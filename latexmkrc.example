@@ -1,0 +1,24 @@
+# ============================================================
+#  Local latexmk config (NOT pushed to Overleaf - see .gitignore).
+#  Overleaf compiles with its own defaults; the drawio PDFs are
+#  committed to git so Overleaf can use them without draw.io.
+# ============================================================
+$out_dir = 'build';            # all build artifacts go to build/
+$pdf_mode = 1;
+$pdflatex = 'pdflatex -interaction=nonstopmode -synctex=1 -shell-escape %O %S';
+$use_biber = 1;
+$max_repeat = 5;
+@default_files = ('main.tex'); # `latexmk` with no args builds the report
+
+# ------------------------------------------------------------
+#  DrawIO -> PDF: any assets/drawio/<name>.drawio referenced as
+#  assets/drawio/<name>.pdf is converted automatically when the
+#  .drawio file is new or has changed.
+# ------------------------------------------------------------
+add_cus_dep('drawio', 'pdf', 0, 'drawio2pdf');
+sub drawio2pdf {
+    my ($base) = @_;
+    my $drawio = 'C:/Program Files/draw.io/draw.io.exe';
+    print "Converting $base.drawio -> $base.pdf\n";
+    return system("\"$drawio\" -x -f pdf --crop -o \"$base.pdf\" \"$base.drawio\"");
+}

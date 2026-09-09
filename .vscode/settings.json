@@ -1,0 +1,5 @@
+{
+    // LaTeX Workshop: put all build output in build/ (matches latexmkrc)
+    "latex-workshop.latex.outDir": "%DIR%/build",
+    "latex-workshop.latex.recipe.default": "latexmk"
+}

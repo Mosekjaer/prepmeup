@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[table]{xcolor}
+\usepackage{array}
+
+\begin{document}
+
+\begin{table}[h]
+\centering
+% --- Infoblok ---
+\begin{tabular}{|p{3cm}|p{10cm}|}
+\hline
+\textbf{Use case under test} & \textbf{Create Customer Account} \\
+\hline
+\textbf{Scenario} & Main scenario: A Customer Account is succesfully created. \\
+\hline
+\textbf{Precondition} & The Server RPi is powered on and connected to the network. No instance of the server application is currently running. \\
+\hline
+\textbf{Postcondition} & The server is listening on port 9000 and ready to accept incoming client connections. \\
+\hline
+\end{tabular}
+
+\vspace{0.5cm}
+
+% --- Trin-tabel ---
+\begin{tabular}{|c|p{2.5cm}|p{3.2cm}|p{3.2cm}|p{2.2cm}|}
+\hline
+\textbf{Step} & \textbf{Action} & \textbf{Expected observation/result} & \textbf{Actual observation/result} & \textbf{Validation} \\
+\hline
+1 & Operator launches the server application on the Server RPi by typing \texttt{./server} & System binds to port 9000 and begins listening for connections, and enters the main select-loop & The terminal responds with ``[Lobby] Listening on port 9000'' and waits for clients. & \cellcolor{green!20} \\
+\hline
+2 & & & & \\
+\hline
+3 & & & & \\
+\hline
+4 & & & & \\
+\hline
+5 & & & & \\
+\hline
+6 & & & & \\
+\hline
+7 & & & & \\
+\hline
+8 & & & & \\
+\hline
+9 & & & & \\
+\hline
+10 & & & & \\
+\hline
+\end{tabular}
+\caption{Validation of Server Setup}
+\end{table}
+
+\end{document}

@@ -1,0 +1,44 @@
+% ============================================================
+%  MAIN REPORT - SW4PRJ4 Group 3
+%  Compile locally :  latexmk          (from the repo root)
+%  Overleaf        :  Menu -> Main document -> main.tex
+%  MUST stay in the repo root (Overleaf requirement).
+% ============================================================
+\documentclass[11pt, a4paper]{report}
+
+\usepackage{report/styles/dependencies} % ALL packages go in this file ONLY
+\usepackage{report/styles/commands}     % Custom commands/environments
+\usepackage{report/styles/commenting}   % Draft commenting commands
+\usepackage{report/meta}                % Title, authors, supervisor etc.
+\input{report/styles/listings.cfg}
+
+\addbibresource{assets/references.bib}
+
+\begin{document}
+\pagenumbering{arabic}
+
+% ---------------- Frontmatter ----------------
+\input{report/frontmatter/0_1_titlepage}
+\input{report/frontmatter/0_2_abstract}
+\input{report/frontmatter/0_3_reading_guide}
+\clearpage
+\input{report/frontmatter/0_4_table_of_contents}
+\newpage
+
+% ---------------- Chapters ----------------    
+\input{report/chapters/1_introduction}
+\input{report/chapters/2_method}
+\input{report/chapters/3_requirements}
+\input{report/chapters/4_architecture}
+\input{report/chapters/5_design}
+\input{report/chapters/6_integration_testing}
+\input{report/chapters/7_acceptance_testing}
+\input{report/chapters/8_discussion}
+\input{report/chapters/9_conclusion}
+
+% ---------------- Bibliography and appendix ----------------
+\newpage
+\printbibliography[heading=bibintoc]
+\input{report/chapters/10_appendix}
+
+\end{document}

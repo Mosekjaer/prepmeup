@@ -1,0 +1,108 @@
+# Local Setup
+
+How to compile this project locally and keep it in sync with Overleaf (trit).
+
+## Prerequisites
+
+| Tool | Why | Where |
+|---|---|---|
+| **MiKTeX** (incl. `latexmk`) | Compiles the LaTeX sources | https://miktex.org |
+| **draw.io Desktop** | Auto-converts `.drawio` diagrams to PDF | https://get.diagrams.net |
+| **VS Code + LaTeX Workshop** *(optional)* | Ctrl+S builds the report | Extension: `James-Yu.latex-workshop` |
+
+Tip: set MiKTeX to install missing packages automatically, otherwise the first
+compile hangs on hidden consent dialogs:
+
+```
+initexmf --set-config-value "[MPM]AutoInstall=1"
+```
+
+## One-time setup after cloning
+
+```
+copy latexmkrc.example latexmkrc
+```
+
+`latexmkrc` is **local only** (gitignored) because Overleaf would otherwise read
+it and break — Overleaf compiles with its own defaults. The file does three things:
+
+1. `$out_dir = 'build'` — every build artifact (aux, log, PDF, ...) goes to
+   `build/`, which is gitignored. Your report ends up at `build/main.pdf`.
+   You can delete `build/` at any time; everything in it is regenerated.
+2. `@default_files = ('main.tex')` — running plain `latexmk` builds the report.
+3. **DrawIO rule** — any `assets/drawio/<name>.drawio` referenced in the report
+   is automatically converted to `assets/drawio/<name>.pdf` when missing or
+   outdated. If draw.io is installed somewhere other than
+   `C:/Program Files/draw.io/`, edit the path at the bottom of `latexmkrc`.
+
+## Compiling
+
+```
+latexmk                 # build the report -> build/main.pdf
+latexmk -pvc            # watch mode: rebuilds on every save
+latexmk -C              # clean all build output
+```
+
+Appendices are standalone documents and compile individually:
+
+```
+cd appendices/Technical/02Analysis
+latexmk -pdf 2_1_technical_analysis.tex
+```
+
+## Inserting DrawIO diagrams
+
+1. Save the diagram as `assets/drawio/<name>.drawio` (commit the source!)
+2. In the report, insert it with (all three arguments are required):
+
+```latex
+\drawiofig{<name>}{Caption text}{fig:my-label}
+\drawiofig[0.5\linewidth]{<name>}{Half width}{fig:small}
+```
+
+latexmk runs draw.io for you during compilation. **Commit the generated
+`assets/drawio/*.pdf` as well** — Overleaf cannot run draw.io, it uses the
+committed PDF. (An example lives in `report/chapters/1_introduction.tex`.)
+
+## Overleaf sync (git)
+
+The remote is the Overleaf (trit) project. Teammates edit live in the browser,
+so **always pull before pushing**:
+
+```
+git pull
+git add .
+git commit -m "..."
+git push
+```
+
+First push/pull asks for credentials: username `git` (sometimes only your overleaf email works, which ever was used to log in with), password is a **Git token**
+generated in Overleaf under Account Settings -> Git integration (not your AU
+password). Windows caches it after the first time.
+
+In Overleaf, set **Menu -> Main document -> `main.tex`**.
+
+## The `.vscode/` folder
+
+Shared VS Code settings for LaTeX Workshop: it builds with the `latexmk` recipe
+and outputs to `build/`, so Ctrl+S behaves exactly like running `latexmk` in the
+terminal instead of dumping aux files in the root.
+
+## Folder overview
+
+```
+main.tex              The report entry point (must stay in root - Overleaf rule)
+report/
+  meta.sty            Title, authors, supervisor - edit here
+  styles/             dependencies.sty (ALL packages go here), commands, ...
+  frontmatter/        0_1_titlepage ... 0_4_table_of_contents
+  chapters/           1_introduction ... 10_appendix (the polished report)
+appendices/           Raw standalone documents (Technical/ + Process/),
+                      numbered like the SW3PRJ3 hand-in
+assets/
+  drawio/             .drawio sources + auto-generated PDFs
+  images/             Photos, logos
+  figures/            Other figure files
+  references.bib      Bibliography
+build/                All build output (gitignored, safe to delete)
+```

@@ -1,0 +1,50 @@
+# ============================================================
+#  Build artifacts stay local - they are never pushed to Overleaf.
+#  Overleaf compiles the .tex sources itself.
+# ============================================================
+
+# All compile output lives here (see latexmkrc)
+build/
+
+# Local-only latexmk config (Overleaf would read a root latexmkrc
+# and break; teammates: copy latexmkrc.example -> latexmkrc)
+/latexmkrc
+
+# Local reference copy of the AU report template
+rapport-eksempel-main/
+
+# LaTeX auxiliary files (if compiled without latexmkrc)
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.loc
+*.fls
+*.fdb_latexmk
+*.synctex
+*.synctex.gz
+*.synctex(busy)
+*.synctex.gz(busy)
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.nav
+*.snm
+*.vrb
+_minted*
+
+# Compiled PDFs are build output - EXCEPT figure PDFs under assets/,
+# which Overleaf needs (it cannot run draw.io itself)
+*.pdf
+!assets/**/*.pdf
+
+# DrawIO temp files
+*.drawio.bkp
+*.drawio.dtmp
+
+# OS
+.DS_Store
+Thumbs.db

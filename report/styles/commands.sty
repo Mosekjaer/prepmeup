@@ -1,0 +1,168 @@
+% -------------------------- %
+% Lasse Thamsen 25.01.2026   %
+% -------------------------- %
+% Description:               %
+%
+% This file contains some custom commands 
+% and enviroments 
+
+\RequirePackage{newfloat}
+\tcbuselibrary{skins,breakable}
+
+% Quick inline code 
+\newcommand{\cppin}[1]{%
+    \mintinline{c++}{#1}%
+}
+\newcommand{\rustin}[1]{%
+    \mintinline{rust}{#1}%
+}
+
+% Figure and Table listing settings
+%\renewcommand{\figurename}{Figur}       % Danish language
+%\renewcommand{\listfigurename}{Figurer} % Danish language 
+%\renewcommand{\tablename}{Tabel}        % Danish language
+%\renewcommand{\listtablename}{Tabeller} % Danish language
+
+%For creating referable code listings
+\DeclareFloatingEnvironment[
+    fileext=loc,                        % File extension for list of codes
+%    listname={List of Code Listings},   % Title for \listofcodes
+    listname={Code Listings},              % Title for \listofcodes
+    name=Code Listing,                  % The caption label (e.g., Code Listing 1)
+%    name=Code Listing,                  % The caption label (e.g., Source Code 1)
+    placement=htbp,                     % Default placement preference (here, top, bottom, page)
+    %within=section,                    % (Optional) Reset numbering per section
+]{code}
+
+% Colors
+\definecolor{hlblue}{RGB}{220,245,255}
+\definecolor{hlgreen}{RGB}{225,245,230}
+\definecolor{hlyellow}{RGB}{255,245,200}
+\definecolor{hlred}{RGB}{255,225,225}
+
+% Compare boxes for code
+\newtcblisting{codelisting}[3][]{%
+  listing only,
+  listing engine=minted,
+  minted language=#2,
+  minted options={
+    fontsize=\small,
+    linenos,
+    breaklines,
+    autogobble,
+    tabsize=4,
+    frame=none,
+    xleftmargin=1.2em,
+    numbersep=0.6em,
+    baselinestretch=1.0,
+    #1
+  },
+  colback=white,
+  colframe=white,
+  boxrule=0pt,
+  boxsep=0pt,          % <-- removes extra inner padding
+  top=0mm,
+  bottom=0mm,
+  left=0mm,
+  right=0mm,
+  after upper={%
+  \par\vspace*{\fill}%
+  {\footnotesize\itshape\color{black!60}\centering #3\par}%
+},
+}
+
+% Side-by-side box with Code Listing caption
+%{codeboxsidebyside}{Box Header}{Caption}{Label}
+\newtcolorbox{codeboxsidebyside}[3]{%
+  enhanced,
+  title={#1},
+  sidebyside,
+  sidebyside align=top seam,
+  sidebyside gap=4mm,
+  lefthand width=0.49\textwidth,
+  righthand width=0.49\textwidth,
+  colback=white,
+  colframe=black!35,
+  arc=1.5mm,
+  boxsep=1.5mm,
+  top=1mm,
+  bottom=1mm,
+  leftupper=0mm,   rightupper=0mm,
+  leftlower=0mm,   rightlower=0mm,
+  after={%
+    \par\smallskip
+    \captionsetup{type=code}%
+    \centering\caption{#2}%
+    \if\relax\detokenize{#3}\relax\else\label{#3}\fi
+  }
+}
+
+% Code box with Code Listing caption
+%{codebox}{Box Header}{Caption}{Label}
+\newtcolorbox{codebox}[3]{%
+  enhanced,
+  title={#1},
+  colback=white,
+  colframe=black!35,
+  arc=1.5mm,
+  boxsep=1.5mm,    % <-- default is larger
+  top=1mm,
+  bottom=1mm,
+    % per-side padding:
+  leftupper=0mm,   rightupper=0mm,
+  leftlower=0mm,   rightlower=0mm,  % <-- add space only on the right column
+  after={%
+    \par\smallskip
+    \captionsetup{type=code}%
+    \centering\caption{#2}%
+    \if\relax\detokenize{#3}\relax\else\label{#3}\fi
+  }
+}
+  
+\newtcolorbox{terminalbox}{
+  enhanced,
+  colback=black!2,
+  colframe=black!40,
+  arc=1.5mm,
+  boxsep=1.5mm,
+  left=1mm,
+  right=1mm,
+  top=1mm,
+  bottom=1mm,
+  breakable,
+}
+
+% ============================================================
+%  Additions (2026): bg_out, examplebox and \drawiofig
+% ============================================================
+
+% Background color for minted text output (used in listings.cfg)
+\definecolor{bg_out}{RGB}{245,245,245}
+
+% Example box as used in the AU report template
+% Usage: \begin{examplebox}{Title} ... \end{examplebox}
+\newtcolorbox{examplebox}[1]{%
+  enhanced, breakable,
+  colback=hlblue!60!white,
+  colframe=black!40,
+  arc=1.5mm,
+  title={#1},
+}
+
+% ------------------------------------------------------------
+% Insert a DrawIO figure.
+% The .drawio file lives in assets/drawio/ and is AUTOMATICALLY
+% converted to PDF by latexmk (see latexmkrc) - just reference
+% the file name without extension.
+%
+% Usage:          \drawiofig{file-name}{Caption}{fig:label}
+% Optional width: \drawiofig[0.5\linewidth]{...}{...}{...}
+% ------------------------------------------------------------
+\newcommand{\drawiofig}[4][0.9\linewidth]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#1]{assets/drawio/#2.pdf}
+    \caption{#3}
+    \label{#4}
+  \end{figure}%
+}

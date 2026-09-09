@@ -1,6 +1,9 @@
 # Local Setup
 
-How to compile this project locally and keep it in sync with Overleaf (trit).
+How to compile this project locally and keep it in sync with the team.
+
+The LaTeX project lives in the `4PRJ/` subfolder of the repo. Open the repo
+root in VS Code, but run all `latexmk` commands from inside `4PRJ/`.
 
 ## Prerequisites
 
@@ -20,6 +23,7 @@ initexmf --set-config-value "[MPM]AutoInstall=1"
 ## One-time setup after cloning
 
 ```
+cd 4PRJ
 copy latexmkrc.example latexmkrc
 ```
 
@@ -37,7 +41,10 @@ it and break — Overleaf compiles with its own defaults. The file does three th
 
 ## Compiling
 
+All commands run from `4PRJ/` (that is where `latexmkrc` and `main.tex` live):
+
 ```
+cd 4PRJ
 latexmk                 # build the report -> build/main.pdf
 latexmk -pvc            # watch mode: rebuilds on every save
 latexmk -C              # clean all build output
@@ -46,7 +53,7 @@ latexmk -C              # clean all build output
 Appendices are standalone documents and compile individually:
 
 ```
-cd appendices/Technical/02Analysis
+cd 4PRJ/appendices/Technical/02Analysis
 latexmk -pdf 2_1_technical_analysis.tex
 ```
 
@@ -64,10 +71,9 @@ latexmk runs draw.io for you during compilation. **Commit the generated
 `assets/drawio/*.pdf` as well** — Overleaf cannot run draw.io, it uses the
 committed PDF. (An example lives in `report/chapters/1_introduction.tex`.)
 
-## Overleaf sync (git)
+## Git sync
 
-The remote is the Overleaf (trit) project. Teammates edit live in the browser,
-so **always pull before pushing**:
+The remote is GitHub (`Mosekjaer/prepmeup`). **Always pull before pushing**:
 
 ```
 git pull
@@ -80,18 +86,23 @@ First push/pull asks for credentials: username `git` (sometimes only your overle
 generated in Overleaf under Account Settings -> Git integration (not your AU
 password). Windows caches it after the first time.
 
-In Overleaf, set **Menu -> Main document -> `main.tex`**.
+If the project is also opened in Overleaf (via GitHub sync), set
+**Menu -> Main document -> `4PRJ/main.tex`**.
 
 ## The `.vscode/` folder
 
-Shared VS Code settings for LaTeX Workshop: it builds with the `latexmk` recipe
-and outputs to `build/`, so Ctrl+S behaves exactly like running `latexmk` in the
-terminal instead of dumping aux files in the root.
+Shared VS Code settings for LaTeX Workshop live in the **repo root** `.vscode/`
+(VS Code only reads settings from the folder you open, so they must sit next to
+`4PRJ/`, not inside it). They build with the `latexmk` recipe and output to
+`build/` next to the `.tex` file, so Ctrl+S behaves exactly like running
+`latexmk` in the terminal instead of dumping aux files in the source folder.
 
 ## Folder overview
 
 ```
-main.tex              The report entry point (must stay in root - Overleaf rule)
+.vscode/              Shared LaTeX Workshop settings (repo root)
+4PRJ/                 The LaTeX project - run latexmk from here
+main.tex              The report entry point (must stay in 4PRJ/ root)
 report/
   meta.sty            Title, authors, supervisor - edit here
   styles/             dependencies.sty (ALL packages go here), commands, ...

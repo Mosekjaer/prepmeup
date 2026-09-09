@@ -1,6 +1,9 @@
 % ============================================================
-%  Domain model - PrepMeUp (SW4PRJ4, gruppe 3)
-%  Kompilerer selvstaendigt:  pdflatex domain-model.tex
+%  Domain model 2 (kun klasser og associationer, ingen attributter)
+%  PrepMeUp (SW4PRJ4, gruppe 3)
+%  Kompilerer selvstaendigt:  pdflatex domain-model-2.tex
+%  Samme layout og beslutninger som domain-model.tex. Ret der foerst,
+%  og kopier aendringerne hertil.
 %  Bruges i rapporten med:    \input{assets/tikz/domain-model-body.tex}
 %  (klip alt mellem \begin{tikzpicture} og \end{tikzpicture} ud,
 %   eller \includegraphics den PDF, denne fil producerer.)
@@ -53,9 +56,9 @@
   mult/.style={font=\scriptsize\itshape, inner sep=1.5pt},
 }
 
-% \cls{node-navn}{position}{Klassenavn}{attributter adskilt med \\}
+% \cls{node-navn}{position}{Klassenavn}{attributter} - attributter ignoreres her
 \newcommand{\cls}[4]{%
-  \node[cls] (#1) at (#2) {\textbf{#3}\nodepart{two}#4};}
+  \node[clsn] (#1) at (#2) {#3};}
 
 \begin{document}
 \begin{tikzpicture}[x=1mm,y=1mm]

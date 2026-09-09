@@ -1,6 +1,11 @@
 % ============================================================
-%  Domain model - PrepMeUp (SW4PRJ4, gruppe 3)
-%  Kompilerer selvstaendigt:  pdflatex domain-model.tex
+%  Domain model 3 (forenklet: ingen attributter, uden FoodItem,
+%  PackageType og PackageTypeItem)
+%  PrepMeUp (SW4PRJ4, gruppe 3)
+%  Kompilerer selvstaendigt:  pdflatex domain-model-3.tex
+%  Samme layout og beslutninger som domain-model.tex. Ret der foerst,
+%  og kopier aendringerne hertil. Pakkens indhold vises kun som
+%  Package - PackageLineItem - Item; pakketyper og varetyper er udeladt.
 %  Bruges i rapporten med:    \input{assets/tikz/domain-model-body.tex}
 %  (klip alt mellem \begin{tikzpicture} og \end{tikzpicture} ud,
 %   eller \includegraphics den PDF, denne fil producerer.)
@@ -53,9 +58,9 @@
   mult/.style={font=\scriptsize\itshape, inner sep=1.5pt},
 }
 
-% \cls{node-navn}{position}{Klassenavn}{attributter adskilt med \\}
+% \cls{node-navn}{position}{Klassenavn}{attributter} - attributter ignoreres her
 \newcommand{\cls}[4]{%
-  \node[cls] (#1) at (#2) {\textbf{#3}\nodepart{two}#4};}
+  \node[clsn] (#1) at (#2) {#3};}
 
 \begin{document}
 \begin{tikzpicture}[x=1mm,y=1mm]
@@ -74,17 +79,14 @@
 \cls{subscription}{60,-50}{Subscription}{status\\startDate\\cancelledDate\\/nextDeliveryDate\\coverageDays}
 \cls{delivery}{120,-50}{Delivery}{plannedDate\\sentDate\\/expiryDate\\status}
 \node[clsn] (package) at (180,-50) {Package};
-\cls{packagetype}{240,-50}{PackageType}{name\\description\\price\\isDefault}
-\cls{packagetypeitem}{300,-50}{PackageTypeItem}{quantityPerPerson}
 
 % ----- raekke 3 -----
 \cls{payment}{60,-100}{Payment}{amount\\date\\status}
 \cls{notification}{120,-100}{Notification}{message\\sentAt\\recipientRole}
 \cls{packagelineitem}{180,-100}{PackageLineItem}{quantity\\unitPrice}
-\node[clsn] (fooditem) at (300,-100) {FoodItem};
 
 % ----- raekke 4 -----
-\cls{item}{300,-140}{Item}{name\\unit\\price}
+\cls{item}{240,-100}{Item}{name\\unit\\price}
 
 % ----- associationer (navn i midten, multiplicitet ved hver ende) -----
 % Hjaelper: \assoc{fra}{til}{navn}{mult ved fra}{mult ved til}{navn-side}{mult-side}
@@ -111,19 +113,9 @@
 
 % Pakke, pakketype og varer
 \assoc{package}{member}{intended-for}{*}{1}{sloped,above}{sloped,below}
-\assoc{package}{packagetype}{described-by}{*}{1}{above}{below}
-\assoc{packagetype}{diet}{suits}{*}{1}{sloped,above}{sloped,below}
-\assoc{packagetype}{packagetypeitem}{contains}{1}{1..*}{above}{below}
-% PackageTypeItem -> Item: knaekket streg uden om FoodItem
-\draw[assoc] (packagetypeitem.east) -- ++(10,0) |- (item.east);
-\node[mult,above] at ($(packagetypeitem.east)+(4,0)$) {*};
-\node[mult,above] at ($(item.east)+(4,0)$) {1};
-\node[lbl,rotate=90] at ($(packagetypeitem.east)+(10,-45)$) {refers-to};
 \assoc{package}{packagelineitem}{contains}{1}{1..*}{right}{left}
 \assoc{packagelineitem}{item}{refers-to}{*}{1}{above}{below}
 
-% FoodItem er en slags Item (ingen arv-notation i domaenemodellen)
-\draw[assoc] (fooditem) -- (item);
 
 \end{tikzpicture}
 \end{document}

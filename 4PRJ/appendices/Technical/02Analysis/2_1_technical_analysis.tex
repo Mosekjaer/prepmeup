@@ -11,6 +11,78 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\section{Purpose}
+This appendix summarises the technology choices for PrepMeUp and the reasoning behind them. The system consists of one backend, two user interfaces and one shared client package. The requirements are given in appendix 1.2.
+
+\section{Technology Stack}
+
+\subsection{Clients (TypeScript monorepo, \texttt{clients/})}
+\begin{itemize}
+    \item Customer app: Expo, React Native, TypeScript, Expo Router, TanStack Query. JWT stored in SecureStore. Targets iOS and Android.
+    \item Admin UI: React, Vite, TypeScript, React Router. Runs in the browser.
+    \item Shared client package \texttt{packages/api-client}: generated from the OpenAPI schema. Never edited by hand.
+\end{itemize}
+
+\subsection{Backend (.NET)}
+\begin{itemize}
+    \item ASP.NET Core Web API on .NET 10.
+    \item Controllers, dependency injection, JWT authentication with roles, CORS.
+    \item Serilog for structured logging to file and database.
+    \item ProblemDetails for central error handling and human-readable error messages.
+    \item Swagger/OpenAPI as the contract between client and server.
+    \item BackgroundService as scheduler: checks expiry dates and triggers new deliveries.
+    \item Configuration via environment variables.
+\end{itemize}
+
+\subsection{Data}
+\begin{itemize}
+    \item Relational SQL database accessed through EF Core (object-relational mapper, LINQ, migrations in git).
+    \item Database engine: SQL Server or PostgreSQL. Not yet decided.
+    \item Runs in Docker. Port 1433 is internal only. Data in the volume \texttt{pmu-data}.
+\end{itemize}
+
+\subsection{Test}
+\begin{itemize}
+    \item Backend unit tests: NUnit and NSubstitute against the Application layer.
+    \item Backend integration tests: WebApplicationFactory against the API.
+    \item Client tests: Vitest.
+    \item CI runs build and all tests on every merge request. Green pipeline before merge.
+\end{itemize}
+
+\subsection{Deployment and Development Tools}
+\begin{itemize}
+    \item docker compose with two services: \texttt{api} (dotnet/aspnet image, container port 8080 mapped to host port 5001) and \texttt{db}, on the network \texttt{prepmeup-net}. Same setup on Windows and Linux.
+    \item Secrets in OS environment variables or credential manager. Never in the repository.
+    \item GitLab for version control, merge requests and CI.
+    \item Claude Code as AI assistant: 10 read-only review agents and 8 skills, governed by \texttt{CLAUDE.md}. Access to \texttt{.env} and key files is denied in \texttt{.claude/settings.json}.
+    \item Kaneo (self-hosted) as task board with REST API.
+    \item Architecture decision records in \texttt{docs/adr/}.
+\end{itemize}
+
+\section{Architecture}
+\begin{itemize}
+    \item Layered architecture with four projects: \texttt{PrepMeUp.Api} (presentation), \texttt{PrepMeUp.Application} (use cases, repository interfaces), \texttt{PrepMeUp.Domain} (entities and rules), \texttt{PrepMeUp.Infrastructure} (EF Core, repositories, migrations).
+    \item Rule: a layer may only use the layer below it. Domain references nothing.
+    \item Infrastructure implements the interfaces defined in Application. Api references Infrastructure only in the composition root.
+    \item Cross-cutting concerns: authentication, logging, error handling, caching, configuration.
+    \item The scheduler shares the Application layer with the Web API.
+\end{itemize}
+
+\section{Key Technical Decisions}
+\begin{itemize}
+    \item One backend serves both user interfaces. The OpenAPI schema is the single contract.
+    \item Business rules live in Domain only. Clients hold UI state and call the API through the generated client. No business logic in the UI.
+    \item EF Core instead of hand-written SQL. Generated SQL can be inspected and replaced where needed.
+    \item Database is not exposed to the host. Only \texttt{api} reaches it through the service name \texttt{db}.
+    \item MediatR is not used. It solves a problem the project does not have and is not part of the curriculum.
+    \item Vertical slices: each iteration delivers one feature through all four layers, Domain first.
+    \item AI agents review but do not modify code. Test cases are designed and approved by a human before implementation.
+\end{itemize}
+
+\section{Open Decisions}
+\begin{itemize}
+    \item Database engine: SQL Server or PostgreSQL.
+    \item UI language: English or Danish (see appendix 1.2, non-functional requirements).
+\end{itemize}
 
 \end{document}

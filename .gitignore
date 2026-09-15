@@ -22,6 +22,9 @@ obj/
 .vs/
 *.user
 
+# Personal scratch notes
+/todo.md
+
 # Editors / OS
 .idea/
 *.swp

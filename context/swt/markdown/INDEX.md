@@ -37,7 +37,7 @@ Filer der optraeder i flere moduler, konverteret én gang.
 
 ## Laeringsmaal og hvor de daekkes
 
-Fra kursusbeskrivelsen. Hvert maal peger paa de moduler der behandler det.
+Fra kursusbeskrivelsen ([fuld tekst fra AU Kursuskatalog](./startside/kursusbeskrivelse-katalog.md): indhold, motivation, eksamen, uoverensstemmelser). Hvert maal peger paa de moduler der behandler det.
 
 | Laeringsmaal | Moduler |
 |---|---|

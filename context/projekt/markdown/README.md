@@ -10,6 +10,7 @@ Eksamen: **20 minutters mundtlig projekteksamen med ekstern censur, 7-trinsskala
 
 | Fil | Hvad |
 |---|---|
+| [00-kursus/kursusbeskrivelse-katalog.md](00-kursus/kursusbeskrivelse-katalog.md) | Officiel kursusbeskrivelse fra AU Kursuskatalog: indhold, kvalifikationsbeskrivelse, læringsmål, eksamen, GAI-regler, uoverensstemmelser med slides |
 | [00-kursus/sw4prj4-introduktion.md](00-kursus/sw4prj4-introduktion.md) | Læringsmål, eksamensform, iterationer, krav til projektopgaven, tools |
 | [00-kursus/lektionsplan.md](00-kursus/lektionsplan.md) | L1–L28 med emne, aflevering A/B/C, feedback, underviser |
 | [00-kursus/semesterplan.md](00-kursus/semesterplan.md) | Uge for uge, deadlines, ferie, eksamensperiode |
@@ -45,7 +46,7 @@ Lektionsnumrene følger E25-lektionsplanen. Brightspace-sidernes egne titler bru
 
 | Mappe | Indhold | Filer |
 |---|---|---|
-| [00-kursus/](00-kursus/README.md) | Kursusfakta, planer, undervisere, forsider, afleveringsopgave A/B/C, L1-slides | 12 |
+| [00-kursus/](00-kursus/README.md) | Kursusfakta, planer, undervisere, forsider, afleveringsopgave A/B/C, L1-slides, officiel kursusbeskrivelse | 13 |
 | [01-kravspecifikation/](01-kravspecifikation/README.md) | System Specification-slides, Vasa-casen | 3 |
 | [02-use-cases/](02-use-cases/README.md) | Use case-slides, Bilvaskehal-case, fully dressed UC-skabelon | 4 |
 | [03-systemtest/](03-systemtest/README.md) | System Test-slides, TTT-accepttestspecifikation (eksempel), accepttest-øvelse | 4 |

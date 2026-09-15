@@ -15,6 +15,7 @@ Dækker Brightspace-modulerne:
 
 | Fil | Kilde-PDF / side | Type | Sider | Indhold |
 |---|---|---|---|---|
+| `kursusbeskrivelse-katalog.md` | AU Kursuskatalog (kursuskatalog.au.dk, kopieret 15/9 2026) | kursusbeskrivelse | 1 | Officiel beskrivelse: stamdata, kursusindhold, kvalifikationsbeskrivelse, læringsmål, forudsætninger, eksamen, GAI tilladt, uoverensstemmelser med slides |
 | `sw4prj4-introduktion.md` | `SW4PRJ4 Introduktion.pdf` | slides | 13 | Vejlederstab, læringsmål, eksamen (20 min projekteksamen, ekstern censur), iterationer, projektforslag, deadline 11/12 kl. 13, tools |
 | `semesterplan.md` | `Semesterplan.PNG` | oversigt | 1 | Uge/kalenderuge/aflevering for hele semestret, sidste undervisningsdag 4/12, eksamen fra 14/12 |
 | `semestergrupper.md` | `Oversigt over semestergrupper i SW4 efteråret 2026.pdf` | oversigt | 2 | 7 grupper med vejleder, projekt og medlemmer (Frederik: gruppe 3) |
@@ -39,7 +40,7 @@ Dubletter: forsiderne (`ISE obligatorisk opgave forside.docx`, `ISE review af op
 | Efterårsferie | KW42 |
 | Sidste undervisningsdag | Fredag 4/12 (KW49) |
 | Semesterprojekt afleveres | Fredag 11/12 før kl. 13.00 via WISEflow — også sidste frist for kursusgodkendelsesopgaver |
-| Eksamen | Starter 14/12. SW4PRJ4: 20 min. gruppefremvisning + 15 min. individuel mundtlig, ingen forberedelse, 7-trinsskala, ekstern censur |
+| Eksamen | Starter 14/12. SW4PRJ4 ifølge slides: 20 min. gruppefremvisning + 15 min. individuel mundtlig, ingen forberedelse, 7-trinsskala, ekstern censur. **Kataloget siger 15 min. gruppe + 20 min. individuelt** — se `kursusbeskrivelse-katalog.md`. GAI-værktøjer tilladt. |
 | Frederiks gruppe | Gruppe 3, vejleder Michel Howard, projekt "Automated Emergency Preparedness Subscription"; gruppe 3 review'er gruppe 2 |
 
 ## Brightspace-sider

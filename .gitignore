@@ -2,9 +2,15 @@
 #  Repo-wide ignores. LaTeX-specific rules live in docs/.gitignore.
 # ============================================================
 
-# Personal course material / knowledge graph - not part of the project
-context/
+# Generated knowledge graph - rebuildable, not part of the project
 graphify-out/
+
+# Course material in context/ IS shared with the team, but lecture videos
+# are too big for GitHub - get those from Moodle instead.
+context/**/*.mp4
+context/**/*.mov
+context/**/*.mkv
+context/**/*.avi
 
 # LaTeX build output (latexmkrc uses build/)
 build/

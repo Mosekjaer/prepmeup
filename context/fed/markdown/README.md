@@ -14,6 +14,7 @@ Indeks over konverteret kursusmateriale til brug som AI-kontekst.
 | **Undervisere** | Poul Ejnar Rovsing (kursusansvarlig), Jung Min Kim ("Jenny") |
 | **Undervisningssprog** | Dansk, delvist engelsk |
 | **Omfang** | 56 timer over 14 uger |
+| **Kursusbeskrivelse** | [kursusbeskrivelse-katalog.md](kursusbeskrivelse-katalog.md) — officiel tekst fra AU Kursuskatalog (formål, forudsætninger, eksamen, GAI-regler, uoverensstemmelser) |
 
 ## 2. Kursusindhold
 

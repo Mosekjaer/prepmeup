@@ -1,0 +1,47 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf 02-method-and-process.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage{../../appendix-style}
+\usepackage{biblatex}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+\addbibresource{referencer.bib}
+
+\title{10.2 Method and Process}
+\author{SW4PRJ4 -- Group 3}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% Content goes here...
+\begin{itemize}
+    \item Frederik volunteered to be Scrummaster. Everyone was in agreement.
+    \item Product owner is a blue elephant named Bodil.
+    \item Sprintplanning was done using Notion. Different group members had different experiences using Trello and Jira why we settled on Notion.
+\end{itemize}
+
+\subsection*{2/9}
+\begin{itemize}
+    \item We went with User Stories to try something else than fully dressed use cases. User Stories appealed to the team since this is as close to the consumer as possible, expressed in the customer's own words and language, which made it easier to validate requirements and keep the focus on delivering what the consumer wants.
+    \item Requirement-specification $\rightarrow$ A lot of thought went into the database. What relations should be between each ``member'' of the database.
+    \item Created user stories before the beginning of sprint\#1. We followed the setup from brightspace.
+    \item During requirement specifications the group spend a lot of time on discussing the scope of the project and how the database should be constructed. Should every customer be able to swap a single food item or should it be x amount of packets which content is irreplaceable? We chose certain packets with irreplaceable content since we presumed that the vast majority of customers would pick either a ``standard package'', a ``vegetarian package'' or ``gluten-free'' package. Whole household = one package. One package per person was probably feasible as well, but we chose to get with it as a ``Could'' in MoSCoW since we deemed it a minor modification to the system.
+    \item Concept clarification started.
+\end{itemize}
+
+\subsection*{9/9}
+\begin{itemize}
+    \item Fred presents how the project could be shaped using AI as development-tool. Unanimous agreement. See \href{run:./Arkitektur-ide.pdf}{Arkitektur-idé}.
+    \item Moreover, Notion was ditched and Kaneo was chosen due to it being open source and compatible with Claude. This way, Claude will be able to create and chose tickets and complete these. 
+\end{itemize}
+
+\printbibliography
+\end{document}

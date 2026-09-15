@@ -1,0 +1,28 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf 01-development-guidelines.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage{../../appendix-style}
+\usepackage{listings}
+%\usepackage{minted}
+
+\title{10.1 Development Guidelines}
+\author{SW4PRJ4 -- Group 3}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Latex Templates and styles}
+There have been created multiple templates for the documents. To ensure streamlined documents, and ease of use when creating a new document. 
+
+Therefore in the appendices it is only neccesary to write:
+\begin{lstlisting}[language={[LaTeX]TeX}]
+\usepackage[english]{babel} %english or danish to determine language
+\usepackage{../../appendix-style} % to use appendix template
+\end{lstlisting}
+
+
+% Content goes here...
+
+\end{document}

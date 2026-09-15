@@ -1,5 +1,36 @@
 {
     // LaTeX Workshop: put all build output in build/ (matches latexmkrc)
     "latex-workshop.latex.outDir": "%DIR%/build",
+
+    // Build automatically when a .tex file is saved
+    "latex-workshop.latex.autoBuild.run": "onSave",
+
+    // Open the PDF in a VS Code tab instead of an external viewer
+    "latex-workshop.view.pdf.viewer": "tab",
+
+    // pdflatex + -shell-escape: minted needs shell-escape to call pygmentize.
+    // pdflatex also matches what Overleaf compiles with.
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk-shellescape",
+            "command": "latexmk",
+            "args": [
+                "-pdf",
+                "-shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-outdir=%OUTDIR%",
+                "%DOC%"
+            ],
+            "env": {}
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk",
+            "tools": ["latexmk-shellescape"]
+        }
+    ],
     "latex-workshop.latex.recipe.default": "latexmk"
 }

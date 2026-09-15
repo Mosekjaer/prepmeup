@@ -17,7 +17,7 @@
 
 \textbf{Tid:} 13:00
 
-\textbf{Sted:}
+\textbf{Sted:} Orbit Lab
 
 \textbf{Referent:} Alexander H
 
@@ -25,30 +25,55 @@
 
 \begin{itemize}
     \item Alexander H
+    \item Ida F
+    \item Frederik
+    \item Alexander D
+    \item Malthe
 \end{itemize}
 
 \textbf{Fraværende:}
 
+\begin{itemize}
+    \item Ida
+    \item Marie
+    \item Oskar
+\end{itemize}
+
 \section*{Dagsorden}
 
 \begin{enumerate}
-    \item
+    \item Hvad synes Michel om projektformulering/idé, og er projektet en passende størrelse?
+    \item Brug af AI værktøjer og udviklingsmiljø
 \end{enumerate}
 
 \section*{Noter}
-
 \subsection*{1.}
+
+\begin{itemize}
+    \item Overvej brug af Agenter og i hvilket omfang
+    \item Man skal forstå alt i den kode, man skriver/genererer (fx hvad gør denne funktion) -- hvis man kan det, er brug af AI ok.
+    \item Frontend skal laves i React Native og skal minimum kunne køre som Android-app -- muligvis også som web-app.
+    \item Backend opstilles simpelt til at starte med, med ét endpoint, der testes med curl sammen med databasen.
+    \item Overvej vedligeholdelse af databasen -- hvordan opdaterer man tabeller osv. (evt. med update scripts).
+    \item Trin 2: tilføj ekstern authority (autentificering) til systemet -- overvej hvilken metode (fx Firebase, Keycloak, Clerk, OAuth).
+    \item Overvej deployment-strategi (én fælles deployment frem for at hver bruger skal deploye lokalt fordi vi vil have en administrator).
+\end{itemize}
 
 \section*{Beslutninger}
 
 \begin{itemize}
-    \item
+    \item Frontend implementeres i React Native.
 \end{itemize}
 
 \section*{Opgaver}
 
 \begin{itemize}
-    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} -- \textbf{Frist:}
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Tilføj user stories, der er relevante for ovenstående krav
+    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} Opstil frontend samt knapper, routing og navigation i appen
+    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} Deployment med pipeline
+    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} Unit test
+    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} Opstil simpel backend med ét endpoint, testet med curl sammen med DB
+    \item \textbf{Ansvarlig:} -- \textbf{Opgave:} (Efter det andet) Tilføj ekstern authority til systemet
 \end{itemize}
 
 \section*{Næste møde}

@@ -9,8 +9,8 @@ root in VS Code, but run all `latexmk` commands from inside `docs/`.
 
 | Tool | Why | Where |
 |---|---|---|
-| **MiKTeX** (incl. `latexmk`) | Compiles the LaTeX sources | https://miktex.org |
-| **draw.io Desktop** | Auto-converts `.drawio` diagrams to PDF | https://get.diagrams.net |
+| **MiKTeX** (Windows) or **TeX Live** (Linux, `texlive-full` + `latexmk` + `biber`) | Compiles the LaTeX sources | https://miktex.org / https://tug.org/texlive |
+| **draw.io Desktop** (Linux: `snap install drawio` or the .deb) | Auto-converts `.drawio` diagrams to PDF | https://get.diagrams.net |
 | **VS Code + LaTeX Workshop** *(optional)* | Ctrl+S builds the report | Extension: `James-Yu.latex-workshop` |
 
 Tip: set MiKTeX to install missing packages automatically, otherwise the first
@@ -24,7 +24,8 @@ initexmf --set-config-value "[MPM]AutoInstall=1"
 
 ```
 cd docs
-copy latexmkrc.example latexmkrc
+copy latexmkrc.example latexmkrc      # Windows
+cp   latexmkrc.example latexmkrc      # Linux / macOS
 ```
 
 `latexmkrc` is **local only** (gitignored) because Overleaf would otherwise read
@@ -36,8 +37,11 @@ it and break — Overleaf compiles with its own defaults. The file does three th
 2. `@default_files = ('main.tex')` — running plain `latexmk` builds the report.
 3. **DrawIO rule** — any `assets/drawio/<name>.drawio` referenced in the report
    is automatically converted to `assets/drawio/<name>.pdf` when missing or
-   outdated. If draw.io is installed somewhere other than
-   `C:/Program Files/draw.io/`, edit the path at the bottom of `latexmkrc`.
+   outdated. The rule picks the binary by OS: `C:/Program Files/draw.io/` on
+   Windows, `drawio` on PATH on Linux, the app bundle on macOS. Installed
+   elsewhere? Edit the path at the bottom of `latexmkrc`.
+   Linux snap note: the snap can only read non-hidden folders under your
+   home, so keep the repo somewhere like `~/Documents`, not `~/.something`.
 
 ## Compiling
 

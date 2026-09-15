@@ -18,7 +18,11 @@ $max_repeat = 5;
 add_cus_dep('drawio', 'pdf', 0, 'drawio2pdf');
 sub drawio2pdf {
     my ($base) = @_;
-    my $drawio = 'C:/Program Files/draw.io/draw.io.exe';
+    # Windows: draw.io Desktop default install path.
+    # Linux/macOS: `drawio` on PATH (snap, .deb, AppImage symlink, brew).
+    my $drawio = $^O eq 'MSWin32'
+        ? 'C:/Program Files/draw.io/draw.io.exe'
+        : ($^O eq 'darwin' ? '/Applications/draw.io.app/Contents/MacOS/draw.io' : 'drawio');
     print "Converting $base.drawio -> $base.pdf\n";
     return system("\"$drawio\" -x -f pdf --crop -o \"$base.pdf\" \"$base.drawio\"");
 }

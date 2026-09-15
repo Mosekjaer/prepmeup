@@ -1,0 +1,23 @@
+# ============================================================
+#  Repo-wide ignores. LaTeX-specific rules live in docs/.gitignore.
+# ============================================================
+
+# Personal course material / knowledge graph - not part of the project
+context/
+graphify-out/
+
+# LaTeX build output (latexmkrc uses build/)
+build/
+/docs/latexmkrc
+
+# .NET / Visual Studio artifacts
+bin/
+obj/
+.vs/
+*.user
+
+# Editors / OS
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

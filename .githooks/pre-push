@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Rejects direct pushes to main and pushes of branches that break the naming rule.
+# Tags and branch deletions pass through.
+
+set -euo pipefail
+
+check="$(dirname "$0")/check-conventions.sh"
+
+while read -r _local_ref local_sha remote_ref _remote_sha; do
+  [[ "$local_sha" =~ ^0+$ ]] && continue
+  case "$remote_ref" in
+    refs/heads/main)
+      echo "Direct push to main is not allowed. Push a branch and open a pull request." >&2
+      exit 1
+      ;;
+    refs/heads/*)
+      "$check" branch "${remote_ref#refs/heads/}"
+      ;;
+  esac
+done

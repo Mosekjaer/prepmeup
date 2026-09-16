@@ -77,14 +77,20 @@ committed PDF. (An example lives in `report/chapters/1_introduction.tex`.)
 
 ## Git sync
 
-The remote is GitHub (`Mosekjaer/prepmeup`). **Always pull before pushing**:
+The remote is GitHub (`Mosekjaer/prepmeup`). We use GitHub Flow: never commit
+directly to `main`. Work on a branch and open a pull request. The full rules are
+in appendix 10.1 (`appendices/process/10-method/01-development-guidelines.tex`).
 
 ```
+git switch main
 git pull
-git add .
-git commit -m "..."
-git push
+git switch -c docs/update-technical-analysis
+git add <files>
+git commit -m "docs: update technical analysis"
+git push -u origin HEAD
 ```
+
+Then open a pull request against `main` on GitHub.
 
 First push/pull asks for credentials: username `git` (sometimes only your overleaf email works, which ever was used to log in with), password is a **Git token**
 generated in Overleaf under Account Settings -> Git integration (not your AU

@@ -14,6 +14,7 @@
 \begin{versionhistory}
   1.0 & 02-09-2026 & Group 3 & Initial version \\
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
+  1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -197,7 +198,7 @@ Each non-functional requirement states how it is verified, so it can be tested r
 
 \paragraph{Usability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=1]
-    \item The language displayed in the UIs is [English/Danish?].
+    \item All text displayed in the UIs is in English, including error messages from the API. \emph{Verified by:} acceptance-test review of every screen in the customer app and the administrator interface.
     \item Every error message shown in a UI is a complete sentence in the UI language that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown. \emph{Verified by:} acceptance-test review of every error state in the customer app and the administrator interface.
 \end{enumerate}
 
@@ -214,7 +215,7 @@ Each non-functional requirement states how it is verified, so it can be tested r
 
 \paragraph{Portability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=6]
-    \item The customer UI runs as an Android app built with React Native. \emph{Verified by:} acceptance test on an Android device or emulator.
+    \item The customer UI runs as an Android app built with Expo (React Native). \emph{Verified by:} acceptance test on an Android device or emulator.
 \end{enumerate}
 
 \paragraph{Supportability}

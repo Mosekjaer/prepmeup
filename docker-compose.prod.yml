@@ -1,0 +1,96 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/PrepMeUp.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__PrepMeUpDb: "Server=db,1433;Database=PrepMeUp;User Id=sa;Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
+      Cors__AllowedOrigins__0: "${PMU_ADMIN_ORIGIN:?set PMU_ADMIN_ORIGIN}"
+      Cors__AllowedOrigins__1: "${PMU_MOBILE_ORIGIN:?set PMU_MOBILE_ORIGIN}"
+      Keycloak__Authority: "${PMU_KEYCLOAK_PUBLIC_URL:?set PMU_KEYCLOAK_PUBLIC_URL}/realms/prepmeup"
+      Keycloak__MetadataAddress: "http://keycloak:8080/realms/prepmeup/.well-known/openid-configuration"
+      Keycloak__Audience: "prepmeup-api"
+      Keycloak__RequireHttpsMetadata: "false"
+    expose:
+      - "8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - prepmeup-net
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}"
+      MSSQL_PID: Developer
+    volumes:
+      - pmu-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - prepmeup-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    command: ["start", "--import-realm"]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: "${KEYCLOAK_DB_PASSWORD:?set KEYCLOAK_DB_PASSWORD}"
+      KC_HOSTNAME: "${PMU_KEYCLOAK_PUBLIC_URL:?set PMU_KEYCLOAK_PUBLIC_URL}"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: "${KEYCLOAK_ADMIN:?set KEYCLOAK_ADMIN}"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "${KEYCLOAK_ADMIN_PASSWORD:?set KEYCLOAK_ADMIN_PASSWORD}"
+      PMU_ADMIN_ORIGIN: "${PMU_ADMIN_ORIGIN}"
+      PMU_MOBILE_ORIGIN: "${PMU_MOBILE_ORIGIN}"
+      PMU_MOBILE_SCHEME: "${PMU_MOBILE_SCHEME:-prepmeup}"
+      PMU_MOBILE_DEV_ORIGIN: "${PMU_MOBILE_DEV_ORIGIN:-${PMU_MOBILE_ORIGIN}}"
+    expose:
+      - "8080"
+    volumes:
+      - ./infra/keycloak/realm-prepmeup.json:/opt/keycloak/data/import/realm-prepmeup.json:ro
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - prepmeup-net
+
+  keycloak-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: "${KEYCLOAK_DB_PASSWORD:?set KEYCLOAK_DB_PASSWORD}"
+    volumes:
+      - pmu-keycloak-db:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U keycloak -d keycloak
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - prepmeup-net
+
+volumes:
+  pmu-data:
+  pmu-keycloak-db:
+
+networks:
+  prepmeup-net:

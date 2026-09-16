@@ -27,6 +27,13 @@
 %   G. Item er det generelle varebegreb. FoodItem er den eneste konkrete
 %      varetype nu; andre (fx Medicine, jf. 0_ProjectDescription) kan tilfoejes.
 %      Tegnes som almindelig streg, ikke som arv.
+%   H. Administrator er en konceptuel klasse (review #1, gruppe 4): vedligeholder
+%      PackageType og afsender (dispatches) Delivery.
+%   I. Notification sendes til Customer (sent-to). recipientRole er fjernet;
+%      alarmering af administrator modelleres ikke endnu (review #1).
+%   J. Betalingskaeden er en vej: Delivery paid-by Payment charged-via
+%      PaymentMethod. Subscription paid-with PaymentMethod er fjernet som
+%      redundant (review #1).
 %  Koncepter som spec kraever, men DB-udkastet mangler:
 %   Diet, HouseholdMember, Package (per medlem), Notification, Delivery.status.
 % ============================================================
@@ -71,6 +78,7 @@
 \node[clsn] (household) at (60,0) {Household};
 \cls{member}{120,0}{HouseholdMember}{name\\isChild}
 \cls{diet}{180,0}{Diet}{name}
+\cls{admin}{240,0}{Administrator}{name\\email}
 
 % ----- raekke 2 -----
 \cls{paymentmethod}{0,-50}{PaymentMethod}{cardLast4\\expiryMonth\\expiryYear}
@@ -82,7 +90,7 @@
 
 % ----- raekke 3 -----
 \cls{payment}{60,-100}{Payment}{amount\\date\\status}
-\cls{notification}{120,-100}{Notification}{message\\sentAt\\recipientRole}
+\cls{notification}{120,-100}{Notification}{message\\sentAt}
 \cls{packagelineitem}{180,-100}{PackageLineItem}{quantity\\unitPrice}
 \node[clsn] (fooditem) at (300,-100) {FoodItem};
 
@@ -105,12 +113,22 @@
 \assoc{household}{subscription}{has}{1}{0..1}{right}{left}
 
 % Abonnement og levering
-\assoc{paymentmethod}{subscription}{paid-with}{1}{*}{above}{below}
 \assoc{subscription}{delivery}{schedules}{1}{*}{above}{below}
 \assoc{delivery}{package}{contains}{1}{1..*}{above}{below}
 \assoc{delivery}{payment}{paid-by}{1}{0..1}{sloped,above}{sloped,below}
 \assoc{payment}{paymentmethod}{charged-via}{*}{1}{sloped,above}{sloped,below}
 \assoc{delivery}{notification}{announced-by}{1}{*}{right}{left}
+% Notification -> Customer: knaekket streg under raekke 3 og op langs venstre kant
+\draw[assoc] (notification.south) -- ++(0,-18) -| (-30,0) -- (customer.west);
+\node[mult,right] at ($(notification.south)+(0,-4)$) {*};
+\node[mult,above] at ($(customer.west)+(-4,0)$) {1};
+\node[lbl,rotate=90] at (-30,-60) {sent-to};
+
+% Administrator
+% dispatches: label taet paa Administrator, saa den ikke rammer krydset med intended-for
+\draw[assoc] (admin) -- node[lbl,sloped,above,pos=.18]{dispatches}
+  node[mult,pos=.08,sloped,below]{0..1} node[mult,pos=.9,sloped,below]{*} (delivery);
+\assoc{admin}{packagetype}{maintains}{1}{*}{right}{left}
 
 % Pakke, pakketype og varer
 \assoc{package}{member}{intended-for}{*}{1}{sloped,above}{sloped,below}

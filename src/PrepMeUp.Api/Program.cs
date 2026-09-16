@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,39 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+
+var keycloak = builder.Configuration.GetSection("Keycloak");
+var authority = keycloak["Authority"];
+
+if (!string.IsNullOrWhiteSpace(authority))
+{
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Authority = authority;
+            options.Audience = keycloak["Audience"];
+            options.RequireHttpsMetadata = keycloak.GetValue("RequireHttpsMetadata", true);
+
+            var metadataAddress = keycloak["MetadataAddress"];
+            if (!string.IsNullOrWhiteSpace(metadataAddress))
+            {
+                options.MetadataAddress = metadataAddress;
+            }
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = authority,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.FromSeconds(30)
+            };
+        });
+}
+
+builder.Services.AddAuthorization();
 
 const string ClientCorsPolicy = "clients";
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
@@ -35,6 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(ClientCorsPolicy);
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 

@@ -20,6 +20,7 @@ her — ret den i `AGENTS.md`.
 | `api-contract` | hold OpenAPI og `api-client` i sync (NSwag) |
 | `report-check` | kritik af rapporten, tegnoptælling mod 72.000 |
 | `meeting-docs` | dagsordener og referater på dansk i LaTeX |
+| `drawio-skill` | draw.io-diagrammer: skriv XML, valider, eksportér og tjek visuelt. Upstream [agents365-ai/drawio-skill](https://github.com/agents365-ai/drawio-skill) v3.4.0 (`7aa92f7`), deles med Antigravity via `.agents/sync-agents.py` |
 
 | Agent (read-only) | Dækker |
 |---|---|

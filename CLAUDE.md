@@ -35,7 +35,10 @@ her — ret den i `AGENTS.md`.
 
 ## Kaneo
 
-MCP-serveren er defineret i `.mcp.json`. Tokenet kommer fra miljøvariablen `KANEO_TOKEN`.
+MCP-serveren er defineret i `.mcp.json` som en stdio-server (`npx @kaneo/mcp`, peger på
+`KANEO_API_URL=https://kaneo.mosekjaer.com`). Første gang serveren bruges, åbner den en
+device-authorization-flow i browseren, hvor du selv godkender login — der er ikke længere
+et statisk token i miljøvariabler. Kræver Node.js 24+ installeret lokalt.
 
 Tilladt i `.claude/settings.json`: læsning, `create_task_comment`, `create_task`, `attach_label_to_task`
 og `create_task_relation`. Alt andet skrivende er på deny-listen — se Kaneo-afsnittet i `AGENTS.md`.

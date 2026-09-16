@@ -1,9 +1,10 @@
 {
   "mcpServers": {
     "kaneo": {
-      "serverUrl": "https://kaneo.mosekjaer.com/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ${KANEO_TOKEN}"
+      "command": "npx",
+      "args": ["-y", "@kaneo/mcp"],
+      "env": {
+        "KANEO_API_URL": "https://kaneo.mosekjaer.com"
       }
     }
   }

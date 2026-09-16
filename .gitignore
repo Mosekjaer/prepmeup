@@ -24,6 +24,7 @@ obj/
 
 # Personal scratch notes
 /todo.md
+.plans/
 
 # Editors / OS
 .idea/

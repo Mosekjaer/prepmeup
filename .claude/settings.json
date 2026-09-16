@@ -1,0 +1,87 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pfx)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "mcp__kaneo__create_task",
+      "mcp__kaneo__update_task",
+      "mcp__kaneo__delete_task",
+      "mcp__kaneo__move_task",
+      "mcp__kaneo__update_task_status",
+      "mcp__kaneo__update_task_assignee",
+      "mcp__kaneo__update_task_due_date",
+      "mcp__kaneo__create_project",
+      "mcp__kaneo__update_project",
+      "mcp__kaneo__create_label",
+      "mcp__kaneo__delete_label",
+      "mcp__kaneo__attach_label_to_task",
+      "mcp__kaneo__detach_label_from_task",
+      "mcp__kaneo__create_task_relation",
+      "mcp__kaneo__delete_task_relation",
+      "mcp__kaneo__update_task_comment",
+      "mcp__kaneo__delete_task_comment",
+      "mcp__kaneo__create_time_entry",
+      "mcp__kaneo__update_time_entry"
+    ],
+    "ask": [
+      "Bash(git push:*)"
+    ],
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet format:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(latexmk:*)",
+      "Bash(texcount:*)",
+      "Bash(python3 .claude/skills/plan/scripts/build.py:*)",
+      "mcp__kaneo__whoami",
+      "mcp__kaneo__search",
+      "mcp__kaneo__list_workspaces",
+      "mcp__kaneo__list_workspace_members",
+      "mcp__kaneo__list_workspace_labels",
+      "mcp__kaneo__list_projects",
+      "mcp__kaneo__get_project",
+      "mcp__kaneo__list_project_columns",
+      "mcp__kaneo__list_tasks",
+      "mcp__kaneo__get_task",
+      "mcp__kaneo__get_task_relations",
+      "mcp__kaneo__list_task_comments",
+      "mcp__kaneo__list_task_activity",
+      "mcp__kaneo__list_notifications",
+      "mcp__kaneo__list_task_time_entries",
+      "mcp__kaneo__get_time_entry"
+    ]
+  },
+  "enableAllProjectMcpServers": false,
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/git-behind.sh SessionStart",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/git-behind.sh PreToolUse",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

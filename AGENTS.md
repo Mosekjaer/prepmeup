@@ -40,6 +40,13 @@ Altid `[sti:linjer](sti#Lstart-Lslut)` — linkteksten er selv den relative sti 
 
 VS Code-udvidelsen bruger linkmålet, åbner filen og markerer intervallet. VS Code's integrerede terminal genkender `sti:linje` i den viste linktekst og åbner på linjen med Ctrl+klik. Én skrivemåde dækker begge.
 
+## Diagrammer
+
+- Diagrammer der skal i rapporten eller bilagene laves i draw.io. Kilden er en `.drawio`-fil i `docs/assets/drawio/`, og den committes — PDF'en genereres af `latexmk` og er et build-artefakt.
+- Indsæt med `\drawiofig{filnavn}{caption}{fig:label}`. Ingen `\includegraphics` direkte mod en genereret PDF.
+- Agenter bruger `drawio-skill` til at skrive og validere XML'en. Skriv ikke draw.io-XML i hånden uden validering.
+- Mermaid og PlantUML er til skitser i chat og i `.plans/` — aldrig til noget der ender i `docs/`. Ét format i rapporten.
+
 ## Lagregler
 
 Fra `docs/standalone/architecture-pitch.tex`, slide 5.

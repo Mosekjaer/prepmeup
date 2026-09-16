@@ -1,0 +1,11 @@
+# Samler hver persons git-identiteter, så "git log --author" og
+# /defend-my-code finder alle commits. Tilføj din egen linje, hvis du
+# committer fra flere maskiner eller med flere adresser:
+#
+#   Rigtigt Navn <primær@mail> <anden@mail>
+#
+# Tjek resultatet med: git log --use-mailmap --format='%aN' | sort -u
+Frederik Pedersen <32482750+Mosekjaer@users.noreply.github.com>
+Alexander Hougaard <202410114@post.au.dk>
+Oskar Seeberg <oskarfamilyseeberg@gmail.com> <159518705+GitOsser@users.noreply.github.com>
+Oskar Seeberg <oskarfamilyseeberg@gmail.com>

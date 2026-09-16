@@ -42,7 +42,9 @@ services:
       - prepmeup-net
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.3
+    build:
+      context: ./infra/keycloak
+      dockerfile: Dockerfile
     command: ["start", "--import-realm"]
     environment:
       KC_DB: postgres
@@ -61,8 +63,6 @@ services:
       PMU_MOBILE_DEV_ORIGIN: "${PMU_MOBILE_DEV_ORIGIN:-${PMU_MOBILE_ORIGIN}}"
     expose:
       - "8080"
-    volumes:
-      - ./infra/keycloak/realm-prepmeup.json:/opt/keycloak/data/import/realm-prepmeup.json:ro
     depends_on:
       keycloak-db:
         condition: service_healthy

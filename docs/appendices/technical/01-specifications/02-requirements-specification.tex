@@ -11,24 +11,41 @@
 \begin{document}
 \maketitle
 
+\begin{versionhistory}
+  1.0 & 02-09-2026 & Group 3 & Initial version \\
+  1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
+\end{versionhistory}
+
 \section{Glossary}
 
 \textbf{Customer} = The person who has an account and subscribes their household
+
+\textbf{Administrator} = An employee of PrepMeUp who maintains package types and dispatches deliveries through the administrator interface
 
 \textbf{Household} = A collection of household members at a given address. Can be one single person.
 
 \textbf{Household member} = A single person in a household.
 
+\textbf{Diet} = Dietary preference for a household member.
+
+\textbf{Subscription} = A household's standing agreement to receive a new delivery before the previous one expires. Has a status (active, paused, cancelled).
+
 \textbf{Package} = Food according to diet and enough water for one household member.
 
 \textbf{Package item} = An item that goes into a package
 
-\textbf{Diet} = Dietary preference for a household member.
+\textbf{Package type} = A template maintained by the administrator that defines which items, and how much per person, a package for a given diet contains.
+
+\textbf{Package line item} = One item and its quantity in a concrete package, as it was delivered.
 
 \textbf{Delivery} = A delivery of packages for a single household.
 
+\textbf{Delivery status} = Where a delivery is in its life cycle: \emph{planned} (scheduled, not yet sent), \emph{sent} (dispatched by the administrator) or \emph{delivered}.
 
-% Content goes here...
+\textbf{Expiry date} = The date on which the items of a delivery are no longer considered usable. The system schedules the next delivery before this date.
+
+\textbf{Notification} = A message from the system to a customer or administrator, e.g. that a new delivery is about to be sent.
+
 \section{System Description}
 This system constitutes:
 \begin{itemize}
@@ -39,7 +56,13 @@ This system constitutes:
 
 Customers can sign up for a prepping subscription called ``PrepMeUp'' through the client app. The subscription ensures that they always have enough food and water for a three-day emergency.
 
+\subsection{Platform}
+The customer user interface is a React Native app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
 
+\subsection{Payment}
+Payment is simulated. The back-end records a payment for each delivery against a stored (fake) card. No real payment provider is integrated, and no real money is charged.
+
+\subsection{Responsibilities}
 The back-end part of the project is responsible for persistently storing information on:
 \begin{itemize}
     \item All subscribed households
@@ -66,91 +89,138 @@ The administrator interface should make it possible to:
     \item See which deliveries should be sent
 \end{itemize}
 
-\section{User Stories}
+\section{Epics and User Stories}
+User stories are grouped into epics. Each epic lists the functional requirements (section~\ref{sec:fr}) that realise it.
+
 \begin{enumerate}
-    \item Customer
-    \begin{enumerate}[label=\theenumi.\arabic*]
+    \item \textbf{Account} (FR-01, FR-08)
+    \begin{enumerate}
         \item As a new customer, I want to be able to create an account, so that my user data, household data, and stock are saved between sessions.
+        \item As a customer, I want to log in with my e-mail and password, so that only I can see and change my household.
+        \item As a customer, I want to change my password, so that I can keep my account secure.
+        \item As a customer, I want to delete my account, so that my personal data is removed when I no longer use the service.
+    \end{enumerate}
 
+    \item \textbf{Household} (FR-02, FR-08, FR-09, FR-13)
+    \begin{enumerate}
         \item As a customer, I want to be able to adjust the number of people in my household, so that my deliveries match the current household size.
+        \item As a customer, I want to choose a diet for my household, so that the packages contain food we actually eat.
+    \end{enumerate}
 
+    \item \textbf{Subscription and deliveries} (FR-03, FR-04, FR-07, FR-10, FR-12)
+    \begin{enumerate}
         \item As a customer, I want to automatically receive a new prepping package before the old one expires, so that I don't have to keep track of the expiration date myself and have a chance to use the soon-to-expire items.
+        \item As a customer, I want to see the status of my next delivery, so that I know when to expect it.
+        \item As a customer, I want to pause or cancel my subscription, so that I am not sent packages I do not need.
+    \end{enumerate}
 
+    \item \textbf{Notifications} (FR-04)
+    \begin{enumerate}
         \item As a customer, I want to receive a notification shortly before my next delivery is sent, so that I have a chance to make changes (e.g. household members, diet).
     \end{enumerate}
 
-    \item Administrator
-    \begin{enumerate}[label=\theenumi.\arabic*]
+    \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)
+    \begin{enumerate}
         \item As an administrator, I want to be able to add new types of packages, so that I can give customers more choices.
-
         \item As an administrator, I want to change pre-existing packages by adding and deleting items, so that I can keep their contents up to date.
+    \end{enumerate}
 
+    \item \textbf{Dispatch} (FR-05, FR-06)
+    \begin{enumerate}
         \item As an administrator, I want to see the deliveries that should be sent, sorted by which delivery should be sent first.
+        \item As an administrator, I want to mark a delivery as sent, so that the customer can see it is on its way.
     \end{enumerate}
 \end{enumerate}
 
 \section{Functional Requirements}
-\begin{enumerate}
-    \item \textbf{MUST HAVE}
-    \begin{enumerate}
-        \item Customer UI: The customer can create an account and sign their household up for a PrepMeUp subscription.
-        \item Back-end: Persistent storage of customers and their registered households.
-        \item Back-end: A default package for a household member with a ``normal'' diet.
-        \item Back-end: Keeps track of the expiration dates of the customer's past deliveries.
-        \item Admin interface: See the next deliveries that should be sent.
-        \item Admin interface: Register deliveries as sent.
-    \end{enumerate}
+\label{sec:fr}
+Functional requirements are numbered FR-\emph{nn}, non-functional requirements NFR-\emph{nn}, so the two can be told apart later in the report.
 
-    \item \textbf{SHOULD HAVE}
-    \begin{enumerate}
-        \item Customer UI: See the status of your deliveries and change them.
-        \item Customer UI: Change profile and household settings.
-        \item Customer UI: Choose a diet for the whole household.
-        \item Back-end: A simulated card payment method.
-        \item Admin interface: Create a package type.
-    \end{enumerate}
-
-    \item \textbf{COULD HAVE}
-    \begin{enumerate}
-        \item Customer UI: Adjust the number of days the package lasts for.
-        \item Customer UI: Set a diet for each household member.
-        \item Back-end: A simulated card subscription method.
-        \item Admin interface: Change the contents of a package.
-    \end{enumerate}
-
-    \item \textbf{WON'T HAVE}
-    \begin{enumerate}
-        \item A custom package for each household, depending on diet and allergies.
-        \item An integrated API to a real grocery supplier.
-    \end{enumerate}
+\paragraph{MUST HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=1]
+    \item Customer UI: The customer can create an account and sign their household up for a PrepMeUp subscription.
+    \item Back-end: Persistent storage of customers and their registered households.
+    \item Back-end: A default package for a household member with a ``normal'' diet.
+    \item Back-end: Keeps track of the expiration dates of the customer's past deliveries.
+    \item Admin interface: See the next deliveries that should be sent.
+    \item Admin interface: Register deliveries as sent.
 \end{enumerate}
 
-\section{Project Scope}
-We will build the software side of the system.
+\paragraph{SHOULD HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=7]
+    \item Customer UI: See the status of your deliveries and change them.
+    \item Customer UI: Change profile and household settings.
+    \item Customer UI: Choose a diet for the whole household.
+    \item Back-end: A simulated card payment method.
+    \item Admin interface: Create a package type.
+\end{enumerate}
+
+\paragraph{COULD HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=12]
+    \item Customer UI: Adjust the number of days the package lasts for.
+    \item Customer UI: Set a diet for each household member.
+    \item Back-end: A simulated card subscription method.
+    \item Admin interface: Change the contents of a package.
+    \item Customer UI: Web build of the customer app.
+\end{enumerate}
+
+\paragraph{WON'T HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=17]
+    \item A custom package for each household, depending on diet and allergies.
+    \item An integrated API to a real grocery supplier.
+\end{enumerate}
+
+\section{Scope and Delimitation}
+We build the software side of the system. Hardware, logistics and the actual grocery supply are outside the project.
+
+\subsection{Version 1.0 -- minimum viable product}
+Version 1.0 is the smallest system that lets a household subscribe and receive a first delivery. It contains:
+\begin{itemize}
+    \item An Android customer app (React Native) where a customer creates an account and signs up their household (FR-01).
+    \item A back-end with persistent storage of customers and households (FR-02).
+    \item One default package type for a ``normal'' diet, sized by number of household members (FR-03).
+    \item Expiry tracking per delivery, so the next delivery can be scheduled (FR-04).
+    \item An administrator interface that lists upcoming deliveries and lets the administrator mark them as sent (FR-05, FR-06).
+    \item Simulated payment and simulated supplier.
+\end{itemize}
+
+\subsection{Out of scope}
+\begin{itemize}
+    \item Integration with a real grocery supplier or a real payment provider.
+    \item iOS build of the customer app.
+    \item Medicine and other prescription or regulated goods.
+    \item Individually composed packages per household based on allergies.
+\end{itemize}
 
 \section{Non-functional Requirements}
-\begin{enumerate}
-    \item \textbf{Usability}
-    \begin{enumerate}
-        \item The language displayed in the UIs is [English/Danish?].
-        \item Human-readable error messages in the UIs.
-    \end{enumerate}
+Each non-functional requirement states how it is verified, so it can be tested rather than judged.
 
-    \item \textbf{Reliability}
-    \begin{enumerate}
-        \item Graceful degradation in both the back-end and the user application when data transfer fails.
-    \end{enumerate}
+\paragraph{Usability}
+\begin{enumerate}[label=\reqlabel{NFR}, start=1]
+    \item The language displayed in the UIs is [English/Danish?].
+    \item Every error message shown in a UI is a complete sentence in the UI language that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown. \emph{Verified by:} acceptance-test review of every error state in the customer app and the administrator interface.
+\end{enumerate}
 
-    \item \textbf{Performance}
-    \begin{enumerate}
-        \item Response time is under 1 second for 90\% of requests.
-    \end{enumerate}
+\paragraph{Reliability}
+\begin{enumerate}[label=\reqlabel{NFR}, start=3]
+    \item If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data; it does not crash. \emph{Verified by:} integration test with the API stopped.
+    \item If the database is unreachable, the API returns HTTP 503 with an error body instead of failing silently or crashing. \emph{Verified by:} integration test with the database stopped.
+\end{enumerate}
 
-    \item \textbf{Supportability}
-    \begin{enumerate}
-        \item Variables are collected in a configuration file.
-        \item Automated tests that cover all endpoints.
-    \end{enumerate}
+\paragraph{Performance}
+\begin{enumerate}[label=\reqlabel{NFR}, start=5]
+    \item Response time is under 1 second for 90\% of requests. \emph{Verified by:} a load-testing tool (e.g. k6) against the deployed API with 10 concurrent users over 1 minute.
+\end{enumerate}
+
+\paragraph{Portability}
+\begin{enumerate}[label=\reqlabel{NFR}, start=6]
+    \item The customer UI runs as an Android app built with React Native. \emph{Verified by:} acceptance test on an Android device or emulator.
+\end{enumerate}
+
+\paragraph{Supportability}
+\begin{enumerate}[label=\reqlabel{NFR}, start=7]
+    \item Variables are collected in a configuration file.
+    \item Automated tests that cover all endpoints. \emph{Verified by:} the test suite lists one or more tests per endpoint.
 \end{enumerate}
 
 \end{document}

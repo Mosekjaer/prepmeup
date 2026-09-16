@@ -20,6 +20,7 @@ her — ret den i `AGENTS.md`.
 | `api-contract` | hold OpenAPI og `api-client` i sync (NSwag) |
 | `report-check` | kritik af rapporten, tegnoptælling mod 72.000 |
 | `meeting-docs` | dagsordener og referater på dansk i LaTeX |
+| `git-workflow` | start arbejde på branch, commit, PR mod `main`, release-tag (GitHub Flow) |
 
 | Agent (read-only) | Dækker |
 |---|---|

@@ -40,7 +40,24 @@
 \subsection*{9/9}
 \begin{itemize}
     \item Fred presents how the project could be shaped using AI as development-tool. Unanimous agreement. See \href{run:./Arkitektur-ide.pdf}{Arkitektur-idé}.
-    \item Moreover, Notion was ditched and Kaneo was chosen due to it being open source and compatible with Claude. This way, Claude will be able to create and chose tickets and complete these. 
+    \item Moreover, Notion was ditched and Kaneo was chosen due to it being open source and compatible with Claude. This way, Claude will be able to create and chose tickets and complete these.
+\end{itemize}
+
+\subsection*{15/9}
+\begin{itemize}
+    \item Review \#1 with group 4. Their feedback led to FR/NFR numbering and testable NFRs in the requirements specification.
+    \item We agreed that step 2 is to add an external authority for login, and discussed Firebase, Keycloak, Clerk and OAuth.
+    \item We agreed on one shared deployment instead of everyone running the system locally, because an administrator needs to work on the same data as the customers.
+\end{itemize}
+
+\subsection*{16/9}
+\begin{itemize}
+    \item The project skeleton was set up: the layered .NET solution, test projects, the Expo app, the React admin panel and the shared api-client in one npm workspace.
+    \item Keycloak was chosen as identity provider and runs in docker compose. Coolify on our own server was chosen for deployment. The reasons are in appendix 2.1.
+    \item We use GitHub instead of GitLab, which the first architecture pitch planned for. GitHub Actions builds and tests on every pull request.
+    \item We chose GitHub Flow with Conventional Commits and named branches. Git hooks and a GitHub Actions check make sure the rules are followed. See appendix 10.1.
+    \item We changed our mind about Claude and Kaneo: the AI may read, comment on and create tasks, but moving, assigning and deleting tasks is done by the group. Planning the sprint is part of what we have to learn ourselves.
+    \item We decided that all text in the apps is in English.
 \end{itemize}
 
 \printbibliography

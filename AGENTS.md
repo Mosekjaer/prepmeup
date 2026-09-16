@@ -10,10 +10,11 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 | Område | Valg |
 |---|---|
 | Kunde-app | Expo (TypeScript, Expo Router). Mindst Android, måske web |
+| Admin-panel | React + Vite (TypeScript, React Router) |
 | Backend | ASP.NET Core Web API, .NET 10, EF Core |
 | Database | SQL i Docker |
 | Test | NUnit + NSubstitute (backend), Vitest (klienter) |
-| CI | GitHub Actions: grøn build + test før merge |
+| CI | GitHub Actions: grøn build + test før merge (`.github/workflows/ci.yml`) |
 | Drift | Coolify på egen server. Én `Dockerfile` pr. service, samlet i `docker-compose.yml` |
 | Auth | Trin 2: Keycloak som ekstern authority, selvhostet i samme compose |
 
@@ -67,7 +68,8 @@ src/PrepMeUp.Domain/           entiteter, invarianter — ingen referencer
 src/PrepMeUp.Application/      use cases, repository-interfaces
 src/PrepMeUp.Infrastructure/   DbContext, EF-repositories, migrations
 src/PrepMeUp.Api/              controllers, contracts, middleware, BackgroundService
-clients/apps/mobile/           Expo
+clients/apps/mobile/           Expo — kunde-app
+clients/apps/admin/            React + Vite — admin-panel
 clients/packages/api-client/   genereret fra OpenAPI — redigeres aldrig i hånden
 tests/PrepMeUp.Tests.Unit/
 tests/PrepMeUp.Tests.Integration/

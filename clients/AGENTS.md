@@ -1,13 +1,14 @@
 # clients/
 
-TypeScript-monorepo: `apps/mobile` (Expo) og `packages/api-client` (genereret).
+TypeScript-monorepo (npm workspaces, rod i `clients/`): `apps/mobile` (Expo, kunde-app), `apps/admin` (React + Vite, admin-panel) og `packages/api-client` (genereret).
 Rod-[CLAUDE.md](../CLAUDE.md) gælder også her — især **Kilder** og **Link-format**. Herunder står kun det, der er specifikt for klienterne.
 
 ## Stak
 
-- Expo, React Native, TypeScript i `strict`-mode. Ingen `any`, ingen `@ts-ignore` uden begrundelse i samme commit.
-- Expo Router til navigation. Ruter er mapper og filer, ikke en manuelt vedligeholdt navigator.
-- Vitest til tests.
+- TypeScript i `strict`-mode overalt. Ingen `any`, ingen `@ts-ignore` uden begrundelse i samme commit.
+- `apps/mobile`: Expo, React Native. Expo Router til navigation — ruter er mapper og filer under `src/app/`, ikke en manuelt vedligeholdt navigator.
+- `apps/admin`: React + Vite. React Router; ruter defineres i `src/router.tsx` og ligger i `src/routes/`.
+- Vitest til tests i begge apps. Mobilens komponenter testes mod `react-native-web` — se `apps/mobile/vitest.config.mts`.
 
 ## Forretningslogik hører ikke til her
 

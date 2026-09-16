@@ -6,6 +6,8 @@
 \usepackage{listings}
 %\usepackage{minted}
 
+\lstset{basicstyle=\ttfamily\small, columns=fullflexible, breaklines=true}
+
 \title{10.1 Development Guidelines}
 \author{SW4PRJ4 -- Group 3}
 \date{\today}
@@ -13,16 +15,136 @@
 \begin{document}
 \maketitle
 
-\section{Latex Templates and styles}
-There have been created multiple templates for the documents. To ensure streamlined documents, and ease of use when creating a new document.
+\begin{versionhistory}
+  1.0 & 09-09-2026 & Group 3 & LaTeX templates \\
+  1.1 & 16-09-2026 & Group 3 & Local setup, configuration, git workflow, languages and AI tools \\
+\end{versionhistory}
 
-Therefore in the appendices it is only neccesary to write:
+This appendix collects the practical rules the group works by. The reasons behind the technology choices are in appendix 2.1.
+
+\section{LaTeX Templates and Styles}
+We have made templates for the documents, so they look the same and a new document is quick to start.
+
+In an appendix it is therefore only necessary to write:
 \begin{lstlisting}[language={[LaTeX]TeX}]
 \usepackage[english]{babel} %english or danish to determine language
 \usepackage{../../appendix-style} % to use appendix template
 \end{lstlisting}
 
+The report and appendices are written in English. Agendas and meeting minutes are written in Danish.
 
-% Content goes here...
+\section{Local Setup}
+You need the .NET 10 SDK, Node.js and Docker.
+
+\begin{lstlisting}
+dotnet build                 # build the backend
+dotnet test                  # run unit and integration tests
+docker compose up            # start api, db and keycloak
+
+cd clients
+npm install                  # install all client packages (also activates git hooks)
+npm test                     # Vitest in all client packages
+npm run typecheck            # tsc in all client packages
+npm run generate:api-client  # regenerate api-client from the OpenAPI document
+\end{lstlisting}
+
+When compose is running, the API is on port 5001 and Keycloak on port 8082 on \texttt{localhost}.
+
+\section{Configuration and Secrets}
+\begin{itemize}
+    \item Passwords and other secrets are never committed. They are set as environment variables or in a local \texttt{.env} file, which is ignored by git.
+    \item \texttt{.env.example} shows which variables exist. Locally you need at least \texttt{MSSQL\_SA\_PASSWORD} and \texttt{KEYCLOAK\_ADMIN\_PASSWORD}.
+    \item In production the variables are set in Coolify. \texttt{docker-compose.prod.yml} stops with an error if one is missing, so we do not deploy with an empty password by accident.
+\end{itemize}
+
+\section{Git Workflow}
+We use GitHub Flow. Why we chose it is described in appendix 2.1.
+
+\subsection{Branches}
+\texttt{main} is the only long-lived branch, and it must always work. All work happens on a short-lived branch created from an up-to-date \texttt{main}:
+\begin{lstlisting}
+git switch main
+git pull
+git switch -c feat/pmu-12-household-profile
+\end{lstlisting}
+
+A branch name is \texttt{<type>/<slug>}. The slug is lowercase English words separated by hyphens, and starts with the Kaneo task number when there is one. A branch should live for days, not weeks.
+
+\subsection{Types}
+The same types are used for branches and commits:
+
+\begin{center}
+\begin{tabular}{@{}l l@{}}
+\textbf{Type} & \textbf{Used for} \\
+\hline
+\texttt{feat} & a new feature \\
+\texttt{fix} & a bug fix \\
+\texttt{refactor} & restructuring code without changing behaviour \\
+\texttt{test} & only tests \\
+\texttt{docs} & report, appendices and other documentation \\
+\texttt{style} & formatting only \\
+\texttt{perf} & performance improvement \\
+\texttt{build} & build setup and dependencies \\
+\texttt{ci} & GitHub Actions \\
+\texttt{chore} & other maintenance \\
+\texttt{revert} & undoing an earlier commit \\
+\end{tabular}
+\end{center}
+
+\subsection{Commit Messages}
+We follow Conventional Commits. The first line is \texttt{<type>(<scope>): <description>}, in English, in the imperative (``add'', not ``added''), and at most 72 characters. The scope is optional.
+\begin{lstlisting}
+feat(api): add household profile endpoint
+fix(mobile): show error when the API is unreachable
+docs: update technical analysis
+\end{lstlisting}
+
+\subsection{Pull Requests}
+\begin{itemize}
+    \item Keep the branch up to date with \texttt{git merge origin/main}. We do not rebase or force push branches that others may have pulled.
+    \item Open a pull request against \texttt{main}. The title must also follow Conventional Commits, and the description links the Kaneo task.
+    \item The pull request needs green CI and one review from another group member before merge.
+    \item We use squash merge. The whole branch becomes one commit on \texttt{main}, with the pull request title as the message. The branch is deleted afterwards.
+\end{itemize}
+
+\subsection{Releases}
+At the end of a sprint, or before a hand-in, we put a tag on \texttt{main}, for example \texttt{v0.1.0}. We do not use release branches.
+
+\subsection{Automatic Checks}
+The rules are checked automatically, so nobody has to remember them all:
+\begin{itemize}
+    \item \texttt{.githooks/commit-msg} rejects a commit whose message does not follow the format.
+    \item \texttt{.githooks/pre-push} rejects a push directly to \texttt{main} and a push of a branch with a wrong name.
+    \item The hooks are turned on by \texttt{npm install} in \texttt{clients/}. Without Node.js, run this once instead:
+\begin{lstlisting}
+git config core.hooksPath .githooks
+\end{lstlisting}
+    \item The GitHub Actions workflow \texttt{conventions.yml} checks the branch name and pull request title again on GitHub, where it cannot be skipped.
+    \item All three use the same script, \texttt{.githooks/check-conventions.sh}, so the rules are only written in one place.
+\end{itemize}
+
+\section{Languages}
+\begin{itemize}
+    \item Code, names, comments and commit messages: English.
+    \item All text the user sees in the apps, including error messages from the API: English (NFR-01).
+    \item Kaneo tasks: Danish.
+\end{itemize}
+
+\section{AI Tools}
+\begin{itemize}
+    \item The shared rules for the AI tools are in \texttt{AGENTS.md} in the repository root. Change a rule there, not in a tool-specific file.
+    \item The AI may read the Kaneo board and create and comment on tasks. Moving, assigning and deleting tasks is done by the group.
+    \item The AI cannot read \texttt{.env} files or key files.
+    \item Whoever commits code must be able to explain it, also at the exam.
+\end{itemize}
+
+\section{Definition of Done}
+A task is done when:
+\begin{itemize}
+    \item \texttt{dotnet build} and \texttt{dotnet test} are green, and the client tests if \texttt{clients/} was changed.
+    \item The change is merged to \texttt{main} through a pull request with green CI and one review.
+    \item The Kaneo task is linked in the pull request.
+    \item The person who made the change can explain it.
+\end{itemize}
 
 \end{document}

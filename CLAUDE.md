@@ -1,0 +1,39 @@
+# PrepMeUp — Claude Code
+
+Projektets regler står i [AGENTS.md](AGENTS.md) og gælder uændret her. Læs den først.
+
+@AGENTS.md
+
+Denne fil indeholder kun det, der er specifikt for Claude Code. Alt andet hører i `AGENTS.md`, så gruppens
+øvrige værktøjer (Antigravity læser `AGENTS.md`) arbejder efter de samme regler. Ret aldrig en fælles regel
+her — ret den i `AGENTS.md`.
+
+## Skills og agenter i `.claude/`
+
+| Skill | Hvornår |
+|---|---|
+| `oral-examiner` | eksamination i hele projektet på dansk, standard 3 spørgsmål |
+| `defend-my-code` | forbered forsvar af egne commits i `src/`, `clients/`, `tests/` |
+| `plan` | ny plan i `.plans/NNNN-slug.md` + interaktiv HTML |
+| `vertical-slice` | ny funktion gennem alle lag: Domain → Application → Infrastructure → Api → api-client → skærm |
+| `tdd-loop` | red/green/refactor med NUnit + NSubstitute; testtilfælde godkendes først |
+| `api-contract` | hold OpenAPI og `api-client` i sync (NSwag) |
+| `report-check` | kritik af rapporten, tegnoptælling mod 72.000 |
+| `meeting-docs` | dagsordener og referater på dansk i LaTeX |
+
+| Agent (read-only) | Dækker |
+|---|---|
+| `architecture-reviewer` | lagregler, afhængighedsretning, SOLID, design smells |
+| `backend-reviewer` | REST, statuskoder, model binding, EF-model, N+1, migrations |
+| `test-designer` | ækvivalensklasser, grænseværdier, fakes, integrationsplan |
+| `security-reviewer` | auth (Keycloak/JWT), adgangskontrol, secrets, validering |
+
+## Hooks
+
+`.claude/hooks/git-behind.sh` kører ved sessionsstart og før `Edit`/`Write`. Den fetcher fra origin
+(throttlet til hvert 5. minut) og siger til, hvis branchen er bagud. Den puller aldrig selv.
+
+## Kaneo
+
+MCP-serveren er defineret i `.mcp.json`. Alle skrivende tools er blokeret i `.claude/settings.json` —
+kun læsning og `create_task_comment` er tilladt. Tokenet kommer fra miljøvariablen `KANEO_TOKEN`.

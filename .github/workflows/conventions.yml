@@ -1,0 +1,25 @@
+name: Conventions
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  conventions:
+    name: Branch name + PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Branch name
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: .githooks/check-conventions.sh branch "$BRANCH"
+
+      - name: PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: .githooks/check-conventions.sh header "$TITLE"

@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/.expo/
+**/dist/
+.git/
+.github/
+.plans/
+.vscode/
+.idea/
+clients/
+context/
+docs/

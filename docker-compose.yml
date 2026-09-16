@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/PrepMeUp.Api/Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__PrepMeUpDb: "Server=db,1433;Database=PrepMeUp;User Id=sa;Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in your shell or .env};TrustServerCertificate=True;Encrypt=False"
+      Cors__AllowedOrigins__0: "http://localhost:5173"
+      Cors__AllowedOrigins__1: "http://localhost:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - prepmeup-net
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    # Deliberately no `ports:` - only the api container reaches the database, through the
+    # service name `db`. That keeps the setup identical on Windows and Linux.
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in your shell or .env}"
+      MSSQL_PID: Developer
+    volumes:
+      - pmu-data:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - prepmeup-net
+
+volumes:
+  pmu-data:
+    name: prepmeup-data
+
+networks:
+  prepmeup-net:
+    name: prepmeup-net

@@ -76,6 +76,47 @@
     \item \textbf{Ansvarlig:} -- \textbf{Opgave:} (Efter det andet) Tilføj ekstern authority til systemet
 \end{itemize}
 
+\section*{Review \#1 fra gruppe 4 (16-09-2026)}
+
+Punkter fra reviewet af projektformulering, kravspecifikation og domænemodel.
+
+\subsection*{Projektformulering}
+
+\begin{itemize}
+    \item Kunne et rigt billede være godt?
+    \item Evt. produktbeskrivelse med komponenter.
+    \item Kilder?
+\end{itemize}
+
+\subsection*{Kravspecifikation}
+
+\begin{itemize}
+    \item Subscription, Administrator, Expiry date og Delivery status bruges i dokumentet uden at være defineret øverst i glossary.
+    \item Overvej at kategorisere de større systemdele som epics frem for kun user stories -- nogle user stories skaber mange opgaver i sig selv.
+    \item Afgrænsningen kunne være mere uddybende -- evt. lav en 1.0 for, hvad minimum skal være i en første version af et viable product.
+    \item Ingen user story omkring at slette konto, ændre kodeord osv.
+    \item Vil I teste performancekravet i forhold til response time?
+    \item Er platformen under overvejelse (telefon / hjemmeside)?
+    \item Hvordan afgøres det, om kravene ``graceful degradation'' og ``human-readable error messages'' er opfyldt? Er de testbare?
+    \item Subscription-featuren lyder som om, der er et betalingssystem koblet på projektet -- skal det håndteres i backenden? Overvej at uddybe i projektbeskrivelsen eller kravene.
+    \item Overvej at navngive ikke-funktionelle krav anderledes, så de kan skelnes fra funktionelle krav senere i rapporten, fx NFR-01 og FR-01 i stedet for at begge hedder 1.1.
+\end{itemize}
+
+\subsection*{Domænemodel}
+
+\begin{itemize}
+    \item Ingen administrator / administrator-flow.
+    \item Notifikationer når aldrig til brugeren.
+    \item Subscription \emph{paid with} PaymentMethod \emph{charged via} Payment, Delivery \emph{paid-by} Payment.
+    \item PackageLineItem nævnes første gang her.
+\end{itemize}
+
+\subsection*{Generelt}
+
+\begin{itemize}
+    \item Overvej versionshistorik i dokumenterne.
+\end{itemize}
+
 \section*{Næste møde}
 
 \end{document}

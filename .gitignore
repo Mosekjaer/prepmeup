@@ -31,3 +31,16 @@ obj/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Node / clients
+node_modules/
+dist/
+.expo/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# Local environment - secrets come from the environment, never from the repo
+.env
+.env.local
+.env.*.local

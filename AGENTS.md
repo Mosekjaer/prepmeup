@@ -22,6 +22,7 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 
 - Chat, planer og eksamination: dansk.
 - Kode, identifiers, kommentarer og commits: engelsk.
+- Agenter skriver ikke kommentarer i kildekoden. Begrundelsen hører i commit-beskeden, PR-teksten eller chatten. Kommentarer skrevet af gruppen står urørt.
 - Alt brugeren ser i appen: engelsk. Labels, knapper, validerings- og API-fejlbeskeder. Ingen i18n.
 - Rapport og bilag i `docs/`: engelsk. **Undtagelse:** dagsordener (`docs/appendices/process/12-meeting-invitations`) og mødereferater (`docs/appendices/process/13-meeting-minutes`) skrives på dansk.
 

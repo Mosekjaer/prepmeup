@@ -13,6 +13,23 @@
 \RequirePackage{hyperref}
 \RequirePackage{parskip}
 \RequirePackage{enumitem}
+\RequirePackage{array}
 
 \setlist[itemize,1]{label=$\cdot$}
 \setlist[enumerate,2]{label=\theenumi.\arabic*}
+
+% Zero-padded requirement labels, e.g. \begin{enumerate}[label=\reqlabel{FR}, start=7]
+\protected\def\reqlabel#1{#1-\ifnum\c@enumi<10 0\fi\number\c@enumi}
+
+% Version history table. Use right after \maketitle:
+%   \begin{versionhistory}
+%     1.0 & 02-09-2026 & Group 3 & Initial version \\
+%   \end{versionhistory}
+\newenvironment{versionhistory}{%
+  \noindent\textbf{Version history}\par\smallskip
+  \begin{tabular}{@{}l l l p{8cm}@{}}
+    \textbf{Version} & \textbf{Date} & \textbf{Author} & \textbf{Change} \\
+    \hline
+}{%
+  \end{tabular}\par\bigskip
+}

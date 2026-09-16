@@ -1,3 +1,59 @@
 \chapter{Discussion}\label{ch:discussion}
 % Looking back: consequences of choices made along the way, process and results.
 
+\section{Assumptions About the Deployment Platform}\label{sec:deployment-assumptions}
+
+Authentication was the first part of the system where a component behaved
+differently in deployment than it did locally, and the difference was silent.
+
+The Keycloak realm is kept in version control as \texttt{realm-prepmeup.json} so
+the identity configuration can be recreated rather than clicked together by hand.
+The container imports it at startup with \texttt{-{}-import-realm}, and locally
+this worked: the file was made available to the container through a bind mount
+declared in the compose file. Deployed on Coolify, the same declaration produced
+a realm that did not exist. Requests to
+\texttt{/realms/prepmeup/.well-known/openid-configuration} returned 404, while
+the container reported a healthy startup and logged no error.
+
+The cause was the relative path in the bind mount. Coolify resolves such paths
+against its own working directory rather than against the cloned repository, so
+Docker found no file at the source path. Rather than failing, it created an empty
+directory at the mount target, which was confirmed on the server:
+
+\begin{verbatim}
+$ docker exec <keycloak-container> ls -la /opt/keycloak/data/import/
+drwxr-xr-x 2 root root 4096 Sep 16 12:25 realm-prepmeup.json
+\end{verbatim}
+
+The directory bit in \texttt{drwxr-xr-x} shows that the realm file had become a
+directory. Keycloak scanned an empty import folder, found nothing to import, and
+started normally. Every individual component behaved as documented; the failure
+lived in the assumption that a relative path means the same thing on both sides
+of a deployment.
+
+The fix was to stop depending on the platform's path handling and copy the realm
+into a thin image layered on the Keycloak base image, so the file is part of the
+build artefact rather than something mounted at run time. A second constraint
+surfaced during the same fix: \texttt{-{}-import-realm} only imports against an
+uninitialised database, so the existing Keycloak volume had to be discarded
+before the corrected configuration took effect. That cost nothing at this stage,
+but it would have been a destructive operation with real users in the system, and
+it is the reason the realm file is treated as the source of truth rather than the
+running database.
+
+Two lessons carry forward. The first is that a deployment platform is part of the
+system under test: a configuration that works under \texttt{docker compose} on a
+developer machine has not been shown to work in production, because the platform
+resolves paths, networks and volumes on its own terms. The second is that silent
+success is more expensive to diagnose than a crash. Keycloak treated an empty
+import directory as an empty task rather than a misconfiguration, so the defect
+only became visible one layer up, when the API could not be pointed at an issuer
+that did not exist.
+
+This informed how JWT validation was then configured. The API pins the expected
+issuer explicitly instead of inferring it from the discovery document, because
+the two addresses legitimately differ in deployment: discovery is fetched over
+the internal container network, while the tokens clients present carry the public
+issuer. Making that distinction explicit in configuration means the mismatch
+becomes a validation error with an obvious cause, rather than another failure
+that depends on where the code happens to be running.

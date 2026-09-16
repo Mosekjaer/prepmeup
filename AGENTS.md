@@ -84,12 +84,17 @@ context/                       kursusmateriale + INDEX.md
 |---|---|
 | `dotnet build` | bygger hele solution |
 | `dotnet test` | kører unit- og integrationstests |
-| `docker compose up` | api + db lokalt; db eksponeres ikke til host |
+| `docker compose up` | api + db lokalt; db eksponeres ikke til host. Kræver `MSSQL_SA_PASSWORD` i miljøet eller `.env` |
+| `npm install` | **køres fra `clients/`** — ét workspace for begge apps og `api-client` |
+| `npm test` / `npm run typecheck` | Vitest og `tsc` på tværs af alle klient-workspaces |
+| `npm run generate:api-client` | genererer `api-client` fra API'ets OpenAPI-dokument (NSwag) |
 | `latexmk` | **køres fra `docs/`**, ikke fra roden |
 
 ## Kaneo
 
-Kun læs og kommentér. Statusskift, flytning af kort og oprettelse af opgaver er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke.
+Claude må læse, kommentere og oprette opgaver — inklusive labels og relationer på nye kort. Nye kort lander i `To Do` og skrives på dansk.
+
+Statusskift, flytning af kort mellem kolonner, tildeling, deadlines og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
 
 ## Secrets
 

@@ -35,5 +35,7 @@ her — ret den i `AGENTS.md`.
 
 ## Kaneo
 
-MCP-serveren er defineret i `.mcp.json`. Alle skrivende tools er blokeret i `.claude/settings.json` —
-kun læsning og `create_task_comment` er tilladt. Tokenet kommer fra miljøvariablen `KANEO_TOKEN`.
+MCP-serveren er defineret i `.mcp.json`. Tokenet kommer fra miljøvariablen `KANEO_TOKEN`.
+
+Tilladt i `.claude/settings.json`: læsning, `create_task_comment`, `create_task`, `attach_label_to_task`
+og `create_task_relation`. Alt andet skrivende er på deny-listen — se Kaneo-afsnittet i `AGENTS.md`.

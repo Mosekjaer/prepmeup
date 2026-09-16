@@ -6,7 +6,6 @@
       "Read(./**/*.pfx)",
       "Read(./**/*.pem)",
       "Read(./**/*.key)",
-      "mcp__kaneo__create_task",
       "mcp__kaneo__update_task",
       "mcp__kaneo__delete_task",
       "mcp__kaneo__move_task",
@@ -17,9 +16,7 @@
       "mcp__kaneo__update_project",
       "mcp__kaneo__create_label",
       "mcp__kaneo__delete_label",
-      "mcp__kaneo__attach_label_to_task",
       "mcp__kaneo__detach_label_from_task",
-      "mcp__kaneo__create_task_relation",
       "mcp__kaneo__delete_task_relation",
       "mcp__kaneo__update_task_comment",
       "mcp__kaneo__delete_task_comment",
@@ -54,7 +51,10 @@
       "mcp__kaneo__list_task_activity",
       "mcp__kaneo__list_notifications",
       "mcp__kaneo__list_task_time_entries",
-      "mcp__kaneo__get_time_entry"
+      "mcp__kaneo__get_time_entry",
+      "mcp__kaneo__create_task",
+      "mcp__kaneo__attach_label_to_task",
+      "mcp__kaneo__create_task_relation"
     ]
   },
   "enableAllProjectMcpServers": false,

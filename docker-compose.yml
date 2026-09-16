@@ -40,7 +40,9 @@ services:
       - prepmeup-net
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.3
+    build:
+      context: ./infra/keycloak
+      dockerfile: Dockerfile
     command: ["start-dev", "--import-realm"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: "${KEYCLOAK_ADMIN:-admin}"
@@ -51,7 +53,6 @@ services:
     ports:
       - "8082:8080"
     volumes:
-      - ./infra/keycloak/realm-prepmeup.json:/opt/keycloak/data/import/realm-prepmeup.json:ro
       - pmu-keycloak:/opt/keycloak/data
     networks:
       - prepmeup-net

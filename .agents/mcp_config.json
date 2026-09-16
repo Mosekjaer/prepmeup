@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "kaneo": {
+      "serverUrl": "https://kaneo.mosekjaer.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${KANEO_TOKEN}"
+      }
+    }
+  }
+}

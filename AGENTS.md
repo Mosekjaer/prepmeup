@@ -90,6 +90,20 @@ context/                       kursusmateriale + INDEX.md
 | `npm run generate:api-client` | genererer `api-client` fra API'ets OpenAPI-dokument (NSwag) |
 | `latexmk` | **køres fra `docs/`**, ikke fra roden |
 
+## Git
+
+GitHub Flow. `main` er den eneste langlivede branch og altid deploybar — Coolify deployer den. Fremgangsmåde trin for trin: `.claude/skills/git-workflow/SKILL.md`.
+
+- **Commit aldrig direkte på `main`.** Står du på `main`, så opret en branch først.
+- **Branch:** `<type>/<slug>` fra en frisk `main`. Slug i små bogstaver med bindestreger, Kaneo-nummer først når der er et kort: `feat/pmu-12-household-profile`. Kortlivet — dage, ikke uger.
+- **Typer** (samme for branch og commit): `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+- **Commits:** Conventional Commits på engelsk, imperativ, header maks. 72 tegn: `feat(api): add household profile endpoint`. Scope er valgfrit.
+- **Hold branchen ajour** med `git merge origin/main`. Ingen rebase af pushede branches, ingen force push.
+- **Merge:** pull request mod `main`, grøn CI og ét review. **Squash merge** — PR-titlen bliver commit-beskeden på `main` og skal derfor selv være en Conventional Commits-header. Branchen slettes efter merge.
+- **Releases:** annoteret tag på `main` ved sprint-afslutning eller aflevering (`v0.1.0`). Ingen release-branches.
+
+Reglerne står ét sted: `.githooks/check-conventions.sh`. Den bruges af `commit-msg`- og `pre-push`-hooks lokalt og af `.github/workflows/conventions.yml` på hver PR. `npm install` i `clients/` aktiverer hooks; ellers `git config core.hooksPath .githooks` én gang pr. klon.
+
 ## Kaneo
 
 Claude må læse, kommentere og oprette opgaver — inklusive labels og relationer på nye kort. Nye kort lander i `To Do` og skrives på dansk.
@@ -102,4 +116,4 @@ Kun fra miljøvariabler. Aldrig i repoet, aldrig i en fil agenten kan læse, ald
 
 ## Definition of done
 
-`dotnet build` og `dotnet test` er grønne. Den, der committer, kan forklare ændringen — også til eksamen. Kaneo-opgaven er linket. Kilder er angivet i svaret.
+`dotnet build` og `dotnet test` er grønne. Ændringen er merget til `main` via en PR med grøn CI. Den, der committer, kan forklare ændringen — også til eksamen. Kaneo-opgaven er linket i PR'en. Kilder er angivet i svaret.

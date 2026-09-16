@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Rejects commit messages whose first line is not a Conventional Commits header.
+
+set -euo pipefail
+
+header=$(grep -v '^#' "$1" | sed -n '/[^[:space:]]/{p;q}')
+
+case "$header" in
+  "Merge "* | "Revert \""* | "fixup! "* | "squash! "* | "amend! "*) exit 0 ;;
+esac
+
+exec "$(dirname "$0")/check-conventions.sh" header "$header"

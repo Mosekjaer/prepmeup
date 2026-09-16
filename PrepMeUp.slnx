@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PrepMeUp.Api/PrepMeUp.Api.csproj" />
+    <Project Path="src/PrepMeUp.Application/PrepMeUp.Application.csproj" />
+    <Project Path="src/PrepMeUp.Domain/PrepMeUp.Domain.csproj" />
+    <Project Path="src/PrepMeUp.Infrastructure/PrepMeUp.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PrepMeUp.Tests.Integration/PrepMeUp.Tests.Integration.csproj" />
+    <Project Path="tests/PrepMeUp.Tests.Unit/PrepMeUp.Tests.Unit.csproj" />
+  </Folder>
+</Solution>

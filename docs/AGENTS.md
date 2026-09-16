@@ -23,6 +23,14 @@ Indsæt draw.io-diagrammer med alle tre argumenter:
 
 Kilden `assets/drawio/<navn>.drawio` **og** den genererede `assets/drawio/<navn>.pdf` committes begge. Overleaf kan ikke køre draw.io og bruger den committede PDF.
 
+Agenter tegner og retter diagrammer med skill'en `drawio-skill` (`.claude/skills/` for Claude Code, `.agents/skills/` for Antigravity):
+
+1. `python3 <skill-dir>/scripts/validate.py assets/drawio/<navn>.drawio` skal give 0 fejl før eksport.
+2. Udkast-PNG til visuelt tjek: `drawio -x -f png --width 2000 -o build/drawio-preview/<navn>.png assets/drawio/<navn>.drawio`.
+3. Endelig PDF: `drawio -x -f pdf --crop -o assets/drawio/<navn>.pdf assets/drawio/<navn>.drawio` — samme kommando som `latexmkrc.example`.
+
+**draw.io fra snap (Linux)** må ikke skrive til `/tmp` og fejler med `Error writing to file`. Eksportér derfor under `build/`, aldrig til `/tmp`. Følg heller ikke skill'ens råd om `export HOME=/tmp` — det bryder snap-udgaven.
+
 ## Build
 
 - `latexmk` køres fra `docs/`, ikke fra repo-roden. Det er dér `main.tex` og `latexmkrc` ligger.

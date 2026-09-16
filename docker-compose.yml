@@ -10,16 +10,20 @@ services:
       ConnectionStrings__PrepMeUpDb: "Server=db,1433;Database=PrepMeUp;User Id=sa;Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in your shell or .env};TrustServerCertificate=True;Encrypt=False"
       Cors__AllowedOrigins__0: "http://localhost:5173"
       Cors__AllowedOrigins__1: "http://localhost:8081"
+      Keycloak__Authority: "http://localhost:8082/realms/prepmeup"
+      Keycloak__MetadataAddress: "http://keycloak:8080/realms/prepmeup/.well-known/openid-configuration"
+      Keycloak__Audience: "prepmeup-api"
+      Keycloak__RequireHttpsMetadata: "false"
     depends_on:
       db:
         condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - prepmeup-net
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    # Deliberately no `ports:` - only the api container reaches the database, through the
-    # service name `db`. That keeps the setup identical on Windows and Linux.
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in your shell or .env}"
@@ -27,11 +31,7 @@ services:
     volumes:
       - pmu-data:/var/opt/mssql
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1",
-        ]
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -Q "SELECT 1" -b -o /dev/null
       interval: 10s
       timeout: 5s
       retries: 10
@@ -39,9 +39,28 @@ services:
     networks:
       - prepmeup-net
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "${KEYCLOAK_ADMIN:-admin}"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "${KEYCLOAK_ADMIN_PASSWORD:?set KEYCLOAK_ADMIN_PASSWORD in your shell or .env}"
+      KC_HOSTNAME: "http://localhost:8082"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./infra/keycloak/realm-prepmeup.json:/opt/keycloak/data/import/realm-prepmeup.json:ro
+      - pmu-keycloak:/opt/keycloak/data
+    networks:
+      - prepmeup-net
+
 volumes:
   pmu-data:
     name: prepmeup-data
+  pmu-keycloak:
+    name: prepmeup-keycloak
 
 networks:
   prepmeup-net:

@@ -1,0 +1,100 @@
+{
+  "realm": "prepmeup",
+  "enabled": true,
+  "displayName": "PrepMeUp",
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "accessTokenLifespan": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "household",
+        "description": "Customer who owns a household and a subscription."
+      },
+      {
+        "name": "admin",
+        "description": "Operator of the admin panel."
+      }
+    ]
+  },
+  "defaultRoles": [
+    "household"
+  ],
+  "clients": [
+    {
+      "clientId": "prepmeup-mobile",
+      "name": "PrepMeUp mobile app",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${PMU_MOBILE_SCHEME:prepmeup}://auth/*",
+        "${PMU_MOBILE_DEV_ORIGIN:exp://localhost:8081}/*",
+        "${PMU_MOBILE_ORIGIN:http://localhost:8081}/*"
+      ],
+      "webOrigins": [
+        "${PMU_MOBILE_ORIGIN:http://localhost:8081}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${PMU_MOBILE_SCHEME:prepmeup}://auth/*##${PMU_MOBILE_ORIGIN:http://localhost:8081}/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "prepmeup-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "prepmeup-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "prepmeup-admin",
+      "name": "PrepMeUp admin panel",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${PMU_ADMIN_ORIGIN:http://localhost:5173}/*"
+      ],
+      "webOrigins": [
+        "${PMU_ADMIN_ORIGIN:http://localhost:5173}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${PMU_ADMIN_ORIGIN:http://localhost:5173}/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "prepmeup-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "prepmeup-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ]
+}

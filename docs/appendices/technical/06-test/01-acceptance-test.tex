@@ -11,6 +11,93 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 22-09-2026 & Group 3 & Initial version: acceptance tests for non-functional requirements (NFR-01--11) in appendix 1.2 \\
+\end{versionhistory}
+
+\section{Non-functional Requirements}
+This section tests the non-functional requirements specified in appendix 1.2 (Requirements Specification). Each requirement is repeated in short, followed by how it is executed. The last two columns are filled in when the test is actually run.
+
+\subsection{Usability}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-01 & All text in the customer app and the administrator interface, including API error messages, is in English. & Review every screen in the customer app and the administrator interface and confirm every visible string is English. & & \\
+\hline
+NFR-02 & Every error message is a complete sentence stating what went wrong and what the user can do, with no stack traces, HTTP status codes or exception names. & Trigger every error state in the customer app and the administrator interface (e.g. wrong password, network error, validation error) and review the message shown. & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Reliability}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-03 & If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data instead of crashing. & Stop the API, open the customer app, and confirm a connection error is shown while previously loaded data stays visible. & & \\
+\hline
+NFR-04 & If the database is unreachable, the API returns HTTP 503 with an error body. & Stop the database container, call an API endpoint, and confirm the response is HTTP 503 with an error body. & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Performance}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-05 & Response time is under 1 second for 90\% of requests. & Run a load-testing tool (e.g. k6) against the deployed API with 10 concurrent users over 1 minute and confirm the 90th percentile response time is under 1 second. & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Portability}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-06 & The customer UI runs as an Android app built with Expo (React Native). & Build and run the customer app on an Android device or emulator and confirm it starts and is usable. & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Supportability}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-07 & The application refuses to start if a required configuration value is missing, instead of running with an incorrect default. & Remove a required configuration value (e.g. the connection string) and start the container. Confirm it fails to start with a clear error. & & \\
+\hline
+NFR-08 & Automated tests cover all endpoints. & Check the test project and confirm every API endpoint has at least one corresponding automated test. & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Security}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{1.2cm}p{3.8cm}p{5.8cm}p{1.7cm}p{1.3cm}@{}}
+\hline
+\textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
+\hline
+NFR-09 & A customer can only view and change their own household's data. A request for another household's data is rejected with HTTP 403. & Authenticate as household A, request a resource belonging to household B, and confirm the response is HTTP 403. & & \\
+\hline
+NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Authenticate as a customer (household role), call an administrator-only endpoint, and confirm the response is HTTP 403. & & \\
+\hline
+NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call a protected endpoint without an \texttt{Authorization} header and confirm the response is HTTP 401. & & \\
+\hline
+\end{tabular}
+\end{center}
 
 \end{document}

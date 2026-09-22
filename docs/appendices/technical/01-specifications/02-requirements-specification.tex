@@ -15,6 +15,7 @@
   1.0 & 02-09-2026 & Group 3 & Initial version \\
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
+  1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -58,7 +59,7 @@ This system constitutes:
 Customers can sign up for a prepping subscription called ``PrepMeUp'' through the client app. The subscription ensures that they always have enough food and water for a three-day emergency.
 
 \subsection{Platform}
-The customer user interface is a React Native app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
+The customer user interface is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
 Payment is simulated. The back-end records a payment for each delivery against a stored (fake) card. No real payment provider is integrated, and no real money is charged.
@@ -177,7 +178,7 @@ We build the software side of the system. Hardware, logistics and the actual gro
 \subsection{Version 1.0 -- minimum viable product}
 Version 1.0 is the smallest system that lets a household subscribe and receive a first delivery. It contains:
 \begin{itemize}
-    \item An Android customer app (React Native) where a customer creates an account and signs up their household (FR-01).
+    \item An Android customer app (Expo, React Native) where a customer creates an account and signs up their household (FR-01).
     \item A back-end with persistent storage of customers and households (FR-02).
     \item One default package type for a ``normal'' diet, sized by number of household members (FR-03).
     \item Expiry tracking per delivery, so the next delivery can be scheduled (FR-04).
@@ -194,34 +195,41 @@ Version 1.0 is the smallest system that lets a household subscribe and receive a
 \end{itemize}
 
 \section{Non-functional Requirements}
-Each non-functional requirement states how it is verified, so it can be tested rather than judged.
+Each non-functional requirement is stated so it can be measured rather than judged. How each one is tested is described in appendix 6.1 (Acceptance Test).
 
 \paragraph{Usability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=1]
-    \item All text displayed in the UIs is in English, including error messages from the API. \emph{Verified by:} acceptance-test review of every screen in the customer app and the administrator interface.
-    \item Every error message shown in a UI is a complete sentence in the UI language that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown. \emph{Verified by:} acceptance-test review of every error state in the customer app and the administrator interface.
+    \item All text displayed in the UIs is in English, including error messages from the API.
+    \item Every error message shown in a UI is a complete sentence in the UI language that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown.
 \end{enumerate}
 
 \paragraph{Reliability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=3]
-    \item If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data; it does not crash. \emph{Verified by:} integration test with the API stopped.
-    \item If the database is unreachable, the API returns HTTP 503 with an error body instead of failing silently or crashing. \emph{Verified by:} integration test with the database stopped.
+    \item If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data; it does not crash.
+    \item If the database is unreachable, the API returns HTTP 503 with an error body instead of failing silently or crashing.
 \end{enumerate}
 
 \paragraph{Performance}
 \begin{enumerate}[label=\reqlabel{NFR}, start=5]
-    \item Response time is under 1 second for 90\% of requests. \emph{Verified by:} a load-testing tool (e.g. k6) against the deployed API with 10 concurrent users over 1 minute.
+    \item Response time is under 1 second for 90\% of requests.
 \end{enumerate}
 
 \paragraph{Portability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=6]
-    \item The customer UI runs as an Android app built with Expo (React Native). \emph{Verified by:} acceptance test on an Android device or emulator.
+    \item The customer UI runs as an Android app built with Expo (React Native).
 \end{enumerate}
 
 \paragraph{Supportability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=7]
-    \item Variables are collected in a configuration file.
-    \item Automated tests that cover all endpoints. \emph{Verified by:} the test suite lists one or more tests per endpoint.
+    \item The application refuses to start if a required configuration value is missing, instead of running with an incorrect default.
+    \item Automated tests that cover all endpoints.
+\end{enumerate}
+
+\paragraph{Security}
+\begin{enumerate}[label=\reqlabel{NFR}, start=9]
+    \item A customer can only view and change their own household's data. A request for another household's data is rejected with HTTP 403.
+    \item Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403.
+    \item Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401.
 \end{enumerate}
 
 \end{document}

@@ -3,6 +3,8 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
 
 \hypersetup{
     colorlinks=true,
@@ -23,7 +25,7 @@
 \begin{itemize}
     \item Frederik volunteered to be Scrummaster. Everyone was in agreement.
     \item Product owner is a blue elephant named Bodil.
-    \item Sprintplanning was done using Notion. Different group members had different experiences using Trello and Jira why we settled on Notion.
+    \item Sprint planning is done in Kaneo. Different group members had different experiences with Trello and Jira, so we started in Notion and moved to Kaneo on 9/9.
 \end{itemize}
 
 \subsection*{2/9}
@@ -38,7 +40,7 @@
 \subsection*{9/9}
 \begin{itemize}
     \item Fred presents how the project could be shaped using AI as development-tool. Unanimous agreement. See \href{run:./Arkitektur-ide.pdf}{Arkitektur-idé}.
-    \item Moreover, Notion was ditched and Kaneo was chosen due to it being open source and compatible with Claude. This way, Claude will be able to create and chose tickets and complete these.
+    \item Moreover, Notion was ditched and Kaneo was chosen. Kaneo is an open-source alternative to Trello. It is easy to use and has what we need, without the information overload of larger tools such as Jira. It is also compatible with Claude. This way, Claude will be able to create and chose tickets and complete these.
 \end{itemize}
 
 \subsection*{15/9}
@@ -57,6 +59,44 @@
     \item We changed our mind about Claude and Kaneo: the AI may read, comment on and create tasks, but moving, assigning and deleting tasks is done by the group. Planning the sprint is part of what we have to learn ourselves.
     \item We decided that all text in the apps is in English.
 \end{itemize}
+
+\subsection*{23/9}
+\begin{itemize}
+    \item Sprints are two weeks, from Wednesday to Tuesday. Sprint 1 runs from 16/9 to 29/9. The sprint calendar is in appendix 10.1.
+    \item The Backlog view in Kaneo is our product backlog, and the board is the sprint backlog.
+    \item Tasks get labels for story points, sprint and epic, so we can measure velocity and trace a task back to the requirements.
+\end{itemize}
+
+\section*{Velocity}
+Committed is the sum of story points in \emph{To Do} at sprint planning. Done is the sum in \emph{Done} at sprint review. Spillover is the points that move on to the next sprint. Backlog size is the sum of all estimated points in the project at sprint review.
+
+The numbers are kept in \texttt{docs/assets/data/sprint-velocity.csv}. The table below and the burn-up chart in chapter~2 of the report are both generated from that file, so it is the only place the numbers are entered.
+
+\begin{center}
+\pgfplotstabletypeset[
+    col sep=comma,
+    empty cells with={--},
+    every head row/.style={after row=\hline},
+    columns/sprint/.style={column name=Sprint},
+    columns/committed/.style={column name=Committed},
+    columns/done/.style={column name=Done},
+    columns/spillover/.style={column name=Spillover},
+    columns/scope/.style={column name=Backlog size},
+]{../../../assets/data/sprint-velocity.csv}
+\end{center}
+
+\section*{Sprint Goals}
+\begin{center}
+\begin{tabular}{@{}llp{9cm}@{}}
+Sprint & Period & Sprint goal \\ \hline
+1 & 16/9 -- 29/9 & \\
+2 & 30/9 -- 13/10 & \\
+3 & 14/10 -- 27/10 & \\
+4 & 28/10 -- 10/11 & \\
+5 & 11/11 -- 24/11 & \\
+6 & 25/11 -- 8/12 & \\
+\end{tabular}
+\end{center}
 
 \printbibliography
 \end{document}

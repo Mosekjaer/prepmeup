@@ -23,11 +23,13 @@ Alle kilder samles i **én fælles fil**: `assets/references.bib`. Et bilag der 
 
 **Kilder der ikke er bøger eller artikler** (myndighedsretningslinjer, leverandørdokumentation som Microsoft/Keycloak/Coolify-docs, GitHub-repos) citeres som `@online` (organisation som `author` i dobbelt-klammer, `{{Beredskabsstyrelsen}}`, så biblatex ikke tolker det som fornavn/efternavn) eller `@software` for et repo. Tilgangsdato skrives i `urldate`-feltet, ikke som fritekst i `note`.
 
-`assets/references.bib` har én eksempelkilde af hver type (`@online`, `@software`, `@book`, `@article`) som skabelon — brug dem som forlæg, ikke som rigtige kilder (undtagen `brs-forberedt` og `agents365-drawio-skill`, som er reelle).
+`assets/references.bib` har én eksempelkilde af hver type (`@online`, `@software`, `@book`, `@article`) som skabelon — brug dem som forlæg, ikke som rigtige kilder (undtagen `brs-forberedt`, `agents365-drawio-skill` og `schwaber-scrum-guide-2016`, som er reelle).
 
 Brug af AI-værktøjer citeres ikke i `references.bib` — det dækkes af AI-deklarationen, se nedenfor.
 
 ## Figurer
+
+Dataplots er undtaget fra draw.io-reglen: de laves med `pgfplots` og læser data fra en CSV-fil i `assets/data/`. Se burn-up-figuren i `report/chapters/02-method.tex`.
 
 Indsæt draw.io-diagrammer med alle tre argumenter:
 

@@ -47,6 +47,7 @@ VS Code-udvidelsen bruger linkmålet, åbner filen og markerer intervallet. VS C
 - Indsæt med `\drawiofig{filnavn}{caption}{fig:label}`. Ingen `\includegraphics` direkte mod en genereret PDF.
 - Agenter bruger `drawio-skill` til at skrive og validere XML'en. Skriv ikke draw.io-XML i hånden uden validering.
 - Mermaid og PlantUML er til skitser i chat og i `.plans/` — aldrig til noget der ender i `docs/`. Ét format i rapporten.
+- **Undtagelse: dataplots** (fx burn-up) laves med `pgfplots` direkte i LaTeX og læser data fra en CSV-fil i `docs/assets/data/`. Tallene skrives kun i CSV-filen; tabeller og plots genereres fra den.
 
 ## Lagregler
 
@@ -115,9 +116,40 @@ Reglerne står ét sted: `.githooks/check-conventions.sh`. Den bruges af `commit
 
 ## Kaneo
 
-Claude må læse, kommentere og oprette opgaver — inklusive labels og relationer på nye kort. Nye kort lander i `To Do` og skrives på dansk.
+Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
 
-Statusskift, flytning af kort mellem kolonner, tildeling, deadlines og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
+Statusskift, flytning af kort mellem kolonner, tildeling, startdatoer, estimater og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
+
+### Sprints
+
+To uger, onsdag til tirsdag. Sprint review, retrospective og planning holdes samme dag.
+
+| Sprint | Periode |
+|---|---|
+| 1 | 16/9 – 29/9 |
+| 2 | 30/9 – 13/10 |
+| 3 | 14/10 – 27/10 |
+| 4 | 28/10 – 10/11 |
+| 5 | 11/11 – 24/11 |
+| 6 | 25/11 – 8/12 |
+
+Aflevering fredag 11/12 kl. 13.00. Dagene 9/12 – 11/12 er ikke en sprint.
+
+- **Backlog-visningen** (`planned`) er Product Backlog. **Boardet** er Sprint Backlog. Der oprettes ikke en kolonne ved navn Backlog.
+- Et kort flyttes fra Backlog til `To Do` ved sprint planning og kun når det er **ready**: beskrivelse med `Krav: FR-xx` som første linje (eller ingen FR ved `Teknisk`/`Rapport`), definition of done, point-label, epic-label og en ejer.
+- Et kort der ikke bliver færdigt, beholder sin sprint-label og får den næste oveni. To sprint-labels = spillover.
+
+### Labels
+
+| Type | Labels | Farve |
+|---|---|---|
+| Point | `0 pt`, `½ pt`, `1 pt`, `2 pt`, `3 pt`, `5 pt`, `8 pt`, `13 pt`, `20 pt`, `40 pt`, `? pt` | grøn 0–2, gul 3–5, rød 8+, grå `?` |
+| Sprint | `Sprint 1` … `Sprint 6` | blå |
+| Epic | `Account`, `Household`, `Subscription`, `Notifications`, `Catalogue`, `Dispatch` — grupperingen fra kravspecifikationen | teal |
+| Ikke-krav | `Teknisk`, `Rapport` | grå |
+| Undergruppe | `Gruppe 1`, `Gruppe 2`, `Alle` | lilla, gul, mørkegrå |
+
+Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point i hele backloggen ved review). Tabellen i bilag 10.2 og burn-up-figuren i kap. 2 genereres fra filen.
 
 ## Secrets
 

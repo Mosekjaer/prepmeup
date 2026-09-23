@@ -13,6 +13,20 @@ Undtagelse: dagsordener i `appendices/process/12-meeting-invitations/` og møder
 Alle LaTeX-pakker deklareres i `report/styles/dependencies.sty`. Aldrig et `\usepackage` i et kapitel eller i `main.tex`.
 Standalone-dokumenter i `standalone/` og bilag er selvstændige og har deres egen præambel.
 
+## Referencer
+
+Citation style er **numerisk** (biblatex `style=numeric, sorting=none` — nummereret efter første optræden, ikke alfabetisk). Sat op i `report/styles/dependencies.sty` for rapporten og i `appendices/appendix-style.sty` for bilag, så begge bruger samme stil. AU stiller ikke krav om en bestemt style, kun konsekvens — og hvis numerisk: kronologisk nummerering (`god-rapportskrivning.md`). Denne stil matcher AU ECE's egen rapportskabelon.
+
+Alle kilder samles i **én fælles fil**: `assets/references.bib`. Et bilag der har brug for kilder tilføjer `\addbibresource{../../../assets/references.bib}` (juster antal `../` efter dybde) og `\printbibliography` — opret aldrig en ny `.bib`-fil pr. bilag.
+
+**Nøglekonvention:** kebab-case, `<organisation-eller-forfatter>-<emneord>[-<årstal>]`, fx `brs-forberedt`, `keycloak-authorization-services`. Undgår konflikter når flere tilføjer kilder samtidig.
+
+**Kilder der ikke er bøger eller artikler** (myndighedsretningslinjer, leverandørdokumentation som Microsoft/Keycloak/Coolify-docs, GitHub-repos) citeres som `@online` (organisation som `author` i dobbelt-klammer, `{{Beredskabsstyrelsen}}`, så biblatex ikke tolker det som fornavn/efternavn) eller `@software` for et repo. Tilgangsdato skrives i `urldate`-feltet, ikke som fritekst i `note`.
+
+`assets/references.bib` har én eksempelkilde af hver type (`@online`, `@software`, `@book`, `@article`) som skabelon — brug dem som forlæg, ikke som rigtige kilder (undtagen `brs-forberedt` og `agents365-drawio-skill`, som er reelle).
+
+Brug af AI-værktøjer citeres ikke i `references.bib` — det dækkes af AI-deklarationen, se nedenfor.
+
 ## Figurer
 
 Indsæt draw.io-diagrammer med alle tre argumenter:
@@ -21,7 +35,7 @@ Indsæt draw.io-diagrammer med alle tre argumenter:
 \drawiofig{<navn>}{Caption text}{fig:my-label}
 ```
 
-Kilden `assets/drawio/<navn>.drawio` **og** den genererede `assets/drawio/<navn>.pdf` committes begge. Overleaf kan ikke køre draw.io og bruger den committede PDF.
+Kun kilden `assets/drawio/<navn>.drawio` committes. Den genererede `assets/drawio/<navn>.pdf` er et build-artefakt — `latexmk` genskaber den automatisk og den er gitignored.
 
 Agenter tegner og retter diagrammer med skill'en `drawio-skill` (`.claude/skills/` for Claude Code, `.agents/skills/` for Antigravity):
 
@@ -34,7 +48,7 @@ Agenter tegner og retter diagrammer med skill'en `drawio-skill` (`.claude/skills
 ## Build
 
 - `latexmk` køres fra `docs/`, ikke fra repo-roden. Det er dér `main.tex` og `latexmkrc` ligger.
-- `latexmkrc` er lokal og **må ikke committes** — Overleaf læser den og går i stykker. Hver bruger kopierer `latexmkrc.example`.
+- `latexmkrc` er lokal og **må ikke committes** — den har maskinspecifikke stier (fx draw.io-binærens placering). Hver bruger kopierer `latexmkrc.example`.
 - `build/` er gitignored og kan altid slettes; alt i den genskabes.
 - Bilag er standalone-dokumenter og kompilerer hver for sig: `latexmk -pdf <fil>.tex` i bilagets egen mappe.
 

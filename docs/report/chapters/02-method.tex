@@ -1,4 +1,109 @@
 \chapter{Development Process and Method}\label{ch:method}
-% Chosen project model and development methods
-% (process, methods, risk management, use of AI).
 
+The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. This
+chapter describes how the group has set up roles, sprints and the product backlog,
+where the setup deviates from the Scrum Guide, and how progress is measured. The
+practical rules are in Appendix 10.1, and the decisions are logged with dates in
+Appendix 10.2.
+
+\section{Roles}\label{sec:method-roles}
+
+Frederik is Scrum Master. The rest of the group is the development team.
+
+The Scrum Guide describes the Product Owner as the one person who orders the product
+backlog: ``The Product Owner is one person, not a committee''
+\cite[p.~5]{schwaber-scrum-guide-2016}. We deviate from that. Our Product Owner is
+Bodil, a blue toy elephant, and the whole group orders the backlog together at
+sprint planning. Bodil is the one the group talks to when a feature is discussed: the
+question is what Bodil, as a customer, would need. The idea came as advice from a
+previous exam.
+
+The cost of the deviation is that no single person settles a disagreement about
+priority. The MoSCoW priorities in the requirements specification (Appendix 1.2) are
+therefore the tie-breaker: a MUST requirement goes before a SHOULD, and a task that
+does not trace to a requirement has to be argued for.
+
+\section{Sprints}\label{sec:method-sprints}
+
+A sprint runs from a Wednesday to the Tuesday two weeks later. Sprint 1 ran from 16 to
+29 September, and sprint 6 ends on 8 December, three days before the report is handed
+in. A sprint starts with sprint planning, where the group picks the tasks for the
+sprint and writes a sprint goal, and ends with a sprint review and a retrospective.
+The sprint goal is one sentence that names the requirements the sprint delivers, so
+the tasks in a sprint belong together \cite[p.~10]{schwaber-scrum-guide-2016}. The
+last sprint is set aside for the full acceptance test and the report.
+
+\section{Product Backlog and Board}\label{sec:method-backlog}
+
+The backlog lives in a self-hosted Kaneo instance, which replaced Notion on
+9 September because it is open source and can be read by the AI tool the group uses.
+Kaneo's Backlog view is the product backlog, and the board with the columns
+\emph{To Do}, \emph{In Progress}, \emph{In Review} and \emph{Done} is the sprint
+backlog.
+
+A task moves from the backlog to \emph{To Do} only at sprint planning, and only when
+it is ready: its description starts with the requirements it covers, it has a
+definition of done, a story point estimate, an epic label and an owner. The Scrum
+Guide calls an item ready when it can be done within one sprint
+\cite[p.~14]{schwaber-scrum-guide-2016}; the list above is how we check that. The epic
+labels follow the grouping of the user stories in the requirements specification, so
+every task can be traced back to a requirement.
+
+The AI tool may create tasks and suggest estimates, but moving, assigning and
+estimating tasks is done by the group. Planning a sprint is part of what the project
+is meant to teach us, so it is not handed to a tool.
+
+\section{Estimation and Progress}\label{sec:method-progress}
+
+Tasks are estimated in story points with planning poker, on the scale 0, \textonehalf,
+1, 2, 3, 5, 8, 13, 20, 40 and ``?'' for a task that cannot be estimated yet. As the
+Scrum Guide prescribes, the people who do the work make the estimate
+\cite[p.~14]{schwaber-scrum-guide-2016}.
+
+At sprint planning we note the points committed to the sprint, and at the sprint
+review the points done. Together with the size of the whole backlog, the numbers are
+kept in one table (Appendix 10.2), which Figure~\ref{fig:burnup} is drawn from. We use
+a burn-up rather than a burn-down chart. Most of the backlog was not estimated when
+the project started, so the total will grow, and a burn-down chart would show that
+growth as missing progress. A burn-up chart keeps the two apart
+\cite[p.~14]{schwaber-scrum-guide-2016}.
+
+\begin{figure}[H]
+    \centering
+    \pgfplotstableread[col sep=comma]{assets/data/sprint-velocity.csv}\velocitytable
+    \def\velocitydone{0}
+    \pgfplotstablecreatecol[create col/assign/.code={%
+        \getthisrow{done}\entry
+        \ifx\entry\empty
+            \pgfkeyssetvalue{/pgfplots/table/create col/next content}{nan}%
+        \else
+            \pgfmathparse{\velocitydone+\entry}\xdef\velocitydone{\pgfmathresult}%
+            \pgfkeyslet{/pgfplots/table/create col/next content}\velocitydone
+        \fi}]{donetotal}\velocitytable
+    \pgfplotstablecreatecol[create col/assign/.code={%
+        \getthisrow{scope}\entry
+        \ifx\entry\empty
+            \pgfkeyssetvalue{/pgfplots/table/create col/next content}{nan}%
+        \else
+            \pgfkeyslet{/pgfplots/table/create col/next content}\entry
+        \fi}]{scopetotal}\velocitytable
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.8\textwidth, height=6cm,
+            xlabel={Sprint}, ylabel={Story points},
+            xmin=1, xmax=6, xtick={1,...,6}, ymin=0,
+            legend pos=south east, unbounded coords=jump,
+        ]
+            \addlegendimage{blue, mark=*}
+            \addlegendentry{Backlog size}
+            \addlegendimage{red, mark=square*}
+            \addlegendentry{Done (cumulative)}
+            \addplot[draw=none, forget plot] table[x=sprint, y expr={2*(\thisrow{sprint}-1)}]{\velocitytable};
+            \addplot[blue, mark=*, forget plot] table[x=sprint, y=scopetotal]{\velocitytable};
+            \addplot[red, mark=square*, forget plot] table[x=sprint, y=donetotal]{\velocitytable};
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Burn-up per sprint]{Burn-up per sprint. The gap between the lines is the work left; when the
+    upper line rises, the backlog has grown, not the progress slowed.}
+    \label{fig:burnup}
+\end{figure}

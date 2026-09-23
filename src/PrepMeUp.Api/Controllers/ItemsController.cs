@@ -10,9 +10,8 @@ namespace PrepMeUp.Api.Controllers;
 public class ItemsController : ControllerBase
 {
     [HttpGet(Name = "Items_GetItems")]
-    [ProducesResponseType<IEnumerable<ItemsResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<ItemResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<IEnumerable<ItemsResponse>> GetItems() =>
-    Ok(new[] { new ItemsResponse("Ida x2"), new ItemsResponse("Marie"), new ItemsResponse("Malthe") });
-
+    public ActionResult<IEnumerable<ItemResponse>> GetItems() =>
+        Ok(new[] { new ItemResponse("Ida x2"), new ItemResponse("Marie"), new ItemResponse("Malthe") });
 }

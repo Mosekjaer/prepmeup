@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { apiBaseUrl } from './api';
+import { apiBaseUrl } from '../src/lib/api';
 
 describe('apiBaseUrl', () => {
   it('falls back to the local API when no environment variable is set', () => {

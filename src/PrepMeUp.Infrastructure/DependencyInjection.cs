@@ -11,7 +11,7 @@ public static class DependencyInjection
     // Note: the 'this' mean you can call the method below as builder.Services.AddInfrastructure(...)
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("PrepMeUpDb");
+        var connectionString = configuration.GetConnectionString("PrepMeUpDb"); // get from appsettings.json
 
         // When any class needs a DbContext, the program provides PrepMeUpDbContext
         services.AddDbContext<PrepMeUpDbContext>(options => options.UseSqlServer(connectionString));

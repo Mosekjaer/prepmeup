@@ -93,4 +93,7 @@ jobs:
       - name: Call deploy webhook
         env:
           WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
-        run: curl --fail --silent --show-error --request GET "$WEBHOOK"
+          TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          curl --fail --silent --show-error --request GET "$WEBHOOK" \
+            --header "Authorization: Bearer $TOKEN"

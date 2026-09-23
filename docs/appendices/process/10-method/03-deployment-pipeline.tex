@@ -16,6 +16,7 @@
 
 \begin{versionhistory}
   1.0 & 18-09-2026 & Group 3 & Deployment chain, image and tag strategy, rollback, secrets, migrations \\
+  1.1 & 23-09-2026 & Group 3 & The deploy job requires HTTPS and an exact 200 from the webhook \\
 \end{versionhistory}
 
 This appendix describes how a change travels from a developer's push to a running container in production, and why the chain is built the way it is. The daily rules for branches, commits and pull requests are in appendix 10.1; the reasons behind the technology choices are in appendix 2.1. This appendix covers the part that comes after a pull request is merged.
@@ -33,7 +34,7 @@ The steps are:
     \item The pull request cannot be merged until those checks are green and one other group member has reviewed it.
     \item On squash merge, \texttt{ci.yml} runs again, now on \texttt{main}.
     \item Only if the build and test jobs are green does the \texttt{publish} job run. It builds the API image and the Keycloak image and pushes both to GitHub Container Registry (GHCR).
-    \item Only if \texttt{publish} succeeded does the \texttt{deploy} job run. It calls Coolify's deploy webhook.
+    \item Only if \texttt{publish} succeeded does the \texttt{deploy} job run. It calls Coolify's deploy webhook and fails unless Coolify answers \texttt{200}.
     \item Coolify fetches the repository to get the current \texttt{docker-compose.prod.yml}, pulls the images named in it and starts the stack.
     \item Coolify's HTTP health check calls the API's \texttt{/health} endpoint. If it does not answer, the deployment is not considered healthy.
 \end{enumerate}
@@ -52,6 +53,11 @@ Concretely, the \texttt{deploy} job declares \texttt{needs: publish}, and \textt
 The deployment itself is automatic once \texttt{main} is green -- there is no manual approval click. The argument is that \texttt{main} is always deployable under GitHub Flow, and an approval step adds waiting time without adding information: CI already knows more about the change than the person who would click. What moved was the sender of the signal, not the decision to deploy automatically.
 
 The trigger is a webhook call from the \texttt{deploy} job rather than Coolify polling the registry for a new image. Polling ties the deployment to the state of the registry instead of to the result of the pipeline, and a registry cannot tell why an image appeared. The webhook makes deployment the last link in a single chain with a single decision point.
+
+\subsection*{The deploy job only turns green when Coolify accepted the call}
+A green \texttt{deploy} job has to mean that Coolify started a deployment. The first version called the webhook with \texttt{curl --fail}, which only treats \texttt{4xx} and \texttt{5xx} as errors. When the webhook URL was stored with \texttt{http://}, Cloudflare in front of the server answered \texttt{301} to redirect to HTTPS. That is not an error to \texttt{curl --fail}, so the job was green while no deployment had started.
+
+The job now calls the webhook with \texttt{--proto '=https'}, so a plain HTTP URL is refused before any request is sent, and it compares the status code with exactly \texttt{200}. Any other answer, including a redirect, fails the job. The response body is printed in the log, so a failure shows what Coolify or the proxy actually answered. The bearer token is also never sent over plain HTTP, even if the secret is set up wrong.
 
 \section{Why the Image is Built in CI and Pulled by Coolify}
 The images are built once, by the \texttt{publish} job, and pushed to GHCR. Coolify does not build anything; it pulls.
@@ -148,7 +154,7 @@ Parts of the chain cannot be created from the repository, and a clone of the rep
 \begin{itemize}
     \item \textbf{GHCR packages must exist and be public.} A package is created private by default and its visibility is set in GitHub, independently of the repository's own visibility. Both \texttt{prepmeup-api} and \texttt{prepmeup-keycloak} must be pushed once and made public \emph{before} the compose file starts referring to them. If this is skipped, the CI run and the webhook are both green and the failure appears as \texttt{denied} or \texttt{manifest unknown} in Coolify's deployment log, long after GitHub reported success. Verify with a \texttt{docker pull} from a machine that is not logged in to GitHub.
     \item \textbf{Coolify: automatic deployment on git push must be turned off.} If it is left on, the gate exists only on paper -- Coolify still builds on every push to \texttt{main}, and which deployment wins is decided by whichever finishes first. Test it by pushing a documentation-only commit to \texttt{main} and confirming that Coolify registers no deployment until the webhook is called.
-    \item \textbf{Coolify: the deploy webhook and the environment variables.} The webhook URL goes into the repository secret \texttt{COOLIFY\_DEPLOY\_WEBHOOK}, and an API token with only the \texttt{deploy} permission into \texttt{COOLIFY\_API\_TOKEN}. Every variable that the compose file marks with \texttt{:?} must be set on the resource.
+    \item \textbf{Coolify: the deploy webhook and the environment variables.} The webhook URL goes into the repository secret \texttt{COOLIFY\_DEPLOY\_WEBHOOK} and an API token with only the \texttt{deploy} permission into \texttt{COOLIFY\_API\_TOKEN}. The URL must start with \texttt{https://}; otherwise the deploy job refuses to call it. Every variable that the compose file marks with \texttt{:?} must be set on the resource.
     \item \textbf{Coolify: an HTTP health check against \texttt{/health}} on the API service. It has to be configured in Coolify rather than as a \texttt{healthcheck:} block in the compose file, because the ASP.NET runtime image contains neither \texttt{curl} nor \texttt{wget} -- a compose health check would fail regardless of the application's actual state.
     \item \textbf{Branch protection on \texttt{main}} in GitHub: the build and test checks and the conventions check as required, one review, and no direct pushes. Without it, the whole chain can be bypassed by pushing straight to \texttt{main}, and the local git hooks do not help -- they run on the developer's machine and can be skipped.
     \item \textbf{Clean-up.} Old GHCR packages and Coolify resources that are no longer part of the chain should be deleted, so there is only one place a deployment can come from.

@@ -95,5 +95,8 @@ jobs:
           WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
         run: |
-          curl --fail --silent --show-error --request GET "$WEBHOOK" \
-            --header "Authorization: Bearer $TOKEN"
+          status=$(curl --proto '=https' --silent --show-error --output response.txt \
+            --write-out '%{http_code}' --request GET "$WEBHOOK" \
+            --header "Authorization: Bearer $TOKEN")
+          cat response.txt
+          test "$status" = 200

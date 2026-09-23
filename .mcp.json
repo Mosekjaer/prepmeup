@@ -7,6 +7,13 @@
       "env": {
         "KANEO_API_URL": "https://kaneo.mosekjaer.com"
       }
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_MCP_TOKEN}"
+      }
     }
   }
 }

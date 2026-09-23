@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 // Composition root. This is the only place Api is allowed to know Infrastructure.
 // TODO: builder.Services.AddApplication();
-// TODO: builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration); // Here, PrepMeUpContext and e.g. IItemRepository become know to the app
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();

@@ -13,6 +13,7 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 | Admin-panel | React + Vite (TypeScript, React Router) |
 | Backend | ASP.NET Core Web API, .NET 10, EF Core |
 | Database | SQL i Docker |
+| Migrations | EF Core Migrations (code-first) i `PrepMeUp.Infrastructure`. Skemaet ændres kun via `dotnet ef migrations add`, aldrig i hånden. Deploy kører dem som migration bundle |
 | Test | NUnit + NSubstitute (backend), Vitest (klienter) |
 | CI | GitHub Actions: grøn build + test før merge (`.github/workflows/ci.yml`) |
 | Drift | Coolify på egen server. Én `Dockerfile` pr. service, samlet i `docker-compose.yml` |

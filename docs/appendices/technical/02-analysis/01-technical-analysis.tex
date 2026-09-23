@@ -14,6 +14,7 @@
 \begin{versionhistory}
   1.0 & 09-09-2026 & Group 3 & Initial version \\
   1.1 & 16-09-2026 & Group 3 & Stack updated to what is actually set up. Added choice of authentication, deployment, database, version control and git workflow \\
+  1.2 & 23-09-2026 & Group 3 & Added operations, CI and security. Authentication status and CI description updated \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -55,7 +56,7 @@ This appendix describes the technologies we use in PrepMeUp and why we chose the
     \item One realm \texttt{prepmeup} with two roles: \texttt{household} and \texttt{admin}. Customers can register themselves and get the \texttt{household} role automatically.
     \item Two public clients, \texttt{prepmeup-mobile} and \texttt{prepmeup-admin}. Both use the Authorization Code flow with PKCE. Logging in with username and password directly through the client (password grant) is turned off.
     \item The realm is described in \texttt{infra/keycloak/realm-prepmeup.json} and imported when Keycloak starts. That way every group member gets the same setup.
-    \item Status: Keycloak runs and the API has its settings (authority, audience). Validating the JWT in the API is the next step.
+    \item Status: Keycloak runs, and the API validates the JWT. \texttt{GET /items} is behind \texttt{[Authorize]} as the first protected endpoint. Checking roles and household ownership is not implemented yet (section~\ref{sec:ops}).
 \end{itemize}
 
 \subsection{Test}
@@ -63,7 +64,7 @@ This appendix describes the technologies we use in PrepMeUp and why we chose the
     \item Backend unit tests: NUnit and NSubstitute against the Application layer.
     \item Backend integration tests: \texttt{WebApplicationFactory} against the API.
     \item Client tests: Vitest.
-    \item GitHub Actions builds and tests the backend and the clients on every pull request. The pipeline must be green before merge.
+    \item GitHub Actions builds and tests the backend and the clients on every pull request. The pipeline must be green before merge. On \texttt{main} the same run also builds the images and starts the deployment (section~\ref{sec:ops}).
 \end{itemize}
 
 \subsection{Deployment and Development Tools}
@@ -152,7 +153,7 @@ We use SQL Server for the application data. It is the database used in the backe
 
 \section{Version Control and Git Workflow}
 \label{sec:git}
-The repository is on GitHub, and Coolify deploys from GitHub. The course uses GitLab CI, but the ideas are the same, so we use GitHub Actions.
+The repository is on GitHub. Coolify reads the production compose file from GitHub and pulls the images from GitHub Container Registry. The course uses GitLab CI, but the ideas are the same, so we use GitHub Actions.
 
 We looked at three workflows from the course: trunk-based, GitHub Flow and Git Flow. We chose \textbf{GitHub Flow}.
 \begin{itemize}
@@ -170,6 +171,72 @@ The rules are:
     \item Releases are git tags on \texttt{main}, for example \texttt{v0.1.0} at the end of a sprint.
 \end{itemize}
 Branch names and commit messages are checked by git hooks on each computer and again by GitHub Actions on every pull request. The details are in appendix 10.1.
+
+\section{Operations, CI and Security}
+\label{sec:ops}
+This section describes how the system is built, deployed and protected. The step-by-step deployment chain, the rollback procedure and the rules for migrations are in appendix 10.3. Here we explain the choices and look at what could go wrong.
+
+\subsection{Containers}
+Every service runs as a Docker container, both locally and in production.
+\begin{itemize}
+    \item The API image is built in two stages, as taught in the course. The first stage uses the .NET SDK image to restore and publish. The second stage only contains the ASP.NET runtime and the published files. The SDK and the source code are not in the image that runs in production.
+    \item The API container runs as a non-root user (\texttt{USER \$APP\_UID}). If someone finds a hole in the application, they do not get root inside the container.
+    \item The Keycloak image is the official Keycloak image with our realm file copied in. The realm configuration is then part of a versioned image instead of something set up by hand in production.
+    \item The base images use version tags, never \texttt{latest} (for example \texttt{keycloak:26.3} and SQL Server \texttt{2022-CU27}), so a new major release upstream does not reach production without a commit.
+\end{itemize}
+
+\subsection{CI and the Gate Before Deploy}
+The workflow \texttt{ci.yml} has four jobs:
+\begin{enumerate}
+    \item \texttt{backend}: \texttt{dotnet build} and \texttt{dotnet test}.
+    \item \texttt{clients}: \texttt{npm ci}, typecheck and Vitest.
+    \item \texttt{publish}: only on \texttt{main}, and only if both jobs above are green. Builds the API and Keycloak images and pushes them to GitHub Container Registry, tagged with the commit SHA and \texttt{main}.
+    \item \texttt{deploy}: only if \texttt{publish} is green. Calls Coolify's deploy webhook.
+\end{enumerate}
+A second workflow, \texttt{conventions.yml}, checks branch names and pull request titles.
+
+The course defines continuous integration as frequent integration where each integration is checked by an automated build that includes the tests. We take that one step further: the automated build is also the only way to get something into production. Because \texttt{publish} depends on the test jobs and \texttt{deploy} depends on \texttt{publish}, a red test means that no image is built and no deployment starts. Automatic deployment on push must be turned off in Coolify (appendix 10.3), so there is no second route. The image that runs in production is the same image that was built after the tests passed; Coolify does not build anything itself.
+
+The deploy job only succeeds if Coolify answers exactly \texttt{200} over HTTPS. The first version only failed on \texttt{4xx} and \texttt{5xx}. A redirect from Cloudflare (\texttt{301}) therefore gave a green job while nothing was deployed. A green pipeline must mean that the deployment really started, otherwise the gate gives false confidence. The details are in appendix 10.3.
+
+\subsection{Network and HTTPS}
+\begin{itemize}
+    \item Only Coolify's reverse proxy is reachable from the internet. It ends HTTPS and forwards the requests over plain HTTP to \texttt{api} and \texttt{keycloak} on the internal Docker network. The course describes this setup: only the proxy needs the certificate, and the proxy limits what is exposed to the internet.
+    \item No container publishes a port in production. \texttt{db} and \texttt{keycloak-db} can only be reached from inside the network. The network layout is in appendix 3.1.
+    \item The connection from the API to SQL Server is not encrypted (\texttt{Encrypt=False}). We accept this because the traffic never leaves the internal Docker network on one server.
+\end{itemize}
+
+\subsection{Authentication and Authorization in the API}
+The API checks every access token it receives. The token must be signed by Keycloak's key, have the expected issuer and the audience \texttt{prepmeup-api}, and not be expired. We allow 30 seconds of clock difference. Access tokens live for 15 minutes.
+
+The API fetches Keycloak's discovery document over the internal network, while the tokens carry the public Keycloak address as issuer. The two addresses are different in production. That is why the issuer is set explicitly and not taken from Keycloak's discovery document. Chapter 8 in the report describes how we found this. Fetching the discovery document over plain HTTP is allowed (\texttt{RequireHttpsMetadata=false}) for the same reason as above: the call stays inside the Docker network.
+
+The requirements NFR-09 to NFR-11 describe what the API must refuse:
+\begin{itemize}
+    \item \textbf{NFR-11, no token gives 401.} Handled by \texttt{[Authorize]} and the JWT check above. In place for \texttt{GET /items}.
+    \item \textbf{NFR-10, admin endpoints give 403 to customers.} The \texttt{admin} role is in the token. The role check on the endpoints is not implemented yet, because there are no admin endpoints yet.
+    \item \textbf{NFR-09, a household only sees its own data.} A role cannot answer this. The API must compare the household in the request with the user in the token. This check belongs in the use case in the Application layer, so it cannot be forgotten in a single controller. Not implemented yet.
+\end{itemize}
+
+CORS only allows the origins of the admin panel and the customer app, read from configuration. There is no wildcard. CORS only limits what a browser allows. It does not protect the API against other clients, which is why authorization must be checked in the API itself.
+
+\subsection{Secrets}
+\begin{itemize}
+    \item Production secrets are only set as environment variables in Coolify. They are not in the repository, not in the compose file and not in any image. That is why the images on GitHub Container Registry can be public.
+    \item \texttt{docker-compose.prod.yml} marks every required secret with \texttt{:?}. If one is missing, the stack does not start. It does not start with an empty password.
+    \item GitHub stores only two secrets: the Coolify webhook URL and an API token that can only start a deployment. The token cannot read the environment variables in Coolify, so it does not leak any passwords.
+    \item Pushing images uses the token that GitHub Actions creates for each run. The \texttt{publish} job asks for write access to packages and nothing else beyond reading the repository. There is no long-lived registry password.
+    \item AI tools cannot read \texttt{.env} files. This is enforced in \texttt{.claude/settings.json}.
+\end{itemize}
+
+\subsection{Weaknesses We Know About}
+These are known and accepted for now. They are also listed under open decisions.
+\begin{itemize}
+    \item The API connects to SQL Server as \texttt{sa}. The API only needs to read and write data, so it should have its own database user with fewer rights. The migrations, which change the schema, would keep the stronger user.
+    \item If \texttt{Keycloak:Authority} is empty, the API starts without authentication. A protected endpoint then fails with a server error instead of 401. In production this cannot happen, because the compose file requires the value. The API itself should still refuse to start outside development (NFR-07).
+    \item The API does not redirect HTTP to HTTPS and does not send an HSTS header itself. The course says an API should only accept HTTPS. In our setup the proxy handles HTTPS, so this depends on how Coolify's proxy is configured. It has not been checked.
+    \item The GitHub Actions in the workflows are pinned to a major version (for example \texttt{actions/checkout@v4}), not to a commit SHA. If one of those actions is compromised, our pipeline runs the new code.
+\end{itemize}
 
 \section{AI Tools}
 \label{sec:ai}
@@ -197,6 +264,22 @@ We use AI assistants as a development tool (decided on 09-09). To keep the work 
 \begin{itemize}
     \item Data fetching and token storage in the customer app, for example TanStack Query and Expo SecureStore. Not installed yet.
     \item Whether the customer app is also released as a web app.
+    \item A separate database user for the API with only read and write rights, instead of \texttt{sa}.
+    \item The API should refuse to start without \texttt{Keycloak:Authority} outside development.
+    \item Check whether Coolify's proxy redirects HTTP to HTTPS and sends HSTS for the API and Keycloak.
+    \item Whether to pin GitHub Actions to commit SHAs.
+\end{itemize}
+
+\section*{Sources}
+Coolify and Keycloak integration are not covered by the course material; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered either -- the course teaches CI with GitLab CI. The principles used in section~\ref{sec:ops} are from the course:
+\begin{itemize}
+    \item Multi-stage Docker build and publishing images to a registry: \path{context/bad/markdown/01-intro-og-docker/docker.md}, lines 135--156.
+    \item CI as an automated build including tests: \path{context/swt/markdown/02.1-continuous-integration/01-Continuous-Integration.md}, lines 43--50.
+    \item Reverse proxy, HTTPS only at the proxy, forwarded headers: \path{context/bad/markdown/11-release-security/release-og-deployment.md}, lines 42--85.
+    \item Production secrets only on the production host: same file, lines 125--131.
+    \item APIs should only accept HTTPS, HSTS: \path{context/bad/markdown/11-release-security/https.md}, lines 89--110.
+    \item JWT claims (issuer, expiration, audience) and signature validation: \path{context/bad/markdown/10-auth/json-web-token.md}, lines 49--52 and 76--129.
+    \item Keycloak listed as an identity provider: \path{context/bad/markdown/10-auth/authentication-og-authorization.md}, line 808.
 \end{itemize}
 
 \end{document}

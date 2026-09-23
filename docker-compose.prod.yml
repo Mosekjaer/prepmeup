@@ -1,8 +1,7 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: src/PrepMeUp.Api/Dockerfile
+    image: "ghcr.io/mosekjaer/prepmeup-api:${PMU_IMAGE_TAG:-main}"
+    pull_policy: always
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__PrepMeUpDb: "Server=db,1433;Database=PrepMeUp;User Id=sa;Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
@@ -24,7 +23,7 @@ services:
       - prepmeup-net
 
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}"
@@ -42,9 +41,8 @@ services:
       - prepmeup-net
 
   keycloak:
-    build:
-      context: ./infra/keycloak
-      dockerfile: Dockerfile
+    image: "ghcr.io/mosekjaer/prepmeup-keycloak:${PMU_IMAGE_TAG:-main}"
+    pull_policy: always
     command: ["start", "--import-realm"]
     environment:
       KC_DB: postgres

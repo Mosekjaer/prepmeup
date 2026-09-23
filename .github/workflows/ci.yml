@@ -48,3 +48,52 @@ jobs:
 
       - name: Test
         run: npm test
+
+  publish:
+    name: Build and push ${{ matrix.image }}
+    needs: [backend, clients]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - image: prepmeup-api
+            context: .
+            file: src/PrepMeUp.Api/Dockerfile
+          - image: prepmeup-keycloak
+            context: ./infra/keycloak
+            file: infra/keycloak/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          push: true
+          tags: |
+            ghcr.io/mosekjaer/${{ matrix.image }}:${{ github.sha }}
+            ghcr.io/mosekjaer/${{ matrix.image }}:main
+
+  deploy:
+    name: Trigger Coolify deploy
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call deploy webhook
+        env:
+          WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
+          TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          curl --fail --silent --show-error --request GET "$WEBHOOK" \
+            --header "Authorization: Bearer $TOKEN"

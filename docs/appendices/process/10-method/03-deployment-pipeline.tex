@@ -1,0 +1,174 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf 03-deployment-pipeline.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage{../../appendix-style}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily\small, columns=fullflexible, breaklines=true}
+
+\title{10.3 Deployment Pipeline}
+\author{SW4PRJ4 -- Group 3}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{versionhistory}
+  1.0 & 18-09-2026 & Group 3 & Deployment chain, image and tag strategy, rollback, secrets, migrations \\
+\end{versionhistory}
+
+This appendix describes how a change travels from a developer's push to a running container in production, and why the chain is built the way it is. The daily rules for branches, commits and pull requests are in appendix 10.1; the reasons behind the technology choices are in appendix 2.1. This appendix covers the part that comes after a pull request is merged.
+
+\section{Scope}
+The system is deployed as one Docker Compose stack on the group's own server, managed by Coolify. The stack contains the API, the SQL Server database, Keycloak and Keycloak's own PostgreSQL database. The two client applications, the Expo app and the React admin panel, are not part of this chain yet. Adding them means one more image in the build matrix and one more service in the compose file; the chain is built so that this is an addition, not a rewrite.
+
+Out of scope, and deliberately so for a one-semester project: a staging environment, blue/green or canary releases, automatic rollback, and monitoring and alerting.
+
+\section{The Chain from Push to Running Container}
+The steps are:
+
+\begin{enumerate}
+    \item A developer pushes a branch. The workflow \texttt{ci.yml} builds the backend and the clients and runs all tests. The workflow \texttt{conventions.yml} checks the branch name and the pull request title.
+    \item The pull request cannot be merged until those checks are green and one other group member has reviewed it.
+    \item On squash merge, \texttt{ci.yml} runs again, now on \texttt{main}.
+    \item Only if the build and test jobs are green does the \texttt{publish} job run. It builds the API image and the Keycloak image and pushes both to GitHub Container Registry (GHCR).
+    \item Only if \texttt{publish} succeeded does the \texttt{deploy} job run. It calls Coolify's deploy webhook.
+    \item Coolify fetches the repository to get the current \texttt{docker-compose.prod.yml}, pulls the images named in it and starts the stack.
+    \item Coolify's HTTP health check calls the API's \texttt{/health} endpoint. If it does not answer, the deployment is not considered healthy.
+\end{enumerate}
+
+Every step depends on the one before it. There is exactly one path from a commit to a running container, and the first thing on that path is the test suite.
+
+\section{Why the Gate Lives in GitHub Actions}
+Coolify can watch the git repository itself and deploy on every push to \texttt{main}. That is how it was configured to begin with, and it is the configuration we turned off.
+
+The problem is not that Coolify deploys too eagerly. The problem is that it deploys without knowing anything about the tests. CI and Coolify both started from the same commit, but independently: a red test run did not stop Coolify from building and starting the same code. In practice that means two paths to production, and only one of them has ever seen a test result.
+
+The course defines continuous integration as work that is integrated frequently, where \emph{each integration is verified by an automated build including test} (Fowler's definition, quoted in the SWT lecture on continuous integration, lines 43--50). A deployment that bypasses that build is not a lighter variant of CI; it is a way around it. So the gate belongs where the test result exists, which is the workflow that produced it.
+
+Concretely, the \texttt{deploy} job declares \texttt{needs: publish}, and \texttt{publish} declares \texttt{needs: [backend, clients]}. GitHub Actions skips a job whose dependencies failed, so a red test run leaves both \texttt{publish} and \texttt{deploy} as skipped. No image is produced and no webhook is called. The rule ``never deploy on red'' is not a habit anyone has to remember; it is the shape of the graph.
+
+The deployment itself is automatic once \texttt{main} is green -- there is no manual approval click. The argument is that \texttt{main} is always deployable under GitHub Flow, and an approval step adds waiting time without adding information: CI already knows more about the change than the person who would click. What moved was the sender of the signal, not the decision to deploy automatically.
+
+The trigger is a webhook call from the \texttt{deploy} job rather than Coolify polling the registry for a new image. Polling ties the deployment to the state of the registry instead of to the result of the pipeline, and a registry cannot tell why an image appeared. The webhook makes deployment the last link in a single chain with a single decision point.
+
+\section{Why the Image is Built in CI and Pulled by Coolify}
+The images are built once, by the \texttt{publish} job, and pushed to GHCR. Coolify does not build anything; it pulls.
+
+The reason is artefact identity. If Coolify builds the image itself after CI has run, then two images exist: the one the tests ran against and the one that serves users. They were built from the same source, but not by the same process, not at the same time, and not necessarily with the same base layers -- a base image tag can move between the two builds. What is running in production has then never been tested; only the source code it was built from has. Building once and moving that exact image forward removes the difference: the artefact that answers requests is byte-for-byte the artefact the test suite approved.
+
+This also changes what a rollback costs. When Coolify builds, there is no artefact to go back to -- undoing a bad release means a git revert and a new build, minutes of work under pressure, and a new commit in the history that exists only because something broke. When the images are stored in a registry with immutable tags, a rollback is pointing at a different tag.
+
+The price is that CI needs to log in to a registry and that Coolify needs to be able to pull. Both images are pushed with the built-in \texttt{GITHUB\_TOKEN} and the \texttt{packages: write} permission, so no extra credential is stored in the repository. The GHCR packages are public, which means Coolify pulls without credentials at all: one fewer secret, one fewer token that can expire, and one fewer class of failure that only shows up in a deployment log. The consequence is that anyone can pull the image. That is acceptable precisely because of the secrets rule in section \ref{sec:secrets}: every secret is injected as an environment variable at start-up and none of them is baked into an image layer. What a stranger can download is the compiled application, not access to it.
+
+Keycloak is built and published the same way rather than being pulled straight from upstream, because our Keycloak image carries the realm configuration. Treating it as a versioned artefact means the identity provider's configuration is reviewed in a pull request and tagged with a commit, instead of being assembled by the deployment platform at start-up. Both images are built by the same job from the same commit, so one tag moves them forward -- and back -- together.
+
+\section{Why the Stack Stays One Compose File}
+Coolify can also manage each container as a separately created resource, configured in its web interface. We keep the resource as a Docker Compose application with \texttt{docker-compose.prod.yml} from the repository as its source. Only the origin of the images changed: \texttt{build:} became \texttt{image:} for \texttt{api} and \texttt{keycloak}.
+
+The argument is where the topology lives. The compose file contains the network, the start-up order, the health check conditions, the volumes and the environment contract. Splitting the stack into individually created containers moves all of that from a version-controlled file into a web interface. It would then exist in exactly one place, nobody could review a change to it in a pull request, it could not be diffed against an earlier version, and it could not be run locally at all. The compose file is also the artefact that maps one-to-one to the deployment view of the architecture, which makes the documented architecture and the running system the same thing rather than two descriptions that drift apart.
+
+Compose is additionally how the course teaches multi-container applications: services defined in YAML as independently replaceable units (BAD material on Docker Compose, lines 19--30 and 74--81), including waiting for SQL Server with a health check and \texttt{depends\_on: condition: service\_healthy} (same material, lines 122--145). Our stack uses exactly that mechanism for both databases.
+
+The cost is real and worth stating: the stack is deployed as a unit, and services cannot be scaled independently. Neither is a requirement here.
+
+\section{Image Tags and Rollback}\label{sec:rollback}
+\subsection{Two tags, two different jobs}
+Every image is pushed with two tags:
+
+\begin{itemize}
+    \item \textbf{The commit SHA} -- for example \texttt{ghcr.io/mosekjaer/prepmeup-api:9f2c1ab...}. This tag is the truth. It points at one image built from one commit and it never changes.
+    \item \textbf{\texttt{main}} -- a movable pointer to the newest image built from a green \texttt{main}. This is what the compose file reads by default.
+\end{itemize}
+
+The split exists because the two tags answer different questions. ``What should production run right now?'' is answered by a pointer that moves on its own. ``Which image is this, exactly?'' can only be answered by a name that never moves. A movable tag cannot answer the second question, and a fixed tag cannot serve as a default without a commit for every deployment.
+
+The movable tag can also race. Two merges shortly after one another give two \texttt{publish} runs that both write \texttt{:main}, and the one that finishes last wins -- which need not be the newest commit. The SHA tag is untouched by this. Therefore: a verification and a rollback always point at the SHA, never at \texttt{main}.
+
+The compose file reads the tag from a variable:
+
+\begin{lstlisting}
+image: "ghcr.io/mosekjaer/prepmeup-api:${PMU_IMAGE_TAG:-main}"
+pull_policy: always
+\end{lstlisting}
+
+With \texttt{PMU\_IMAGE\_TAG} unset, the stack runs \texttt{main}. Setting it pins the stack to one specific build. \texttt{pull\_policy: always} makes sure a redeployment actually fetches the image instead of reusing a cached layer with the same tag.
+
+\subsection{Rollback procedure}
+This is written to be executed without thinking. A bad deployment is not the moment to work out how the tag variable is resolved.
+
+\begin{enumerate}
+    \item \textbf{Find the SHA that worked.} Open the repository on GitHub, go to Actions, and find the last workflow run on \texttt{main} that deployed successfully -- the run \emph{before} the one that broke production. Copy its full commit SHA. If in doubt, the package page under Packages lists every pushed tag with a timestamp.
+    \item \textbf{Set the variable in Coolify.} Open the PrepMeUp resource, go to its environment variables, and set \texttt{PMU\_IMAGE\_TAG} to that SHA. Do not use \texttt{main}, and do not use a shortened SHA unless the shortened form is what the package page shows.
+    \item \textbf{Redeploy.} Press Deploy on the resource. Coolify pulls the pinned images and restarts the stack. Both the API and Keycloak move back together, because both were tagged with the same SHA by the same job.
+    \item \textbf{Verify.} Call the health endpoint: \texttt{curl -i https://<api-host>/health} must return \texttt{200} and \texttt{Healthy}. Then log in through the app, because a healthy API and a broken Keycloak are not the same thing.
+    \item \textbf{Fix forward.} Leave \texttt{main} in git alone. The rollback did not revert a commit, so the history is intact and the bug can be fixed calmly on a branch.
+    \item \textbf{Remove the pin.} When the fix is merged and \texttt{main} is green again, delete \texttt{PMU\_IMAGE\_TAG} in Coolify and redeploy. Forgetting this step is how a stack silently stops receiving new releases while every workflow stays green.
+\end{enumerate}
+
+The whole procedure takes seconds, requires no build and produces no commit. Note the one thing it does not undo: the database schema. See section \ref{sec:migrations}.
+
+\section{Secrets}\label{sec:secrets}
+Production values live in exactly one place: the environment variables of the Coolify resource. They are not in the repository, not in the compose file, not in an image layer, and not in anything an AI agent can read. This follows the course rule that production secrets belong only on the production server -- as a file, as environment variables, or in whatever the hosting platform provides (BAD material on release and deployment, lines 125--131).
+
+CI holds two secrets as repository secrets: the Coolify deploy webhook URL and a Coolify API token, which the webhook requires as a bearer token. The token is created with only the \texttt{deploy} permission. It is worth noting what the pair can and cannot do: it can start a deployment, and it cannot read environment variables. Compromising it does not expose a database password. Pushing to GHCR uses the workflow's built-in token, so no long-lived registry credential exists to leak in the first place.
+
+The compose file refers to every sensitive value in the form
+
+\begin{lstlisting}
+Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}
+\end{lstlisting}
+
+The \texttt{:?} form is part of the security design, not a convenience. Without it, a missing variable expands to an empty string, and the stack starts anyway: SQL Server with a blank SA password, or Keycloak with an empty admin password, reachable and apparently working. The failure would be silent, and it would be a running system rather than a stopped one. With \texttt{:?}, Compose refuses to start and prints the name of the variable it is missing. The system fails closed, loudly, and at the earliest possible moment. It also documents the contract: reading the compose file tells you exactly which values the production host must supply, without any of them being written down.
+
+\section{Database Migrations}\label{sec:migrations}
+Schema changes are applied by a separate, blocking step before the API starts. They are not applied by the API at start-up.
+
+The database is not exposed to the host, in production or locally, so running \texttt{dotnet ef database update} from a CI runner is not possible -- there is nothing to connect to from outside the Docker network. Migrations are therefore packaged as a \emph{migration bundle}: a self-contained executable that needs neither the .NET SDK nor the \texttt{dotnet-ef} CLI on the machine that runs it, which is one of the two approaches the course material recommends for getting a schema to production (BAD book material on release and deployment, chapter 12). The bundle runs as a one-shot \texttt{migrator} service on the internal network, and the API declares
+
+\begin{lstlisting}
+depends_on:
+  migrator:
+    condition: service_completed_successfully
+\end{lstlisting}
+
+A failed migration then stops the deployment instead of letting the API start against a schema it does not match. Running migrations from inside the application at start-up would do the opposite: every replica would race to migrate, and a failure would surface as application errors rather than as a failed deployment.
+
+\subsection*{The rule this forces: schema changes are backward compatible for one release}
+A rollback changes which image runs. It does not change the database. If a deployment migrated the schema and then failed, rolling the image back gives old code against a new schema.
+
+Therefore: \textbf{every schema change must be backward compatible with the previous release.} The image before the current one must be able to run against the new schema. In practice this means a column is added before it is used and dropped one release after it stopped being used; a rename is an add, a copy and a later drop, not a rename; and a column does not become \texttt{NOT NULL} in the same release that starts writing to it. It costs an extra release to remove anything. That cost is what keeps the rollback procedure in section \ref{sec:rollback} usable at all -- without this rule, rolling back the code is only safe when the release happened to contain no migration, and nobody can tell which case they are in while production is down.
+
+The \texttt{migrator} service cannot be written until there is a \texttt{DbContext} and a first migration. Until then this section is a decided contract rather than a description of running code, and the implementation is tracked as its own task.
+
+\section{Manual Setup Outside the Repository}
+Parts of the chain cannot be created from the repository, and a clone of the repository alone will therefore not reproduce a working deployment. They are listed here so the chain can be rebuilt by someone else.
+
+\begin{itemize}
+    \item \textbf{GHCR packages must exist and be public.} A package is created private by default and its visibility is set in GitHub, independently of the repository's own visibility. Both \texttt{prepmeup-api} and \texttt{prepmeup-keycloak} must be pushed once and made public \emph{before} the compose file starts referring to them. If this is skipped, the CI run and the webhook are both green and the failure appears as \texttt{denied} or \texttt{manifest unknown} in Coolify's deployment log, long after GitHub reported success. Verify with a \texttt{docker pull} from a machine that is not logged in to GitHub.
+    \item \textbf{Coolify: automatic deployment on git push must be turned off.} If it is left on, the gate exists only on paper -- Coolify still builds on every push to \texttt{main}, and which deployment wins is decided by whichever finishes first. Test it by pushing a documentation-only commit to \texttt{main} and confirming that Coolify registers no deployment until the webhook is called.
+    \item \textbf{Coolify: the deploy webhook and the environment variables.} The webhook URL goes into the repository secret \texttt{COOLIFY\_DEPLOY\_WEBHOOK}, and an API token with only the \texttt{deploy} permission into \texttt{COOLIFY\_API\_TOKEN}. Every variable that the compose file marks with \texttt{:?} must be set on the resource.
+    \item \textbf{Coolify: an HTTP health check against \texttt{/health}} on the API service. It has to be configured in Coolify rather than as a \texttt{healthcheck:} block in the compose file, because the ASP.NET runtime image contains neither \texttt{curl} nor \texttt{wget} -- a compose health check would fail regardless of the application's actual state.
+    \item \textbf{Branch protection on \texttt{main}} in GitHub: the build and test checks and the conventions check as required, one review, and no direct pushes. Without it, the whole chain can be bypassed by pushing straight to \texttt{main}, and the local git hooks do not help -- they run on the developer's machine and can be skipped.
+    \item \textbf{Clean-up.} Old GHCR packages and Coolify resources that are no longer part of the chain should be deleted, so there is only one place a deployment can come from.
+\end{itemize}
+
+\section{Course Material and Choice of Tools}
+The principles behind this chain come from the course material: continuous integration as one automated build including tests, the steps of a typical CI job and its trigger sequence (SWT material on continuous integration); GitHub Flow with \texttt{main} always deployable and review before integration (SWT material on git workflows); the multi-container application defined in a single compose file with health checks and start-up conditions (BAD material on Docker Compose); production secrets only on the production host and environment-dependent configuration through \texttt{ASPNETCORE\_ENVIRONMENT} (BAD material on release and deployment); and migration bundles as a recommended way to bring schema changes to production (BAD book material, chapter 12).
+
+The tools are not from the course material. The course teaches CI with GitLab CI and deployment to an Azure virtual machine with IIS and a Visual Studio publish profile. We use GitHub Actions, GitHub Container Registry and Coolify on the group's own server. That choice is ours and stands on its own reasons: the repository is already on GitHub, so the CI runner, the registry and the permission model are the same system and need no credentials passed between them; and Coolify runs a plain Docker Compose stack on hardware the group controls, which keeps the deployed topology identical to the one we run locally and costs nothing per month. The mapping to the course material is at the level of principle -- one automated build including tests as the only route to an artefact, secrets only on the host, migrations as their own step -- not at the level of product names.
+
+\section*{Sources}
+\begin{itemize}
+    \item CI definition and graded builds: \path{context/swt/markdown/02.1-continuous-integration/01-Continuous-Integration.md}, lines 43--50 and 76--106.
+    \item Steps of a typical CI job and the trigger sequence: same file, lines 124--160.
+    \item GitHub Flow, \texttt{main} always deployable, review before integration: \path{context/swt/markdown/02.2-git-workflow/02-Git-Workflows.md}, lines 163--170 and 275--284.
+    \item Compose as the definition of a multi-container application; services as replaceable units: \path{context/bad/markdown/01-intro-og-docker/docker-compose.md}, lines 19--30 and 74--81.
+    \item Health check and \texttt{depends\_on: condition: service\_healthy} against MSSQL: same file, lines 122--145.
+    \item Production secrets belong on the production host; environment-dependent configuration: \path{context/bad/markdown/11-release-security/release-og-deployment.md}, lines 109--131 and 156--178.
+    \item Migration bundles as a recommended path to production: \path{context/bad/markdown/bog/12-release-deployment.md}, chapter 12.
+    \item Layering rules and the composition root: \path{docs/standalone/architecture-pitch.tex}.
+\end{itemize}
+
+\end{document}

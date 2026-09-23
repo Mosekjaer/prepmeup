@@ -43,7 +43,8 @@ This appendix describes the technologies we use in PrepMeUp and why we chose the
 
 \subsection{Data}
 \begin{itemize}
-    \item SQL Server 2022 in Docker, accessed through EF Core. Migrations are kept in git.
+    \item SQL Server 2022 in Docker, accessed through EF Core.
+    \item Migration strategy: EF Core Migrations, code-first. The model in \texttt{PrepMeUp.Infrastructure} is the source of truth, and every schema change is a generated migration kept in git. Production applies them as a migration bundle, see the deployment pipeline appendix.
     \item The database port is not exposed to the host. Only the \texttt{api} container can reach it.
     \item Data is stored in a Docker volume, so it survives when the containers are recreated.
 \end{itemize}

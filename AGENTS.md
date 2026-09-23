@@ -47,6 +47,7 @@ VS Code-udvidelsen bruger linkmålet, åbner filen og markerer intervallet. VS C
 - Indsæt med `\drawiofig{filnavn}{caption}{fig:label}`. Ingen `\includegraphics` direkte mod en genereret PDF.
 - Agenter bruger `drawio-skill` til at skrive og validere XML'en. Skriv ikke draw.io-XML i hånden uden validering.
 - Mermaid og PlantUML er til skitser i chat og i `.plans/` — aldrig til noget der ender i `docs/`. Ét format i rapporten.
+- **Undtagelse: dataplots** (fx burn-up) laves med `pgfplots` direkte i LaTeX og læser data fra en CSV-fil i `docs/assets/data/`. Tallene skrives kun i CSV-filen; tabeller og plots genereres fra den.
 
 ## Lagregler
 
@@ -148,7 +149,7 @@ Aflevering fredag 11/12 kl. 13.00. Dagene 9/12 – 11/12 er ikke en sprint.
 | Ikke-krav | `Teknisk`, `Rapport` | grå |
 | Undergruppe | `Gruppe 1`, `Gruppe 2`, `Alle` | lilla, gul, mørkegrå |
 
-Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene står i tabellen i `docs/appendices/process/10-method/02-method-and-process.tex`.
+Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point i hele backloggen ved review). Tabellen i bilag 10.2 og burn-up-figuren i kap. 2 genereres fra filen.
 
 ## Secrets
 

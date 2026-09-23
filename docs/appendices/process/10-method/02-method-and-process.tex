@@ -3,6 +3,8 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
 
 \hypersetup{
     colorlinks=true,
@@ -66,17 +68,33 @@
 \end{itemize}
 
 \section*{Velocity}
-Committed is the sum of story points in \emph{To Do} at sprint planning. Done is the sum in \emph{Done} at sprint review. Spillover is the points that move on to the next sprint.
+Committed is the sum of story points in \emph{To Do} at sprint planning. Done is the sum in \emph{Done} at sprint review. Spillover is the points that move on to the next sprint. Backlog size is the sum of all estimated points in the project at sprint review.
+
+The numbers are kept in \texttt{docs/assets/data/sprint-velocity.csv}. The table below and the burn-up chart in chapter~2 of the report are both generated from that file, so it is the only place the numbers are entered.
 
 \begin{center}
-\begin{tabular}{@{}llp{5cm}rrr@{}}
-Sprint & Period & Sprint goal & Committed & Done & Spillover \\ \hline
-1 & 16/9 -- 29/9 & & & & \\
-2 & 30/9 -- 13/10 & & & & \\
-3 & 14/10 -- 27/10 & & & & \\
-4 & 28/10 -- 10/11 & & & & \\
-5 & 11/11 -- 24/11 & & & & \\
-6 & 25/11 -- 8/12 & & & & \\
+\pgfplotstabletypeset[
+    col sep=comma,
+    empty cells with={--},
+    every head row/.style={after row=\hline},
+    columns/sprint/.style={column name=Sprint},
+    columns/committed/.style={column name=Committed},
+    columns/done/.style={column name=Done},
+    columns/spillover/.style={column name=Spillover},
+    columns/scope/.style={column name=Backlog size},
+]{../../../assets/data/sprint-velocity.csv}
+\end{center}
+
+\section*{Sprint Goals}
+\begin{center}
+\begin{tabular}{@{}llp{9cm}@{}}
+Sprint & Period & Sprint goal \\ \hline
+1 & 16/9 -- 29/9 & \\
+2 & 30/9 -- 13/10 & \\
+3 & 14/10 -- 27/10 & \\
+4 & 28/10 -- 10/11 & \\
+5 & 11/11 -- 24/11 & \\
+6 & 25/11 -- 8/12 & \\
 \end{tabular}
 \end{center}
 

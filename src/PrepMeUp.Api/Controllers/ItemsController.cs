@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrepMeUp.Api.Contracts;
 
 namespace PrepMeUp.Api.Controllers;
 
@@ -8,6 +9,9 @@ namespace PrepMeUp.Api.Controllers;
 [Authorize]
 public class ItemsController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult GetItems() => Ok(new[] { "Ida x2", "Marie", "Malthe" });
+    [HttpGet(Name = "Items_GetItems")]
+    [ProducesResponseType<IEnumerable<ItemResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public ActionResult<IEnumerable<ItemResponse>> GetItems() =>
+        Ok(new[] { new ItemResponse("Ida x2"), new ItemResponse("Marie"), new ItemResponse("Malthe") });
 }

@@ -255,8 +255,6 @@ MongoDB & Flexible schema. Can scale to several servers. & No foreign keys, so t
 
 We chose SQL Server, mainly because it is what the course uses, and PostgreSQL did not give us anything we needed. Because of the layers, the choice only shows up in Infrastructure, so switching later would mean a new EF Core provider and new migrations, but no changes to the rules or the API \cite[secs.~4.1.2 and 4.3.1]{desanctis-web-apis-aspnet-core}.
 
-There is one problem we still need to fix. Both compose files run SQL Server as the Developer edition, which is free but only allowed for development and test. The Express edition is also free and is allowed in production \cite[sec.~4.2.2, p.~101]{desanctis-web-apis-aspnet-core}. Its limits, for example 10 GB per database \cite{microsoft-sql-server-2022-editions}, are far more than we need, so production should use Express.
-
 \subsection{Database in Tests}
 The unit tests do not use a database, since they test Domain directly and Application with fake repositories. For integration tests the course suggests an in-memory SQLite database \cite[slide 16]{sw4bad-integration-testing}, which is fast and does not need a server. The catch is that our migrations are made for SQL Server, so the SQLite tests have to create the schema in another way. That means the integration tests do not test our migrations, and SQLite does not behave exactly like SQL Server. We think that is acceptable, because the migrations are still run against SQL Server both locally and when we deploy.
 

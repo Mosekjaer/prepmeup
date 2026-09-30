@@ -21,3 +21,9 @@
 **Pattern:** Efter "find online kilder" satte jeg ~60 webkilder ind i bilag 2.1 — også på påstande som bøgerne og slides allerede dækkede, og på trivielle fakta (health checks, volumes, restart-policy).
 **Rule:** Bog- og Brightspace-kilder er førstevalg. Webkilde kun når pensum og bøger er tavse OG påstanden bærer en beslutning, en afvigelse eller en rettelse. Højst én webkilde pr. emne. Ingen webkilde ved siden af en bog- eller slidekilde, der allerede dækker påstanden.
 **Context:** PMU-18, `docs/appendices/technical/02-analysis/01-technical-analysis.tex`. Endte på 10 webkilder mod 32 citerede i alt.
+
+## 2026-09-30 — Rapporttekst skal lyde som studerende, ikke som AI
+
+**Pattern:** Bilag 2.1 var skrevet tæt og teknisk: lange versionshistorik-linjer med alle detaljer, `\texttt{}` om klassenavne, filer, kommandoer og config-nøgler midt i sætninger, fed-start-bullets, konstruktioner som "The question is not X but Y", "There is a limit:", "The price is".
+**Rule:** Skriv rapport og bilag i en almindelig studerendes stemme: "we", korte sætninger, prosa frem for bullets, én pointe ad gangen. Versionshistorik er én kort sætning pr. version ("Added client technologies"). Brug ikke `\texttt{}` i løbende tekst; omskriv til almindelige ord ("the Domain project", "the items endpoint", "the main branch") og undlad kode-identifiers, filstier, porte og config-nøgler, medmindre læseren skal bruge dem. Detaljer, der står i et andet bilag, henvises til i stedet for at gentages.
+**Context:** PMU-18, `docs/appendices/technical/02-analysis/01-technical-analysis.tex`. Gælder alle dokumenter i `docs/`.

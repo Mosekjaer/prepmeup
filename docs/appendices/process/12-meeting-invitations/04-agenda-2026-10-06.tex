@@ -1,0 +1,45 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 04-agenda-2026-10-06.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{12.4 Dagsorden -- 06-10}
+\author{SW4PRJ4 -- Group 3}
+\date{06-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 06-10-2026 (tirsdag)
+
+\textbf{Tid:}
+
+\textbf{Sted:}
+
+\textbf{Deltagere:} Gruppe 3 og vejleder Michel
+
+\section*{Dagsordenspunkter}
+
+\begin{enumerate}
+    \item \textbf{Status siden sidste vejledermøde (15/9)}
+    \begin{itemize}
+        \item Backend-spike med ét endpoint er testet med curl, og databasen er koblet på API'et med EF Core og migrations.
+        \item Docker Compose kører API og database. Main deployes til Coolify, når CI er grøn.
+        \item Keycloak er sat op som ekstern authority. Login i kunde-appen er i gang.
+        \item Kunde-appen henter data fra API'et via den genererede api-client.
+        \item Kravspecifikationen er opdateret efter review \#1 fra gruppe 4 og afstemt med domænemodel og E/R-diagram.
+        \item Teknisk analyse, første udkast til accepttest og low fidelity UI-mockups er skrevet.
+        \item Proces: sprint 1 er afsluttet med velocity 34 af 57 point. Sprint 2 er en mini-sprint på én uge, så vi kan holde demo 7/10.
+    \end{itemize}
+    \item \textbf{Spørgsmål til vejleder}
+    \begin{enumerate}
+        \item \textbf{Diagrammer:} Hvilke diagrammer forventer I i rapporten ud over domænemodel og E/R-diagram (fx klasse-, sekvens- og deploymentdiagrammer)?
+    \end{enumerate}
+    \item \textbf{Næste vejledermøde}
+    \item \textbf{Eventuelt}
+\end{enumerate}
+
+\end{document}

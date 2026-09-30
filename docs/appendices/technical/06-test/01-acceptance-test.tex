@@ -4,6 +4,29 @@
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
 
+% Info block and step table for one use case scenario
+\newcommand{\scenarioinfo}[4]{%
+  \noindent\begin{tabular}{|p{3cm}|p{12cm}|}
+  \hline
+  \textbf{Requirement} & \textbf{#1} \\
+  \hline
+  \textbf{Scenario} & #2 \\
+  \hline
+  \textbf{Precondition} & #3 \\
+  \hline
+  \textbf{Postcondition} & #4 \\
+  \hline
+  \end{tabular}\par\medskip}
+\newenvironment{steps}{%
+  \noindent\footnotesize
+  \begin{tabular}{|c|p{3.6cm}|p{4.6cm}|p{3.2cm}|p{1.5cm}|}
+  \hline
+  \textbf{Step} & \textbf{Action} & \textbf{Expected result} & \textbf{Actual result} & \textbf{Verdict} \\
+  \hline
+}{%
+  \end{tabular}\par\bigskip
+}
+
 \title{6.1 Acceptance Test}
 \author{SW4PRJ4 -- Group 3}
 \date{\today}
@@ -13,7 +36,93 @@
 
 \begin{versionhistory}
   1.0 & 22-09-2026 & Group 3 & Initial version: acceptance tests for non-functional requirements (NFR-01--11) in appendix 1.2 \\
+  1.1 & 30-09-2026 & Group 3 & First draft of tests for the must-have functional requirements. NFR-09 updated to requirements specification 1.4 \\
 \end{versionhistory}
+
+\section{Functional Requirements}
+This section tests the must-have functional requirements (FR-01--06) in appendix 1.2 (Requirements Specification). Each test is a scenario that is run step by step against the deployed system. The actual result and the verdict are filled in when the test is run. The should-have and could-have requirements get tests when they are planned into a sprint.
+
+\subsection{FR-01: Create account and subscription}
+\scenarioinfo{FR-01}
+  {Main scenario: A new customer creates an account and signs up for a subscription.}
+  {The customer app is installed on an Android device. The customer does not have an account.}
+  {The customer is logged in and has an active subscription.}
+\begin{steps}
+1 & The customer opens the app and chooses to create an account. & The app shows a form for e-mail, password and address. & & \\
+\hline
+2 & The customer fills in the form and submits it. & The account is created and the customer is logged in. & & \\
+\hline
+3 & The customer chooses to sign up for a subscription. & The app shows the subscription with status active. & & \\
+\hline
+4 & The customer closes the app and opens it again. & The customer is still signed up, and the subscription is still active. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-02: Persistent storage}
+\scenarioinfo{FR-02}
+  {Main scenario: Customers, subscriptions and orders are kept when the back-end restarts.}
+  {A customer with an active subscription and at least one order exists (FR-01).}
+  {The data is unchanged after the restart.}
+\begin{steps}
+1 & The tester notes the customer's subscription status and orders in the customer app. & The app shows the subscription and the orders. & & \\
+\hline
+2 & The tester restarts the API and the database containers. & Both containers start again without errors. & & \\
+\hline
+3 & The customer logs in again. & The app shows the same subscription status and the same orders as in step 1. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-03: Default package types}
+\scenarioinfo{FR-03}
+  {Main scenario: The customer can choose the default package types for a normal diet.}
+  {The system has just been deployed with an empty database. No administrator has created a package type.}
+  {None.}
+\begin{steps}
+1 & The customer logs in and starts composing an order. & The app lists a package type for adults and a package type for children, both with a normal diet. & & \\
+\hline
+2 & The customer opens each of the two package types. & Each package type shows its contents: items and quantities. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-04: Expiry date of orders}
+\scenarioinfo{FR-04}
+  {Main scenario: The system registers the expiry date of an order when it is sent.}
+  {A customer has a planned order.}
+  {The sent order has an expiry date, and the next order can be scheduled from it.}
+\begin{steps}
+1 & The administrator marks the customer's order as sent (FR-06). & The order is registered as sent. & & \\
+\hline
+2 & The tester looks up the order through the API. & The order has an expiry date after the sent date. & & \\
+\hline
+3 & The administrator marks a second order for the same customer as sent. & Both orders keep their own expiry date. The first one is not overwritten. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-05: See the next orders to send}
+\scenarioinfo{FR-05}
+  {Main scenario: The administrator sees the planned orders, sorted by which one should be sent first.}
+  {The administrator is logged in. At least three planned orders from different customers exist, and at least one sent order exists.}
+  {None.}
+\begin{steps}
+1 & The administrator opens the list of orders to send. & The list shows all planned orders and no sent orders. & & \\
+\hline
+2 & The administrator reads the order of the list. & The order that should be sent first is at the top. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-06: Register an order as sent}
+\scenarioinfo{FR-06}
+  {Main scenario: The administrator marks an order as sent.}
+  {The administrator is logged in. A planned order is shown in the list of orders to send (FR-05).}
+  {The order is sent and can no longer be changed by the customer.}
+\begin{steps}
+1 & The administrator marks the first order in the list as sent. & The order disappears from the list of orders to send. & & \\
+\hline
+2 & The administrator reloads the page. & The order is still gone from the list. & & \\
+\hline
+3 & The customer who owns the order opens the app. & The order is shown as sent. & & \\
+\hline
+\end{steps}
 
 \section{Non-functional Requirements}
 This section tests the non-functional requirements specified in appendix 1.2 (Requirements Specification). Each requirement is repeated in short, followed by how it is executed. The last two columns are filled in when the test is actually run.
@@ -91,9 +200,9 @@ NFR-08 & Automated tests cover all endpoints. & Check the test project and confi
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only view and change their own household's data. A request for another household's data is rejected with HTTP 403. & Authenticate as household A, request a resource belonging to household B, and confirm the response is HTTP 403. & & \\
+NFR-09 & A customer can only view and change their own data. A request for another customer's data is rejected with HTTP 403. & Authenticate as customer A, request an order belonging to customer B, and confirm the response is HTTP 403. & & \\
 \hline
-NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Authenticate as a customer (household role), call an administrator-only endpoint, and confirm the response is HTTP 403. & & \\
+NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Authenticate as a customer, call an administrator-only endpoint, and confirm the response is HTTP 403. & & \\
 \hline
 NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call a protected endpoint without an \texttt{Authorization} header and confirm the response is HTTP 401. & & \\
 \hline

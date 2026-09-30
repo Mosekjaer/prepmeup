@@ -1,0 +1,61 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 05-agenda-2026-10-07.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{12.5 Dagsorden -- 07-10}
+\author{SW4PRJ4 -- Group 3}
+\date{07-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 07-10-2026 (onsdag)
+
+\textbf{Tid:} 10:00
+
+\textbf{Sted:} Incuba
+
+\section*{Dagsordenspunkter}
+
+\begin{enumerate}
+    \item \textbf{Opsamling fra vejledermødet 6/10} (ca. 15 min)
+    \begin{itemize}
+        \item Svar fra Michel og hvad de betyder for backloggen.
+    \end{itemize}
+    \item \textbf{Sprint review -- sprint 2} (ca. 45 min)
+    \begin{itemize}
+        \item Sprint goal: gøre sprint 1 færdig og levere et E/R-diagram og et low fidelity UI-mockup. Blev det nået?
+        \item Demo: hver af os gennemgår det, vi selv har lavet i sprinten.
+        \item I \emph{Done}: 9 kort (25 point). PMU-2, PMU-3, PMU-4, PMU-12, PMU-13, PMU-18, PMU-19, PMU-71 og PMU-72.
+        \item Ikke færdigt: PMU-70 (login i kunde-appen med Keycloak, 3 point) er i \emph{In Progress}.
+        \item Velocity for sprint 2: committed 28 point, done 25 point, spillover 3 point, scope 62 point. PMU-71 (2 point) og PMU-72 (3 point) fik først point-label ved sprintens afslutning og er talt med i committed. Tallene står i \texttt{docs/assets/data/sprint-velocity.csv}.
+    \end{itemize}
+    \item \textbf{Retrospective} (ca. 30 min)
+    \begin{itemize}
+        \item Opfølgning på sidste retrospective: har demoen givet overblik over den anden undergruppes arbejde? Bliver E/R-diagrammet brugt som overbliksdiagram?
+        \item Hvad gik godt?
+        \item Hvad gik skidt?
+        \item Hvad ændrer vi i sprint 3? Hver handling bliver et kort i Kaneo.
+    \end{itemize}
+    \item \textbf{Sprint planning -- sprint 3 (7/10 -- 20/10)} (ca. 60 min)
+    \begin{itemize}
+        \item Kapacitet: hvor mange timer har hver af os i perioden?
+        \item Spillover: kort, der ikke er færdige, beholder label \emph{Sprint 2} og får \emph{Sprint 3} oveni.
+        \item PMU-27 er slået sammen med PMU-70, som har overtaget krav FR-01 og definition of done. PMU-27 skal slettes, og kravlinjen skal ind i beskrivelsen på PMU-70.
+        \item PMU-30 (GUI-skitser) overlapper med mockuppet i PMU-72. Er PMU-30 stadig nødvendig?
+        \item PMU-73 (kravspec 1.4) ligger i backloggen, men har label \emph{Sprint 2}. Skal den med i sprint 3, eller skal labelen fjernes?
+        \item Kandidater til sprint 3: husstandsslicen PMU-24 -- PMU-26 og PMU-29, konto PMU-28 og rapportkortene PMU-31 -- PMU-33.
+        \item Planning poker på de kort, der trækkes ind. Ingen af dem har point-label endnu.
+        \item Ready-kort fra backlog til \emph{To Do}: \texttt{Krav: FR-xx} som første linje, definition of done, point-label, epic-label og ejer.
+        \item Sprint goal (én sætning, der nævner de krav sprinten leverer).
+        \item Ejer og undergruppe på hvert kort.
+        \item Point i \emph{To Do} (committed).
+    \end{itemize}
+    \item \textbf{Eventuelt}
+\end{enumerate}
+
+\end{document}

@@ -107,9 +107,6 @@ Layers with the data dependency turned around & Domain has no technical details 
 \end{center}
 We went with the last option. It does give more files, but they are the same kinds of files every time, and we always create them in the same order, starting with Domain. The expiry and reorder rules are where we are most likely to make mistakes, so we wanted to be able to test those on their own.
 
-\subsection{Status}
-The four projects and the references between them are set up, but Domain and Infrastructure are still empty. There are no entities and no migrations yet, and the only endpoint returns hard-coded data. The first real feature, the household profile, will add the first entity and the first migration.
-
 \section{Choice of Client Technologies}
 \label{sec:clients}
 We have two kinds of users. Customers use an app on their phone, and administrators use a web page on a computer to send out deliveries. According to the requirements, the customer app must run on Android in version 1.0, and the admin interface must be a web application (appendix 1.2).
@@ -136,7 +133,7 @@ In Expo Router each file in the app folder is a screen \cite{expo-router-introdu
 
 \subsection{Admin Panel}
 The admin panel is a normal React app with Vite and React Router, which is what the course uses \cite[slides 12--14]{sw4fed-react-overview}\cite[ch.~13]{mardan-react-quickly}.
-One thing we need to remember when we deploy it: the web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[slides 6--7]{sw4fed-react-router}. The admin panel is not deployed yet.
+One thing we need to remember when we deploy it: the web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[slides 6--7]{sw4fed-react-router}.
 
 \subsection{Why Two Apps}
 Since Expo can also build for the web, one app could in theory be used by both customers and administrators. We decided not to do that. The two users need different screens and have different roles, so a shared app would need role checks on every screen, and the admin screens would end up inside the customer app. The admin panel only has to run in a browser, and for that a plain React app with Vite is simpler than React Native running on the web. Having two apps also means each has its own Keycloak client (section~\ref{sec:auth}).
@@ -231,7 +228,7 @@ EF Core Migrations, code first & Generated from the classes, so classes and sche
 \hline
 DbUp with SQL scripts & Plain SQL that is easy to read. & Classes and schema updated by hand. \\
 \hline
-Database first & Good if a database already exists. & We have no database yet, and we want the domain to decide the schema. \\
+Database first & Good if a database already exists. & There is no existing database, and we want the domain to decide the schema. \\
 \hline
 Only create the schema at startup & No migration files. & Only works on an empty database, so the schema cannot be changed later. \\
 \hline
@@ -305,7 +302,7 @@ The API checks every token it gets: it must be signed by Keycloak, come from the
 
 In production the API talks to Keycloak over the internal network, but the tokens contain Keycloak's public address. Because the two addresses are different, we had to set the expected issuer by hand. Chapter 8 in the report describes how we found this. For the same reason the API is allowed to fetch Keycloak's settings over plain HTTP inside the network. Microsoft recommends only doing that in development \cite{microsoft-jwtbearer-requirehttpsmetadata}, so it only works because the traffic stays internal.
 
-The requirements NFR-09 to NFR-11 say what the API must refuse. A request without a token gets 401 (NFR-11), which already works for the items endpoint. Customers must get 403 on admin endpoints (NFR-10), but we have no admin endpoints yet, so there is no role check yet. A household must only see its own data (NFR-09). A role cannot solve this, so the API has to compare the household in the request with the user in the token. We want to put that check in the Application layer, so it cannot be forgotten in a single controller. It is not built yet.
+The requirements NFR-09 to NFR-11 say what the API must refuse. A request without a token gets 401 (NFR-11). Customers must get 403 on admin endpoints (NFR-10), which needs a role check on those endpoints. A household must only see its own data (NFR-09). A role cannot solve this, so the API has to compare the household in the request with the user in the token. We put that check in the Application layer, so it cannot be forgotten in a single controller.
 
 CORS only allows our two apps. That is not real protection, though, because CORS is only enforced by browsers \cite[sec.~3.1.1]{desanctis-web-apis-aspnet-core}. The API still has to check authorization itself.
 

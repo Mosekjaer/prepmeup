@@ -26,6 +26,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"
+      # TODO: create e.g. .env file
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in your shell or .env}"
       MSSQL_PID: Developer
     volumes:

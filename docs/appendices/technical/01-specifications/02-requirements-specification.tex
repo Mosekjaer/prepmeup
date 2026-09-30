@@ -16,7 +16,7 @@
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
   1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
-  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types in adult or child size. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items \\
+  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -33,7 +33,7 @@
 
 \textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
 
-\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. It has a size (\emph{adult} or \emph{child}), and it expresses the diet. Equipment, e.g. a flashlight, is offered as its own package type without a size. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
+\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. Equipment, e.g. a flashlight, is offered as its own package type. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
 
 \textbf{Package content} = One item and its quantity in a package type.
 
@@ -57,7 +57,7 @@ Customers can sign up for a prepping subscription called ``PrepMeUp'' through th
 The customer user interface is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
-Payment is simulated. The back-end records a payment for each order against a stored (fake) card. No real payment provider is integrated, and no real money is charged.
+Payment is simulated. The back-end records a payment for each order against the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
 
 \subsection{Responsibilities}
 The back-end part of the project is responsible for persistently storing information on:
@@ -136,7 +136,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \begin{enumerate}[label=\reqlabel{FR}, start=1]
     \item Customer UI: The customer can create an account and sign up for a PrepMeUp subscription.
     \item Back-end: Persistent storage of customers, their subscriptions and their orders.
-    \item Back-end: A default package type for a ``normal'' diet, in adult and child size.
+    \item Back-end: Default package types for a ``normal'' diet, one for adults and one for children.
     \item Back-end: Keeps track of the expiration dates of the customer's past orders.
     \item Admin interface: See the next orders that should be sent.
     \item Admin interface: Register orders as sent.
@@ -174,7 +174,7 @@ Version 1.0 is the smallest system that lets a customer subscribe and receive a 
 \begin{itemize}
     \item An Android customer app (Expo, React Native) where a customer creates an account and signs up (FR-01).
     \item A back-end with persistent storage of customers, subscriptions and orders (FR-02).
-    \item One default package type for a ``normal'' diet, in adult and child size (FR-03).
+    \item Default package types for a ``normal'' diet, one for adults and one for children (FR-03).
     \item Expiry tracking per order, so the next order can be scheduled (FR-04).
     \item An administrator interface that lists upcoming orders and lets the administrator mark them as sent (FR-05, FR-06).
     \item Simulated payment and simulated supplier.

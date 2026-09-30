@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-header=$(grep -v '^#' "$1" | sed -n '/[^[:space:]]/{p;q}')
+header=$(grep -v '^#' "$1" | sed -n '/[^[:space:]]/{p;q;}')
 
 case "$header" in
   "Merge "* | "Revert \""* | "fixup! "* | "squash! "* | "amend! "*) exit 0 ;;

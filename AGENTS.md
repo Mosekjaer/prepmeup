@@ -32,6 +32,7 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 - Slå op i [context/INDEX.md](context/INDEX.md) **før** du læser kursusmateriale. Læs kun de filer, der matcher emnet. Læs aldrig `context/` igennem i blinde.
 - Hvert svar, der foreslår eller skriver kode, slutter med sektionen **Kilder** med markdown-links til de `context/`-filer og linjer, mønsteret stammer fra. Henvis også til `docs/standalone/architecture-pitch.tex`, når en lagregel er grundlaget.
 - Ingen kildehenvisninger som kommentarer i kildekoden. Kilder står i chatten, aldrig i koden.
+- `context/`-stier og linjenumre bruges kun i chatten. I `docs/` citeres originalen fra `context/<kursus>/SOURCES.md` med `\cite` og slidenummer — se Referencer i `docs/AGENTS.md`. `context/` er en lokal konvertering, som censor ikke har.
 - Findes mønsteret ikke i kursusmaterialet, skriv: `⚠ Ikke i kursusmaterialet: <begrundelse>`. Det gælder bl.a. Coolify, TanStack Query, klientgenerering til TypeScript og Keycloak-integration.
 
 ## Link-format

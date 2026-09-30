@@ -16,7 +16,7 @@
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
   1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
-  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items \\
+  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items. FR-12 moved to won't have \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -103,7 +103,7 @@ User stories are grouped into epics. Each epic lists the functional requirements
         \item As a customer, I want to add equipment packages, e.g. a flashlight, to my order, so that I get more than food and water.
     \end{enumerate}
 
-    \item \textbf{Subscription and orders} (FR-03, FR-04, FR-07, FR-10, FR-12)
+    \item \textbf{Subscription and orders} (FR-03, FR-04, FR-07, FR-10)
     \begin{enumerate}
         \item As a customer, I want to automatically receive a new order before the old one expires, so that I don't have to keep track of the expiration date myself and have a chance to use the soon-to-expire items.
         \item As a customer, I want to see the status of my next order, so that I know when to expect it.
@@ -152,8 +152,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \end{enumerate}
 
 \paragraph{COULD HAVE}
-\begin{enumerate}[label=\reqlabel{FR}, start=12]
-    \item Customer UI: Adjust the number of days the package lasts for.
+\begin{enumerate}[label=\reqlabel{FR}, start=13]
     \item Customer UI: Add equipment packages, e.g. a flashlight, to an order.
     \item Back-end: A simulated card subscription method.
     \item Admin interface: Create a new version of a package type with other contents.
@@ -161,6 +160,9 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \end{enumerate}
 
 \paragraph{WON'T HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=12]
+    \item Customer UI: Adjust the number of days the package lasts for. A customer who wants to cover more days orders more packages.
+\end{enumerate}
 \begin{enumerate}[label=\reqlabel{FR}, start=17]
     \item A custom package for each customer, depending on allergies.
     \item An integrated API to a real grocery supplier.

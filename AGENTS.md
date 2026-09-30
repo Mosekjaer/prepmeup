@@ -116,9 +116,9 @@ Reglerne står ét sted: `.githooks/check-conventions.sh`. Den bruges af `commit
 
 ## Kaneo
 
-Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
+Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag og startdato til sprintens første dag. Et spillover-kort beholder startdatoen fra den sprint, det startede i, og får den nye sprints sidste dag som forfaldsdato. Startdatoer sættes med `update_task`, som kræver godkendelse ved hvert kald, fordi det samme kald også kan ændre status og titel. Claude må fjerne labels med `detach_label_from_task`, fx sprint-labels fra kort i Backlog-visningen. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
 
-Statusskift, flytning af kort mellem kolonner, tildeling, startdatoer, estimater og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
+Statusskift, flytning af kort mellem kolonner, tildeling, estimater og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
 
 ### Sprints
 

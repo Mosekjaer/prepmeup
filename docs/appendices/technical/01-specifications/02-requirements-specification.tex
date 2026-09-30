@@ -16,7 +16,7 @@
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
   1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
-  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from packages in adult or child size. Delivery renamed to order. Item generalised into food and equipment items \\
+  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types in adult or child size. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -31,15 +31,13 @@
 
 \textbf{Order status} = Where an order is in its life cycle: \emph{planned} (scheduled, not yet sent, can be changed by the customer), \emph{sent} (dispatched by the administrator) or \emph{delivered}.
 
-\textbf{Package} = One package of a given package type and size in an order. A package is not tied to a specific person.
+\textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
 
-\textbf{Package size} = \emph{adult} or \emph{child}. The size decides which quantities of the package type are used.
+\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. It has a size (\emph{adult} or \emph{child}), and it expresses the diet. Equipment, e.g. a flashlight, is offered as its own package type without a size. A package type that has been ordered is never edited. The administrator creates a new package type and deactivates the old one, so past orders keep their contents.
 
-\textbf{Package type} = A template maintained by the administrator that defines which items a package contains, and how much of each item for the adult and the child size. The package type also expresses the diet, e.g. \emph{Vegetarian Package}. Equipment, e.g. a flashlight, is offered as its own package type.
+\textbf{Package content} = One item and its quantity in a package type.
 
 \textbf{Item} = A product that can go into a package. An item is either a \emph{food item} (including water) or an \emph{equipment item}.
-
-\textbf{Package line item} = One item and its quantity in a concrete package, with the price at the time the order was sent.
 
 \textbf{Expiry date} = The date on which the items of an order are no longer considered usable. The system schedules the next order before this date.
 
@@ -66,7 +64,7 @@ The back-end part of the project is responsible for persistently storing informa
 \begin{itemize}
     \item All customers and their subscriptions
     \item The address of each customer
-    \item The packages in each order, with package type and size
+    \item The packages in each order and their package types
     \item The expiration date of the last order
 \end{itemize}
 
@@ -82,7 +80,7 @@ The client part of the project provides a user interface for the customer, where
 The administrator interface should make it possible to:
 \begin{itemize}
     \item Add package types for the customers to choose between
-    \item Change what a package type should contain
+    \item Replace a package type with a new version with different contents
     \item See which orders should be sent
 \end{itemize}
 
@@ -120,7 +118,7 @@ User stories are grouped into epics. Each epic lists the functional requirements
     \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)
     \begin{enumerate}
         \item As an administrator, I want to be able to add new types of packages, so that I can give customers more choices.
-        \item As an administrator, I want to change pre-existing packages by adding and deleting items, so that I can keep their contents up to date.
+        \item As an administrator, I want to replace a package type with a new version with other items, so that I can keep the contents up to date without changing past orders.
     \end{enumerate}
 
     \item \textbf{Dispatch} (FR-05, FR-06)
@@ -148,7 +146,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \begin{enumerate}[label=\reqlabel{FR}, start=7]
     \item Customer UI: See the status of your orders and change a planned order.
     \item Customer UI: Change profile settings and address.
-    \item Customer UI: Choose the number of adult and child packages in an order, and the package type of each package.
+    \item Customer UI: Choose which package types an order contains, and how many of each.
     \item Back-end: A simulated card payment method.
     \item Admin interface: Create a package type.
 \end{enumerate}
@@ -158,7 +156,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
     \item Customer UI: Adjust the number of days the package lasts for.
     \item Customer UI: Add equipment packages, e.g. a flashlight, to an order.
     \item Back-end: A simulated card subscription method.
-    \item Admin interface: Change the contents of a package.
+    \item Admin interface: Replace a package type with a new version and deactivate the old one.
     \item Customer UI: Web build of the customer app.
 \end{enumerate}
 

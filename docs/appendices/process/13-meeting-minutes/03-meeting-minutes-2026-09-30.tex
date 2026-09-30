@@ -1,0 +1,107 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 03-meeting-minutes-2026-09-30.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{13.3 Mødereferat -- 30-09}
+\author{SW4PRJ4 -- Group 3}
+\date{30-09-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 30-09-2026 (onsdag)
+
+\textbf{Tid:} 11:00
+
+\textbf{Sted:} Incuba
+
+\textbf{Referent:} Frederik
+
+\section*{Deltagere}
+
+\begin{itemize}
+    \item Alexander H
+    \item Alexander D
+    \item Frederik
+    \item Ida D
+    \item Malthe
+    \item Marie
+    \item Oskar
+\end{itemize}
+
+\textbf{Fraværende:}
+
+\begin{itemize}
+    \item Ida F
+\end{itemize}
+
+\section*{Dagsorden}
+
+\begin{enumerate}
+    \item Sprint review -- sprint 1
+    \item Retrospective
+    \item Sprint planning -- sprint 2
+    \item Eventuelt
+\end{enumerate}
+
+\section*{Noter}
+\subsection*{1. Sprint review}
+
+\begin{itemize}
+    \item Alt, der står i \emph{Done}, er færdigt fra sprint 1: 12 kort (34 point).
+    \item 8 kort (23 point) er ikke færdige: PMU-2 og PMU-12 er i gang, og PMU-3, PMU-4, PMU-13, PMU-18, PMU-19 og PMU-70 er ikke påbegyndt.
+    \item Den første spike er ikke helt i mål. Vi demonstrerer og tester den først, når der er noget, vi rent faktisk kan demonstrere fra ende til anden.
+    \item Velocity for sprint 1: committed 57 point, done 34 point, spillover 23 point, scope 57 point. Scope tæller kun estimerede kort; backloggen har endnu ingen point-labels.
+\end{itemize}
+
+\subsection*{2. Retrospective}
+
+\begin{itemize}
+    \item \textbf{Hvad gik godt?} AI-opsætningen og strukturen i hele projektet. Alle er sat ind i, hvordan opsætningen fungerer. Den første afgrænsning af projektet er så lille, at ingen bliver overvældet: man kan overskue helheden og dykke ned i sine egne opgaver.
+    \item \textbf{Hvad gik skidt?} Man har ikke overblik over, hvad den anden undergruppe har lavet, før vi holder en demo, og den kan vi ikke holde endnu.
+    \item \textbf{Hvad ændrer vi?} Hver sprint slutter med en demo, så alle også kender de dele, de ikke selv har arbejdet på. Vi vil have et lille sæt overbliksdiagrammer, fx et E/R-diagram, som man kan slå op i. Kun diagrammer, der bliver brugt.
+\end{itemize}
+
+\subsection*{3. Sprint planning}
+
+\begin{itemize}
+    \item Sprint 2 bliver en mini-sprint på én uge, så vi kan holde sprint review med demo onsdag i næste uge.
+    \item Målet er at blive færdige med det, der mangler fra sprint 1.
+    \item Ud over resten af sprint 1-kortene leverer sprinten et E/R-diagram og et low fidelity UI-mockup lavet i PowerPoint.
+    \item E/R-diagrammet og mockuppet er oprettet som PMU-71 og PMU-72 og laves af gruppe 2.
+    \item De 8 kort fra sprint 1 er flyttet til sprint 2 og har fået label \emph{Sprint 2} oveni \emph{Sprint 1}.
+    \item Kortene i backloggen skal ikke have sprint-labels, før de bliver trukket ind ved en sprint planning.
+\end{itemize}
+
+\section*{Beslutninger}
+
+\begin{itemize}
+    \item Sprint 2 er en mini-sprint på én uge (30/9 -- 6/10), så der kan holdes demo til sprint review onsdag 7/10. Sprint 3 -- 6 rykkes en uge frem, så sprint 6 slutter 1/12.
+    \item Sprint 2 skal gøre sprint 1 færdig og levere et E/R-diagram og et low fidelity UI-mockup i PowerPoint.
+    \item Hver sprint slutter fremover med en demo.
+    \item Til næste sprint review gennemgår hver af os, hvad vi selv har lavet.
+    \item Kort i backloggen har ingen sprint-label. Sprint-labelen sættes, når kortet trækkes ind ved sprint planning.
+\end{itemize}
+
+\section*{Opgaver}
+
+\begin{itemize}
+    \item \textbf{Ansvarlig:} Frederik \textbf{Opgave:} Indkald Michel til møde tirsdag 6/10 på et tidspunkt, hvor han har tid
+    \item \textbf{Ansvarlig:} Gruppe 2 \textbf{Opgave:} E/R-diagram (PMU-71) \textbf{Frist:} tirsdag 6/10
+    \item \textbf{Ansvarlig:} Gruppe 2 \textbf{Opgave:} Low fidelity UI-mockup i PowerPoint (PMU-72) \textbf{Frist:} tirsdag 6/10
+    \item \textbf{Ansvarlig:} Ejerne af kortene \textbf{Opgave:} Gør de resterende sprint 1-kort færdige (PMU-2, PMU-3, PMU-4, PMU-12, PMU-13, PMU-18, PMU-19, PMU-70) \textbf{Frist:} tirsdag 6/10
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Forbered en gennemgang af det, man selv har lavet, til sprint review \textbf{Frist:} onsdag 7/10
+\end{itemize}
+
+\section*{Næste møde}
+
+\begin{itemize}
+    \item Tirsdag 6/10: møde med Michel. Tidspunkt aftales med ham.
+    \item Onsdag 7/10: sprint review med demo, retrospective og sprint planning for sprint 3.
+\end{itemize}
+
+\end{document}

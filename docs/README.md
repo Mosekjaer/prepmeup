@@ -58,8 +58,12 @@ Appendices are standalone documents and compile individually:
 
 ```
 cd docs/appendices/technical/02-analysis
-latexmk -pdf 01-technical-analysis.tex
+latexmk -pdf -outdir=build 01-technical-analysis.tex
 ```
+
+`-outdir=build` matters: `latexmkrc` is only read from `docs/`, so without the flag
+the aux files land next to the `.tex` file. A stale `.bbl` there makes the VS Code
+build run `bibtex` instead of `biber` and fail.
 
 ## Inserting DrawIO diagrams
 

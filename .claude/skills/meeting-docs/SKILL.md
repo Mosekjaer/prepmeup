@@ -49,8 +49,10 @@ Escape `&` `%` `_` `#` `$` som `\&` `\%` `\_` `\#` `\$`. Punkter i `itemize`, da
 ## Efter hver ændring
 
 ```bash
-cd docs/appendices/process/13-meeting-minutes && latexmk -pdf NN-meeting-minutes-YYYY-MM-DD.tex
+cd docs/appendices/process/13-meeting-minutes && latexmk -pdf -outdir=build NN-meeting-minutes-YYYY-MM-DD.tex
 ```
+
+Dagsordener bygges på samme måde fra `12-meeting-invitations`. `-outdir=build` er obligatorisk: `docs/latexmkrc` læses ikke fra undermapperne, så uden flaget havner `.aux`/`.bbl` ved siden af `.tex`-filen, og VS Code's build (der bruger `build/`) kører derefter `bibtex` i stedet for `biber` og fejler.
 
 Rapportér fejl ordret. Svar altid: hvad blev tilføjet i hvilken sektion + link til filen i formatet `[sti:linjer](sti#Lx-Ly)`.
 

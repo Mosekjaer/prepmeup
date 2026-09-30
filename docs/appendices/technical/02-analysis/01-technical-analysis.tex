@@ -3,6 +3,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\addbibresource{../../../assets/references.bib}
 
 \title{2.1 Technical Analysis}
 \author{SW4PRJ4 -- Group 3}
@@ -328,21 +329,23 @@ We use AI assistants as a development tool (decided on 09-09). To keep the work 
 \end{itemize}
 
 \section*{Sources}
-Expo, Expo Router and generating a TypeScript client with NSwag are not covered by the course material; the course teaches React for the web and .NET MAUI for native apps, and uses NSwag only for C\# clients. Coolify and Keycloak integration are not covered either; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered either -- the course teaches CI with GitLab CI. The principles used in section~\ref{sec:ops} are from the course:
+Expo, Expo Router and generating a TypeScript client with NSwag are not covered by the course material; the course teaches React for the web and .NET MAUI for native apps, and uses NSwag only for C\# clients. Coolify and Keycloak integration are not covered either; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered -- the course teaches CI with GitLab CI. The principles used in this appendix are from the course:
 \begin{itemize}
-    \item Multi-stage Docker build and publishing images to a registry: \path{context/bad/markdown/01-intro-og-docker/docker.md}, lines 135--156.
-    \item CI as an automated build including tests: \path{context/swt/markdown/02.1-continuous-integration/01-Continuous-Integration.md}, lines 43--50.
-    \item Reverse proxy, HTTPS only at the proxy, forwarded headers: \path{context/bad/markdown/11-release-security/release-og-deployment.md}, lines 42--85.
-    \item Production secrets only on the production host: same file, lines 125--131.
-    \item APIs should only accept HTTPS, HSTS: \path{context/bad/markdown/11-release-security/https.md}, lines 89--110.
-    \item JWT claims (issuer, expiration, audience) and signature validation: \path{context/bad/markdown/10-auth/json-web-token.md}, lines 49--52 and 76--129.
-    \item Keycloak listed as an identity provider: \path{context/bad/markdown/10-auth/authentication-og-authorization.md}, line 808.
-    \item React is independent of the renderer (React DOM, React Native): \path{context/fed/markdown/slides/SW4FED-02_L16.1_React_Overview.md}, lines 62--67.
-    \item Vite as build tool for React: same file, lines 105--122.
-    \item .NET MAUI targets Windows, macOS, iOS and Android: \path{context/fed/markdown/slides/SW4FED-02_L01.6_MAUI_introduction.md}, line 43.
-    \item React Router and serving the same page on all client-side routes: \path{context/fed/markdown/slides/SW4FED-02_L17.3_React_Router.md}, lines 82--111.
-    \item NSwag-generated clients and their value as the API grows: \path{context/fed/markdown/book/MAUI_in_Action_Ch08_Enterprise_app_development.md}, lines 668--671.
-    \item Vitest with jsdom and React Testing Library: \path{context/fed/markdown/slides/SW4FED-02_L23.2_Testing_med_Vitest.md}, lines 127--160.
+    \item Multi-stage Docker build and publishing images to a registry \cite[slides 13 and 15]{sw4bad-docker}.
+    \item CI as an automated build including tests \cite[slide 3]{sw4swt-continuous-integration}.
+    \item Reverse proxy, HTTPS only at the proxy, forwarded headers \cite[slides 5--7]{sw4bad-release-deployment}.
+    \item Production secrets only on the production host \cite[slide 13]{sw4bad-release-deployment}.
+    \item APIs should only accept HTTPS, HSTS \cite[slides 11--13]{sw4bad-https}.
+    \item JWT claims (issuer, expiration, audience) and signature validation \cite[slides 6, 9 and 18--20]{sw4bad-jwt}.
+    \item Keycloak listed as an identity provider \cite[slide 70]{sw4bad-authentication}.
+    \item React is independent of the renderer (React DOM, React Native) \cite[slide 7]{sw4fed-react-overview}.
+    \item Vite as build tool for React \cite[slides 12--14]{sw4fed-react-overview}.
+    \item .NET MAUI targets Windows, macOS, iOS and Android \cite[slide 4]{sw4fed-maui-introduction}.
+    \item React Router and serving the same page on all client-side routes \cite[slides 6--7]{sw4fed-react-router}.
+    \item NSwag-generated clients and their value as the API grows \cite[sec.~8.3]{goldman-maui-in-action}.
+    \item Vitest with jsdom and React Testing Library \cite[slides 13--14]{sw4fed-vitest}.
 \end{itemize}
+
+\printbibliography
 
 \end{document}

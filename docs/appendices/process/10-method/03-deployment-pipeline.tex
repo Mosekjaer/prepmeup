@@ -3,6 +3,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\addbibresource{../../../assets/references.bib}
 \usepackage{listings}
 
 \lstset{basicstyle=\ttfamily\small, columns=fullflexible, breaklines=true}
@@ -161,20 +162,22 @@ Parts of the chain cannot be created from the repository, and a clone of the rep
 \end{itemize}
 
 \section{Course Material and Choice of Tools}
-The principles behind this chain come from the course material: continuous integration as one automated build including tests, the steps of a typical CI job and its trigger sequence (SWT material on continuous integration); GitHub Flow with \texttt{main} always deployable and review before integration (SWT material on git workflows); the multi-container application defined in a single compose file with health checks and start-up conditions (BAD material on Docker Compose); production secrets only on the production host and environment-dependent configuration through \texttt{ASPNETCORE\_ENVIRONMENT} (BAD material on release and deployment); and migration bundles as a recommended way to bring schema changes to production (BAD book material, chapter 12).
+The principles behind this chain come from the course material: continuous integration as one automated build including tests, the steps of a typical CI job and its trigger sequence \cite{sw4swt-continuous-integration}; GitHub Flow with \texttt{main} always deployable and review before integration \cite{sw4swt-git-workflows}; the multi-container application defined in a single compose file with health checks and start-up conditions \cite{sw4bad-docker-compose,sw4bad-docker-compose-release}; production secrets only on the production host and environment-dependent configuration through \texttt{ASPNETCORE\_ENVIRONMENT} \cite{sw4bad-release-deployment}; and migration bundles as a recommended way to bring schema changes to production \cite[ch.~12]{desanctis-web-apis-aspnet-core}.
 
 The tools are not from the course material. The course teaches CI with GitLab CI and deployment to an Azure virtual machine with IIS and a Visual Studio publish profile. We use GitHub Actions, GitHub Container Registry and Coolify on the group's own server. That choice is ours and stands on its own reasons: the repository is already on GitHub, so the CI runner, the registry and the permission model are the same system and need no credentials passed between them; and Coolify runs a plain Docker Compose stack on hardware the group controls, which keeps the deployed topology identical to the one we run locally and costs nothing per month. The mapping to the course material is at the level of principle -- one automated build including tests as the only route to an artefact, secrets only on the host, migrations as their own step -- not at the level of product names.
 
 \section*{Sources}
 \begin{itemize}
-    \item CI definition and graded builds: \path{context/swt/markdown/02.1-continuous-integration/01-Continuous-Integration.md}, lines 43--50 and 76--106.
-    \item Steps of a typical CI job and the trigger sequence: same file, lines 124--160.
-    \item GitHub Flow, \texttt{main} always deployable, review before integration: \path{context/swt/markdown/02.2-git-workflow/02-Git-Workflows.md}, lines 163--170 and 275--284.
-    \item Compose as the definition of a multi-container application; services as replaceable units: \path{context/bad/markdown/01-intro-og-docker/docker-compose.md}, lines 19--30 and 74--81.
-    \item Health check and \texttt{depends\_on: condition: service\_healthy} against MSSQL: same file, lines 122--145.
-    \item Production secrets belong on the production host; environment-dependent configuration: \path{context/bad/markdown/11-release-security/release-og-deployment.md}, lines 109--131 and 156--178.
-    \item Migration bundles as a recommended path to production: \path{context/bad/markdown/bog/12-release-deployment.md}, chapter 12.
-    \item Layering rules and the composition root: \path{docs/standalone/architecture-pitch.tex}.
+    \item CI definition and graded builds \cite[slides 3 and 5]{sw4swt-continuous-integration}.
+    \item Steps of a typical CI job and the trigger sequence \cite[slides 7--8]{sw4swt-continuous-integration}.
+    \item GitHub Flow, \texttt{main} always deployable, review before integration \cite[slides 9--10 and 16]{sw4swt-git-workflows}.
+    \item Compose as the definition of a multi-container application; services as replaceable units \cite[slides 2--3 and 7]{sw4bad-docker-compose}.
+    \item Health check and \texttt{depends\_on: condition: service\_healthy} against MSSQL \cite[slide 11]{sw4bad-docker-compose-release}.
+    \item Production secrets belong on the production host; environment-dependent configuration \cite[slides 11--13]{sw4bad-release-deployment}.
+    \item Migration bundles as a recommended path to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}.
+    \item Layering rules and the composition root: the architecture pitch, \path{docs/standalone/architecture-pitch.tex}.
 \end{itemize}
+
+\printbibliography
 
 \end{document}

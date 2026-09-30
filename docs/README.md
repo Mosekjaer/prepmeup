@@ -28,8 +28,8 @@ copy latexmkrc.example latexmkrc      # Windows
 cp   latexmkrc.example latexmkrc      # Linux / macOS
 ```
 
-`latexmkrc` is **local only** (gitignored) because Overleaf would otherwise read
-it and break — Overleaf compiles with its own defaults. The file does three things:
+`latexmkrc` is **local only** (gitignored) because it has machine-specific paths
+(e.g. the draw.io binary location). The file does three things:
 
 1. `$out_dir = 'build'` — every build artifact (aux, log, PDF, ...) goes to
    `build/`, which is gitignored. Your report ends up at `build/main.pdf`.
@@ -71,9 +71,10 @@ latexmk -pdf 01-technical-analysis.tex
 \drawiofig[0.5\linewidth]{<name>}{Half width}{fig:small}
 ```
 
-latexmk runs draw.io for you during compilation. **Commit the generated
-`assets/drawio/*.pdf` as well** — Overleaf cannot run draw.io, it uses the
-committed PDF. (An example lives in `report/chapters/1_introduction.tex`.)
+latexmk runs draw.io for you during compilation and regenerates
+`assets/drawio/*.pdf` whenever the `.drawio` source is new or has changed.
+That generated PDF is a build artifact and is gitignored — only commit the
+`.drawio` source. (An example lives in `report/chapters/1_introduction.tex`.)
 
 ## Git sync
 
@@ -91,13 +92,6 @@ git push -u origin HEAD
 ```
 
 Then open a pull request against `main` on GitHub.
-
-First push/pull asks for credentials: username `git` (sometimes only your overleaf email works, which ever was used to log in with), password is a **Git token**
-generated in Overleaf under Account Settings -> Git integration (not your AU
-password). Windows caches it after the first time.
-
-If the project is also opened in Overleaf (via GitHub sync), set
-**Menu -> Main document -> `docs/main.tex`**.
 
 ## The `.vscode/` folder
 

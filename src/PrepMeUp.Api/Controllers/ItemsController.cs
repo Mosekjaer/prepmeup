@@ -10,11 +10,12 @@ namespace PrepMeUp.Api.Controllers;
 [Authorize] // A client must be logged in to make this request
 public class ItemsController(IItemRepository itemRepository) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetItems(CancellationToken cancellationToken)
+    [HttpGet(Name = "Items_GetItems")]
+    [ProducesResponseType<IEnumerable<ItemResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItems(CancellationToken cancellationToken)
     {
         var items = await itemRepository.GetAllAsync(cancellationToken);
-        var response = items.Select(item => new ItemResponse(item.Id, item.Name));
-        return Ok(response);
+        return Ok(items.Select(item => new ItemResponse(item.Id, item.Name)));
     }
 }

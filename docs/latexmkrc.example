@@ -1,7 +1,7 @@
 # ============================================================
-#  Local latexmk config (NOT pushed to Overleaf - see .gitignore).
-#  Overleaf compiles with its own defaults; the drawio PDFs are
-#  committed to git so Overleaf can use them without draw.io.
+#  Local latexmk config (gitignored - see .gitignore). Has
+#  machine-specific paths (e.g. the draw.io binary location),
+#  so each clone copies latexmkrc.example instead of committing it.
 # ============================================================
 $out_dir = 'build';            # all build artifacts go to build/
 $pdf_mode = 1;

@@ -1,13 +1,12 @@
 # ============================================================
-#  Build artifacts stay local - they are never pushed to Overleaf.
-#  Overleaf compiles the .tex sources itself.
+#  Build artifacts stay local.
 # ============================================================
 
 # All compile output lives here (see latexmkrc)
 build/
 
-# Local-only latexmk config (Overleaf would read a root latexmkrc
-# and break; teammates: copy latexmkrc.example -> latexmkrc)
+# Local-only latexmk config (has machine-specific paths;
+# teammates: copy latexmkrc.example -> latexmkrc)
 /latexmkrc
 
 # Local reference copy of the AU report template
@@ -36,10 +35,12 @@ rapport-eksempel-main/
 *.vrb
 _minted*
 
-# Compiled PDFs are build output - EXCEPT figure PDFs under assets/,
-# which Overleaf needs (it cannot run draw.io itself)
+# Compiled PDFs are build output, EXCEPT assets/figures/*.pdf:
+# latexmk has no rule to rebuild those (plain standalone TikZ),
+# so they're committed by hand. assets/drawio/*.pdf IS rebuilt
+# automatically by the drawio rule in latexmkrc, so it stays ignored.
 *.pdf
-!assets/**/*.pdf
+!assets/figures/*.pdf
 
 # DrawIO temp files
 *.drawio.bkp

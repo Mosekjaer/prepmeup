@@ -21,8 +21,7 @@
       "generateOptionalParameters": true,
       "exportTypes": true,
       "markOptionalProperties": true,
-      "useTransformOptionsMethod": true,
-      "injectionTokenType": "None",
+      "useTransformOptionsMethod": false,
       "output": "src/generated/api.ts"
     }
   }

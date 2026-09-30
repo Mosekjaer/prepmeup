@@ -9,7 +9,6 @@
     "latex-workshop.view.pdf.viewer": "tab",
 
     // pdflatex + -shell-escape: minted needs shell-escape to call pygmentize.
-    // pdflatex also matches what Overleaf compiles with.
     "latex-workshop.latex.tools": [
         {
             "name": "latexmk-shellescape",

@@ -15,3 +15,9 @@
 **Pattern:** Bilag 2.1 citerede kun Brightspace-slides, og emner uden kursusdækning (NSwag, Expo, Keycloak, Coolify, SQL Server-licens) stod bare som "not covered" uden kilde.
 **Rule:** Citér kursusbøgerne (De Sanctis, Goldman, React Quickly, Database Systems) med kapitel/afsnit og trykt side, hvor de dækker påstanden — ikke kun slides. Er emnet ikke i pensum, så find en primærkilde online (RFC, OpenID-spec, officiel leverandørdokumentation, anerkendt bog) og verificér siden, før den citeres. Aldrig blogs, Medium, StackOverflow eller tutorial-sites.
 **Context:** PMU-18, `docs/appendices/technical/02-analysis/01-technical-analysis.tex` og `docs/assets/references.bib`.
+
+## 2026-09-30 — Webkilder sparsomt; bog og Brightspace først
+
+**Pattern:** Efter "find online kilder" satte jeg ~60 webkilder ind i bilag 2.1 — også på påstande som bøgerne og slides allerede dækkede, og på trivielle fakta (health checks, volumes, restart-policy).
+**Rule:** Bog- og Brightspace-kilder er førstevalg. Webkilde kun når pensum og bøger er tavse OG påstanden bærer en beslutning, en afvigelse eller en rettelse. Højst én webkilde pr. emne. Ingen webkilde ved siden af en bog- eller slidekilde, der allerede dækker påstanden.
+**Context:** PMU-18, `docs/appendices/technical/02-analysis/01-technical-analysis.tex`. Endte på 10 webkilder mod 32 citerede i alt.

@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrepMeUp.Api.Contracts;
+using PrepMeUp.Application;
 
 namespace PrepMeUp.Api.Controllers;
 
 [ApiController]
 [Route("items")]
-[Authorize]
-public class ItemsController : ControllerBase
+[Authorize] // A client must be logged in to make this request
+public class ItemsController(IItemRepository itemRepository) : ControllerBase
 {
     [HttpGet(Name = "Items_GetItems")]
     [ProducesResponseType<IEnumerable<ItemResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<IEnumerable<ItemResponse>> GetItems() =>
-        Ok(new[] { new ItemResponse("Ida x2"), new ItemResponse("Marie"), new ItemResponse("Malthe") });
+    public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItems(CancellationToken cancellationToken)
+    {
+        var items = await itemRepository.GetAllAsync(cancellationToken);
+        return Ok(items.Select(item => new ItemResponse(item.Id, item.Name)));
+    }
 }

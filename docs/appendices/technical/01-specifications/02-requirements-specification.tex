@@ -1,5 +1,5 @@
 % Standalone appendix document - compiles on its own:
-%   latexmk -pdf 02-requirements-specification.tex
+%   latexmk -pdf -outdir=build 02-requirements-specification.tex
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
@@ -16,37 +16,32 @@
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
   1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
+  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items. FR-12 moved to won't have \\
 \end{versionhistory}
 
 \section{Glossary}
 
-\textbf{Customer} = The person who has an account and subscribes their household
+\textbf{Customer} = The person who has an account and a subscription
 
-\textbf{Administrator} = An employee of PrepMeUp who maintains package types and dispatches deliveries through the administrator interface
+\textbf{Administrator} = An employee of PrepMeUp who maintains package types and dispatches orders through the administrator interface
 
-\textbf{Household} = A collection of household members at a given address. Can be one single person.
+\textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. Has a status (active, paused, cancelled).
 
-\textbf{Household member} = A single person in a household.
+\textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned.
 
-\textbf{Diet} = Dietary preference for a household member.
+\textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (dispatched by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
 
-\textbf{Subscription} = A household's standing agreement to receive a new delivery before the previous one expires. Has a status (active, paused, cancelled).
+\textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
 
-\textbf{Package} = Food according to diet and enough water for one household member.
+\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. Equipment, e.g. a flashlight, is offered as its own package type. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
 
-\textbf{Package item} = An item that goes into a package
+\textbf{Package content} = One item and its quantity in a package type.
 
-\textbf{Package type} = A template maintained by the administrator that defines which items, and how much per person, a package for a given diet contains.
+\textbf{Item} = A product that can go into a package. An item is either a \emph{food item} (including water) or an \emph{equipment item}.
 
-\textbf{Package line item} = One item and its quantity in a concrete package, as it was delivered.
+\textbf{Expiry date} = The date on which the items of an order are no longer considered usable. The system schedules the next order before this date.
 
-\textbf{Delivery} = A delivery of packages for a single household.
-
-\textbf{Delivery status} = Where a delivery is in its life cycle: \emph{planned} (scheduled, not yet sent), \emph{sent} (dispatched by the administrator) or \emph{delivered}.
-
-\textbf{Expiry date} = The date on which the items of a delivery are no longer considered usable. The system schedules the next delivery before this date.
-
-\textbf{Notification} = A message from the system to a customer or administrator, e.g. that a new delivery is about to be sent.
+\textbf{Notification} = A message from the system to a customer, e.g. that a new order is about to be sent.
 
 \section{System Description}
 This system constitutes:
@@ -62,33 +57,31 @@ Customers can sign up for a prepping subscription called ``PrepMeUp'' through th
 The customer user interface is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
-Payment is simulated. The back-end records a payment for each delivery against a stored (fake) card. No real payment provider is integrated, and no real money is charged.
+Payment is simulated. The back-end records a payment for each order against the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
 
 \subsection{Responsibilities}
 The back-end part of the project is responsible for persistently storing information on:
 \begin{itemize}
-    \item All subscribed households
-    \item Household members
-    \item The diet of the given household
-    \item How much water the entire household needs for three days
-    \item The address of the household
-    \item The expiration date of the last delivery
+    \item All customers and their subscriptions
+    \item The address of each customer
+    \item The packages in each order and their package types
+    \item The expiration date of the last order
 \end{itemize}
 
 The back-end is also responsible for:
 \begin{itemize}
-    \item Initiating the delivery of new packages shortly before the old one expires
-    \item Alerting the customer that they will soon receive a new package
-    \item Alerting the administration that a new package is needed
+    \item Creating the next order shortly before the previous one expires
+    \item Alerting the customer that they will soon receive a new order
+    \item Alerting the administration that a new order is ready to be sent
 \end{itemize}
 
-The client part of the project provides a user interface for the customer, where they can sign up their household with all the information needed.
+The client part of the project provides a user interface for the customer, where they can sign up and compose their order from adult and child packages.
 
 The administrator interface should make it possible to:
 \begin{itemize}
-    \item Add packages for the customers to choose between
-    \item Change what a prepping package should contain
-    \item See which deliveries should be sent
+    \item Add package types for the customers to choose between
+    \item Replace a package type with a new version with different contents
+    \item See which orders should be sent
 \end{itemize}
 
 \section{Epics and User Stories}
@@ -97,40 +90,41 @@ User stories are grouped into epics. Each epic lists the functional requirements
 \begin{enumerate}
     \item \textbf{Account} (FR-01, FR-08)
     \begin{enumerate}
-        \item As a new customer, I want to be able to create an account, so that my user data, household data, and stock are saved between sessions.
-        \item As a customer, I want to log in with my e-mail and password, so that only I can see and change my household.
+        \item As a new customer, I want to be able to create an account, so that my user data, subscription, and orders are saved between sessions.
+        \item As a customer, I want to log in with my e-mail and password, so that only I can see and change my orders.
         \item As a customer, I want to change my password, so that I can keep my account secure.
         \item As a customer, I want to delete my account, so that my personal data is removed when I no longer use the service.
     \end{enumerate}
 
-    \item \textbf{Household} (FR-02, FR-08, FR-09, FR-13)
+    \item \textbf{Order contents} (FR-02, FR-08, FR-09, FR-13)
     \begin{enumerate}
-        \item As a customer, I want to be able to adjust the number of people in my household, so that my deliveries match the current household size.
-        \item As a customer, I want to choose a diet for my household, so that the packages contain food we actually eat.
+        \item As a customer, I want to choose how many adult and child packages my order contains, so that my orders match the number of people I prepare for.
+        \item As a customer, I want to choose the package type of each package, so that one person can get a vegetarian package and another a standard package.
+        \item As a customer, I want to add equipment packages, e.g. a flashlight, to my order, so that I get more than food and water.
     \end{enumerate}
 
-    \item \textbf{Subscription and deliveries} (FR-03, FR-04, FR-07, FR-10, FR-12)
+    \item \textbf{Subscription and orders} (FR-03, FR-04, FR-07, FR-10)
     \begin{enumerate}
-        \item As a customer, I want to automatically receive a new prepping package before the old one expires, so that I don't have to keep track of the expiration date myself and have a chance to use the soon-to-expire items.
-        \item As a customer, I want to see the status of my next delivery, so that I know when to expect it.
-        \item As a customer, I want to pause or cancel my subscription, so that I am not sent packages I do not need.
+        \item As a customer, I want to automatically receive a new order before the old one expires, so that I don't have to keep track of the expiration date myself and have a chance to use the soon-to-expire items.
+        \item As a customer, I want to see the status of my next order, so that I know when to expect it.
+        \item As a customer, I want to pause or cancel my subscription, so that I am not sent orders I do not need.
     \end{enumerate}
 
     \item \textbf{Notifications} (FR-04)
     \begin{enumerate}
-        \item As a customer, I want to receive a notification shortly before my next delivery is sent, so that I have a chance to make changes (e.g. household members, diet).
+        \item As a customer, I want to receive a notification shortly before my next order is sent, so that I have a chance to make changes (e.g. number of packages, package types).
     \end{enumerate}
 
     \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)
     \begin{enumerate}
         \item As an administrator, I want to be able to add new types of packages, so that I can give customers more choices.
-        \item As an administrator, I want to change pre-existing packages by adding and deleting items, so that I can keep their contents up to date.
+        \item As an administrator, I want to replace a package type with a new version with other items, so that I can keep the contents up to date without changing past orders.
     \end{enumerate}
 
     \item \textbf{Dispatch} (FR-05, FR-06)
     \begin{enumerate}
-        \item As an administrator, I want to see the deliveries that should be sent, sorted by which delivery should be sent first.
-        \item As an administrator, I want to mark a delivery as sent, so that the customer can see it is on its way.
+        \item As an administrator, I want to see the orders that should be sent, sorted by which order should be sent first.
+        \item As an administrator, I want to mark an order as sent, so that the customer can see it is on its way.
     \end{enumerate}
 \end{enumerate}
 
@@ -140,35 +134,37 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 
 \paragraph{MUST HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=1]
-    \item Customer UI: The customer can create an account and sign their household up for a PrepMeUp subscription.
-    \item Back-end: Persistent storage of customers and their registered households.
-    \item Back-end: A default package for a household member with a ``normal'' diet.
-    \item Back-end: Keeps track of the expiration dates of the customer's past deliveries.
-    \item Admin interface: See the next deliveries that should be sent.
-    \item Admin interface: Register deliveries as sent.
+    \item Customer UI: The customer can create an account and sign up for a PrepMeUp subscription.
+    \item Back-end: Persistent storage of customers, their subscriptions and their orders.
+    \item Back-end: Default package types for a ``normal'' diet, one for adults and one for children.
+    \item Back-end: Keeps track of the expiration dates of the customer's past orders.
+    \item Admin interface: See the next orders that should be sent.
+    \item Admin interface: Register orders as sent.
 \end{enumerate}
 
 \paragraph{SHOULD HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=7]
-    \item Customer UI: See the status of your deliveries and change them.
-    \item Customer UI: Change profile and household settings.
-    \item Customer UI: Choose a diet for the whole household.
+    \item Customer UI: See the status of your orders and change a planned order.
+    \item Customer UI: Change profile settings and address.
+    \item Customer UI: Choose which package types an order contains, and how many of each.
     \item Back-end: A simulated card payment method.
     \item Admin interface: Create a package type.
 \end{enumerate}
 
 \paragraph{COULD HAVE}
-\begin{enumerate}[label=\reqlabel{FR}, start=12]
-    \item Customer UI: Adjust the number of days the package lasts for.
-    \item Customer UI: Set a diet for each household member.
+\begin{enumerate}[label=\reqlabel{FR}, start=13]
+    \item Customer UI: Add equipment packages, e.g. a flashlight, to an order.
     \item Back-end: A simulated card subscription method.
-    \item Admin interface: Change the contents of a package.
+    \item Admin interface: Create a new version of a package type with other contents.
     \item Customer UI: Web build of the customer app.
 \end{enumerate}
 
 \paragraph{WON'T HAVE}
+\begin{enumerate}[label=\reqlabel{FR}, start=12]
+    \item Customer UI: Adjust the number of days the package lasts for. A customer who wants to cover more days orders more packages.
+\end{enumerate}
 \begin{enumerate}[label=\reqlabel{FR}, start=17]
-    \item A custom package for each household, depending on diet and allergies.
+    \item A custom package for each customer, depending on allergies.
     \item An integrated API to a real grocery supplier.
 \end{enumerate}
 
@@ -176,13 +172,13 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 We build the software side of the system. Hardware, logistics and the actual grocery supply are outside the project.
 
 \subsection{Version 1.0 -- minimum viable product}
-Version 1.0 is the smallest system that lets a household subscribe and receive a first delivery. It contains:
+Version 1.0 is the smallest system that lets a customer subscribe and receive a first order. It contains:
 \begin{itemize}
-    \item An Android customer app (Expo, React Native) where a customer creates an account and signs up their household (FR-01).
-    \item A back-end with persistent storage of customers and households (FR-02).
-    \item One default package type for a ``normal'' diet, sized by number of household members (FR-03).
-    \item Expiry tracking per delivery, so the next delivery can be scheduled (FR-04).
-    \item An administrator interface that lists upcoming deliveries and lets the administrator mark them as sent (FR-05, FR-06).
+    \item An Android customer app (Expo, React Native) where a customer creates an account and signs up (FR-01).
+    \item A back-end with persistent storage of customers, subscriptions and orders (FR-02).
+    \item Default package types for a ``normal'' diet, one for adults and one for children (FR-03).
+    \item Expiry tracking per order, so the next order can be scheduled (FR-04).
+    \item An administrator interface that lists upcoming orders and lets the administrator mark them as sent (FR-05, FR-06).
     \item Simulated payment and simulated supplier.
 \end{itemize}
 
@@ -191,7 +187,7 @@ Version 1.0 is the smallest system that lets a household subscribe and receive a
     \item Integration with a real grocery supplier or a real payment provider.
     \item iOS build of the customer app.
     \item Medicine and other prescription or regulated goods.
-    \item Individually composed packages per household based on allergies.
+    \item Individually composed packages per customer based on allergies.
 \end{itemize}
 
 \section{Non-functional Requirements}
@@ -227,7 +223,7 @@ Each non-functional requirement is stated so it can be measured rather than judg
 
 \paragraph{Security}
 \begin{enumerate}[label=\reqlabel{NFR}, start=9]
-    \item A customer can only view and change their own household's data. A request for another household's data is rejected with HTTP 403.
+    \item A customer can only view and change their own data (subscription, orders, address). A request for another customer's data is rejected with HTTP 403.
     \item Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403.
     \item Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401.
 \end{enumerate}

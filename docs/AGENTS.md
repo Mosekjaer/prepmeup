@@ -59,7 +59,7 @@ Agenter tegner og retter diagrammer med skill'en `drawio-skill` (`.claude/skills
 - `latexmk` køres fra `docs/`, ikke fra repo-roden. Det er dér `main.tex` og `latexmkrc` ligger.
 - `latexmkrc` er lokal og **må ikke committes** — den har maskinspecifikke stier (fx draw.io-binærens placering). Hver bruger kopierer `latexmkrc.example`.
 - `build/` er gitignored og kan altid slettes; alt i den genskabes.
-- Bilag er standalone-dokumenter og kompilerer hver for sig: `latexmk -pdf <fil>.tex` i bilagets egen mappe.
+- Bilag er standalone-dokumenter og kompilerer hver for sig: `latexmk -pdf -outdir=build <fil>.tex` i bilagets egen mappe. `-outdir=build` er obligatorisk: `latexmkrc` læses kun fra `docs/`, og uden flaget lægges `.aux`/`.bbl` ved siden af `.tex`-filen, hvorefter VS Code's build kører `bibtex` i stedet for `biber` og fejler.
 
 ## Længde
 

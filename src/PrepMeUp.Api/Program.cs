@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using PrepMeUp.Domain;
+using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +14,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 // Composition root. This is the only place Api is allowed to know Infrastructure.
 // TODO: builder.Services.AddApplication();
-// TODO: builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration); // Here, PrepMeUpContext and e.g. IItemRepository become know to the app
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
@@ -59,6 +62,28 @@ builder.Services.AddCors(options => options.AddPolicy(ClientCorsPolicy, policy =
     .AllowAnyMethod()));
 
 var app = builder.Build();
+
+// Apply any pending EF Core migrations on startup, if a real database is
+// configured. Runs inside the api container, which is the only thing that
+// can reach the db service (its port is not exposed to the host). Skipped
+// when no connection string is set, e.g. in the integration test host.
+if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("PrepMeUpDb")))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+    dbContext.Database.Migrate();
+
+    // Seed the same items the PMU-9 spike hardcoded, so the endpoint has
+    // real data to return the first time the table is created.
+    if (!dbContext.Items.Any())
+    {
+        dbContext.Items.AddRange(
+            new Item { Id = Guid.NewGuid(), Name = "torch" },
+            new Item { Id = Guid.NewGuid(), Name = "water" },
+            new Item { Id = Guid.NewGuid(), Name = "radio" });
+        dbContext.SaveChanges();
+    }
+}
 
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();

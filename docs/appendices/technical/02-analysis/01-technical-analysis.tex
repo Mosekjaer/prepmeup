@@ -17,6 +17,7 @@
   1.1 & 16-09-2026 & Group 3 & Stack updated to what is actually set up. Added choice of authentication, deployment, database, version control and git workflow \\
   1.2 & 23-09-2026 & Group 3 & Added operations, CI and security. Authentication status and CI description updated \\
   1.3 & 30-09-2026 & Group 3 & Added choice of client technologies: Expo, admin panel, two clients, generated API client and client test strategy \\
+  1.4 & 30-09-2026 & Group 3 & Added backend architecture (layers, dependency direction, why Domain references nothing) and choice of data access: EF Core, migration strategy, SQL Server and database in tests \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -78,20 +79,63 @@ This appendix describes the technologies we use in PrepMeUp and why we chose the
     \item Claude Code and Antigravity as AI assistants. See section~\ref{sec:ai}.
 \end{itemize}
 
-\section{Architecture}
+\section{Backend Architecture}
+\label{sec:backend}
+The backend is one ASP.NET Core Web API that serves both user interfaces and runs the scheduler. This section explains how the code inside it is split, which way the dependencies point, and why.
+
+\subsection{Four Layers as Four Projects}
+The course describes the layered style as concerns split into stacked groups, where dependencies are only allowed from a higher layer to a lower one. The benefits it lists are separation of concerns, lower coupling, and that a layer can be replaced and tested on its own when the layers talk through interfaces and dependency injection. We use four layers, and each layer is its own project in the solution:
+\begin{center}
+\begin{tabular}{@{}p{3.6cm} p{5.3cm} p{5.3cm}@{}}
+\textbf{Project} & \textbf{May} & \textbf{May not} \\
+\hline
+\texttt{PrepMeUp.Api} & Routing, validating input, mapping contracts to the domain, status codes, authorization & Contain business rules. Know the \texttt{DbContext} \\
+\hline
+\texttt{PrepMeUp.Application} & Run the use cases, define the repository interfaces, decide where a transaction starts and ends & Know HTTP, controllers, EF Core types or SQL \\
+\hline
+\texttt{PrepMeUp.Domain} & Entities and their rules: household composition, water need, package content, expiry & Reference any other project \\
+\hline
+\texttt{PrepMeUp.Infrastructure} & EF Core configuration, queries, migrations & Make decisions. It only reads and writes \\
+\hline
+\end{tabular}
+\end{center}
+The scheduler (a \texttt{BackgroundService}) lives in the Api project, because it is hosted by the same process. It calls the same use cases in Application as the controllers do, so a planned delivery follows the same rules whether it is created by a user or by the scheduler.
+
+Authentication, logging, error handling and configuration cut across all layers. They are set up once in the ASP.NET Core pipeline in \texttt{Program.cs} and not placed in a single layer.
+
+\subsection{The Dependency Direction}
+In the classic layered design from the course, the domain layer sits above a technical services layer with persistence, so the business logic depends on the data access. We turn the last arrow around:
 \begin{itemize}
-    \item Layered architecture with four projects:
-    \begin{itemize}
-        \item \texttt{PrepMeUp.Api}: presentation
-        \item \texttt{PrepMeUp.Application}: use cases, repository interfaces
-        \item \texttt{PrepMeUp.Domain}: entities and rules
-        \item \texttt{PrepMeUp.Infrastructure}: EF Core, repositories, migrations
-    \end{itemize}
-    \item Rule: a layer may only use the layer below it. Domain references nothing.
-    \item Infrastructure implements the interfaces defined in Application. Api only knows Infrastructure in the composition root (\texttt{Program.cs}).
-    \item Cross-cutting concerns: authentication, logging, error handling and configuration.
-    \item The scheduler shares the Application layer with the Web API.
+    \item \texttt{Api} references \texttt{Application}, and \texttt{Application} references \texttt{Domain}.
+    \item \texttt{Application} defines the interfaces it needs, for example a repository for households. \texttt{Infrastructure} references \texttt{Application} and implements them with EF Core.
+    \item \texttt{Api} references \texttt{Infrastructure} for one reason: \texttt{Program.cs} is the composition root, where the implementations are registered in the dependency injection container. No controller uses a type from \texttt{Infrastructure}.
 \end{itemize}
+This is the Dependency Inversion Principle from the course: high-level modules, which contain policies and business models, should not depend on low-level modules that know the details. Both should depend on abstractions. In PrepMeUp the policy is when a household needs a new delivery. The detail is that items are stored in SQL Server. The interface between them is owned by the policy side.
+
+\subsection{Why Domain References Nothing}
+\texttt{PrepMeUp.Domain} has no project references and no NuGet packages. The rules that the whole product is about (how much water a household needs, what goes into a package, when an item expires) are therefore plain C\# that can be tested without a database, without HTTP and without a browser. A unit test creates a household and checks the result. Nothing has to be started or faked.
+
+The rule is enforced by the compiler, not by discipline. Because the Domain project does not reference EF Core, a class in Domain cannot use a \texttt{DbContext} or an EF attribute; the build fails. For the same reason, the mapping between entities and tables is written with EF Core's Fluent API in \texttt{Infrastructure}, and not as attributes on the entities.
+
+The same structure decides what the test projects reference. \texttt{Tests.Unit} references \texttt{Application} and \texttt{Domain} and replaces the repository interfaces with NSubstitute fakes. \texttt{Tests.Integration} starts the whole API with \texttt{WebApplicationFactory}.
+
+\subsection{Alternatives}
+\begin{center}
+\begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
+\textbf{Option} & \textbf{For} & \textbf{Against} \\
+\hline
+One Web API project & Least code. Controllers use the \texttt{DbContext} directly. & Business rules end up in controllers. They cannot be tested without a database, and the scheduler would have to copy them. \\
+\hline
+Classic layers (Api $\rightarrow$ business $\rightarrow$ data) & The structure most people know. & The business layer depends on EF Core, so a domain test still needs a database or a fake of EF Core. \\
+\hline
+Layers with the data dependency inverted & The domain is free of technical details. Rules are tested without a database. The layer rules are checked by the compiler. & Four projects and a set of interfaces for a small system. Each new table means an entity, a configuration, a repository method and an interface method. \\
+\hline
+\end{tabular}
+\end{center}
+We chose the third option. The extra files are a real cost, but they are the same kind of file every time, and the vertical slice skill in our AI setup (section~\ref{sec:ai}) generates them in the same order: Domain, Application, Infrastructure, Api. The expiry and reorder rules are the part of the product that is most likely to be wrong, and this design lets us test exactly that part in isolation.
+
+\subsection{Status}
+The four projects and their references are in place. \texttt{Domain} and \texttt{Infrastructure} are still empty: there are no entities, no \texttt{DbContext} and no migrations yet, and the registration of \texttt{Infrastructure} in \texttt{Program.cs} is a placeholder. The only endpoint, \texttt{GET /items}, returns fixed data. The first vertical slice (the household profile) will add the first entity, the \texttt{DbContext} and the first migration.
 
 \section{Choice of Client Technologies}
 \label{sec:clients}
@@ -206,8 +250,77 @@ We chose \textbf{Coolify}. The production setup is in \texttt{docker-compose.pro
     \item All services restart automatically if they stop.
 \end{itemize}
 
-\section{Choice of Database}
-We use SQL Server for the application data. It is the database used in the backend course, so the course material and exercises apply directly, and EF Core has full support for it. As the course suggests, the integration tests can use SQLite in memory instead, so they do not need a running SQL Server. PostgreSQL was also considered, but we did not see a reason to move away from what the course uses. Keycloak uses its own PostgreSQL database in production, because it is a separate system with its own data.
+\section{Choice of Data Access and Database}
+\label{sec:data}
+
+\subsection{EF Core as ORM}
+The course presents two ways to reach a SQL database from .NET: EF Core, a full object-relational mapper, and Dapper, a micro ORM where we write the SQL ourselves and Dapper maps the result to objects.
+\begin{center}
+\begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
+\textbf{Option} & \textbf{For} & \textbf{Against} \\
+\hline
+EF Core & LINQ is translated to SQL. Change tracking, so one \texttt{SaveChanges} writes all changes in one transaction. Generates the schema and the migrations from the C\# model. Parameterised queries by default. & More to learn. Generated SQL can be slow for complex queries and bulk inserts. \\
+\hline
+Dapper & Full control over the SQL. Very close to raw ADO.NET in speed. & No change tracking and no schema generation. Every query and every schema change is written by hand, and the model and the schema must be kept in sync by hand. \\
+\hline
+\end{tabular}
+\end{center}
+
+We chose \textbf{EF Core}. The course recommends Dapper when we need full control over the SQL, when performance matters, and when we do not need change tracking. None of these fit PrepMeUp well:
+\begin{itemize}
+    \item The data volume is small: households, their items, a catalogue and deliveries. The heaviest query is the scheduler's search for items close to expiry, and it runs in the background, not while a user waits.
+    \item Change tracking is useful for us. Creating a delivery changes the household's items and the delivery itself, and both must be saved together or not at all.
+    \item With EF Core the C\# model is the only description of the schema. With Dapper we would maintain the model, the SQL and the migration scripts separately.
+\end{itemize}
+EF Core does not lock us out of SQL. If a query becomes slow, it can be replaced with raw SQL or a stored procedure through \texttt{FromSqlRaw}, as shown in the course. Because data access is behind the repository interfaces (section~\ref{sec:backend}), such a change stays inside \texttt{Infrastructure}.
+
+\subsection{Migration Strategy}
+The course explains why the schema must be versioned: when someone changes a database by hand, or scripts are not in version control, the environments drift apart and the application fails at runtime. So the question is not whether to use migrations, but how they are written.
+\begin{center}
+\begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
+\textbf{Option} & \textbf{For} & \textbf{Against} \\
+\hline
+EF Core Migrations, code first & The migration is generated from the model, so the model and the schema cannot disagree. Versioned, with \texttt{Up} and \texttt{Down}. Can be reviewed in the pull request. & The generated SQL must be read before merge, for example to catch a rename that is generated as drop and add, which loses the data. Tied to one database provider. \\
+\hline
+DbUp with SQL scripts & Plain SQL that is easy to read. Tracks which scripts have run. & We would update both the model and the schema by hand. More manual setup in the pipeline. \\
+\hline
+Database first & Fits a database that already exists. & We have no existing database. The domain model should drive the schema, not the other way around. \\
+\hline
+\texttt{EnsureCreated} & No migration files at all. & Only creates a new database. It cannot change one that already holds data. \\
+\hline
+\end{tabular}
+\end{center}
+
+We chose \textbf{EF Core Migrations with code first}. The model in \texttt{PrepMeUp.Infrastructure} is the source of truth. The rules are:
+\begin{itemize}
+    \item The schema is only changed with \texttt{dotnet ef migrations add}. Nobody changes a database by hand, not locally and not in production.
+    \item Each migration is committed in the same pull request as the model change, so the generated SQL can be read in the review.
+    \item Production applies the migrations as a migration bundle before the new API starts. The order of the steps and the rollback procedure are in appendix 10.3.
+\end{itemize}
+
+\subsection{SQL Server}
+The data in PrepMeUp is relational. A household has members and items, an item points to a product in the catalogue, and a delivery has lines that point to items. Consistency matters more than scale: a delivery and the change to the household's items must be committed together. That points to a relational database with ACID transactions and foreign keys, which the course lists as the strengths of SQL databases.
+\begin{center}
+\begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
+\textbf{Option} & \textbf{For} & \textbf{Against} \\
+\hline
+SQL Server & The database used in the course, so exercises and slides apply directly. Full EF Core support. Runs in Docker. & Heavy image. The free editions have limits, see below. \\
+\hline
+PostgreSQL & Free for every use. Light. Full EF Core support. Already in our stack as Keycloak's database. & Not the database in the course. Nothing in our requirements needs it. \\
+\hline
+MongoDB & Flexible schema. Scales out to several servers. & No foreign keys: the links between documents are kept by the application. We have many relations and one server, so we get the downsides without the benefit. \\
+\hline
+\end{tabular}
+\end{center}
+
+We chose \textbf{SQL Server}, mainly because it is what the course teaches, and PostgreSQL gave us no advantage that mattered for our requirements. Because of the layer rules, the choice is only visible in \texttt{Infrastructure}: the EF Core provider and the generated migrations. Switching would mean a new provider and new migrations, not changes to the rules or the API.
+
+Keycloak uses its own PostgreSQL database in production, because it is a separate system with its own data (section~\ref{sec:deployment}).
+
+One thing is not right yet. Both compose files start SQL Server with \texttt{MSSQL\_PID: Developer}. The Developer edition is free, but Microsoft only licenses it for development and test, not for production. The Express edition is also free and may be used in production. Its limits (10 GB per database, and a cap on memory and CPU) are far above what PrepMeUp needs. Production should therefore run Express. It is listed under open decisions.
+
+\subsection{Database in Tests}
+Unit tests do not use a database at all: they test Domain directly and Application with faked repositories. For integration tests the course suggests SQLite in memory, which is fast and needs no running server. The course also points out the catch: migrations are generated for one provider, so SQLite tests must create the schema with \texttt{EnsureCreated} instead. Those tests therefore do not test our migrations, and SQLite behaves differently from SQL Server in some places. We accept this for the integration tests. The migrations themselves are checked when they run against SQL Server, locally in \texttt{docker compose} and in the deployment.
 
 \section{Version Control and Git Workflow}
 \label{sec:git}
@@ -326,10 +439,11 @@ We use AI assistants as a development tool (decided on 09-09). To keep the work 
     \item The API should refuse to start without \texttt{Keycloak:Authority} outside development.
     \item Check whether Coolify's proxy redirects HTTP to HTTPS and sends HSTS for the API and Keycloak.
     \item Whether to pin GitHub Actions to commit SHAs.
+    \item Run SQL Server as the Express edition in production instead of Developer (section~\ref{sec:data}).
 \end{itemize}
 
 \section*{Sources}
-Expo, Expo Router and generating a TypeScript client with NSwag are not covered by the course material; the course teaches React for the web and .NET MAUI for native apps, and uses NSwag only for C\# clients. Coolify and Keycloak integration are not covered either; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered -- the course teaches CI with GitLab CI. The principles used in this appendix are from the course:
+Expo, Expo Router and generating a TypeScript client with NSwag are not covered by the course material; the course teaches React for the web and .NET MAUI for native apps, and uses NSwag only for C\# clients. Coolify and Keycloak integration are not covered either; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered -- the course teaches CI with GitLab CI. SQL Server editions and their licensing are not covered either; that part is based on Microsoft's licensing terms. The principles used in this appendix are from the course:
 \begin{itemize}
     \item Multi-stage Docker build and publishing images to a registry \cite[slides 13 and 15]{sw4bad-docker}.
     \item CI as an automated build including tests \cite[slide 3]{sw4swt-continuous-integration}.
@@ -344,6 +458,13 @@ Expo, Expo Router and generating a TypeScript client with NSwag are not covered 
     \item React Router and serving the same page on all client-side routes \cite[slides 6--7]{sw4fed-react-router}.
     \item NSwag-generated clients and their value as the API grows \cite[sec.~8.3]{goldman-maui-in-action}.
     \item Vitest with jsdom and React Testing Library \cite[slides 13--14]{sw4fed-vitest}.
+    \item Layered style, dependencies only downwards, benefits of layers, typical layers with persistence at the bottom \cite[slides 24, 27 and 28]{sw4swd-architecture-process-2}.
+    \item Dependency Inversion Principle \cite[slides 15--16]{sw4swd-solid-isp-dip}.
+    \item SQL versus NoSQL, ORMs in .NET, code first, migrations, Fluent API \cite[slides 4, 7, 9, 14 and 25]{sw4bad-ef-intro}.
+    \item Raw SQL and stored procedures from EF Core, bulk inserts \cite[slides 14--15]{sw4bad-ef-core-advanced}.
+    \item Schema drift, DbUp and Dapper, when to use Dapper \cite[slides 6, 14--15, 18 and 30]{sw4bad-dbup-dapper}.
+    \item No foreign keys in MongoDB, links kept by the application \cite[slide 24]{sw4bad-mongo-intro}.
+    \item SQLite in memory for integration tests and \texttt{EnsureCreated} \cite[slide 16]{sw4bad-integration-testing}.
 \end{itemize}
 
 \printbibliography

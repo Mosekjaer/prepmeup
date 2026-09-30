@@ -15,6 +15,7 @@
   1.0 & 09-09-2026 & Group 3 & Initial version \\
   1.1 & 16-09-2026 & Group 3 & Stack updated to what is actually set up. Added choice of authentication, deployment, database, version control and git workflow \\
   1.2 & 23-09-2026 & Group 3 & Added operations, CI and security. Authentication status and CI description updated \\
+  1.3 & 30-09-2026 & Group 3 & Added choice of client technologies: Expo, admin panel, two clients, generated API client and client test strategy \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -89,6 +90,62 @@ This appendix describes the technologies we use in PrepMeUp and why we chose the
     \item Infrastructure implements the interfaces defined in Application. Api only knows Infrastructure in the composition root (\texttt{Program.cs}).
     \item Cross-cutting concerns: authentication, logging, error handling and configuration.
     \item The scheduler shares the Application layer with the Web API.
+\end{itemize}
+
+\section{Choice of Client Technologies}
+\label{sec:clients}
+The system has two kinds of users, so it has two user interfaces. Customers use an app on their phone. Administrators use a web page at a desk to dispatch deliveries. The requirements say that the customer app runs on Android in version 1.0 and that the administrator interface is a web application (appendix 1.2).
+
+\subsection{Customer App}
+At the meeting on 15-09 we decided that the customer app is built with Expo. The course teaches two ways to build a user interface: .NET MAUI for native apps and React for the web. We compared those with Expo, which uses React Native.
+
+\begin{center}
+\begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
+\textbf{Option} & \textbf{For} & \textbf{Against} \\
+\hline
+.NET MAUI & Taught in the course. Same language (C\#) as the backend. Builds native apps for Android, iOS and Windows. & The admin panel would still be React, so the group would work in two UI frameworks, two languages and two test tools. \\
+\hline
+React web app only & Taught in the course. One framework for both user interfaces. & Not an Android app, which the requirements ask for. \\
+\hline
+Expo (React Native) & The same React, hooks and TypeScript as the admin panel. Builds an Android app, and can also build for the web. Expo Router gives file-based navigation. & Not in the course. React Native components are not HTML, so what we learn about the DOM and CSS only applies in part. \\
+\hline
+\end{tabular}
+\end{center}
+
+We chose \textbf{Expo}. The course describes React as independent of where it renders: React DOM renders to the browser and React Native to iOS and Android. So components, state, hooks and data fetching work the same way in both of our user interfaces, and the whole group can work on both. With MAUI, half of the group would write C\# and XAML and the other half React, and we would lose that.
+
+Expo Router finds the screens from the files in \texttt{src/app/}. A new file is a new route, and navigation is done with \texttt{router.push('/second')}. This is the same idea as the routes in React Router, only defined by files instead of in code.
+
+\subsection{Admin Panel}
+The admin panel is a normal React app built with Vite and React Router. That is the setup taught in the course, so there is no new tool here. The routes are defined in \texttt{src/router.tsx} with \texttt{createBrowserRouter}.
+
+The course points out that a single page app needs the web server to return the same page for every URL the router handles. Otherwise a user who opens a sub page directly gets a 404. We have to set this up when the admin panel is deployed. It is not deployed yet.
+
+\subsection{Two Clients Instead of One}
+Expo can also build a web version, so one app could in theory serve both customers and administrators. We decided against that:
+\begin{itemize}
+    \item The two users need different screens and have different roles in Keycloak (\texttt{household} and \texttt{admin}). In one app every screen would need a role check, and the admin screens would ship in the customer app.
+    \item The admin panel only runs in a browser. A plain React DOM app with Vite is simpler there than React Native compiled to the web, and it is what the course teaches.
+    \item Each app has its own Keycloak client (section~\ref{sec:auth}), so the login of the two apps can be configured separately.
+\end{itemize}
+The price is two apps to maintain. We keep that small by sharing everything that is not UI: the generated API client, the TypeScript configuration, and one npm workspace so that \texttt{npm test} and \texttt{npm run typecheck} run across both apps.
+
+\subsection{The Generated API Client}
+The apps only call the API through \texttt{packages/api-client}. The client is generated with NSwag from the OpenAPI document of the API and is never edited by hand. The course uses NSwag in the same way to generate clients for a .NET API, and notes that a generated client becomes more valuable as the number of routes grows.
+\begin{itemize}
+    \item The OpenAPI document is the only contract between the API and the apps. When the API changes, the client is regenerated. If an app uses a field or an endpoint that no longer exists, \texttt{npm run typecheck} fails in CI instead of the app failing at runtime.
+    \item The apps do not write URLs, JSON handling or DTO types themselves. A screen calls for example \texttt{itemsClient.getItems()} and gets typed objects back.
+    \item The access token is added in one place. Each app registers a function that returns its token, so the app decides where the token is stored. The function is registered with \texttt{setAccessTokenProvider}. The generated code does not know about Keycloak or storage.
+    \item Business rules stay in the backend. The apps hold UI state and show what the API returns.
+\end{itemize}
+
+\subsection{Test Strategy for the Clients}
+Both apps are tested with Vitest, jsdom and React Testing Library, which is the setup taught in the course. The tests are in a \texttt{tests/} folder in each app and run in CI on every pull request.
+\begin{itemize}
+    \item \textbf{Admin panel:} components are rendered in jsdom and checked through what the user sees, for example that the dashboard shows its heading.
+    \item \textbf{Customer app:} React Native cannot run in Vitest. The test setup replaces \texttt{react-native} with \texttt{react-native-web}, so the components render as HTML in jsdom. The tests therefore check logic and state, not how the screen looks on a phone.
+    \item \textbf{Isolation:} tests never call the real API. The module that creates the API client is replaced with a fake that returns fixed data, so a test can show both the list of items and the error state. Navigation is tested by replacing \texttt{expo-router} with a fake and checking which route was pushed.
+    \item \textbf{Not covered:} the native rendering on Android and the login flow with Keycloak. These are checked by hand on a device, and later in the acceptance test (appendix 6.1).
 \end{itemize}
 
 \section{Choice of Authentication}
@@ -271,7 +328,7 @@ We use AI assistants as a development tool (decided on 09-09). To keep the work 
 \end{itemize}
 
 \section*{Sources}
-Coolify and Keycloak integration are not covered by the course material; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered either -- the course teaches CI with GitLab CI. The principles used in section~\ref{sec:ops} are from the course:
+Expo, Expo Router and generating a TypeScript client with NSwag are not covered by the course material; the course teaches React for the web and .NET MAUI for native apps, and uses NSwag only for C\# clients. Coolify and Keycloak integration are not covered either; the course lists Keycloak once as an example of an identity provider. GitHub Actions is not covered either -- the course teaches CI with GitLab CI. The principles used in section~\ref{sec:ops} are from the course:
 \begin{itemize}
     \item Multi-stage Docker build and publishing images to a registry: \path{context/bad/markdown/01-intro-og-docker/docker.md}, lines 135--156.
     \item CI as an automated build including tests: \path{context/swt/markdown/02.1-continuous-integration/01-Continuous-Integration.md}, lines 43--50.
@@ -280,6 +337,12 @@ Coolify and Keycloak integration are not covered by the course material; the cou
     \item APIs should only accept HTTPS, HSTS: \path{context/bad/markdown/11-release-security/https.md}, lines 89--110.
     \item JWT claims (issuer, expiration, audience) and signature validation: \path{context/bad/markdown/10-auth/json-web-token.md}, lines 49--52 and 76--129.
     \item Keycloak listed as an identity provider: \path{context/bad/markdown/10-auth/authentication-og-authorization.md}, line 808.
+    \item React is independent of the renderer (React DOM, React Native): \path{context/fed/markdown/slides/SW4FED-02_L16.1_React_Overview.md}, lines 62--67.
+    \item Vite as build tool for React: same file, lines 105--122.
+    \item .NET MAUI targets Windows, macOS, iOS and Android: \path{context/fed/markdown/slides/SW4FED-02_L01.6_MAUI_introduction.md}, line 43.
+    \item React Router and serving the same page on all client-side routes: \path{context/fed/markdown/slides/SW4FED-02_L17.3_React_Router.md}, lines 82--111.
+    \item NSwag-generated clients and their value as the API grows: \path{context/fed/markdown/book/MAUI_in_Action_Ch08_Enterprise_app_development.md}, lines 668--671.
+    \item Vitest with jsdom and React Testing Library: \path{context/fed/markdown/slides/SW4FED-02_L23.2_Testing_med_Vitest.md}, lines 127--160.
 \end{itemize}
 
 \end{document}

@@ -1,0 +1,1812 @@
+[
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "About this course",
+  "file": "Vejledende Lektionsplan for SW4FED 2026 forår.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839552",
+  "local": "context/fed/sources/brightspace/About this course/Vejledende Lektionsplan for SW4FED 2026 forår.pdf",
+  "markdown": "context/fed/markdown/README_lektionsplan.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Selvstudie",
+  "file": "FED XML Essentials.pdf",
+  "slides": 7,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839602",
+  "local": "context/fed/sources/brightspace/01 Introduction/Selvstudie/FED XML Essentials.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.2_XML_Essentials.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Selvstudie",
+  "file": "FED XAML.pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839603",
+  "local": "context/fed/sources/brightspace/01 Introduction/Selvstudie/FED XAML.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.3_XAML.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Selvstudie",
+  "file": "Copilot in SW4FED.pdf",
+  "slides": 9,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839621",
+  "local": "context/fed/sources/brightspace/01 Introduction/Selvstudie/Copilot in SW4FED.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.5_Copilot_i_kurset.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Lectures",
+  "file": "FED Introduktion til kurset.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839604",
+  "local": "context/fed/sources/brightspace/01 Introduction/Lectures/FED Introduktion til kurset.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.1_Introduktion_til_kurset.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Lectures",
+  "file": "Csharp-Introduction.pdf",
+  "slides": 17,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839606",
+  "local": "context/fed/sources/brightspace/01 Introduction/Lectures/Csharp-Introduction.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.4_Csharp_Introduction.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "01 Introduction/Lectures",
+  "file": "MAUI introduction.pdf",
+  "slides": 36,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839605",
+  "local": "context/fed/sources/brightspace/01 Introduction/Lectures/MAUI introduction.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L01.6_MAUI_introduction.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "02 Making Apps Interactive/Lectures",
+  "file": "MAUI Making App Interactive.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839599",
+  "local": "context/fed/sources/brightspace/02 Making Apps Interactive/Lectures/MAUI Making App Interactive.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L02.1_MAUI_Making_App_Interactive.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "02 Making Apps Interactive/Lectures",
+  "file": "Data Binding Basics.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839600",
+  "local": "context/fed/sources/brightspace/02 Making Apps Interactive/Lectures/Data Binding Basics.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L02.2_Data_Binding_Basics.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "02 Making Apps Interactive/Lectures",
+  "file": "Event in Csharp.pdf",
+  "slides": 9,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839609",
+  "local": "context/fed/sources/brightspace/02 Making Apps Interactive/Lectures/Event in Csharp.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L02.3_Events_i_Csharp.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "02 Making Apps Interactive/Exercises",
+  "file": "FED Lab 02 MauiTodo.pdf",
+  "slides": 5,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839601",
+  "local": "context/fed/sources/brightspace/02 Making Apps Interactive/Exercises/FED Lab 02 MauiTodo.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab02_MauiTodo.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "03 Controls and .NET typesystem/Lectures",
+  "file": "FED Controls.pdf",
+  "slides": 23,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839607",
+  "local": "context/fed/sources/brightspace/03 Controls and .NET typesystem/Lectures/FED Controls.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L03.1_Controls.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "03 Controls and .NET typesystem/Lectures",
+  "file": "FED .Nets type system.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839608",
+  "local": "context/fed/sources/brightspace/03 Controls and .NET typesystem/Lectures/FED .Nets type system.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L03.2_NET_typesystem.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "03 Controls and .NET typesystem/Exercises",
+  "file": "FED Lab 03 SelectImages.pdf",
+  "slides": 4,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839613",
+  "local": "context/fed/sources/brightspace/03 Controls and .NET typesystem/Exercises/FED Lab 03 SelectImages.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab03_SelectImages.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "04 Layouts og .NET Architecture/Lectures",
+  "file": "L4 NET Architecture.pdf",
+  "slides": 26,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839642",
+  "local": "context/fed/sources/brightspace/04 Layouts og .NET Architecture/Lectures/L4 NET Architecture.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L04.1_NET_Architecture.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "04 Layouts og .NET Architecture/Lectures",
+  "file": "Layouts.pdf",
+  "slides": 34,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839622",
+  "local": "context/fed/sources/brightspace/04 Layouts og .NET Architecture/Lectures/Layouts.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L04.2_Layouts.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "04 Layouts og .NET Architecture/Exercises",
+  "file": "FED Lab 04 MauiCalc.pdf",
+  "slides": 5,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839623",
+  "local": "context/fed/sources/brightspace/04 Layouts og .NET Architecture/Exercises/FED Lab 04 MauiCalc.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab04_MauiCalc.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "05 Advanced layout concepts and Garbage collection/Lectures",
+  "file": "Advanced layout concepts.pdf",
+  "slides": 17,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839618",
+  "local": "context/fed/sources/brightspace/05 Advanced layout concepts and Garbage collection/Lectures/Advanced layout concepts.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L05.1_Advanced_layout_concepts.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "05 Advanced layout concepts and Garbage collection/Lectures",
+  "file": "Garbage Collection.pdf",
+  "slides": 12,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839617",
+  "local": "context/fed/sources/brightspace/05 Advanced layout concepts and Garbage collection/Lectures/Garbage Collection.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L05.4_Garbage_Collection.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "05 Advanced layout concepts and Garbage collection/Lectures",
+  "file": "FED async-await.pdf",
+  "slides": 9,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839625",
+  "local": "context/fed/sources/brightspace/05 Advanced layout concepts and Garbage collection/Lectures/FED async-await.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L05.2_async_await.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "05 Advanced layout concepts and Garbage collection/Lectures",
+  "file": "Httpclient.pdf",
+  "slides": 11,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839624",
+  "local": "context/fed/sources/brightspace/05 Advanced layout concepts and Garbage collection/Lectures/Httpclient.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L05.3_HttpClient.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "05 Advanced layout concepts and Garbage collection/Exercises",
+  "file": "FED Lab 05 SelectImages v2.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839616",
+  "local": "context/fed/sources/brightspace/05 Advanced layout concepts and Garbage collection/Exercises/FED Lab 05 SelectImages v2.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab05_SelectImages_v2.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "06 Pages and navigation/Lectures",
+  "file": "Pages and Navigation.pdf",
+  "slides": 22,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2926116",
+  "local": "context/fed/sources/brightspace/06 Pages and navigation/Lectures/Pages and Navigation.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L06.1_Pages_and_Navigation.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "06 Pages and navigation/Lectures",
+  "file": "Shell and Routes.pdf",
+  "slides": 24,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839685",
+  "local": "context/fed/sources/brightspace/06 Pages and navigation/Lectures/Shell and Routes.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L06.2_Shell_and_Routes.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "06 Pages and navigation/Lectures",
+  "file": "NavigationPage.pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839646",
+  "local": "context/fed/sources/brightspace/06 Pages and navigation/Lectures/NavigationPage.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L07.1_NavigationPage.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "06 Pages and navigation/Exercise",
+  "file": "FED Lab 06 MauiShell app.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839667",
+  "local": "context/fed/sources/brightspace/06 Pages and navigation/Exercise/FED Lab 06 MauiShell app.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab06_MauiShell_app.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "07 Enterprise app development/Lectures",
+  "file": "Enterprise App development in .NET MAUI.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839645",
+  "local": "context/fed/sources/brightspace/07 Enterprise app development/Lectures/Enterprise App development in .NET MAUI.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L07.2_Enterprise_App_development.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "07 Enterprise app development/Lectures",
+  "file": "Dependency Injection and Generic Host builder pattern.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839661",
+  "local": "context/fed/sources/brightspace/07 Enterprise app development/Lectures/Dependency Injection and Generic Host builder pattern.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L07.3_Dependency_Injection_og_Generic_Host_builder.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "07 Enterprise app development/Lectures",
+  "file": "Authentication in .NET MAUI.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839690",
+  "local": "context/fed/sources/brightspace/07 Enterprise app development/Lectures/Authentication in .NET MAUI.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L07.4_Authentication_i_MAUI.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "08 The MVVM pattern/Lectures",
+  "file": "The MVVM Pattern.pdf",
+  "slides": 30,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839691",
+  "local": "context/fed/sources/brightspace/08 The MVVM pattern/Lectures/The MVVM Pattern.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L08.1_The_MVVM_Pattern.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "08 The MVVM pattern/Exercises",
+  "file": "FED Lab 08-1 ToDoApp-v2.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839649",
+  "local": "context/fed/sources/brightspace/08 The MVVM pattern/Exercises/FED Lab 08-1 ToDoApp-v2.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab08_ToDoApp_v2.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "09 The MVVM pattern/Lectures",
+  "file": "MVVM Community Toolkit.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839663",
+  "local": "context/fed/sources/brightspace/09 The MVVM pattern/Lectures/MVVM Community Toolkit.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L09.1_MVVM_Community_Toolkit.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "09 The MVVM pattern/Lectures",
+  "file": "Preferences.pdf",
+  "slides": 11,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839671",
+  "local": "context/fed/sources/brightspace/09 The MVVM pattern/Lectures/Preferences.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L09.2_Preferences.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "10 Styles, themes, and multiplatform layouts/Lectures",
+  "file": "Styles and themes.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839650",
+  "local": "context/fed/sources/brightspace/10 Styles, themes, and multiplatform layouts/Lectures/Styles and themes.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L10.1_Styles_and_themes.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "11 Custom controls/Lectures",
+  "file": "Custom controls.pdf",
+  "slides": 12,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839652",
+  "local": "context/fed/sources/brightspace/11 Custom controls/Lectures/Custom controls.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L11.1_Custom_controls.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Selvstudie",
+  "file": "BED WebSitesAndWebApps.pdf",
+  "slides": 28,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839653",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Selvstudie/BED WebSitesAndWebApps.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.1_Websites_og_Web_apps.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Selvstudie",
+  "file": "Serve static files - VS code.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839675",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Selvstudie/Serve static files - VS code.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.2b_Serve_static_files_VS_Code.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Selvstudie",
+  "file": "FED Config Server for static files .pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839676",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Selvstudie/FED Config Server for static files .pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Selvstudie",
+  "file": "FED HTML5 basics.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839677",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Selvstudie/FED HTML5 basics.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.3_HTML5_basics.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Selvstudie",
+  "file": "FED CSS3 basics.pdf",
+  "slides": 38,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839678",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Selvstudie/FED CSS3 basics.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.5_CSS3_basics.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Lectures",
+  "file": "FED HTML5 structural elements.pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839658",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Lectures/FED HTML5 structural elements.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.4_HTML5_structural_elements.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Lectures",
+  "file": "FED Graphics in HTML and CSS.pdf",
+  "slides": 39,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839659",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Lectures/FED Graphics in HTML and CSS.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.6_Graphics_i_HTML_og_CSS.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Lectures",
+  "file": "FED Page Layout.pdf",
+  "slides": 23,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839660",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Lectures/FED Page Layout.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.7_Page_Layout.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Lectures",
+  "file": "FED Flexbox.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839687",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Lectures/FED Flexbox.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.8_Flexbox.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Lectures",
+  "file": "FED CSS Grid.pdf",
+  "slides": 11,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839688",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Lectures/FED CSS Grid.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L13.9_CSS_Grid.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "13 HTML and CSS/Exercises",
+  "file": "FED Lab 13 HTMLandCSS-basic.pdf",
+  "slides": 7,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839693",
+  "local": "context/fed/sources/brightspace/13 HTML and CSS/Exercises/FED Lab 13 HTMLandCSS-basic.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "14 Forms and tables in HTML/Flipped",
+  "file": "FED Web Design.pdf",
+  "slides": 41,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839696",
+  "local": "context/fed/sources/brightspace/14 Forms and tables in HTML/Flipped/FED Web Design.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L14.1_Web_Design.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "14 Forms and tables in HTML/Flipped",
+  "file": "FED Bootstrap.pdf",
+  "slides": 23,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839721",
+  "local": "context/fed/sources/brightspace/14 Forms and tables in HTML/Flipped/FED Bootstrap.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L14.4_Bootstrap.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "14 Forms and tables in HTML/Lectures",
+  "file": "FED Tables in HTML.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839722",
+  "local": "context/fed/sources/brightspace/14 Forms and tables in HTML/Lectures/FED Tables in HTML.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L14.2_Tables_i_HTML.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "14 Forms and tables in HTML/Lectures",
+  "file": "FED Forms in HTML.pdf",
+  "slides": 44,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839723",
+  "local": "context/fed/sources/brightspace/14 Forms and tables in HTML/Lectures/FED Forms in HTML.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L14.3_Forms_i_HTML.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "14 Forms and tables in HTML/Exercises",
+  "file": "Lab14 JavaJam 03.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839724",
+  "local": "context/fed/sources/brightspace/14 Forms and tables in HTML/Exercises/Lab14 JavaJam 03.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab14_JavaJam_03.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Flipped",
+  "file": "FED JavaScript.pdf",
+  "slides": 53,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839725",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Flipped/FED JavaScript.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L15.1_JavaScript.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Lectures",
+  "file": "FED Functions in js.pdf",
+  "slides": 29,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839703",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Lectures/FED Functions in js.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L15.2_Functions_i_JS.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Lectures",
+  "file": "FED Objects and Arrays in js.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839704",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Lectures/FED Objects and Arrays in js.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L15.3_Objects_og_Arrays_i_JS.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Lectures",
+  "file": "FED The DOM.pdf",
+  "slides": 36,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839705",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Lectures/FED The DOM.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L15.4_The_DOM.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Lectures",
+  "file": "FED npm.pdf",
+  "slides": 12,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839727",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Lectures/FED npm.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L15.5_npm.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Lectures",
+  "file": "FED Modules.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839739",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Lectures/FED Modules.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L20.1_Modules.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "15 JavaScript basics samt the DOM/Exercise",
+  "file": "Lab15-JavaScript.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839706",
+  "local": "context/fed/sources/brightspace/15 JavaScript basics samt the DOM/Exercise/Lab15-JavaScript.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab15_JavaScript.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "16 React basics/Lectures",
+  "file": "FED React Overview.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839738",
+  "local": "context/fed/sources/brightspace/16 React basics/Lectures/FED React Overview.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L16.1_React_Overview.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "17 useState and SPA routing/Lecture",
+  "file": "FED Functional components.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839710",
+  "local": "context/fed/sources/brightspace/17 useState and SPA routing/Lecture/FED Functional components.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L17.1_Functional_components.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "17 useState and SPA routing/Lecture",
+  "file": "FED React useState Hook.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839712",
+  "local": "context/fed/sources/brightspace/17 useState and SPA routing/Lecture/FED React useState Hook.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L17.2_React_useState_Hook.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "17 useState and SPA routing/Lecture",
+  "file": "FED React Router.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839713",
+  "local": "context/fed/sources/brightspace/17 useState and SPA routing/Lecture/FED React Router.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L17.3_React_Router.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "18 useEffect/Lectures",
+  "file": "FED React side effects.pdf",
+  "slides": 11,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839729",
+  "local": "context/fed/sources/brightspace/18 useEffect/Lectures/FED React side effects.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L18.1_React_side_effects.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "18 useEffect/Lectures",
+  "file": "FED JSON.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839740",
+  "local": "context/fed/sources/brightspace/18 useEffect/Lectures/FED JSON.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L18.2_JSON.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "18 useEffect/Lectures",
+  "file": "FED WebStorageAndCookies.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839741",
+  "local": "context/fed/sources/brightspace/18 useEffect/Lectures/FED WebStorageAndCookies.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L18.3_WebStorage_og_Cookies.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "18 useEffect/Exercises",
+  "file": "FED Lab18 - useEffect.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839717",
+  "local": "context/fed/sources/brightspace/18 useEffect/Exercises/FED Lab18 - useEffect.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab18_useEffect.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "19 HTTP requests/Lectures",
+  "file": "FED Promises.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839743",
+  "local": "context/fed/sources/brightspace/19 HTTP requests/Lectures/FED Promises.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L19.1_Promises.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "19 HTTP requests/Lectures",
+  "file": "FED Fetch.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839744",
+  "local": "context/fed/sources/brightspace/19 HTTP requests/Lectures/FED Fetch.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L19.2_Fetch.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "19 HTTP requests/Lectures",
+  "file": "FED React fetching data.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839745",
+  "local": "context/fed/sources/brightspace/19 HTTP requests/Lectures/FED React fetching data.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L19.3_React_fetching_data.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "19 HTTP requests/Exercises",
+  "file": "FED Lab19 Fetching data from React.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839749",
+  "local": "context/fed/sources/brightspace/19 HTTP requests/Exercises/FED Lab19 Fetching data from React.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab19_Fetching_data_fra_React.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "20 Typescript/Lectures",
+  "file": "FED Typescript.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839764",
+  "local": "context/fed/sources/brightspace/20 Typescript/Lectures/FED Typescript.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L25.1_TypeScript.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "21 Handling events in React/Lectures",
+  "file": "FED React useRef Hook.pdf",
+  "slides": 7,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839769",
+  "local": "context/fed/sources/brightspace/21 Handling events in React/Lectures/FED React useRef Hook.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L20.2_React_useRef_Hook.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "21 Handling events in React/Lectures",
+  "file": "Handling Events in React.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839754",
+  "local": "context/fed/sources/brightspace/21 Handling events in React/Lectures/Handling Events in React.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L21.1_Handling_Events_i_React.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "22 Forms in React/Lectures",
+  "file": "FED React Forms.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839756",
+  "local": "context/fed/sources/brightspace/22 Forms in React/Lectures/FED React Forms.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L22.1_React_Forms.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "22 Forms in React/Lectures",
+  "file": "(Comments) FED React Forms.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839783",
+  "local": "context/fed/sources/brightspace/22 Forms in React/Lectures/(Comments) FED React Forms.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L22.2_React_Forms_med_kommentarer.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "22 Forms in React/Exercises",
+  "file": "Lab 22 - Form and Post data.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839755",
+  "local": "context/fed/sources/brightspace/22 Forms in React/Exercises/Lab 22 - Form and Post data.pdf",
+  "markdown": "context/fed/markdown/labs/SW4FED-02_Lab22_Form_og_Post_data.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "23 Testing React components/Lectures",
+  "file": "FED testing with Vitest.pdf",
+  "slides": 38,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839784",
+  "local": "context/fed/sources/brightspace/23 Testing React components/Lectures/FED testing with Vitest.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L23.2_Testing_med_Vitest.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "24 Managing application state/Lectures",
+  "file": "FED React managing application state.pdf",
+  "slides": 32,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839768",
+  "local": "context/fed/sources/brightspace/24 Managing application state/Lectures/FED React managing application state.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L24.1_React_managing_application_state.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "24 Managing application state/Lectures",
+  "file": "How to run demos in L24 and find other demos.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839766",
+  "local": "context/fed/sources/brightspace/24 Managing application state/Lectures/How to run demos in L24 and find other demos.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L24.2_Koersel_af_demoer.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "25 Styling in React/Lectures",
+  "file": "React Styling.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839767",
+  "local": "context/fed/sources/brightspace/25 Styling in React/Lectures/React Styling.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L23.1_React_Styling.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "26 Responsive design/Lectures",
+  "file": "Responsive Web Design.pdf",
+  "slides": 38,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839786",
+  "local": "context/fed/sources/brightspace/26 Responsive design/Lectures/Responsive Web Design.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L26.2_Responsive_Web_Design.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "27 Redux Toolkit/Lectures",
+  "file": "React - Redux.pdf",
+  "slides": 33,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839772",
+  "local": "context/fed/sources/brightspace/27 Redux Toolkit/Lectures/React - Redux.pdf",
+  "markdown": "context/fed/markdown/slides/SW4FED-02_L26.1_React_Redux.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "28 Om eksamen og evaluering",
+  "file": "FED Eksamensforberedelse.pdf",
+  "slides": 17,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839565",
+  "local": "context/fed/sources/brightspace/28 Om eksamen og evaluering/FED Eksamensforberedelse.pdf",
+  "markdown": "context/fed/markdown/eksamen/SW4FED-02_Eksamensforberedelse.md",
+  "lecturer": "Poul Ejnar Rovsing / Jung Min Kim"
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "28 Om eksamen og evaluering",
+  "file": "SW4FED-02 2024 Sommer.pdf",
+  "slides": 3,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839587",
+  "local": "context/fed/sources/brightspace/28 Om eksamen og evaluering/SW4FED-02 2024 Sommer.pdf",
+  "markdown": "context/fed/markdown/eksamen/SW4FED-02_Eksamen_2024_Sommer.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "28 Om eksamen og evaluering",
+  "file": "SW4FED-02 2024 Vinter.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839589",
+  "local": "context/fed/sources/brightspace/28 Om eksamen og evaluering/SW4FED-02 2024 Vinter.pdf",
+  "markdown": "context/fed/markdown/eksamen/SW4FED-02_Eksamen_2024_Vinter.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "28 Om eksamen og evaluering",
+  "file": "SW4FED-02 2025 Sommer.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839591",
+  "local": "context/fed/sources/brightspace/28 Om eksamen og evaluering/SW4FED-02 2025 Sommer.pdf",
+  "markdown": "context/fed/markdown/eksamen/SW4FED-02_Eksamen_2025_Sommer.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4FED-02 Front-end udvikling",
+  "module": "28 Om eksamen og evaluering",
+  "file": "SW4FED-02 Front-end udvikling, V25-26-o.pdf",
+  "slides": 3,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219589/topics/2839592",
+  "local": "context/fed/sources/brightspace/28 Om eksamen og evaluering/SW4FED-02 Front-end udvikling, V25-26-o.pdf",
+  "markdown": "context/fed/markdown/eksamen/SW4FED-02_Eksamen_V25-26_ordinaer.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Assignments Details/Assignments",
+  "file": "Assignment 1.pdf",
+  "slides": 3,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2917442",
+  "local": "context/bad/sources/brightspace/Assignments Details/Assignments/Assignment 1.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Assignments Details/Assignments",
+  "file": "Assignment 2.pdf",
+  "slides": 6,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2917471",
+  "local": "context/bad/sources/brightspace/Assignments Details/Assignments/Assignment 2.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Assignments Details/Assignments",
+  "file": "Assignment 3.pdf",
+  "slides": 8,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2942661",
+  "local": "context/bad/sources/brightspace/Assignments Details/Assignments/Assignment 3.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Assignments Details/Check Rehearsal",
+  "file": "Rehersal Assignment 1.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830617",
+  "local": "context/bad/sources/brightspace/Assignments Details/Check Rehearsal/Rehersal Assignment 1.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Course Intro/Preparation",
+  "file": "WebSitesAndWebApps.pdf",
+  "slides": 28,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830587",
+  "local": "context/bad/sources/brightspace/Week 1 - Course Intro/Preparation/WebSitesAndWebApps.pdf",
+  "markdown": "context/bad/markdown/01-intro-og-docker/websites-og-webapps.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Course Intro/Presentations",
+  "file": "SW4BAD Welcome and Intro - Copy.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2897327",
+  "local": "context/bad/sources/brightspace/Week 1 - Course Intro/Presentations/SW4BAD Welcome and Intro - Copy.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Course Intro/Presentations",
+  "file": "Introduction to ASP.NET Core.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830612",
+  "local": "context/bad/sources/brightspace/Week 1 - Course Intro/Presentations/Introduction to ASP.NET Core.pdf",
+  "markdown": "context/bad/markdown/01-intro-og-docker/intro-aspnet-core.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Docker + Use of AI agents/Presentations",
+  "file": "Docker.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830610",
+  "local": "context/bad/sources/brightspace/Week 1 - Docker + Use of AI agents/Presentations/Docker.pdf",
+  "markdown": "context/bad/markdown/01-intro-og-docker/docker.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Docker + Use of AI agents/Presentations",
+  "file": "Docker Compose.pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830613",
+  "local": "context/bad/sources/brightspace/Week 1 - Docker + Use of AI agents/Presentations/Docker Compose.pdf",
+  "markdown": "context/bad/markdown/01-intro-og-docker/docker-compose.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Docker + Use of AI agents/Presentations",
+  "file": "Vibe Coding and Agents.pdf",
+  "slides": 37,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2906344",
+  "local": "context/bad/sources/brightspace/Week 1 - Docker + Use of AI agents/Presentations/Vibe Coding and Agents.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 1 - Docker + Use of AI agents/Presentations",
+  "file": "Harness engineering.pdf",
+  "slides": 38,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2906348",
+  "local": "context/bad/sources/brightspace/Week 1 - Docker + Use of AI agents/Presentations/Harness engineering.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 2 - Relational Databases",
+  "file": "Database Systems - The complete book - second edition - Chapter 2 - Copy.pdf",
+  "slides": 20,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830496",
+  "local": "context/bad/sources/brightspace/Week 2 - Relational Databases/Database Systems - The complete book - second edition - Chapter 2 - Copy.pdf",
+  "markdown": "context/bad/markdown/02-databaser-intro/database-systems-kap2-relational-model.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 3 - Normalization & Transactions/Presentations",
+  "file": "SW2BAD - Transactions.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830667",
+  "local": "context/bad/sources/brightspace/Week 3 - Normalization & Transactions/Presentations/SW2BAD - Transactions.pdf",
+  "markdown": "context/bad/markdown/03-sql/transactions.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 3 - Normalization & Transactions/Presentations",
+  "file": "SW4BAD Normalization.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2927293",
+  "local": "context/bad/sources/brightspace/Week 3 - Normalization & Transactions/Presentations/SW4BAD Normalization.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 3 - Normalization & Transactions/Normalization",
+  "file": "AU-ECE-I4DAB-NormaliseringIntro.pptx",
+  "slides": null,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830644",
+  "local": "context/bad/sources/brightspace/Week 3 - Normalization & Transactions/Normalization/AU-ECE-I4DAB-NormaliseringIntro.pptx",
+  "markdown": "context/bad/markdown/03-sql/normalisering-intro.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 3 - Normalization & Transactions/Normalization",
+  "file": "Au-ECEI4DAB-FunctionalDependency.pptx",
+  "slides": null,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830645",
+  "local": "context/bad/sources/brightspace/Week 3 - Normalization & Transactions/Normalization/Au-ECEI4DAB-FunctionalDependency.pptx",
+  "markdown": "context/bad/markdown/03-sql/functional-dependency.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 3 - Stored Procedures & Indexing/Presentations",
+  "file": "Stored Procedures and Indexing.pdf",
+  "slides": 24,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2927287",
+  "local": "context/bad/sources/brightspace/Week 3 - Stored Procedures & Indexing/Presentations/Stored Procedures and Indexing.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 4 - Web APIs + SQL Connections/Presentations",
+  "file": "Web APIs in ASPNET Core.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830669",
+  "local": "context/bad/sources/brightspace/Week 4 - Web APIs + SQL Connections/Presentations/Web APIs in ASPNET Core.pdf",
+  "markdown": "context/bad/markdown/04-webapi-rest/web-apis-aspnet-core.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 4 - Web APIs + SQL Connections/Presentations",
+  "file": "REST principals.pdf",
+  "slides": 20,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830718",
+  "local": "context/bad/sources/brightspace/Week 4 - Web APIs + SQL Connections/Presentations/REST principals.pdf",
+  "markdown": "context/bad/markdown/04-webapi-rest/rest-principles.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 4 - Web APIs + SQL Connections/Presentations",
+  "file": "SW2BAD - SQL Connections.pdf",
+  "slides": 7,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830670",
+  "local": "context/bad/sources/brightspace/Week 4 - Web APIs + SQL Connections/Presentations/SW2BAD - SQL Connections.pdf",
+  "markdown": "context/bad/markdown/03-sql/sql-connections.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 4 - Dapper + DbUp/Presentations",
+  "file": "DbUp & Dapper.pdf",
+  "slides": 31,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830720",
+  "local": "context/bad/sources/brightspace/Week 4 - Dapper + DbUp/Presentations/DbUp & Dapper.pdf",
+  "markdown": "context/bad/markdown/04-webapi-rest/dbup-og-dapper.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 5 - Using Entity Framework Core",
+  "file": "EF intro.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830529",
+  "local": "context/bad/sources/brightspace/Week 5 - Using Entity Framework Core/EF intro.pdf",
+  "markdown": "context/bad/markdown/05-ef-core/ef-intro.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 5 - EfCore CRUD/Presentations",
+  "file": "EF Core CRUD.pdf",
+  "slides": 31,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830713",
+  "local": "context/bad/sources/brightspace/Week 5 - EfCore CRUD/Presentations/EF Core CRUD.pdf",
+  "markdown": "context/bad/markdown/05-ef-core/ef-core-crud.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 6 - EfCore Advanced Topics/Presentations",
+  "file": "EF Core Advanced.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830721",
+  "local": "context/bad/sources/brightspace/Week 6 - EfCore Advanced Topics/Presentations/EF Core Advanced.pdf",
+  "markdown": "context/bad/markdown/05-ef-core/ef-core-advanced.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 6 - Data validation and error handling/Presentations",
+  "file": "Model Binding.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830714",
+  "local": "context/bad/sources/brightspace/Week 6 - Data validation and error handling/Presentations/Model Binding.pdf",
+  "markdown": "context/bad/markdown/04-webapi-rest/model-binding.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 6 - Data validation and error handling/Presentations",
+  "file": "Model Validation and Error handling.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830715",
+  "local": "context/bad/sources/brightspace/Week 6 - Data validation and error handling/Presentations/Model Validation and Error handling.pdf",
+  "markdown": "context/bad/markdown/06-validering/model-validation-og-error-handling.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 6 - Data validation and error handling/Presentations",
+  "file": "LINQ.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830716",
+  "local": "context/bad/sources/brightspace/Week 6 - Data validation and error handling/Presentations/LINQ.pdf",
+  "markdown": "context/bad/markdown/05-ef-core/linq.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 7 - Application logging + SignalR/Presentations",
+  "file": "Logging.pdf",
+  "slides": 29,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830756",
+  "local": "context/bad/sources/brightspace/Week 7 - Application logging + SignalR/Presentations/Logging.pdf",
+  "markdown": "context/bad/markdown/07-logging-signalr/logging.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 7 - Application logging + SignalR/Presentations",
+  "file": "SignalR.pdf",
+  "slides": 36,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830757",
+  "local": "context/bad/sources/brightspace/Week 7 - Application logging + SignalR/Presentations/SignalR.pdf",
+  "markdown": "context/bad/markdown/07-logging-signalr/signalr.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 7 - NoSQL intro + Mongo/Presentations",
+  "file": "Mongo-intro.pdf",
+  "slides": 41,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830751",
+  "local": "context/bad/sources/brightspace/Week 7 - NoSQL intro + Mongo/Presentations/Mongo-intro.pdf",
+  "markdown": "context/bad/markdown/08-mongo/mongo-intro.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Mongo query + Transaction/Presentations",
+  "file": "mongo2 - query and transactions.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830754",
+  "local": "context/bad/sources/brightspace/Week 8 - Mongo query + Transaction/Presentations/mongo2 - query and transactions.pdf",
+  "markdown": "context/bad/markdown/08-mongo/mongo-query-og-transactions.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Mongo query + Transaction/Presentations",
+  "file": "Mongo - nested queries and logging.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830755",
+  "local": "context/bad/sources/brightspace/Week 8 - Mongo query + Transaction/Presentations/Mongo - nested queries and logging.pdf",
+  "markdown": "context/bad/markdown/08-mongo/mongo-nested-queries-og-logging.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Testing Web.API/Presentations",
+  "file": "Web API Testing overview.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830733",
+  "local": "context/bad/sources/brightspace/Week 8 - Testing Web.API/Presentations/Web API Testing overview.pdf",
+  "markdown": "context/bad/markdown/09-testing/testing-overview.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Testing Web.API/Presentations",
+  "file": "Unit Testing Controllers.pdf",
+  "slides": 20,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830726",
+  "local": "context/bad/sources/brightspace/Week 8 - Testing Web.API/Presentations/Unit Testing Controllers.pdf",
+  "markdown": "context/bad/markdown/09-testing/unit-testing-controllers.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Testing Web.API/Presentations",
+  "file": "Integration Testing Controllers.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830727",
+  "local": "context/bad/sources/brightspace/Week 8 - Testing Web.API/Presentations/Integration Testing Controllers.pdf",
+  "markdown": "context/bad/markdown/09-testing/integration-testing-controllers.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 8 - Testing Web.API/Presentations",
+  "file": "Api testing with Postman.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830734",
+  "local": "context/bad/sources/brightspace/Week 8 - Testing Web.API/Presentations/Api testing with Postman.pdf",
+  "markdown": "context/bad/markdown/09-testing/api-testing-postman.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 10 - Authentication and authorization/Presentations",
+  "file": "Authentication and Authorization.pdf",
+  "slides": 71,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830775",
+  "local": "context/bad/sources/brightspace/Week 10 - Authentication and authorization/Presentations/Authentication and Authorization.pdf",
+  "markdown": "context/bad/markdown/10-auth/authentication-og-authorization.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 10 - Authentication and authorization/Presentations",
+  "file": "JSON Web Token.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830776",
+  "local": "context/bad/sources/brightspace/Week 10 - Authentication and authorization/Presentations/JSON Web Token.pdf",
+  "markdown": "context/bad/markdown/10-auth/json-web-token.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 10 - Authentication and authorization/Presentations",
+  "file": "Secure Web.API - with BCrypt.pdf",
+  "slides": 26,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830777",
+  "local": "context/bad/sources/brightspace/Week 10 - Authentication and authorization/Presentations/Secure Web.API - with BCrypt.pdf",
+  "markdown": "context/bad/markdown/10-auth/secure-webapi-bcrypt.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 11 - Release and deployment/Presentations",
+  "file": "Release and Deployment.pdf",
+  "slides": 17,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830782",
+  "local": "context/bad/sources/brightspace/Week 11 - Release and deployment/Presentations/Release and Deployment.pdf",
+  "markdown": "context/bad/markdown/11-release-security/release-og-deployment.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 11 - Release and deployment/Presentations",
+  "file": "Docker Compose.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830784",
+  "local": "context/bad/sources/brightspace/Week 11 - Release and deployment/Presentations/Docker Compose.pdf",
+  "markdown": "context/bad/markdown/01-intro-og-docker/docker-compose.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 11 - Release and deployment/Presentations",
+  "file": "Deploy_to_azure.pdf",
+  "slides": 17,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830781",
+  "local": "context/bad/sources/brightspace/Week 11 - Release and deployment/Presentations/Deploy_to_azure.pdf",
+  "markdown": "context/bad/markdown/11-release-security/deploy-til-azure.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 11 - Beyond REST- GraphQL and gRPC/Presentations",
+  "file": "GrapQL Introduction.pdf",
+  "slides": 40,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830808",
+  "local": "context/bad/sources/brightspace/Week 11 - Beyond REST- GraphQL and gRPC/Presentations/GrapQL Introduction.pdf",
+  "markdown": "context/bad/markdown/12-beyond-rest/graphql-introduction.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 11 - Beyond REST- GraphQL and gRPC/Presentations",
+  "file": "Exploring GrahpQL APIs.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830809",
+  "local": "context/bad/sources/brightspace/Week 11 - Beyond REST- GraphQL and gRPC/Presentations/Exploring GrahpQL APIs.pdf",
+  "markdown": "context/bad/markdown/12-beyond-rest/exploring-graphql-apis.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 12 - ASP Security/Presentation",
+  "file": "week 11 - ASP Security.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830796",
+  "local": "context/bad/sources/brightspace/Week 12 - ASP Security/Presentation/week 11 - ASP Security.pdf",
+  "markdown": "context/bad/markdown/11-release-security/asp-security.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 12 - ASP Security/Presentation",
+  "file": "86 HTTPS.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830807",
+  "local": "context/bad/sources/brightspace/Week 12 - ASP Security/Presentation/86 HTTPS.pdf",
+  "markdown": "context/bad/markdown/11-release-security/https.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 13 - Advanced Topics/Presentations",
+  "file": "Calling Remote APIs.pdf",
+  "slides": 36,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830805",
+  "local": "context/bad/sources/brightspace/Week 13 - Advanced Topics/Presentations/Calling Remote APIs.pdf",
+  "markdown": "context/bad/markdown/12-beyond-rest/calling-remote-apis.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 13 - Advanced Topics/Presentations",
+  "file": "Mapster.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830806",
+  "local": "context/bad/sources/brightspace/Week 13 - Advanced Topics/Presentations/Mapster.pdf",
+  "markdown": "context/bad/markdown/05-ef-core/mapster.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4BAD Backend og databaser",
+  "module": "Week 13 - Caching/Presentations",
+  "file": "Caching techniques.pdf",
+  "slides": 43,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219588/topics/2830785",
+  "local": "context/bad/sources/brightspace/Week 13 - Caching/Presentations/Caching techniques.pdf",
+  "markdown": "context/bad/markdown/13-docs-caching-background/caching-techniques.md",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Eksamensinformation",
+  "file": "Instruktion-F2025.pdf",
+  "slides": 2,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846514",
+  "local": "context/projekt/sources/brightspace/Eksamensinformation/Instruktion-F2025.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 01.1- Introduktion + Unit Test",
+  "file": "Introduction - Copy.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2903402",
+  "local": "context/projekt/sources/brightspace/Lektion 01.1- Introduktion + Unit Test/Introduction - Copy.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 01.1- Introduktion + Unit Test",
+  "file": "Introduction to Unit Tests.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846513",
+  "local": "context/projekt/sources/brightspace/Lektion 01.1- Introduktion + Unit Test/Introduction to Unit Tests.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 01.2- Exceptions + Git Workflow/Exceptions",
+  "file": "Exeption-Management-CSharp.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846609",
+  "local": "context/projekt/sources/brightspace/Lektion 01.2- Exceptions + Git Workflow/Exceptions/Exeption-Management-CSharp.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 01.2- Exceptions + Git Workflow/Exceptions",
+  "file": "Exception-Testing.pdf",
+  "slides": 7,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846610",
+  "local": "context/projekt/sources/brightspace/Lektion 01.2- Exceptions + Git Workflow/Exceptions/Exception-Testing.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 01.2- Exceptions + Git Workflow/Git - Selvstudie",
+  "file": "GitWorkflow.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846606",
+  "local": "context/projekt/sources/brightspace/Lektion 01.2- Exceptions + Git Workflow/Git - Selvstudie/GitWorkflow.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 02.1- Continuous Integration",
+  "file": "Continuous-Integration.pdf",
+  "slides": 15,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846520",
+  "local": "context/projekt/sources/brightspace/Lektion 02.1- Continuous Integration/Continuous-Integration.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 2.2- Git workflow",
+  "file": "Git-Workflows.pdf",
+  "slides": 43,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846571",
+  "local": "context/projekt/sources/brightspace/Lektion 2.2- Git workflow/Git-Workflows.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 2.2- Git workflow",
+  "file": "GitWorkflow-GitlabMergeRequestExample.pdf",
+  "slides": 9,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846566",
+  "local": "context/projekt/sources/brightspace/Lektion 2.2- Git workflow/GitWorkflow-GitlabMergeRequestExample.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 03.1+2- Design For Testability",
+  "file": "Black And White Box.pdf",
+  "slides": 10,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846572",
+  "local": "context/projekt/sources/brightspace/Lektion 03.1+2- Design For Testability/Black And White Box.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 03.1+2- Design For Testability",
+  "file": "Design for Testability.pdf",
+  "slides": 24,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846573",
+  "local": "context/projekt/sources/brightspace/Lektion 03.1+2- Design For Testability/Design for Testability.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 05.1+2- Test Quality 1 og 2/Coverage",
+  "file": "Coverage-latest.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846612",
+  "local": "context/projekt/sources/brightspace/Lektion 05.1+2- Test Quality 1 og 2/Coverage/Coverage-latest.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 05.1+2- Test Quality 1 og 2/Boundary Value Analysis (BVA) og Equivalence Partitions (EPs)",
+  "file": "Boundary-Value-Analysis.pdf",
+  "slides": 15,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846614",
+  "local": "context/projekt/sources/brightspace/Lektion 05.1+2- Test Quality 1 og 2/Boundary Value Analysis (BVA) og Equivalence Partitions (EPs)/Boundary-Value-Analysis.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 05.1+2- Test Quality 1 og 2/ZOMBIE",
+  "file": "ZombieTesting.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846613",
+  "local": "context/projekt/sources/brightspace/Lektion 05.1+2- Test Quality 1 og 2/ZOMBIE/ZombieTesting.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 06.1-07.2- Obligatorisk Handin 2",
+  "file": "IntroductionHandinTwo.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846574",
+  "local": "context/projekt/sources/brightspace/Lektion 06.1-07.2- Obligatorisk Handin 2/IntroductionHandinTwo.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 08.1+2- Software Quality Metrics",
+  "file": "Static Analysis.pdf",
+  "slides": 29,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846567",
+  "local": "context/projekt/sources/brightspace/Lektion 08.1+2- Software Quality Metrics/Static Analysis.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 08.1+2- Software Quality Metrics",
+  "file": "Dynamic Analysis.pdf",
+  "slides": 16,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846563",
+  "local": "context/projekt/sources/brightspace/Lektion 08.1+2- Software Quality Metrics/Dynamic Analysis.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 09.1+2- Integrationstest",
+  "file": "Integrationtest introduction.pdf",
+  "slides": 55,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846568",
+  "local": "context/projekt/sources/brightspace/Lektion 09.1+2- Integrationstest/Integrationtest introduction.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 10.1 + 10.2- Hand-in 3",
+  "file": "SWT-IntroductionHandin3.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846575",
+  "local": "context/projekt/sources/brightspace/Lektion 10.1 + 10.2- Hand-in 3/SWT-IntroductionHandin3.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4PRJ4 Projekt",
+  "module": "Lektion 13.2- Automatisering af System- og Accepttest",
+  "file": "Automated System Test New.pdf",
+  "slides": 26,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219573/topics/2846588",
+  "local": "context/projekt/sources/brightspace/Lektion 13.2- Automatisering af System- og Accepttest/Automated System Test New.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 1.1 - Introduction to the course and OO Basics",
+  "file": "UML class diagrams - The basics.pdf",
+  "slides": 4,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809687",
+  "local": "context/swd/sources/brightspace/Week 1.1 - Introduction to the course and OO Basics/UML class diagrams - The basics.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 1.1 - Introduction to the course and OO Basics/Lectures",
+  "file": "Course Intro.pdf",
+  "slides": 30,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809846",
+  "local": "context/swd/sources/brightspace/Week 1.1 - Introduction to the course and OO Basics/Lectures/Course Intro.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 1.1 - Introduction to the course and OO Basics/Lectures",
+  "file": "OO Basic.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809847",
+  "local": "context/swd/sources/brightspace/Week 1.1 - Introduction to the course and OO Basics/Lectures/OO Basic.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 1.1 - Introduction to the course and OO Basics/Exercises",
+  "file": "card-game-uml.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809817",
+  "local": "context/swd/sources/brightspace/Week 1.1 - Introduction to the course and OO Basics/Exercises/card-game-uml.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 1.2 - Extreme Programming",
+  "file": "Extreme Programming.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809714",
+  "local": "context/swd/sources/brightspace/Week 1.2 - Extreme Programming/Extreme Programming.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 03 - SOLID- LSP, ISP, DIP/Lectures",
+  "file": "SOLID - ID.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809835",
+  "local": "context/swd/sources/brightspace/Week 03 - SOLID- LSP, ISP, DIP/Lectures/SOLID - ID.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 03 - SOLID- LSP, ISP, DIP/Lectures",
+  "file": "SOLID - L.pdf",
+  "slides": 35,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809836",
+  "local": "context/swd/sources/brightspace/Week 03 - SOLID- LSP, ISP, DIP/Lectures/SOLID - L.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 4.1 - Software architecture - Getting Started",
+  "file": "1-SW-Architecture - Process 1.pdf",
+  "slides": 68,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809723",
+  "local": "context/swd/sources/brightspace/Week 4.1 - Software architecture - Getting Started/1-SW-Architecture - Process 1.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 4.1 - Software architecture - Getting Started",
+  "file": "Architecture exercise - VideoFlix.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809706",
+  "local": "context/swd/sources/brightspace/Week 4.1 - Software architecture - Getting Started/Architecture exercise - VideoFlix.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 4.2 - Software Architecture - The tool box/Lecture",
+  "file": "2-SW-Architecture - Process 2.pdf",
+  "slides": 69,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809854",
+  "local": "context/swd/sources/brightspace/Week 4.2 - Software Architecture - The tool box/Lecture/2-SW-Architecture - Process 2.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 6 - Design Patterns Introduction + GoF Observer/Lectures",
+  "file": "Design Patterns - Introduction.pdf",
+  "slides": 19,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809837",
+  "local": "context/swd/sources/brightspace/Week 6 - Design Patterns Introduction + GoF Observer/Lectures/Design Patterns - Introduction.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 6 - Design Patterns Introduction + GoF Observer/Lectures",
+  "file": "Design Patterns - GoF Observer.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809838",
+  "local": "context/swd/sources/brightspace/Week 6 - Design Patterns Introduction + GoF Observer/Lectures/Design Patterns - GoF Observer.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 6 - Design Patterns Introduction + GoF Observer/Exercises",
+  "file": "SW4SWD design patterns rubric.pdf",
+  "slides": 1,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2942158",
+  "local": "context/swd/sources/brightspace/Week 6 - Design Patterns Introduction + GoF Observer/Exercises/SW4SWD design patterns rubric.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 7.1 - GoF Template Method + GoF Strategy",
+  "file": "GoF Template Method, GoF Strategy.pdf",
+  "slides": 28,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809730",
+  "local": "context/swd/sources/brightspace/Week 7.1 - GoF Template Method + GoF Strategy/GoF Template Method, GoF Strategy.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 7.2 - Factories",
+  "file": "GoF Factory Method, Gof Abstract Factory.pdf",
+  "slides": 21,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809742",
+  "local": "context/swd/sources/brightspace/Week 7.2 - Factories/GoF Factory Method, Gof Abstract Factory.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 8 - State Machines + GoF State + Pattern exercise introduction",
+  "file": "Patterns - State.pdf",
+  "slides": 25,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809769",
+  "local": "context/swd/sources/brightspace/Week 8 - State Machines + GoF State + Pattern exercise introduction/Patterns - State.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 8 - State Machines + GoF State + Pattern exercise introduction",
+  "file": "Patterns - NestedOrthogonal - Copy.pdf",
+  "slides": 13,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809770",
+  "local": "context/swd/sources/brightspace/Week 8 - State Machines + GoF State + Pattern exercise introduction/Patterns - NestedOrthogonal - Copy.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 9.1 - Refactoring",
+  "file": "Refactoring.pdf",
+  "slides": 23,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809750",
+  "local": "context/swd/sources/brightspace/Week 9.1 - Refactoring/Refactoring.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 9.2 - Domain Driven Design",
+  "file": "Domain Driven Design.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809773",
+  "local": "context/swd/sources/brightspace/Week 9.2 - Domain Driven Design/Domain Driven Design.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Selfstudy C# Threads",
+  "file": "11 Threading in C#.pdf",
+  "slides": 59,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809749",
+  "local": "context/swd/sources/brightspace/Selfstudy C# Threads/11 Threading in C#.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 11.1 - Overview of parallel solutions & C# Tasks",
+  "file": "Concurrency - Parallel Tasks.pptx",
+  "slides": null,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809762",
+  "local": "context/swd/sources/brightspace/Week 11.1 - Overview of parallel solutions & C# Tasks/Concurrency - Parallel Tasks.pptx",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 11.2 - Parallel Loops",
+  "file": "Concurrency - Parallel Loops.pdf",
+  "slides": 18,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809763",
+  "local": "context/swd/sources/brightspace/Week 11.2 - Parallel Loops/Concurrency - Parallel Loops.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 12.1 - Dependencies and Futures",
+  "file": "Concurrency - Dependencies, Futures.pdf",
+  "slides": 22,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809768",
+  "local": "context/swd/sources/brightspace/Week 12.1 - Dependencies and Futures/Concurrency - Dependencies, Futures.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 12.2 - Pipelines",
+  "file": "Concurrency - Pipelines.pdf",
+  "slides": 14,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809794",
+  "local": "context/swd/sources/brightspace/Week 12.2 - Pipelines/Concurrency - Pipelines.pdf",
+  "markdown": "",
+  "lecturer": ""
+ },
+ {
+  "course": "SW4SWD Softwaredesign",
+  "module": "Week 13.1 - Parallel Aggregation and MapReduce",
+  "file": "Concurrency - Aggregation, MapReduce.pdf",
+  "slides": 27,
+  "brightspace": "https://brightspace.au.dk/d2l/le/lessons/219572/topics/2809796",
+  "local": "context/swd/sources/brightspace/Week 13.1 - Parallel Aggregation and MapReduce/Concurrency - Aggregation, MapReduce.pdf",
+  "markdown": "",
+  "lecturer": ""
+ }
+]

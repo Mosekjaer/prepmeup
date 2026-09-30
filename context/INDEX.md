@@ -5,6 +5,10 @@ Emne-til-fil-opslag for alt kursusmateriale i `context/` (fem kurser, ca. 545 ma
 Alle stier er relative fra repo-roden. Findes emnet ikke her, tjek listen nederst — så skal svaret
 markeres `⚠ Ikke i kursusmaterialet: <begrundelse>`.
 
+## Citér originalen i docs/
+
+Stierne her er til chatten. I `docs/` citeres originalen: slå filen op i `context/<kursus>/SOURCES.md` (titel, forelæser, antal slides, Brightspace-link, markdown-fil) og find slidenummeret i `.txt`-filen ved siden af PDF'en i `context/<kursus>/sources/`. Samme data som JSON: `context/sources.json`. Originalerne er gitignored og ligger kun lokalt. SWT har intet manifest endnu.
+
 ## Kurser
 
 | Kode | Kursus | Mappe | Hvad det dækker |

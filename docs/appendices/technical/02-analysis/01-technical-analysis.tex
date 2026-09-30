@@ -105,7 +105,7 @@ Layers with the data dependency turned around & Domain has no technical details 
 \hline
 \end{tabular}
 \end{center}
-We went with the last option. It does give more files, but they are the same kinds of files every time, and our vertical slice skill (section~\ref{sec:ai}) creates them in a fixed order. The expiry and reorder rules are where we are most likely to make mistakes, so we wanted to be able to test those on their own.
+We went with the last option. It does give more files, but they are the same kinds of files every time, and we always create them in the same order, starting with Domain. The expiry and reorder rules are where we are most likely to make mistakes, so we wanted to be able to test those on their own.
 
 \subsection{Status}
 The four projects and the references between them are set up, but Domain and Infrastructure are still empty. There are no entities and no migrations yet, and the only endpoint returns hard-coded data. The first real feature, the household profile, will add the first entity and the first migration.
@@ -310,7 +310,7 @@ The requirements NFR-09 to NFR-11 say what the API must refuse. A request withou
 CORS only allows our two apps. That is not real protection, though, because CORS is only enforced by browsers \cite[sec.~3.1.1]{desanctis-web-apis-aspnet-core}. The API still has to check authorization itself.
 
 \subsection{Secrets}
-Passwords and other secrets are only set as environment variables in Coolify, not in the repository or the images \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}\cite[slide 13]{sw4bad-release-deployment}. That is why our images on GitHub can be public. If a secret is missing, the stack refuses to start instead of starting with an empty password. GitHub only stores the Coolify webhook and a token that can start a deployment and nothing else, and images are pushed with the temporary token GitHub Actions creates for each run. The AI tools are not allowed to read .env files.
+Passwords and other secrets are only set as environment variables in Coolify, not in the repository or the images \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}\cite[slide 13]{sw4bad-release-deployment}. That is why our images on GitHub can be public. If a secret is missing, the stack refuses to start instead of starting with an empty password. GitHub only stores the Coolify webhook and a token that can start a deployment and nothing else, and images are pushed with the temporary token GitHub Actions creates for each run.
 
 \subsection{Known Weaknesses}
 These are things we know are not good enough yet. They are also listed under open decisions.
@@ -319,17 +319,6 @@ These are things we know are not good enough yet. They are also listed under ope
     \item If the Keycloak address is missing from the configuration, the API starts without authentication. That cannot happen in production because the compose file requires it, but the API should refuse to start (NFR-07).
     \item The course says an API should only accept HTTPS \cite[slides 11--13]{sw4bad-https}. A redirect from HTTP is not enough for an API, because the token may already have been sent in clear text \cite[sec.~HSTS and API projects]{microsoft-aspnetcore-enforce-https}. We have not checked yet how Coolify's proxy handles this.
     \item The GitHub Actions we use are pinned to a version like v4, not to a specific commit. If one of them is hacked, our pipeline would run the new code \cite[sec.~Using third-party actions]{github-secure-use}.
-\end{itemize}
-
-\section{AI Tools}
-\label{sec:ai}
-We decided on 09-09 to use AI assistants in the project. To make sure everyone in the group still understands the code, we set some rules:
-\begin{itemize}
-    \item The shared rules are in AGENTS.md, which both Claude Code and Antigravity read.
-    \item Claude Code has four review agents that can only read code (architecture, backend, test design and security) and some skills for tasks we do often, like planning, TDD and git. A small script copies the agents to Antigravity so the two tools stay the same.
-    \item The AI can read the Kaneo board and create and comment on tasks, but it cannot move, assign or delete them. Planning the sprint is our job.
-    \item The AI cannot read .env files or key files.
-    \item A person designs and approves the test cases before they are written, and whoever commits a change must be able to explain it.
 \end{itemize}
 
 \section{Key Technical Decisions}

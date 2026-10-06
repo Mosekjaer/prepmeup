@@ -63,7 +63,7 @@ Rapportér fejl ordret. Svar altid: hvad blev tilføjet i hvilken sektion + link
 3. Tjek at hver opgave har en ansvarlig - mangler en, spørg hvem.
 4. Tjek at Næste møde er udfyldt.
 5. Kompilér.
-6. Foreslå opgaverne som **Kaneo-kommentarer** - vis den tekst du ville skrive, og på hvilket kort. **Opret aldrig kort og flyt aldrig noget i Kaneo.** Claude må kun læse og kommentere; statusskift er gruppens beslutning og et bedømt læringsmål.
+6. Foreslå opgaverne som **Kaneo-kommentarer** - vis den tekst du ville skrive, og på hvilket kort. **Opret eller flyt kun kort, når brugeren beder om det.** Hvad Claude må i Kaneo, står i Kaneo-afsnittet i `AGENTS.md`.
 
 ## Kilder
 

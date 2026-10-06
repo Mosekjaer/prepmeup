@@ -43,5 +43,6 @@ device-authorization-flow i browseren, hvor du selv godkender login — der er i
 et statisk token i miljøvariabler. Kræver Node.js 24+ installeret lokalt.
 
 Tilladt i `.claude/settings.json`: læsning, `create_task_comment`, `create_task`, `create_label`, `attach_label_to_task`,
-`detach_label_from_task`, `update_task_due_date` og `create_task_relation`. `update_task` står under `ask` og bruges kun til
-startdatoer — samme kald kan ændre status, så hvert kald godkendes. Alt andet skrivende er på deny-listen — se Kaneo-afsnittet i `AGENTS.md`.
+`detach_label_from_task`, `update_task_due_date`, `create_task_relation`, `move_task` og `update_task_status`. Kort flyttes kun,
+når et gruppemedlem beder om det. `update_task` står under `ask` og bruges kun til startdatoer — samme kald kan ændre status, titel og
+beskrivelse, så hvert kald godkendes. Alt andet skrivende er på deny-listen — se Kaneo-afsnittet i `AGENTS.md`.

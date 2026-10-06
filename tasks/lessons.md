@@ -27,3 +27,9 @@
 **Pattern:** Bilag 2.1 var skrevet tæt og teknisk: lange versionshistorik-linjer med alle detaljer, `\texttt{}` om klassenavne, filer, kommandoer og config-nøgler midt i sætninger, fed-start-bullets, konstruktioner som "The question is not X but Y", "There is a limit:", "The price is".
 **Rule:** Skriv rapport og bilag i en almindelig studerendes stemme: "we", korte sætninger, prosa frem for bullets, én pointe ad gangen. Versionshistorik er én kort sætning pr. version ("Added client technologies"). Brug ikke `\texttt{}` i løbende tekst; omskriv til almindelige ord ("the Domain project", "the items endpoint", "the main branch") og undlad kode-identifiers, filstier, porte og config-nøgler, medmindre læseren skal bruge dem. Detaljer, der står i et andet bilag, henvises til i stedet for at gentages.
 **Context:** PMU-18, `docs/appendices/technical/02-analysis/01-technical-analysis.tex`. Gælder alle dokumenter i `docs/`.
+
+## 2026-10-06 — "Flow mellem noder" er et node-diagram, ikke et sekvensdiagram
+
+**Pattern:** Bedt om et draw.io-diagram over auth-flowet (PMU-77) tegnede jeg et UML-sekvensdiagram med 17 beskeder. Frederik ville have et node-diagram, der giver overblik.
+**Rule:** Når vejleder eller gruppen beder om et "flowdiagram" eller "flow mellem noder", så tegn først et node-diagram: én boks pr. node (klienter, Keycloak, API, database) og få nummererede pile med teknisk tekst. Tegn kun et sekvensdiagram, når der bliver bedt om det, eller som supplement.
+**Context:** PMU-77, `docs/assets/drawio/auth-flow.drawio`. Michel bad 6/10 om "pile med teknisk tekst", så man kan bevare overblikket (referat 13.4).

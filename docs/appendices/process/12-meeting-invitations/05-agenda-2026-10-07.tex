@@ -3,6 +3,8 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[danish]{babel}
 \usepackage{../../appendix-style}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
 
 \title{12.5 Dagsorden -- 07-10}
 \author{SW4PRJ4 -- Group 3}
@@ -24,7 +26,16 @@
 \begin{enumerate}
     \item \textbf{Opsamling fra vejledermødet 6/10} (ca. 15 min)
     \begin{itemize}
-        \item Svar fra Michel og hvad de betyder for backloggen.
+        \item Referatet er bilag 13.4. Til stede var Alexander H, Alexander D, Frederik, Ida D og Ida F.
+        \item \textbf{Kilder:} Vi må kun henvise til originale kilder (dokumentation og litteratur), ikke til slides på Brightspace. Det rammer 29 henvisninger i den tekniske analyse og i bilag 10.3 (PMU-81).
+        \item \textbf{Diagrammer:} Vi følger Projekt 4-prototypen og laver diagrammerne løbende i nogenlunde UML. Michel lægger mere vægt på, at det virker, og at vi forstår det, end på det formelle.
+        \item \textbf{Auth-flow:} Hele flowet fra klient til Keycloak og videre til backend skal beskrives med et diagram, hvor der står teknisk tekst på pilene. Kunde-appen og admin-panelet kan have forskellige flows (PMU-77).
+        \item Credentials går kun mellem klient og Keycloak. Backend ser kun tokens.
+        \item \textbf{Claims og roller:} Vi skal beslutte, hvilke claims de forskellige brugere får, og hvordan man bliver admin (PMU-75).
+        \item \textbf{Flows mellem noderne:} Vi skal løbende dokumentere, hvordan data flyder mellem kunde-app, admin-panel, backend og database, så rapporten viser, at vi har forstået applikationen (PMU-78).
+        \item \textbf{Keycloak:} Rapporten skal sige, hvilke features vi bruger, og hvilke vi har fravalgt (PMU-79). Vi skal forhindre zombie-brugere, nu hvor Keycloak ligger offentligt (PMU-80).
+        \item \textbf{Expo:} Rapporten skal beskrive, at kunde-appen udgives gennem Expo og ikke direkte til Google Play (PMU-82).
+        \item Michels bud på næste skridt: onboarding af en bruger og helt styr på Keycloak-flowet, også admin-login i admin-panelet.
     \end{itemize}
     \item \textbf{Sprint review -- sprint 2} (ca. 45 min)
     \begin{itemize}
@@ -33,7 +44,30 @@
         \item I \emph{Done}: 9 kort (25 point). PMU-2, PMU-3, PMU-4, PMU-12, PMU-13, PMU-18, PMU-19, PMU-71 og PMU-72.
         \item Ikke færdigt: PMU-70 (login i kunde-appen med Keycloak, 3 point) er i \emph{In Progress}.
         \item Velocity for sprint 2: committed 28 point, done 25 point, spillover 3 point, scope 62 point. PMU-71 (2 point) og PMU-72 (3 point) fik først point-label ved sprintens afslutning og er talt med i committed. Tallene står i \texttt{docs/assets/data/sprint-velocity.csv}.
+        \item Vi blev færdige med 60 \% af det, vi tog ind i sprint 1, og 89 \% i sprint 2. Figur~\ref{fig:velocity} viser de to sprints ved siden af hinanden.
     \end{itemize}
+
+    \begin{figure}[H]
+        \centering
+        \pgfplotstableread[col sep=comma]{../../../assets/data/sprint-velocity.csv}\velocitytable
+        \begin{tikzpicture}
+            \begin{axis}[
+                ybar, bar width=14pt,
+                width=0.8\textwidth, height=6cm,
+                xlabel={Sprint}, ylabel={Point},
+                xmin=0.5, xmax=6.5, xtick={1,...,6}, ymin=0,
+                legend pos=north east,
+                nodes near coords, nodes near coords style={font=\footnotesize},
+            ]
+                \addplot[fill=blue!35, draw=blue] table[x=sprint, y=committed]{\velocitytable};
+                \addlegendentry{Committed}
+                \addplot[fill=red!45, draw=red] table[x=sprint, y=done]{\velocitytable};
+                \addlegendentry{Done}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Velocity pr. sprint. Afstanden mellem committed og done er faldet fra 23 point i sprint 1 til 3 point i sprint 2: vi tog mindre ind og blev færdige med næsten det hele.}
+        \label{fig:velocity}
+    \end{figure}
     \item \textbf{Retrospective} (ca. 30 min)
     \begin{itemize}
         \item Opfølgning på sidste retrospective: har demoen givet overblik over den anden undergruppes arbejde? Bliver E/R-diagrammet brugt som overbliksdiagram?
@@ -45,6 +79,13 @@
     \begin{itemize}
         \item Kapacitet: hvor mange timer har hver af os i perioden?
         \item Spillover: kort, der ikke er færdige, beholder label \emph{Sprint 2} og får \emph{Sprint 3} oveni.
+        \item Efter vejledermødet er der oprettet ni kort, PMU-74 -- PMU-82. De ligger allerede i \emph{To Do} med label \emph{Sprint 3}, start 7/10 og frist 20/10, men er ikke ready: de mangler point-label og ejer. Gruppen skal godkende, at de er med i sprinten.
+        \begin{itemize}
+            \item Kode: PMU-74 onboarding af ny bruger, PMU-75 claims og roller i Keycloak, PMU-76 admin-login i admin-panelet, PMU-80 zombie-brugere.
+            \item Rapport: PMU-77 auth-flow, PMU-78 flowdiagram for gem-flow, PMU-79 Keycloak-features, PMU-81 originale kilder, PMU-82 udgivelse gennem Expo.
+            \item Forslag til estimater står i beskrivelsen på hvert kort og giver 26 point i alt uden PMU-80, som først kan estimeres, når den er afklaret. Med PMU-70 er det 29 point, før de gamle kandidater regnes med.
+        \end{itemize}
+        \item PMU-74 har krav FR-01 ligesom PMU-70. Hvor går grænsen mellem login og onboarding, og hvad består onboarding af efter kravspecifikation 1.4?
         \item PMU-27 er slået sammen med PMU-70, som har overtaget krav FR-01 og definition of done. PMU-27 skal slettes, og kravlinjen skal ind i beskrivelsen på PMU-70.
         \item PMU-30 (GUI-skitser) overlapper med mockuppet i PMU-72. Er PMU-30 stadig nødvendig?
         \item PMU-73 (kravspec 1.4) ligger i backloggen, men har label \emph{Sprint 2}. Skal den med i sprint 3, eller skal labelen fjernes?

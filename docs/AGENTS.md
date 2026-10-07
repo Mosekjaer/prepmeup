@@ -25,12 +25,14 @@ Alle kilder samles i **én fælles fil**: `assets/references.bib`. Et bilag der 
 
 `assets/references.bib` har én eksempelkilde af hver type (`@online`, `@software`, `@book`, `@article`) som skabelon — brug dem som forlæg, ikke som rigtige kilder (undtagen `brs-forberedt`, `agents365-drawio-skill` og `schwaber-scrum-guide-2016`, som er reelle).
 
-**Kursusmateriale** (slides, noter, bøger fra Brightspace) citeres som originalen, aldrig som en sti i `context/`:
+**Slides og Brightspace-links er ikke kilder.** Vejleder har afgjort det på mødet 6/10 (referat 13.4): rapport og bilag henviser kun til originale kilder, dvs. litteratur og dokumentation.
 
-- Find filen i `context/<kursus>/SOURCES.md`. Den giver titel, modul, forelæser, antal slides og Brightspace-link, så ingen skal ind på Brightspace igen.
-- Slidenummeret slås op i `.txt`-filen ved siden af PDF'en under `context/<kursus>/sources/brightspace/` (én side pr. form feed). Afsnitsnumre i markdown-konverteringen er ikke slidenumre.
-- Posten i `references.bib` er `@misc` med `author` = forelæser, `title` = slidetitlen, `howpublished = {Lecture slides, <kursus>, Aarhus University}`, `note = {Brightspace}`, `url` = linket fra `SOURCES.md` og `urldate`. Nøgle: `<kursus>-<emne>`, fx `sw4fed-react-overview`.
-- I teksten: `\cite[slide 11]{sw4fed-react-overview}`. Bøger: `\cite[ch.~8, p.~245]{goldman-maui-in-action}`.
+- Bygger en pointe på et slide, så find originalen: pensumbogen, standarden (fx en RFC) eller leverandørens dokumentation. HTTP citeres fx som specifikationen for HTTP, ikke som slidet om HTTP.
+- Bøger citeres med kapitel og side: `\cite[ch.~8, p.~245]{goldman-maui-in-action}`. Dokumentation citeres som `@online`, se ovenfor.
+- Almen softwareviden kræver ingen reference.
+- Kan originalen ikke findes, så sig det i chatten. Opfind ikke en kilde, og fald ikke tilbage på slidet.
+- Opret ingen nye `@misc`-poster med `howpublished = {Lecture slides, ...}`. De eksisterende i `references.bib` er under udfasning og må ikke bruges i nye `\cite`.
+- En sti i `context/` er aldrig en kilde. `context/` bruges til at finde ud af, hvad kurset siger, ikke til at citere det.
 
 Brug af AI-værktøjer citeres ikke i `references.bib` — det dækkes af AI-deklarationen, se nedenfor.
 

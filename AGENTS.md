@@ -32,7 +32,7 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 - Slå op i [context/INDEX.md](context/INDEX.md) **før** du læser kursusmateriale. Læs kun de filer, der matcher emnet. Læs aldrig `context/` igennem i blinde.
 - Hvert svar, der foreslår eller skriver kode, slutter med sektionen **Kilder** med markdown-links til de `context/`-filer og linjer, mønsteret stammer fra. Henvis også til `docs/standalone/architecture-pitch.tex`, når en lagregel er grundlaget.
 - Ingen kildehenvisninger som kommentarer i kildekoden. Kilder står i chatten, aldrig i koden.
-- `context/`-stier og linjenumre bruges kun i chatten. I `docs/` citeres originalen fra `context/<kursus>/SOURCES.md` med `\cite` og slidenummer — se Referencer i `docs/AGENTS.md`. `context/` er en lokal konvertering, som censor ikke har.
+- `context/`-stier og linjenumre bruges kun i chatten. I `docs/` citeres kun originale kilder (litteratur og dokumentation) med `\cite`, aldrig slides eller Brightspace-links — se Referencer i `docs/AGENTS.md`. `context/` er en lokal konvertering, som censor ikke har.
 - Findes mønsteret ikke i kursusmaterialet, skriv: `⚠ Ikke i kursusmaterialet: <begrundelse>`. Det gælder bl.a. Coolify, TanStack Query, klientgenerering til TypeScript og Keycloak-integration.
 
 ## Link-format
@@ -117,9 +117,9 @@ Reglerne står ét sted: `.githooks/check-conventions.sh`. Den bruges af `commit
 
 ## Kaneo
 
-Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag og startdato til sprintens første dag. Et spillover-kort beholder startdatoen fra den sprint, det startede i, og får den nye sprints sidste dag som forfaldsdato. Startdatoer sættes med `update_task`, som kræver godkendelse ved hvert kald, fordi det samme kald også kan ændre status og titel. Claude må fjerne labels med `detach_label_from_task`, fx sprint-labels fra kort i Backlog-visningen. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
+Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag og startdato til sprintens første dag. Et spillover-kort beholder startdatoen fra den sprint, det startede i, og får den nye sprints sidste dag som forfaldsdato. Claude må også flytte kort mellem Backlog-visningen og kolonnerne på boardet med `move_task` og `update_task_status`, når et gruppemedlem beder om det. Startdatoer sættes med `update_task`, som kræver godkendelse ved hvert kald, fordi det samme kald også kan ændre status, titel og beskrivelse. Claude må fjerne labels med `detach_label_from_task`, fx sprint-labels fra kort i Backlog-visningen. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
 
-Statusskift, flytning af kort mellem kolonner, tildeling, estimater og sletning er gruppens beslutning og et bedømt læringsmål — Claude gør det ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
+Hvilke kort der flyttes, og hvornår, er stadig gruppens beslutning og et bedømt læringsmål — Claude flytter kun på besked og aldrig på eget initiativ. Tildeling, estimater og sletning gør Claude ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
 
 ### Sprints
 

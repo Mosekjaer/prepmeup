@@ -47,3 +47,6 @@ yarn-error.log*
 
 # Original course files (slides, books) - local only, copyrighted and large
 context/*/sources/
+
+# Local video projects (HyperFrames), not part of the hand-in
+video/

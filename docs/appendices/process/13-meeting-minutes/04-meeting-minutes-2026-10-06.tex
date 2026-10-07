@@ -1,0 +1,118 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 04-meeting-minutes-2026-10-06.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{13.4 Mødereferat -- 06-10}
+\author{SW4PRJ4 -- Group 3}
+\date{06-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 06-10-2026 (tirsdag)
+
+\textbf{Tid:} 13:00
+
+\textbf{Sted:} 5123-313
+
+\textbf{Referent:} Frederik
+
+\section*{Deltagere}
+
+\begin{itemize}
+    \item Alexander H
+    \item Alexander D
+    \item Frederik
+    \item Ida D
+    \item Ida F
+    \item Michel (vejleder)
+\end{itemize}
+
+\textbf{Fraværende:}
+
+\begin{itemize}
+    \item Malthe
+    \item Marie
+    \item Oskar
+\end{itemize}
+
+\section*{Dagsorden}
+
+\begin{enumerate}
+    \item Status siden sidste vejledermøde (15/9)
+    \item Spørgsmål til vejleder
+    \begin{enumerate}
+        \item Diagrammer
+        \item Kilder til kursusmateriale
+    \end{enumerate}
+    \item Næste vejledermøde
+    \item Eventuelt
+\end{enumerate}
+
+\section*{Noter}
+\subsection*{1. Status siden sidste vejledermøde}
+
+\begin{itemize}
+    \item \textbf{Deployment af kunde-appen:} Vi skal beskrive, at appen udgives gennem Expo og ikke direkte til Google Play.
+    \item \textbf{Auth-flowet:} Hele flowet fra mobil til Keycloak og videre til backend skal beskrives ordentligt. Kunde-appen og admin-panelet kan have forskellige flows, og i så fald skal begge dokumenteres.
+    \item Michel vil gerne have et flowdiagram over auth-flowet med teknisk tekst på pilene, så man kan se, hvad der faktisk bliver sendt mellem parterne.
+    \item Credentials sendes kun mellem klienterne og Keycloak, aldrig gennem backend. Backend håndterer kun tokens fra klienterne og læser bl.a. claims i JWT-tokenet.
+    \item Vi skal finde ud af, hvilke claims de forskellige brugere skal have. Et claim som ``onboarding gennemført'' kan spare et opslag i databasen.
+    \item Roller og rettigheder ligger typisk også i claims, afhængigt af hvordan vi bygger det. Vi skal afklare, hvordan en bruger bliver admin, og hvordan man logger ind som admin i admin-panelet.
+    \item Når en bruger ændres i Keycloak, skal tokenet fornyes, før klienten har de nye claims.
+    \item Næste skridt i sprint 3 er onboarding af en bruger og at få helt styr på Keycloak-flowet, herunder admin-login i admin-panelet.
+    \item Chrome DevTools kan bruges til at se trafikken mellem applikationen og de andre noder.
+    \item \textbf{Keycloak:} Keycloak er stort og har mange features. Efterhånden som vi udvider brugen, skal vi dokumentere, hvilke features vi bruger, og hvilke vi har fravalgt. Eksempler, Michel nævnte: hvorfor man kan spærre JWT-tokens, og IP-tjek.
+    \item Rapporten skal begrunde valget af Keycloak ud fra de egenskaber, vi bruger, uanset hvorfor vi oprindeligt valgte det.
+    \item Keycloak og resten af systemet skal være deployet på nettet. Det er allerede gjort. Michel anbefaler ellers Heroku eller Aarhus Universitets Kubernetes-servere.
+    \item Når Keycloak ligger på en offentlig server, skal vi forhindre zombie-brugere.
+\end{itemize}
+
+\subsection*{2.1 Diagrammer}
+
+\begin{itemize}
+    \item Vi følger Projekt 4-prototypen og de andre eksempler og laver diagrammerne løbende. Så har vi nok.
+    \item Michel går ikke meget op i det formelle. Han lægger mere vægt på, at vi får noget til at virke og selv får hænderne i det.
+    \item Diagrammerne skal være nogenlunde UML, men detaljer som farven på en pil er ligegyldige.
+    \item Dokumentationen er ikke ligegyldig, men den skal være fornuftig og ikke banal.
+    \item Vi skal have et overordnet overblik over projektet. Tidsplanen kan rekonstrueres til sidst; den går Michel ikke op i. Det, der ikke kan rekonstrueres, er forståelsen af hele flowet i applikationen og det tekniske.
+    \item Vi skal løbende dokumentere, hvordan de forskellige flows virker mellem noderne, fx backend og admin-panelet i React. Det gælder fx flowet, hvor noget gemmes, både for admin-panelet og for kunde-appen.
+    \item Flowdiagrammerne behøver ikke alle stå i rapporten, men det skal flettes ind et sted, så det fremgår, at vi har forstået, hvad der foregår i applikationen.
+\end{itemize}
+
+\subsection*{2.2 Kilder til kursusmateriale}
+
+\begin{itemize}
+    \item Vi skal kun henvise til dokumentation eller litteratur, ikke til slides på Brightspace. Det skal være en original reference.
+    \item Eksempel: HTTP-protokollen henvises til dokumentationen for HTTP-protokollen.
+    \item Står en vigtig pointe på et slide, finder vi den originale kilde i bogen eller lignende.
+    \item Almen softwareviden kræver ingen reference.
+\end{itemize}
+
+\section*{Beslutninger}
+
+\begin{itemize}
+    \item Rapporten henviser til originale kilder (dokumentation og litteratur) og ikke til slides på Brightspace.
+    \item Diagrammerne følger Projekt 4-prototypen og laves løbende i nogenlunde UML.
+    \item Sprint 3 fokuserer på onboarding af en bruger og på Keycloak-flowet, herunder claims, roller og admin-login.
+    \item Credentials går aldrig gennem backend, som kun håndterer tokens.
+\end{itemize}
+
+\section*{Opgaver}
+
+\begin{itemize}
+    \item Opgaverne blev ikke fordelt på mødet.
+\end{itemize}
+
+\section*{Næste møde}
+
+\begin{itemize}
+    \item Onsdag 7/10: sprint review med demo, retrospective og sprint planning for sprint 3.
+    \item Næste vejledermøde blev ikke aftalt.
+\end{itemize}
+
+\end{document}

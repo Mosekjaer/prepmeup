@@ -119,7 +119,7 @@ Reglerne står ét sted: `.githooks/check-conventions.sh`. Den bruges af `commit
 
 Claude må læse, kommentere og oprette opgaver og labels, sætte labels og relationer, og sætte forfaldsdato til sprintens sidste dag og startdato til sprintens første dag. Et spillover-kort beholder startdatoen fra den sprint, det startede i, og får den nye sprints sidste dag som forfaldsdato. Claude må også flytte kort mellem Backlog-visningen og kolonnerne på boardet med `move_task` og `update_task_status`, når et gruppemedlem beder om det. Startdatoer sættes med `update_task`, som kræver godkendelse ved hvert kald, fordi det samme kald også kan ændre status, titel og beskrivelse. Claude må fjerne labels med `detach_label_from_task`, fx sprint-labels fra kort i Backlog-visningen. Nye kort oprettes med `status: "planned"`, så de lander i Backlog-visningen og ikke på boardet, og skrives på dansk.
 
-Hvilke kort der flyttes, og hvornår, er stadig gruppens beslutning og et bedømt læringsmål — Claude flytter kun på besked og aldrig på eget initiativ. Tildeling, estimater og sletning gør Claude ikke. Claude må foreslå et estimat i chatten, men gruppen sætter point-labelen. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
+Hvilke kort der flyttes, og hvornår, er stadig gruppens beslutning og et bedømt læringsmål — Claude flytter kun på besked og aldrig på eget initiativ. Tildeling og sletning gør Claude ikke. Claude estimerer og sætter selv point-labelen, når et gruppemedlem beder om det; gruppen retter den, hvis den er uenig. Blokeringen håndhæves af deny-listen i `.claude/settings.json`.
 
 ### Sprints
 

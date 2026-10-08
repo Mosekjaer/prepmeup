@@ -123,18 +123,18 @@ Hvilke kort der flyttes, og hvornår, er stadig gruppens beslutning og et bedøm
 
 ### Sprints
 
-To uger, onsdag til tirsdag. Undtagelse: sprint 2 er en mini-sprint på én uge, så den slutter med en demo. Sprint review, retrospective og planning holdes samme dag.
+To uger, onsdag til tirsdag. Undtagelse: sprint 2 er en mini-sprint på én uge, så den slutter med en demo, og sprint 3 er tre uger på grund af efterårsferien (uge 42). Sprint review, retrospective og planning holdes samme dag.
 
 | Sprint | Periode |
 |---|---|
 | 1 | 16/9 – 29/9 |
 | 2 | 30/9 – 6/10 |
-| 3 | 7/10 – 20/10 |
-| 4 | 21/10 – 3/11 |
-| 5 | 4/11 – 17/11 |
-| 6 | 18/11 – 1/12 |
+| 3 | 7/10 – 27/10 |
+| 4 | 28/10 – 10/11 |
+| 5 | 11/11 – 24/11 |
+| 6 | 25/11 – 8/12 |
 
-Aflevering fredag 11/12 kl. 13.00. Dagene 2/12 – 11/12 er ikke en sprint.
+Aflevering fredag 11/12 kl. 13.00. Dagene 9/12 – 11/12 er ikke en sprint.
 
 - **Backlog-visningen** (`planned`) er Product Backlog. **Boardet** er Sprint Backlog. Der oprettes ikke en kolonne ved navn Backlog.
 - Et kort flyttes fra Backlog til `To Do` ved sprint planning og kun når det er **ready**: beskrivelse med `Krav: FR-xx` som første linje (eller ingen FR ved `Teknisk`/`Rapport`), definition of done, point-label, epic-label og en ejer.

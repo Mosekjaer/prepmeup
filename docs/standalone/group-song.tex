@@ -1,0 +1,123 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[danish]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{multicol}
+\usepackage{csquotes}
+
+\pagestyle{empty}
+
+\newenvironment{songpart}[1]
+    {\par\bigskip\noindent\begin{minipage}{\linewidth}\raggedright\textbf{\textsc{#1}}\par\smallskip}
+    {\par\end{minipage}}
+
+\newcommand{\hook}{%
+\begin{songpart}{Build}
+Hænderne op\\
+Hele gruppe tre\\
+Demo, kom og se\\
+Tre, to, en --
+\end{songpart}
+\begin{songpart}{Hook}
+Prep me up\\
+Vand på lager\\
+Tjek din udløbsdato\\
+Prep me up\\
+Michel sagde det:\\
+\emph{\enquote{Kan du forstå det\\
+er det ikke AI}}
+\end{songpart}}
+
+\newcommand{\drop}{%
+\begin{songpart}{Drop}
+\emph{(instrumental)}
+\end{songpart}}
+
+\begin{document}
+
+\begin{center}
+    {\Huge\bfseries Prep Me Up (Gruppe 3)}\\[0.4em]
+    {\large SW4PRJ4 -- gruppesang, dansk klub anno 2010'erne, 128 bpm}
+\end{center}
+
+\vspace{0.5em}
+
+\begin{multicols}{3}
+
+\begin{songpart}{Intro}
+Gruppe tre\\
+Incuba\\
+PrepMeUp
+\end{songpart}
+
+\hook
+
+\drop
+
+\begin{songpart}{Vers 1}
+Sprint et\\
+Syvoghalvtreds committed\\
+Fireogtredive done\\
+Resten kom med\\
+Treogtyve i spillover\\
+Ingen stress\\
+Mini-sprint, én uge\\
+Demo, succes\\
+Ét endpoint\\
+Curl mod databasen\\
+Bygget det simpelt\\
+Expo på Android\\
+Admin i React
+\end{songpart}
+
+\hook
+
+\begin{songpart}{Vers 2}
+Credentials uden om backend\\
+Kun tokens\\
+Kun claims\\
+Zombie-brugere?\\
+Luk den dør\\
+Keycloak er kæmpe\\
+Vi har styr\\
+Farven på pilen?\\
+Helt ligegyldig\\
+Tidsplanen til sidst\\
+Vær tålmodig\\
+Ingen Brightspace-slides\\
+Find rigtige kilder\\
+Mockup i PowerPoint\\
+Bli'r ikke vildere
+\end{songpart}
+
+\begin{songpart}{Bridge}
+Moralen er høj\\
+Vi hygger os\\
+Koden før testen\\
+Det ved vi godt\\
+Nu test først\\
+Mål, test, kode\\
+Code review på alt
+\end{songpart}
+
+\hook
+
+\drop
+
+\begin{songpart}{Outro}
+Gruppe tre\\
+Ellevte i tolvte\\
+Klokken tretten\\
+Vi er klar
+\end{songpart}
+
+\end{multicols}
+
+\vfill
+
+\begin{center}
+    \small Teksten bygger på mødereferaterne 13.2 -- 13.5.
+\end{center}
+
+\end{document}

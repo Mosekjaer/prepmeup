@@ -33,3 +33,21 @@
 **Pattern:** Bedt om et draw.io-diagram over auth-flowet (PMU-77) tegnede jeg et UML-sekvensdiagram med 17 beskeder. Frederik ville have et node-diagram, der giver overblik.
 **Rule:** Når vejleder eller gruppen beder om et "flowdiagram" eller "flow mellem noder", så tegn først et node-diagram: én boks pr. node (klienter, Keycloak, API, database) og få nummererede pile med teknisk tekst. Tegn kun et sekvensdiagram, når der bliver bedt om det, eller som supplement.
 **Context:** PMU-77, `docs/assets/drawio/auth-flow.drawio`. Michel bad 6/10 om "pile med teknisk tekst", så man kan bevare overblikket (referat 13.4).
+
+## 2026-10-06 — Forklaringsvideo: vis hvert skift, og hold skærmen rolig
+
+**Pattern:** Den lange app-gennemgang (video/app-tour, 22 min) havde fire ting på skærmen ad gangen, et filtræ med 20 dæmpede rækker, og den skiftede fil og emne uden at vise bevægelsen. Frederik: "meget forvirrende", "for meget på skærmen", "den hopper ... springer noget over og man bliver forvirret omkring hvor man nu er henne", og træet skulle gøre det "nemt at se hvor man præcist er henne i repoet".
+**Rule:** I en kode-forklaringsvideo: vis hvert skift af fil som en bevægelse ned gennem stien, før koden kommer. Vis kun stien til den aktuelle fil og dens naboer, ikke hele træet. Lad fortælleren sige, hvor vi er, som første sætning i hver scene. Vis ét fokus ad gangen (dæmp det, der er forklaret). Skriv hvilke linjer der springes over. Sænk taletempoet og giv pauser mellem scener.
+**Context:** `video/app-tour/` (scenes.py, build.py, template.tpl). Gælder også `video/repo-tour/`.
+
+## 2026-10-07 — Sæt point-labelen selv, når der bliver bedt om det
+
+**Pattern:** Bedt om at "opdatere med point" på sprint 3-kortene stoppede jeg og bad gruppen godkende mine forslag først, fordi `AGENTS.md` sagde, at gruppen sætter point-labelen. Frederik: "du skal sætte point label så det er forkert antaget. Gruppen skal ikke gøre det."
+**Rule:** Sæt point-labelen direkte ud fra dit eget estimat, når et gruppemedlem beder om point. Spørg ikke om godkendelse først. Skriv tallene i svaret, så gruppen kan rette dem. Skriv committed i `docs/assets/data/sprint-velocity.csv` i samme omgang.
+**Context:** Sprint planning 7/10, PMU-74 – PMU-85. Reglen i Kaneo-afsnittet i `AGENTS.md` er rettet. Tildeling og sletning er stadig ikke Claudes.
+
+## 2026-10-07 — Sangtekst til Suno: maks 3-4 ord pr. linje
+
+**Pattern:** Skrev gruppesangen (PMU-85) med lange linjer på 8-12 ord. Frederik: "korte sætninger og ikke lange tak. Så lyder det bedre" og "maks 3-4 ord per linje".
+**Rule:** Skriv sangtekster til Suno med højst 3-4 ord pr. linje. Del lange sætninger over flere linjer eller skær dem til. Hold citater korte nok til at passe i samme mål.
+**Context:** PMU-85, `docs/standalone/group-song.tex`. Stil: dansk klub anno 2010'erne, 128 bpm.

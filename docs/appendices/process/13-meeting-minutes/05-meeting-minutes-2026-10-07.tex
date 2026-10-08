@@ -1,0 +1,96 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 05-meeting-minutes-2026-10-07.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{13.5 Mødereferat -- 07-10}
+\author{SW4PRJ4 -- Group 3}
+\date{07-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 07-10-2026 (onsdag)
+
+\textbf{Tid:} 10:00
+
+\textbf{Sted:} Incuba
+
+\textbf{Referent:} Frederik
+
+\section*{Deltagere}
+
+\begin{itemize}
+    \item Alexander H
+    \item Alexander D
+    \item Frederik
+    \item Ida D
+    \item Ida F
+    \item Malthe
+    \item Marie
+    \item Oskar
+\end{itemize}
+
+\textbf{Fraværende:}
+
+\begin{itemize}
+    \item Ingen
+\end{itemize}
+
+\section*{Dagsorden}
+
+\begin{enumerate}
+    \item Opsamling fra vejledermødet 6/10
+    \item Sprint review -- sprint 2
+    \item Retrospective
+    \item Sprint planning -- sprint 3
+    \item Eventuelt
+\end{enumerate}
+
+\section*{Noter}
+\subsection*{2. Sprint review}
+
+\begin{itemize}
+    \item Demoen var rigtig god og var det helt rigtige at gøre. Den gav det overblik over hinandens arbejde, som vi manglede efter sprint 1.
+    \item Demoen er optaget på video. Frederik lægger videoen på Drive og deler linket (PMU-84).
+\end{itemize}
+
+\subsection*{3. Retrospective}
+
+\begin{itemize}
+    \item \textbf{Hvad gik godt?} Moralen er høj, og vi hygger os. Vi fik bygget den grundlæggende arkitektur og kunne være grundige uden at blive stressede. Code review fungerer rigtig godt. Tingene virker, og testene består, så vi har haft succesoplevelser.
+    \item \textbf{Hvad gik skidt?} Vi skal blive bedre til TDD. Vi kom til at skrive koden før testene, men det skyldes nok, at vi først skulle forstå arkitekturen.
+    \item \textbf{Hvad ændrer vi?} Vi starter med at spørge, hvad målet er med det, vi skal lave. Derefter definerer vi testene, skriver dem og implementerer til sidst. Handlingen er oprettet som PMU-83.
+\end{itemize}
+
+\subsection*{5. Eventuelt}
+
+\begin{itemize}
+    \item Frederik laver en sang i Suno i UK grime-stil om projektet (PMU-85). Teksten kan bygge på sjove ting fra mødenoterne, fx Michels ``hvis du kan forstå det, så er det ikke AI''.
+\end{itemize}
+
+\section*{Beslutninger}
+
+\begin{itemize}
+    \item Vi bliver ved med at slutte hver sprint med en demo.
+    \item Fra sprint 3 arbejder vi test først: definér testene, skriv testene, implementér.
+\end{itemize}
+
+\section*{Opgaver}
+
+\begin{itemize}
+    \item \textbf{Ansvarlig:} Frederik \textbf{Opgave:} Læg demo-videoen på Drive og del linket (PMU-84)
+    \item \textbf{Ansvarlig:} Frederik \textbf{Opgave:} Lav en sang i Suno i UK grime-stil med sjove citater fra mødenoterne (PMU-85)
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Skriv testene før implementeringen på alle kodekort i sprint 3 (PMU-83)
+\end{itemize}
+
+\section*{Næste møde}
+
+\begin{itemize}
+    \item Onsdag 28/10 i Incuba: sprint review med demo, retrospective og sprint planning for sprint 4.
+\end{itemize}
+
+\end{document}

@@ -31,7 +31,7 @@ Alle kilder samles i **én fælles fil**: `assets/references.bib`. Et bilag der 
 - Bøger citeres med kapitel og side: `\cite[ch.~8, p.~245]{goldman-maui-in-action}`. Dokumentation citeres som `@online`, se ovenfor.
 - Almen softwareviden kræver ingen reference.
 - Kan originalen ikke findes, så sig det i chatten. Opfind ikke en kilde, og fald ikke tilbage på slidet.
-- Opret ingen nye `@misc`-poster med `howpublished = {Lecture slides, ...}`. De eksisterende i `references.bib` er under udfasning og må ikke bruges i nye `\cite`.
+- Opret ingen `@misc`-poster med `howpublished = {Lecture slides, ...}`. De gamle er fjernet fra `references.bib` (PMU-81).
 - En sti i `context/` er aldrig en kilde. `context/` bruges til at finde ud af, hvad kurset siger, ikke til at citere det.
 
 Brug af AI-værktøjer citeres ikke i `references.bib` — det dækkes af AI-deklarationen, se nedenfor.

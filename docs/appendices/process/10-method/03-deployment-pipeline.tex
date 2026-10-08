@@ -18,6 +18,7 @@
 \begin{versionhistory}
   1.0 & 18-09-2026 & Group 3 & Deployment chain, image and tag strategy, rollback, secrets, migrations \\
   1.1 & 23-09-2026 & Group 3 & The deploy job requires HTTPS and an exact 200 from the webhook \\
+  1.2 & 08-10-2026 & Group 3 & Replaced slide references with original sources \\
 \end{versionhistory}
 
 This appendix describes how a change travels from a developer's push to a running container in production, and why the chain is built the way it is. The daily rules for branches, commits and pull requests are in appendix 10.1; the reasons behind the technology choices are in appendix 2.1. This appendix covers the part that comes after a pull request is merged.
@@ -47,9 +48,9 @@ Coolify can watch the git repository itself and deploy on every push to \texttt{
 
 The problem is not that Coolify deploys too eagerly. The problem is that it deploys without knowing anything about the tests. CI and Coolify both started from the same commit, but independently: a red test run did not stop Coolify from building and starting the same code. In practice that means two paths to production, and only one of them has ever seen a test result.
 
-The course defines continuous integration as work that is integrated frequently, where \emph{each integration is verified by an automated build including test} (Fowler's definition, quoted in the SWT lecture on continuous integration, lines 43--50). A deployment that bypasses that build is not a lighter variant of CI; it is a way around it. So the gate belongs where the test result exists, which is the workflow that produced it.
+Fowler defines continuous integration as a practice where work is integrated at least daily and each integration is verified by an automated build that includes the tests \cite{fowler-continuous-integration}. A deployment that bypasses that build is not a lighter variant of CI; it is a way around it. So the gate belongs where the test result exists, which is the workflow that produced it.
 
-Concretely, the \texttt{deploy} job declares \texttt{needs: publish}, and \texttt{publish} declares \texttt{needs: [backend, clients]}. GitHub Actions skips a job whose dependencies failed, so a red test run leaves both \texttt{publish} and \texttt{deploy} as skipped. No image is produced and no webhook is called. The rule ``never deploy on red'' is not a habit anyone has to remember; it is the shape of the graph.
+Concretely, the \texttt{deploy} job declares \texttt{needs: publish}, and \texttt{publish} declares \texttt{needs: [backend, clients]}. GitHub Actions skips a job whose dependencies failed \cite{github-workflow-syntax}, so a red test run leaves both \texttt{publish} and \texttt{deploy} as skipped. No image is produced and no webhook is called. The rule ``never deploy on red'' is not a habit anyone has to remember; it is the shape of the graph.
 
 The deployment itself is automatic once \texttt{main} is green -- there is no manual approval click. The argument is that \texttt{main} is always deployable under GitHub Flow, and an approval step adds waiting time without adding information: CI already knows more about the change than the person who would click. What moved was the sender of the signal, not the decision to deploy automatically.
 
@@ -76,7 +77,7 @@ Coolify can also manage each container as a separately created resource, configu
 
 The argument is where the topology lives. The compose file contains the network, the start-up order, the health check conditions, the volumes and the environment contract. Splitting the stack into individually created containers moves all of that from a version-controlled file into a web interface. It would then exist in exactly one place, nobody could review a change to it in a pull request, it could not be diffed against an earlier version, and it could not be run locally at all. The compose file is also the artefact that maps one-to-one to the deployment view of the architecture, which makes the documented architecture and the running system the same thing rather than two descriptions that drift apart.
 
-Compose is additionally how the course teaches multi-container applications: services defined in YAML as independently replaceable units (BAD material on Docker Compose, lines 19--30 and 74--81), including waiting for SQL Server with a health check and \texttt{depends\_on: condition: service\_healthy} (same material, lines 122--145). Our stack uses exactly that mechanism for both databases.
+Compose is also made for this: a multi-container application is defined in one YAML file \cite{docker-compose-overview}, and each service can be replaced independently of the others \cite{docker-compose-services}. Waiting for a database is done with a health check and \texttt{depends\_on: condition: service\_healthy} \cite{docker-compose-startup-order}. Our stack uses exactly that mechanism for both databases.
 
 The cost is real and worth stating: the stack is deployed as a unit, and services cannot be scaled independently. Neither is a requirement here.
 
@@ -117,7 +118,7 @@ This is written to be executed without thinking. A bad deployment is not the mom
 The whole procedure takes seconds, requires no build and produces no commit. Note the one thing it does not undo: the database schema. See section \ref{sec:migrations}.
 
 \section{Secrets}\label{sec:secrets}
-Production values live in exactly one place: the environment variables of the Coolify resource. They are not in the repository, not in the compose file, not in an image layer, and not in anything an AI agent can read. This follows the course rule that production secrets belong only on the production server -- as a file, as environment variables, or in whatever the hosting platform provides (BAD material on release and deployment, lines 125--131).
+Production values live in exactly one place: the environment variables of the Coolify resource. They are not in the repository, not in the compose file, not in an image layer, and not in anything an AI agent can read. Secrets should not be stored in source code or deployed with the app, and environment variables are one way to keep them out of both \cite{microsoft-aspnetcore-app-secrets}. De Sanctis does the same with a settings file that is created directly on the production server \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}.
 
 CI holds two secrets as repository secrets: the Coolify deploy webhook URL and a Coolify API token, which the webhook requires as a bearer token. The token is created with only the \texttt{deploy} permission. It is worth noting what the pair can and cannot do: it can start a deployment, and it cannot read environment variables. Compromising it does not expose a database password. Pushing to GHCR uses the workflow's built-in token, so no long-lived registry credential exists to leak in the first place.
 
@@ -127,12 +128,12 @@ The compose file refers to every sensitive value in the form
 Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}
 \end{lstlisting}
 
-The \texttt{:?} form is part of the security design, not a convenience. Without it, a missing variable expands to an empty string, and the stack starts anyway: SQL Server with a blank SA password, or Keycloak with an empty admin password, reachable and apparently working. The failure would be silent, and it would be a running system rather than a stopped one. With \texttt{:?}, Compose refuses to start and prints the name of the variable it is missing. The system fails closed, loudly, and at the earliest possible moment. It also documents the contract: reading the compose file tells you exactly which values the production host must supply, without any of them being written down.
+The \texttt{:?} form is part of the security design, not a convenience. Without it, a missing variable expands to an empty string, and the stack starts anyway: SQL Server with a blank SA password, or Keycloak with an empty admin password, reachable and apparently working. The failure would be silent, and it would be a running system rather than a stopped one. With \texttt{:?}, Compose refuses to start and prints the name of the variable it is missing \cite{docker-compose-interpolation}. The system fails closed, loudly, and at the earliest possible moment. It also documents the contract: reading the compose file tells you exactly which values the production host must supply, without any of them being written down.
 
 \section{Database Migrations}\label{sec:migrations}
 Schema changes are applied by a separate, blocking step before the API starts. They are not applied by the API at start-up.
 
-The database is not exposed to the host, in production or locally, so running \texttt{dotnet ef database update} from a CI runner is not possible -- there is nothing to connect to from outside the Docker network. Migrations are therefore packaged as a \emph{migration bundle}: a self-contained executable that needs neither the .NET SDK nor the \texttt{dotnet-ef} CLI on the machine that runs it, which is one of the two approaches the course material recommends for getting a schema to production (BAD book material on release and deployment, chapter 12). The bundle runs as a one-shot \texttt{migrator} service on the internal network, and the API declares
+The database is not exposed to the host, in production or locally, so running \texttt{dotnet ef database update} from a CI runner is not possible -- there is nothing to connect to from outside the Docker network. Migrations are therefore packaged as a \emph{migration bundle}: a self-contained executable that needs neither the .NET SDK nor the \texttt{dotnet-ef} CLI on the machine that runs it, which is one of the two approaches De Sanctis recommends for getting a schema to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}. The bundle runs as a one-shot \texttt{migrator} service on the internal network, and the API declares
 
 \begin{lstlisting}
 depends_on:
@@ -162,18 +163,18 @@ Parts of the chain cannot be created from the repository, and a clone of the rep
 \end{itemize}
 
 \section{Course Material and Choice of Tools}
-The principles behind this chain come from the course material: continuous integration as one automated build including tests, the steps of a typical CI job and its trigger sequence \cite{sw4swt-continuous-integration}; GitHub Flow with \texttt{main} always deployable and review before integration \cite{sw4swt-git-workflows}; the multi-container application defined in a single compose file with health checks and start-up conditions \cite{sw4bad-docker-compose,sw4bad-docker-compose-release}; production secrets only on the production host and environment-dependent configuration through \texttt{ASPNETCORE\_ENVIRONMENT} \cite{sw4bad-release-deployment}; and migration bundles as a recommended way to bring schema changes to production \cite[ch.~12]{desanctis-web-apis-aspnet-core}.
+The principles behind this chain are the ones we know from the courses: continuous integration as one automated build including tests, triggered by every push to the mainline \cite{fowler-continuous-integration}; GitHub Flow with \texttt{main} always deployable \cite{chacon-github-flow-2011} and review before integration \cite{github-docs-github-flow}; the multi-container application defined in a single compose file \cite{docker-compose-overview} with health checks and start-up conditions \cite{docker-compose-startup-order}; production secrets only on the production host \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core} and environment-dependent configuration through \texttt{ASPNETCORE\_ENVIRONMENT} \cite[sec.~2.4.2]{desanctis-web-apis-aspnet-core}; and migration bundles as a recommended way to bring schema changes to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}.
 
 The tools are not from the course material. The course teaches CI with GitLab CI and deployment to an Azure virtual machine with IIS and a Visual Studio publish profile. We use GitHub Actions, GitHub Container Registry and Coolify on the group's own server. That choice is ours and stands on its own reasons: the repository is already on GitHub, so the CI runner, the registry and the permission model are the same system and need no credentials passed between them; and Coolify runs a plain Docker Compose stack on hardware the group controls, which keeps the deployed topology identical to the one we run locally and costs nothing per month. The mapping to the course material is at the level of principle -- one automated build including tests as the only route to an artefact, secrets only on the host, migrations as their own step -- not at the level of product names.
 
 \section*{Sources}
 \begin{itemize}
-    \item CI definition and graded builds \cite[slides 3 and 5]{sw4swt-continuous-integration}.
-    \item Steps of a typical CI job and the trigger sequence \cite[slides 7--8]{sw4swt-continuous-integration}.
-    \item GitHub Flow, \texttt{main} always deployable, review before integration \cite[slides 9--10 and 16]{sw4swt-git-workflows}.
-    \item Compose as the definition of a multi-container application; services as replaceable units \cite[slides 2--3 and 7]{sw4bad-docker-compose}.
-    \item Health check and \texttt{depends\_on: condition: service\_healthy} against MSSQL \cite[slide 11]{sw4bad-docker-compose-release}.
-    \item Production secrets belong on the production host; environment-dependent configuration \cite[slides 11--13]{sw4bad-release-deployment}.
+    \item CI definition, a build on every push to the mainline, and staged builds \cite{fowler-continuous-integration}.
+    \item Events, jobs and steps in a workflow \cite{github-understanding-actions}; a job is skipped when a job it needs fails \cite{github-workflow-syntax}.
+    \item GitHub Flow and \texttt{main} always deployable \cite{chacon-github-flow-2011}; review before integration \cite{github-docs-github-flow}.
+    \item Compose as the definition of a multi-container application \cite{docker-compose-overview}; services as replaceable units \cite{docker-compose-services}.
+    \item Health check and \texttt{depends\_on} conditions \cite{docker-compose-startup-order}; required variables with \texttt{:?} \cite{docker-compose-interpolation}.
+    \item Production settings created on the production host \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}; secrets as environment variables \cite{microsoft-aspnetcore-app-secrets}; environment-dependent configuration \cite[sec.~2.4.2]{desanctis-web-apis-aspnet-core}.
     \item Migration bundles as a recommended path to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}.
     \item Layering rules and the composition root: the architecture pitch, \path{docs/standalone/architecture-pitch.tex}.
 \end{itemize}

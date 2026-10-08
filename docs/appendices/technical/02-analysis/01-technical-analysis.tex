@@ -18,6 +18,7 @@
   1.2 & 23-09-2026 & Group 3 & Added operations, CI and security \\
   1.3 & 30-09-2026 & Group 3 & Added client technologies \\
   1.4 & 30-09-2026 & Group 3 & Added backend architecture and data access \\
+  1.5 & 08-10-2026 & Group 3 & Replaced slide references with original sources \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -63,7 +64,7 @@ Locally, one docker compose command starts the API, the database and Keycloak. I
 The backend is one ASP.NET Core Web API. It serves both user interfaces and will also run the scheduler. Here we describe how the code inside it is split up.
 
 \subsection{Four Layers}
-In the course, a layered architecture splits the code into layers stacked on top of each other, where a layer may only use the layers below it. The idea is to keep things apart, so a layer can be changed or tested on its own \cite[slides 24 and 27]{sw4swd-architecture-process-2}. We have four layers, and each one is a separate project in the solution:
+A layered architecture splits the code into layers stacked on top of each other, where a layer may only use the layers below it. The idea is to keep things apart, so a layer can be changed or tested on its own \cite[ch.~3]{microsoft-application-architecture-guide}. We have four layers, and each one is a separate project in the solution:
 \begin{center}
 \begin{tabular}{@{}p{3.6cm} p{5.3cm} p{5.3cm}@{}}
 \textbf{Project} & \textbf{Does} & \textbf{Does not} \\
@@ -81,9 +82,9 @@ Infrastructure & EF Core configuration, queries, migrations & Making decisions. 
 The scheduler is placed in the Api project because it runs in the same process. It calls the same use cases as the controllers, so a delivery is planned by the same rules no matter if a user or the scheduler starts it. Things like authentication, logging and error handling are set up once in Program.cs and are not part of any one layer.
 
 \subsection{Which Way the Dependencies Point}
-In the usual layered design from the course, the data access layer is at the bottom, so the business logic depends on it \cite[slide 28]{sw4swd-architecture-process-2}. We turned that last dependency around. Api uses Application, and Application uses Domain. Application defines the interfaces it needs, for example a repository for households, and Infrastructure implements them with EF Core. Api only knows about Infrastructure at startup, where the implementations are registered in dependency injection.
+In the usual layered design, the data access layer is at the bottom, so the business logic depends on it \cite[ch.~5]{microsoft-application-architecture-guide}. We turned that last dependency around. Api uses Application, and Application uses Domain. Application defines the interfaces it needs, for example a repository for households, and Infrastructure implements them with EF Core. Api only knows about Infrastructure at startup, where the implementations are registered in dependency injection.
 
-This is the Dependency Inversion Principle: the part with the business rules should not depend on the part with the technical details, and both should depend on an interface \cite[slides 15--16]{sw4swd-solid-isp-dip}\cite[ch.~4, pp.~139--141]{freeman-head-first-design-patterns}. For us, the rule is when a household needs a new delivery, and the detail is that the items are stored in SQL Server. Goldman calls this structure Clean Architecture \cite[sec.~8.4.1]{goldman-maui-in-action}.
+This is the Dependency Inversion Principle: the part with the business rules should not depend on the part with the technical details, and both should depend on an interface \cite[ch.~4, pp.~139--141]{freeman-head-first-design-patterns}. For us, the rule is when a household needs a new delivery, and the detail is that the items are stored in SQL Server. Goldman calls this structure Clean Architecture \cite[sec.~8.4.1]{goldman-maui-in-action}.
 
 \subsection{Why Domain Has No References}
 The Domain project has no project references and no NuGet packages. That means the most important rules in the product (how much water a household needs, what goes in a package, when an item expires) are plain C\# classes. We can test them by creating a household in a unit test and checking the result, without a database or anything to fake. Goldman describes this as a strict rule in Clean Architecture \cite[sec.~8.4.2, p.~262]{goldman-maui-in-action}.
@@ -127,13 +128,13 @@ Expo (React Native) & Same React, hooks and TypeScript as the admin panel. Build
 \end{tabular}
 \end{center}
 
-We chose Expo. React does not care where it renders: React DOM renders to the browser and React Native renders to the phone \cite[slide 7]{sw4fed-react-overview}\cite[sec.~1.5.1, pp.~16--17]{mardan-react-quickly}. So components, state and hooks work the same way in both of our apps, and everyone in the group can work on both. With MAUI we would have split the group into a C\# half and a React half.
+We chose Expo. React does not care where it renders: React DOM renders to the browser and React Native renders to the phone \cite[sec.~1.5.1, pp.~16--17]{mardan-react-quickly}. So components, state and hooks work the same way in both of our apps, and everyone in the group can work on both. With MAUI we would have split the group into a C\# half and a React half.
 
 In Expo Router each file in the app folder is a screen \cite{expo-router-introduction}. It works like React Router, except the routes come from the files.
 
 \subsection{Admin Panel}
-The admin panel is a normal React app with Vite and React Router, which is what the course uses \cite[slides 12--14]{sw4fed-react-overview}\cite[ch.~13]{mardan-react-quickly}.
-One thing we need to remember when we deploy it: the web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[slides 6--7]{sw4fed-react-router}.
+The admin panel is a normal React app built with Vite, and it uses React Router for navigation \cite[ch.~13]{mardan-react-quickly}.
+One thing we need to remember when we deploy it: the web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[sec.~13.2.3]{mardan-react-quickly}.
 
 \subsection{Why Two Apps}
 Since Expo can also build for the web, one app could in theory be used by both customers and administrators. We decided not to do that. The two users need different screens and have different roles, so a shared app would need role checks on every screen, and the admin screens would end up inside the customer app. The admin panel only has to run in a browser, and for that a plain React app with Vite is simpler than React Native running on the web. Having two apps also means each has its own Keycloak client (section~\ref{sec:auth}).
@@ -146,7 +147,7 @@ Both apps call the API through packages/api-client, which NSwag generates from t
 For us the main benefit is that the apps do not have to build URLs, handle JSON or write their own types for the data. A screen just calls a method on the client and gets typed objects back. When the API changes we regenerate the client, and if an app still uses something that was removed, the type check in CI fails instead of the app crashing later. The login token is added in one place: each app gives the client a function that returns its token, so the generated code does not need to know anything about Keycloak. Business rules stay in the backend, and the apps only show what the API returns.
 
 \subsection{Testing the Clients}
-Both apps are tested with Vitest, jsdom and React Testing Library, like in the course \cite[slides 13--14]{sw4fed-vitest}. The tests are in a tests/ folder in each app and run in CI.
+Both apps are tested with Vitest, which runs the tests in jsdom instead of a real browser \cite{vitest-test-environment}, and React Testing Library \cite{testing-library-react-intro}. The tests are in a tests/ folder in each app and run in CI.
 
 In the admin panel we render components and check what the user sees, for example that the dashboard shows its heading. The customer app is harder, because React Native cannot run in Vitest. We work around it by using React Native for Web in the tests, so the components render as HTML. This means we test logic and state, but not how the screen actually looks on a phone.
 
@@ -168,7 +169,7 @@ Firebase Authentication & Hosted by Google, quick to start with, good mobile SDK
 \hline
 Clerk & Hosted, with ready-made login screens for React and Expo. & User data is stored at a third party. Costs money above the free tier. Hard to move away from. \\
 \hline
-Keycloak & Open source and free. Runs in our own compose. Uses standard OpenID Connect, so the API only needs normal JWT validation. Has roles built in. & Heavier to run (Java) and more to set up. We have to run and update it ourselves. Only mentioned briefly in the course \cite[slide 70]{sw4bad-authentication}. \\
+Keycloak & Open source and free. Runs in our own compose. Uses standard OpenID Connect, so the API only needs normal JWT validation. Has roles built in. & Heavier to run (Java) and more to set up. We have to run and update it ourselves. Only mentioned briefly in the course. \\
 \hline
 \end{tabular}
 \end{center}
@@ -202,7 +203,7 @@ We chose Coolify. The production setup has its own compose file, which is a bit 
 \label{sec:data}
 
 \subsection{EF Core}
-The course shows two ways to use a SQL database from .NET: EF Core, which is a full ORM, and Dapper, where you write the SQL yourself and Dapper turns the result into objects \cite[slide 7]{sw4bad-ef-intro}\cite[slide 16]{sw4bad-dbup-dapper}.
+We looked at two ways to use a SQL database from .NET: EF Core, which is a full ORM \cite[sec.~4.3]{desanctis-web-apis-aspnet-core}, and Dapper, where you write the SQL yourself and Dapper turns the result into objects \cite{dapperlib-dapper}.
 \begin{center}
 \begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
 \textbf{Option} & \textbf{For} & \textbf{Against} \\
@@ -214,12 +215,12 @@ Dapper & Full control over the SQL. Very fast. & No change tracking and no schem
 \end{tabular}
 \end{center}
 
-We chose EF Core. According to the course, Dapper makes sense when you need full control over the SQL or performance really matters \cite[slide 18]{sw4bad-dbup-dapper}. That is not our situation. We have a small amount of data, and the heaviest query (finding items close to expiry) runs in the background, so no user is waiting for it. Change tracking is actually useful for us, because when a delivery is created, both the delivery and the household's items change, and they have to be saved together \cite[sec.~4.3.4]{desanctis-web-apis-aspnet-core}. With EF Core the C\# classes are also the only description of the database, where Dapper would give us classes, SQL and migration scripts to keep in sync.
+We chose EF Core. Dapper makes sense when you need full control over the SQL or performance really matters. Performance is its main feature \cite{dapperlib-dapper}, while an ORM hides the SQL and adds some overhead \cite[sec.~4.3.1]{desanctis-web-apis-aspnet-core}. That is not our situation. We have a small amount of data, and the heaviest query (finding items close to expiry) runs in the background, so no user is waiting for it. Change tracking is actually useful for us, because when a delivery is created, both the delivery and the household's items change, and they have to be saved together \cite[sec.~4.3.4]{desanctis-web-apis-aspnet-core}. With EF Core the C\# classes are also the only description of the database, where Dapper would give us classes, SQL and migration scripts to keep in sync.
 
-If a query gets slow later, EF Core lets us write that one query in raw SQL \cite[slide 15]{sw4bad-ef-core-advanced}. Since the data access is behind the repository interfaces, such a change stays inside Infrastructure.
+If a query gets slow later, EF Core lets us write that one query in raw SQL \cite{microsoft-efcore-sql-queries}. Since the data access is behind the repository interfaces, such a change stays inside Infrastructure.
 
 \subsection{Migrations}
-The course explains that if a database is changed by hand, or the scripts are not in version control, the databases on different machines slowly drift apart and things break when the app runs \cite[slides 6--7]{sw4bad-dbup-dapper}. So we knew we wanted migrations. The question was which kind.
+If a database is changed by hand, or the scripts are not in version control, the databases on different machines slowly drift apart and things break when the app runs. A change one of us makes to the schema has to be something the others can run on their own database \cite{dbup-philosophy}. So we knew we wanted migrations. The question was which kind.
 \begin{center}
 \begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
 \textbf{Option} & \textbf{For} & \textbf{Against} \\
@@ -234,12 +235,12 @@ Only create the schema at startup & No migration files. & Only works on an empty
 \hline
 \end{tabular}
 \end{center}
-The table is based on \cite[slides 9 and 14]{sw4bad-ef-intro}, \cite[slides 14--15]{sw4bad-dbup-dapper} and \cite[secs.~4.3.2 and 4.3.5]{desanctis-web-apis-aspnet-core}.
+The table is based on \cite[secs.~4.3.2 and 4.3.5]{desanctis-web-apis-aspnet-core}, \cite{microsoft-efcore-managing-migrations}, \cite{microsoft-efcore-create-drop-apis} and \cite{dbup-docs}.
 
 We chose EF Core Migrations with code first. The schema is only changed through a new migration, never by hand, and the migration is committed in the same pull request as the change to the classes, so the reviewer can see the SQL. In production the migrations run as a migration bundle before the new API starts \cite[sec.~12.4.4, p.~421]{desanctis-web-apis-aspnet-core}. The steps are described in appendix 10.3.
 
 \subsection{SQL Server}
-Our data has a lot of relations: a household has members and items, an item points to a product in the catalogue, and a delivery has lines that point to items. It is also important that a delivery and the change to the household's items are saved together. Transactions and foreign keys are exactly what relational databases are good at \cite[slide 4]{sw4bad-ef-intro}\cite[sec.~4.1.1]{desanctis-web-apis-aspnet-core}.
+Our data has a lot of relations: a household has members and items, an item points to a product in the catalogue, and a delivery has lines that point to items. It is also important that a delivery and the change to the household's items are saved together. Transactions and foreign keys are exactly what relational databases are good at \cite[secs.~4.1 and 4.1.1]{desanctis-web-apis-aspnet-core}.
 \begin{center}
 \begin{tabular}{@{}p{3.1cm} p{5.6cm} p{5.6cm}@{}}
 \textbf{Option} & \textbf{For} & \textbf{Against} \\
@@ -248,7 +249,7 @@ SQL Server & Used in the course, so the slides and exercises apply directly. Wor
 \hline
 PostgreSQL & Free and light. Works well with EF Core. We already use it for Keycloak. & Not used in the course. Nothing in our requirements needs it. \\
 \hline
-MongoDB & Flexible schema. Can scale to several servers. & No foreign keys, so the app has to keep track of the relations \cite[slide 24]{sw4bad-mongo-intro}. We have many relations and one server. \\
+MongoDB & Flexible schema. Can scale to several servers. & No foreign keys, so the app has to keep track of the relations \cite{mongodb-data-consistency}. We have many relations and one server. \\
 \hline
 \end{tabular}
 \end{center}
@@ -256,13 +257,13 @@ MongoDB & Flexible schema. Can scale to several servers. & No foreign keys, so t
 We chose SQL Server, mainly because it is what the course uses, and PostgreSQL did not give us anything we needed. Because of the layers, the choice only shows up in Infrastructure, so switching later would mean a new EF Core provider and new migrations, but no changes to the rules or the API \cite[secs.~4.1.2 and 4.3.1]{desanctis-web-apis-aspnet-core}.
 
 \subsection{Database in Tests}
-The unit tests do not use a database, since they test Domain directly and Application with fake repositories. For integration tests the course suggests an in-memory SQLite database \cite[slide 16]{sw4bad-integration-testing}, which is fast and does not need a server. The catch is that our migrations are made for SQL Server, so the SQLite tests have to create the schema in another way. That means the integration tests do not test our migrations, and SQLite does not behave exactly like SQL Server. We think that is acceptable, because the migrations are still run against SQL Server both locally and when we deploy.
+The unit tests do not use a database, since they test Domain directly and Application with fake repositories. For integration tests we use an in-memory SQLite database, where each test gets its own database and no server is needed \cite{microsoft-efcore-testing-strategy}. The catch is that our migrations are made for SQL Server, so the SQLite tests have to create the schema in another way. That means the integration tests do not test our migrations, and SQLite does not behave exactly like SQL Server, which Microsoft's guide also warns about. We think that is acceptable, because the migrations are still run against SQL Server both locally and when we deploy.
 
 \section{Version Control and Git Workflow}
 \label{sec:git}
 The code is on GitHub. The course uses GitLab CI, but the ideas are the same, so we use GitHub Actions. Coolify also gets the production compose file and the images from GitHub.
 
-The course presents three workflows: trunk-based, GitHub Flow and Git Flow \cite{sw4swt-git-workflows}. We chose GitHub Flow, because the course describes it as a good fit for small teams that make web applications, release often and only have one version running. That is us. Git Flow is made for planned releases and several versions at once, so its extra branches would not help us. Pure trunk-based, where everyone commits directly to the main branch, would mean no code review before merge, and we want that.
+We looked at three workflows: trunk-based development \cite{hammant-trunk-based-development}, GitHub Flow \cite{chacon-github-flow-2011} and Git Flow \cite{driessen-git-branching-model}. We chose GitHub Flow. Driessen, who came up with Git Flow, recommends a simpler workflow like GitHub Flow for teams that deliver a web application continuously and only have one version running \cite{driessen-git-branching-model}. That is us. Git Flow is made for software with planned versions and several versions in use at once, so its extra branches would not help us. Pure trunk-based, where everyone commits directly to the main branch, would mean no code review before merge, and we want that.
 
 In practice:
 \begin{itemize}
@@ -279,7 +280,7 @@ Branch names and commit messages are checked by git hooks locally and again in G
 Here we explain the choices we made about running the system and keeping it secure, and what we know is still missing. The exact deployment steps and how to roll back are in appendix 10.3.
 
 \subsection{Containers}
-Every service runs in a Docker container, both locally and in production. The API image is built in two steps, like in the course \cite[slide 13]{sw4bad-docker}: first the code is built with the .NET SDK, and then only the finished files are copied into a smaller runtime image. That way the SDK and the source code are not in the image we run. The API also runs as a normal user instead of root, so a bug in the API does not give an attacker root in the container.
+Every service runs in a Docker container, both locally and in production. The API image is built in two steps with a multi-stage build \cite{docker-multi-stage-builds}\cite{microsoft-aspnetcore-docker}: first the code is built with the .NET SDK, and then only the finished files are copied into a smaller runtime image. That way the SDK and the source code are not in the image we run. The API also runs as a normal user instead of root, so a bug in the API does not give an attacker root in the container.
 
 Our Keycloak image is the official one with our realm file copied in. One thing we learned is that Keycloak only imports the realm the first time \cite[sec.~Importing a realm during startup]{keycloak-import-export}. After that, changes to the file do not reach the running Keycloak, so they also have to be made in the admin console.
 
@@ -288,15 +289,15 @@ In production we use fixed image versions instead of latest, so a new version ca
 \subsection{CI and Deployment}
 The CI workflow first builds and tests the backend and the apps. If everything is green on the main branch, it builds the images, pushes them to GitHub Container Registry and tells Coolify to deploy them. A second workflow checks branch names and pull request titles.
 
-The course describes continuous integration as integrating often and checking every integration with an automated build that runs the tests \cite[slide 3]{sw4swt-continuous-integration}. We have also made the pipeline the only way into production. If a test fails, no image is built and nothing is deployed, and automatic deployment is turned off in Coolify, so there is no way around it. Production also runs the exact image that was tested, because Coolify does not build anything itself.
+Continuous integration means integrating often and checking every integration with an automated build that runs the tests \cite{fowler-continuous-integration}. We have also made the pipeline the only way into production. If a test fails, no image is built and nothing is deployed, and automatic deployment is turned off in Coolify, so there is no way around it. Production also runs the exact image that was tested, because Coolify does not build anything itself.
 
 We had a bug in the deploy job at first. It only failed if Coolify answered with an error, so when Cloudflare answered with a redirect, the job was green even though nothing was deployed. Now the job only passes if Coolify answers 200. More about this in appendix 10.3.
 
 \subsection{Network and HTTPS}
-Only Coolify's proxy can be reached from the internet. It handles HTTPS and forwards the requests to the API and Keycloak inside the Docker network. This is the setup from the course, where only the proxy needs a certificate \cite[slides 5--7]{sw4bad-release-deployment}. No container opens a port in production, so the databases can only be reached from inside the network (see appendix 3.1). The traffic inside the network, for example between the API and SQL Server, is not encrypted. We accept that because it never leaves the server.
+Only Coolify's proxy can be reached from the internet. It handles HTTPS and forwards the requests to the API and Keycloak inside the Docker network. In this setup only the proxy needs a certificate \cite{microsoft-kestrel-reverse-proxy}. No container opens a port in production, so the databases can only be reached from inside the network (see appendix 3.1). The traffic inside the network, for example between the API and SQL Server, is not encrypted. We accept that because it never leaves the server.
 
 \subsection{Login in the API}
-The API checks every token it gets: it must be signed by Keycloak, come from the right issuer, be meant for our API and not be expired \cite[slides 6, 9 and 18--20]{sw4bad-jwt}\cite[sec.~9.2.5]{desanctis-web-apis-aspnet-core}. Tokens are valid for 15 minutes, since the advice is to keep them short \cite[sec.~9.1.2]{desanctis-web-apis-aspnet-core}.
+The API checks every token it gets: it must be signed by Keycloak, come from the right issuer, be meant for our API and not be expired \cite[sec.~9.2.5]{desanctis-web-apis-aspnet-core}\cite[secs.~4.1.1, 4.1.3, 4.1.4 and 7.2]{ietf-rfc7519-jwt}. Tokens are valid for 15 minutes, since the advice is to keep them short \cite[sec.~9.1.2]{desanctis-web-apis-aspnet-core}.
 
 In production the API talks to Keycloak over the internal network, but the tokens contain Keycloak's public address. Because the two addresses are different, we had to set the expected issuer by hand. Chapter 8 in the report describes how we found this. For the same reason the API is allowed to fetch Keycloak's settings over plain HTTP inside the network. Microsoft recommends only doing that in development \cite{microsoft-jwtbearer-requirehttpsmetadata}, so it only works because the traffic stays internal.
 
@@ -305,14 +306,14 @@ The requirements NFR-09 to NFR-11 say what the API must refuse. A request withou
 CORS only allows our two apps. That is not real protection, though, because CORS is only enforced by browsers \cite[sec.~3.1.1]{desanctis-web-apis-aspnet-core}. The API still has to check authorization itself.
 
 \subsection{Secrets}
-Passwords and other secrets are only set as environment variables in Coolify, not in the repository or the images \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}\cite[slide 13]{sw4bad-release-deployment}. That is why our images on GitHub can be public. If a secret is missing, the stack refuses to start instead of starting with an empty password. GitHub only stores the Coolify webhook and a token that can start a deployment and nothing else, and images are pushed with the temporary token GitHub Actions creates for each run.
+Passwords and other secrets are only set as environment variables in Coolify, not in the repository or the images \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}\cite{microsoft-aspnetcore-app-secrets}. That is why our images on GitHub can be public. If a secret is missing, the stack refuses to start instead of starting with an empty password. GitHub only stores the Coolify webhook and a token that can start a deployment and nothing else, and images are pushed with the temporary token GitHub Actions creates for each run.
 
 \subsection{Known Weaknesses}
 These are things we know are not good enough yet. They are also listed under open decisions.
 \begin{itemize}
     \item The API logs in to SQL Server as sa. It should have its own user that can only read and write data.
     \item If the Keycloak address is missing from the configuration, the API starts without authentication. That cannot happen in production because the compose file requires it, but the API should refuse to start (NFR-07).
-    \item The course says an API should only accept HTTPS \cite[slides 11--13]{sw4bad-https}. A redirect from HTTP is not enough for an API, because the token may already have been sent in clear text \cite[sec.~HSTS and API projects]{microsoft-aspnetcore-enforce-https}. We have not checked yet how Coolify's proxy handles this.
+    \item An API should only accept HTTPS. A redirect from HTTP is not enough for an API, because the token may already have been sent in clear text \cite[sec.~HSTS and API projects]{microsoft-aspnetcore-enforce-https}. We have not checked yet how Coolify's proxy handles this.
     \item The GitHub Actions we use are pinned to a version like v4, not to a specific commit. If one of them is hacked, our pipeline would run the new code \cite[sec.~Using third-party actions]{github-secure-use}.
 \end{itemize}
 

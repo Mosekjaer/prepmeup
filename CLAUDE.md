@@ -19,6 +19,7 @@ her — ret den i `AGENTS.md`.
 | `tdd-loop` | red/green/refactor med NUnit + NSubstitute; testtilfælde godkendes først |
 | `api-contract` | hold OpenAPI og `api-client` i sync (NSwag) |
 | `report-check` | kritik af rapporten, tegnoptælling mod 72.000 |
+| `student-voice` | omskriv et bilag til almindelig studenterstemme (som bilag 2.1): ingen `\texttt` i prosa, kort versionshistorik, indhold og kilder bevares |
 | `meeting-docs` | dagsordener og referater på dansk i LaTeX |
 | `git-workflow` | start arbejde på branch, commit, PR mod `main`, release-tag (GitHub Flow) |
 | `drawio-skill` | draw.io-diagrammer — obligatorisk for alt der ender i `docs/`, se Diagrammer i `AGENTS.md`. Skriv XML, valider, eksportér og tjek visuelt. Upstream [agents365-ai/drawio-skill](https://github.com/agents365-ai/drawio-skill) v3.4.0 (`7aa92f7`), deles med Antigravity via `.agents/sync-agents.py` |

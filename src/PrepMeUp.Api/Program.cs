@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
@@ -52,6 +54,7 @@ if (!string.IsNullOrWhiteSpace(authority))
         });
 }
 
+builder.Services.AddTransient<IClaimsTransformation, KeycloakRoleClaimsTransformation>();
 builder.Services.AddAuthorization();
 
 const string ClientCorsPolicy = "clients";

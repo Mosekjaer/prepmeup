@@ -3,6 +3,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\addbibresource{../../../assets/references.bib}
 
 \title{3.1 Network Architecture}
 \author{SW4PRJ4 - Group 3}
@@ -14,6 +15,7 @@
 \begin{versionhistory}
   1.0 & 16-09-2026 & Group 3 & Local and production setup \\
   1.1 & 08-10-2026 & Group 3 & Simpler text \\
+  1.2 & 21-10-2026 & Group 3 & Login flow with sequence diagram \\
 \end{versionhistory}
 
 \section{Overview}
@@ -56,16 +58,28 @@ No container publishes a port. Coolify's reverse proxy receives the traffic from
 The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. All services are set to restart, so they start again after a crash or a server restart.
 
 \section{Login Flow}
-Both clients use the Authorization Code flow with PKCE:
+Both clients log in with the Authorization Code flow with PKCE \cite{ietf-rfc6749-oauth2,ietf-rfc7636-pkce}. Figure~\ref{fig:auth-flow-mobile} shows the flow for the customer app. The text on each arrow is the request or response that is sent.
+
+\drawiofig[\linewidth]{auth-flow-mobile}{Login in the customer app. The user's password only goes between the browser and Keycloak.}{fig:auth-flow-mobile}
+
+The flow has four parts:
 \begin{enumerate}
-    \item The client opens Keycloak's login page in the browser.
-    \item The user logs in at Keycloak. The password is never sent to the client or the API.
-    \item Keycloak redirects back to the client with a short-lived code. For the app, the redirect uses the app's own URL scheme.
-    \item The client exchanges the code for an access token (a JWT, valid for 15 minutes).
-    \item The client sends the token to the API in the Authorization header.
-    \item The API checks the token's signature, issuer and audience, and uses the role (household or admin) for authorization.
+    \item \textbf{Discovery.} When the app starts, it reads Keycloak's discovery document \cite{openid-connect-discovery}. It gets the addresses of the login page, the token endpoint and the logout endpoint from there, so they are not hardcoded in the app.
+    \item \textbf{Login in the browser.} The app makes a random code verifier and sends only its SHA-256 hash, the code challenge, to Keycloak. The login page opens in the system browser (a Custom Tab on Android) and not inside the app, as RFC 8252 recommends for native apps \cite[sec.~8.12]{ietf-rfc8252-native-apps}. The user types email and password into Keycloak's own page. The app never sees them.
+    \item \textbf{Back to the app.} Keycloak redirects to \texttt{prepmeup://auth/callback} with a short-lived code and the same state value the app sent. The operating system gives the redirect to the app because the app owns the \texttt{prepmeup} scheme \cite[sec.~7.1]{ietf-rfc8252-native-apps}. The app checks the state and sends the code and the original code verifier to the token endpoint. Keycloak hashes the verifier and compares it with the challenge from step 2. Someone who steals the code cannot use it without the verifier \cite[sec.~1]{ietf-rfc7636-pkce}.
+    \item \textbf{Calling the API.} Keycloak returns an access token (a JWT, valid for 15 minutes) with \texttt{prepmeup-api} as audience. The app sends it in the \texttt{Authorization: Bearer} header \cite[sec.~2.1]{ietf-rfc6750-bearer}. The API fetches Keycloak's public signing keys once and caches them. After that it checks every token locally: signature, issuer, audience and expiry \cite{ietf-rfc7519-jwt}. It then turns the roles in \texttt{realm\_access.roles} into role claims, so the \texttt{AdminOnly} policy works. A missing or invalid token gives 401, a valid token without the admin role gives 403 on admin endpoints.
 \end{enumerate}
 
-Keycloak already adds our API as audience to the tokens for both clients. Step 6 is not implemented in the API yet. Appendix 4.1 describes the roles and which claims the API reads.
+So the credentials only travel between the browser and Keycloak. The API only ever sees the token. This is what the supervisor asked for at the meeting on 6/10.
+
+The app also receives an ID token and a refresh token. The ID token is only used to log out. The refresh token is not used yet, so the user has to log in again when the access token runs out.
+
+\subsection{Admin Panel}
+The admin panel will use the same flow with its own Keycloak client, \texttt{prepmeup-admin}, which is already in the realm. The only differences are that the redirect goes to the admin panel's web address instead of the app scheme, and that the browser calls the token endpoint from JavaScript, so Keycloak must allow the admin panel's origin. The login is not built yet (PMU-76), so this part is not shown in a diagram.
+
+\subsection{What Was Checked}
+The first half of the flow was checked in the browser against the local stack. The request to the login page had \texttt{response\_type=code}, \texttt{code\_challenge\_method=S256} and \texttt{scope=openid}, and the redirect back had \texttt{code}, \texttt{state}, \texttt{session\_state} and \texttt{iss}. The token request and the API call in the figure are drawn from the code in \texttt{clients/apps/mobile/src/lib/auth.tsx} and \texttt{src/PrepMeUp.Api/Program.cs}, and have not been checked in Chrome DevTools yet.
+
+\printbibliography
 
 \end{document}

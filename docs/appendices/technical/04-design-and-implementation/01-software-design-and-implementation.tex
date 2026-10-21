@@ -3,6 +3,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\addbibresource{../../../assets/references.bib}
 
 \title{4.1 Software Design and Implementation}
 \author{SW4PRJ4 -- Group 3}
@@ -11,6 +12,16 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\section{Roles and Claims}
+This section describes how the API tells a customer from an administrator (NFR-10). The login flow itself is in appendix 3.1.
+
+\subsection{Realm Roles}
+We have two roles, household and admin. A household is a customer who owns a household and a subscription. An admin is someone who works in the admin panel. Every new user gets the household role automatically, and only an admin can give someone the admin role.
+
+Keycloak has two kinds of roles. A realm role belongs to the whole realm, so every app in it sees the same role. A client role belongs to one app only \cite{keycloak-server-admin-guide}. We use realm roles. The roles say what a person is, not which app they are using, and the API does not need to know which app a token came from to decide if a request is allowed. There are also only two roles, so splitting them per app would not give us anything. If we later need an admin who may use the admin panel but nothing else, we can add a client role next to the realm roles without changing them.
+
+There is a risk we accept. Both apps are public clients and their tokens are meant for the same API. A customer can therefore log in through the admin panel and get a valid token. What stops them is the admin role, which the API checks on every admin endpoint and answers with 403 (NFR-10). The admin panel should also send users without the role away, but that is only for the user's benefit. It is not what keeps the data safe.
+
+\printbibliography
 
 \end{document}

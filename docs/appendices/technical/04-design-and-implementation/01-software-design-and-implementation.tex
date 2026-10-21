@@ -65,6 +65,22 @@ We are aware that this causes extra "unnecessary" calls to the database, which h
 
 \section{Keycloak}
 
+\textbf{Login library in the admin panel}
+
+The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the standard OpenID Connect and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps differ only in how they redirect and where they keep the token.
+
+\textbf{Where the admin panel keeps the token}
+
+The token is kept in memory only, as in the mobile app, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
+
+\textbf{How the admin panel checks the role}
+
+After login the admin panel calls the admin ping endpoint. A 200 lets the user in and a 403 shows a message that the account has no access. This way only the API knows the rule for who is an admin, and the admin panel does not have to decode the token.
+
+\textbf{Sign-in screen and sign-out}
+
+An unauthenticated user sees a sign-in screen with a sign-in button. Sign-out ends the Keycloak session, as in the mobile app, so a customer who is turned away can sign in with another account.
+
 \textbf{Token refresh}
 
 The client should refresh the access token in the following cases
@@ -72,6 +88,11 @@ The client should refresh the access token in the following cases
     \item Shortly before the access token expires.
     \item When the API replies with 401.
 \end{itemize}
+The admin panel uses the automatic silent renew of react-oidc-context, which uses a refresh token. If the renewal fails or the API replies with 401, the user is sent to the sign-in screen.
+
+\textbf{Tests of the admin login}
+
+We test the admin login with Vitest and mock react-oidc-context and the network, as the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
 
 \printbibliography
 

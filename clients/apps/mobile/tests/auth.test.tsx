@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from '../src/lib/auth';
 
 const mocks = vi.hoisted(() => ({
   request: { codeVerifier: 'verifier' },
+  discovery: { tokenEndpoint: 'http://keycloak/token', endSessionEndpoint: 'http://keycloak/logout' },
   response: null as { type: string; params: Record<string, string> } | null,
   exchangeCodeAsync: vi.fn(),
   openAuthSessionAsync: vi.fn(),
@@ -13,10 +14,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('expo-auth-session', () => ({
   makeRedirectUri: () => 'prepmeup://auth/callback',
-  useAutoDiscovery: () => ({
-    tokenEndpoint: 'http://keycloak/token',
-    endSessionEndpoint: 'http://keycloak/logout',
-  }),
+  useAutoDiscovery: () => mocks.discovery,
   useAuthRequest: () => [mocks.request, mocks.response, vi.fn()],
   exchangeCodeAsync: mocks.exchangeCodeAsync,
 }));
@@ -85,5 +83,6 @@ it('ends the Keycloak session on sign out and stops sending the token', async ()
   const logoutUrl = new URL(mocks.openAuthSessionAsync.mock.calls[0]?.[0]);
   expect(logoutUrl.origin + logoutUrl.pathname).toBe('http://keycloak/logout');
   expect(logoutUrl.searchParams.get('id_token_hint')).toBe('id-token');
+  await screen.findByText('signed out');
   expect(await authorizationHeaderOfNextApiCall()).toBeNull();
 });

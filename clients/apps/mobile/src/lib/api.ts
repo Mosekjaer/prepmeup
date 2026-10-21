@@ -1,4 +1,4 @@
-import { apiConfig, ItemsClient } from '@prepmeup/api-client';
+import { apiConfig, ItemsClient, UserClient } from '@prepmeup/api-client';
 
 /**
  * Base address of the PrepMeUp API. Set EXPO_PUBLIC_API_URL in the environment; on a physical
@@ -7,3 +7,8 @@ import { apiConfig, ItemsClient } from '@prepmeup/api-client';
 export const apiBaseUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:5001';
 
 export const itemsClient = new ItemsClient(apiBaseUrl, apiConfig);
+export const userClient = new UserClient(apiBaseUrl, apiConfig);
+
+export function isNotFound(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'status' in error && error.status === 404;
+}

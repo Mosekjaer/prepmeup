@@ -7,6 +7,7 @@ const push = vi.fn();
 
 vi.mock('expo-router', () => ({
   useRouter: () => ({ push }),
+  useFocusEffect: vi.fn(),
 }));
 
 vi.mock('../src/lib/auth', () => ({

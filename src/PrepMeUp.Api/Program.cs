@@ -55,7 +55,7 @@ if (!string.IsNullOrWhiteSpace(authority))
 }
 
 builder.Services.AddTransient<IClaimsTransformation, KeycloakRoleClaimsTransformation>();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin")));
 
 const string ClientCorsPolicy = "clients";
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];

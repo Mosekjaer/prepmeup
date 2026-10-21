@@ -9,6 +9,10 @@ vi.mock('expo-router', () => ({
   useRouter: () => ({ push }),
 }));
 
+vi.mock('../src/lib/auth', () => ({
+  useAuth: () => ({ token: undefined, signIn: vi.fn(), signOut: vi.fn() }),
+}));
+
 it('navigates to the second screen when the button is pressed', () => {
   render(<HomeScreen />);
 

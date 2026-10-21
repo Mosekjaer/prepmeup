@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using PrepMeUp.Api.Authentication;
+using PrepMeUp.Application;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
@@ -17,6 +18,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Composition root. This is the only place Api is allowed to know Infrastructure.
 // TODO: builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration); // Here, PrepMeUpContext and e.g. IItemRepository become know to the app
+builder.Services.AddScoped<CustomerService>();
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();

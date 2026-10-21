@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
@@ -52,7 +54,8 @@ if (!string.IsNullOrWhiteSpace(authority))
         });
 }
 
-builder.Services.AddAuthorization();
+builder.Services.AddTransient<IClaimsTransformation, KeycloakRoleClaimsTransformation>();
+builder.Services.AddAuthorization(options => options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin")));
 
 const string ClientCorsPolicy = "clients";
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];

@@ -65,6 +65,14 @@ We are aware that this causes extra "unnecessary" calls to the database, which h
 
 \section{Keycloak}
 
+\textbf{Login library in the admin panel}
+
+The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. We chose it because it follows the standard OpenID Connect and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps differ only in how they redirect and where they keep the token. We rejected keycloak-js because it only works with Keycloak, and a hand-written PKCE flow because it is too easy to get wrong.
+
+\textbf{Where the admin panel keeps the token}
+
+The token is kept in memory only, as in the mobile app. Then a script injected into the page cannot read it from browser storage. The price is that a reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
+
 \textbf{Token refresh}
 
 The client should refresh the access token in the following cases

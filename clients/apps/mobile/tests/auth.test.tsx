@@ -1,5 +1,6 @@
 import { apiConfig } from '@prepmeup/api-client';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useEffect } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
 import { AuthProvider, useAuth } from '../src/lib/auth';
@@ -68,6 +69,29 @@ it('exchanges the code with the PKCE verifier and sends the access token', async
     expect.anything(),
   );
   expect(await authorizationHeaderOfNextApiCall()).toBe('Bearer access-token');
+});
+
+it('hands the token to api-client before child effects call the API', async () => {
+  mocks.response = { type: 'success', params: { code: 'code-from-keycloak' } };
+  const headersSeenByChild: (string | null)[] = [];
+
+  function CallsApiWhenSignedIn() {
+    const { token } = useAuth();
+    useEffect(() => {
+      if (token) {
+        authorizationHeaderOfNextApiCall().then((header) => headersSeenByChild.push(header));
+      }
+    }, [token]);
+    return null;
+  }
+
+  render(
+    <AuthProvider>
+      <CallsApiWhenSignedIn />
+    </AuthProvider>,
+  );
+
+  await waitFor(() => expect(headersSeenByChild).toEqual(['Bearer access-token']));
 });
 
 it('ends the Keycloak session on sign out and stops sending the token', async () => {

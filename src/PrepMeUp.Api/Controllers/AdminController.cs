@@ -6,7 +6,6 @@ namespace PrepMeUp.Api.Controllers;
 [ApiController]
 [Route("admin")]
 [Authorize(Policy = "AdminOnly")]
-[ApiExplorerSettings(IgnoreApi = true)]
 public class AdminController : ControllerBase
 {
     [HttpGet("ping")]

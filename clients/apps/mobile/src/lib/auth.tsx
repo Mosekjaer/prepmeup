@@ -48,15 +48,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         extraParams: { code_verifier: request.codeVerifier },
       },
       discovery,
-    ).then(setTokens);
+    ).then((result) => {
+      setAccessTokenProvider(() => result.accessToken);
+      setTokens(result);
+    });
   }, [response, request, discovery]);
-
-  useEffect(() => {
-    setAccessTokenProvider(() => token);
-  }, [token]);
 
   async function signOut() {
     const idToken = tokens?.idToken;
+    setAccessTokenProvider(() => undefined);
     setTokens(undefined);
 
     if (!discovery?.endSessionEndpoint || !idToken) {

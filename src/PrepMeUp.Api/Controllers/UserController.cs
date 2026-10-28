@@ -9,7 +9,7 @@ namespace PrepMeUp.Api.Controllers;
 [ApiController]
 [Route("user")]
 [Authorize]
-public class UserController(ICustomerRepository customerRepository, CustomerService customerService) : ControllerBase
+public class UserController(CustomerService customerService) : ControllerBase
 {
     [HttpGet(Name = "User_GetCustomer")]
     [ProducesResponseType<CustomerResponse>(StatusCodes.Status200OK)]
@@ -17,7 +17,7 @@ public class UserController(ICustomerRepository customerRepository, CustomerServ
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CustomerResponse>> GetCustomer(CancellationToken cancellationToken)
     {
-        var customer = await customerRepository.GetByKeycloakIdAsync(KeycloakId, cancellationToken);
+        var customer = await customerService.GetAsync(KeycloakId, cancellationToken);
         if (customer is null)
         {
             return NotFound();

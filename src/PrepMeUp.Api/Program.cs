@@ -19,6 +19,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // TODO: builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration); // Here, PrepMeUpContext and e.g. IItemRepository become know to the app
 builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<ItemService>();
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();

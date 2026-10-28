@@ -94,6 +94,27 @@ The admin panel uses the automatic silent renew of react-oidc-context, which use
 
 We test the admin login with Vitest and mock react-oidc-context and the network, as the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
 
+\section{Saving Data}
+This section shows how data travels from the customer app to the database. The example is the onboarding screen, where the customer saves a name and an address. It is the only place in the system where data is saved so far.
+
+\drawiofig[\linewidth]{save-customer-flow}{Saving a customer's name and address, from the app through the layers of the API to the database.}{fig:save-customer-flow}
+
+The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
+
+\paragraph{1 and 2. The app sends the data.} The customer types a name and an address and taps Save. The app sends both to the API as PUT /user through the generated api-client, with the access token in the Authorization header. The login flow that gives the app the token is in appendix 3.1.
+
+\paragraph{3. The Api layer checks the request.} Before the controller runs, ASP.NET Core checks the token and the request body. A missing or invalid token gives 401. An empty name or address, or one that is too long, gives 400. The controller then takes the user id from the token and calls the customer service. The id is never sent in the body, so a customer can only change their own data.
+
+\paragraph{4. Find the customer.} The service asks the repository for the customer with that user id. The repository is an interface in the Application layer, and Infrastructure implements it with EF Core, which turns the call into a SELECT.
+
+\paragraph{5. Create or update.} If no customer is found, the service creates a new Customer. Otherwise it calls UpdateDetails on the one it found. The rules for name and address live in the Customer class in the Domain layer, so they hold no matter who calls it. The Api layer checks the same limits first, so a bad request stops with 400 before it reaches the domain.
+
+\paragraph{6. Save.} The service asks the repository to save. EF Core writes an INSERT for a new customer or an UPDATE for an existing one.
+
+\paragraph{7. Answer.} The API answers 204 No Content. The app then goes back to the previous screen. If the request fails, the app shows an error and the customer can try again.
+
+The admin panel does not save anything yet. Its only call is a check that the user is an admin, so there is no admin save flow to draw.
+
 \printbibliography
 
 \end{document}

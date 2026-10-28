@@ -66,6 +66,16 @@ public class SubscriptionEndpointTests
     }
 
     [Test]
+    public async Task PostSubscription_Onboarded_SendsStatusAsText()
+    {
+        var sub = await OnboardAsync();
+
+        var response = await SendAsync(HttpMethod.Post, "/subscription", sub);
+
+        Assert.That(await response.Content.ReadAsStringAsync(), Does.Contain("\"status\":\"Active\""));
+    }
+
+    [Test]
     public async Task PostSubscription_AlreadySubscribed_ReturnsConflict()
     {
         var sub = await OnboardAsync();

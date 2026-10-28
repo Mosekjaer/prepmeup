@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure;
@@ -70,18 +66,10 @@ public class SubscriptionPersistenceTests
         Assert.That(() => otherDbContext.SaveChangesAsync(), Throws.InstanceOf<DbUpdateException>());
     }
 
-    private WebApplicationFactory<Program> CreateFactory()
+    private SqliteApiFactory CreateFactory()
     {
-        var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.ConfigureTestServices(services =>
-            {
-                services.RemoveAll<IDbContextOptionsConfiguration<PrepMeUpDbContext>>();
-                services.AddDbContext<PrepMeUpDbContext>(options => options.UseSqlite(_connection));
-            }));
-
-        using var scope = factory.Services.CreateScope();
-        scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>().Database.EnsureCreated();
-
+        var factory = new SqliteApiFactory(_connection);
+        factory.EnsureDatabaseCreated();
         return factory;
     }
 }

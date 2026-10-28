@@ -1,0 +1,51 @@
+<mxfile host="65bd71144e">
+    <diagram id="auth-flow" name="Login flow">
+        <mxGraphModel dx="1020" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=middle;labelPosition=left;align=right;verticalAlign=middle;spacingRight=8;html=1;fontSize=13;fontStyle=1;strokeColor=#333333;" value="User" vertex="1">
+                    <mxGeometry height="60" width="30" x="855" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="client" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=10;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Client&lt;/b&gt;&lt;br&gt;Customer app (Expo)&lt;br&gt;or admin panel (React)" vertex="1">
+                    <mxGeometry height="540" width="200" x="40" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="keycloak" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=10;fontSize=13;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;Keycloak&lt;/b&gt;&lt;br&gt;realm prepmeup" vertex="1">
+                    <mxGeometry height="280" width="220" x="760" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="api" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=10;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;PrepMeUp API&lt;/b&gt;&lt;br&gt;ASP.NET Core" vertex="1">
+                    <mxGeometry height="160" width="220" x="760" y="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" edge="1" parent="1" source="client" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;exitX=1;exitY=0.065;exitDx=0;exitDy=0;entryX=0;entryY=0.125;entryDx=0;entryDy=0;" target="keycloak" value="&lt;b&gt;1&lt;/b&gt;  Open login page in the browser&lt;br&gt;GET …/openid-connect/auth&lt;br&gt;client_id, redirect_uri, state, code_challenge (S256)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" edge="1" parent="1" source="user" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;strokeColor=#b85450;fontColor=#000000;align=left;labelPosition=right;spacingLeft=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keycloak" value="&lt;b&gt;2&lt;/b&gt;  Email + password&lt;br&gt;(typed into Keycloak&#39;s page)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e3" edge="1" parent="1" source="keycloak" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.375;exitDx=0;exitDy=0;entryX=1;entryY=0.194;entryDx=0;entryDy=0;" target="client" value="&lt;b&gt;3&lt;/b&gt;  Redirect back with a one-time code&lt;br&gt;302 redirect_uri?code=…&amp;amp;state=…">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" edge="1" parent="1" source="client" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;exitX=1;exitY=0.324;exitDx=0;exitDy=0;entryX=0;entryY=0.625;entryDx=0;entryDy=0;" target="keycloak" value="&lt;b&gt;4&lt;/b&gt;  Swap the code for tokens&lt;br&gt;POST …/openid-connect/token&lt;br&gt;code, code_verifier">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" edge="1" parent="1" source="keycloak" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.875;exitDx=0;exitDy=0;entryX=1;entryY=0.454;entryDx=0;entryDy=0;" target="client" value="&lt;b&gt;5&lt;/b&gt;  200 access_token (JWT, 15 min)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" edge="1" parent="1" source="client" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.281;entryDx=0;entryDy=0;" target="api" value="&lt;b&gt;6&lt;/b&gt;  Call the API with the token&lt;br&gt;GET /user&lt;br&gt;Authorization: Bearer &amp;lt;access_token&amp;gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" edge="1" parent="1" source="api" style="endArrow=block;endFill=1;html=1;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="keycloak" value="">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="&lt;b&gt;7&lt;/b&gt;  GET …/certs: Keycloak&#39;s public keys&lt;br&gt;(fetched once and cached)" vertex="1">
+                    <mxGeometry height="50" width="210" x="880" y="455" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" edge="1" parent="1" source="api" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.719;exitDx=0;exitDy=0;entryX=1;entryY=0.88;entryDx=0;entryDy=0;" target="client" value="&lt;b&gt;8&lt;/b&gt;  API checks signature, issuer, audience, expiry&lt;br&gt;200 data  |  401 bad token  |  403 wrong role">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

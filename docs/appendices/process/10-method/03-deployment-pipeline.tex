@@ -20,9 +20,11 @@
   1.1 & 23-09-2026 & Group 3 & Deploy job requires HTTPS and status 200 \\
   1.2 & 08-10-2026 & Group 3 & Original sources and simpler text \\
   1.3 & 21-10-2026 & Group 3 & Releasing the customer app through Expo \\
+  1.4 & 28-10-2026 & Group 3 & Flowcharts for the pipeline, rollback and release of the customer app \\
+  1.5 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
 \end{versionhistory}
 
-In this appendix we describe what happens from a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
+In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
 
 \section{Scope}
 The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak and Keycloak's own PostgreSQL database. The admin panel is not part of the pipeline yet. When it is added, it will be one more image to build and one more service in the compose file. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
@@ -42,7 +44,9 @@ Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it st
     \item Coolify calls the API's health endpoint. If it does not answer, the deployment is not marked as healthy.
 \end{enumerate}
 
-Every step depends on the one before it, so there is only one way from a commit to production, and it starts with the tests.
+\drawiofig[0.6\linewidth]{pipeline-flow}{The pipeline from a pushed branch to a running container. Each red end stops the chain.}{fig:pipeline-flow}
+
+Every step depends on the one before it, so there is only one way from a commit to production, and it starts with the tests. Figure~\ref{fig:pipeline-flow} shows the chain.
 
 \section{Why GitHub Actions Decides When We Deploy}
 Coolify can watch the repository itself and deploy on every push to the main branch. That is how we had it at first, and we turned it off.
@@ -69,7 +73,7 @@ If Coolify built the image itself after CI had run, there would be two images: t
 
 It also makes a rollback cheaper. If Coolify builds, there is no old image to go back to, so we would have to revert the commit and wait for a new build while production is down. With the images saved in a registry, a rollback is just choosing an older tag (section~\ref{sec:rollback}).
 
-The cost is that CI has to log in to a registry and Coolify has to be able to pull from it. CI pushes with the token GitHub Actions creates for each run, so we do not store an extra password. Our packages on GHCR are public, so Coolify can pull without logging in. That is one secret less that can expire or be set up wrong. It does mean that anyone can download our images. We think that is fine, because the images do not contain any secrets (section~\ref{sec:secrets}). What can be downloaded is the compiled application, and it gives no access to our system.
+The downside is that CI has to log in to a registry and Coolify has to be able to pull from it. CI pushes with the token GitHub Actions creates for each run, so we do not store an extra password. Our packages on GHCR are public, so Coolify can pull without logging in. That is one secret less that can expire or be set up wrong. It does mean that anyone can download our images. We think that is fine, because the images do not contain any secrets (section~\ref{sec:secrets}). What can be downloaded is the compiled application, and it gives no access to our system.
 
 We build the Keycloak image the same way, because it contains our realm file. That way a change to the login setup is reviewed in a pull request like any other change. Both images are built by the same job from the same commit, so they always get the same tag and move forward and back together.
 
@@ -86,7 +90,7 @@ The downside is that the stack is deployed as one unit, so we cannot scale one s
 \subsection{Two Tags}
 Every image is pushed with two tags. The first is the commit SHA. It points to one image built from one commit, and it never changes. The second is called main, and it always points to the newest image built from a green main branch. This is the tag the compose file uses by default.
 
-We need both because they answer different questions. What production should run right now is answered by a tag that moves by itself. Which image something exactly is can only be answered by a tag that never moves.
+We need both. The main tag tells production what to run right now, because it moves by itself. The SHA tag tells us exactly which image something is, because it never moves.
 
 The moving tag has a weakness. If two pull requests are merged shortly after each other, both publish jobs write the main tag, and the one that finishes last wins. That is not necessarily the newest commit. The SHA tag does not have that problem, so when we check what is running or roll back, we always use the SHA.
 
@@ -111,7 +115,9 @@ We wrote the steps down, so nobody has to figure them out while production is do
     \item When the fix is merged and the main branch is green, delete the variable in Coolify and redeploy. If we forget this, production stays on the old image while all workflows are green.
 \end{enumerate}
 
-The rollback takes seconds and needs no build and no commit. It does not roll back the database, see section~\ref{sec:migrations}.
+\drawiofig[0.7\linewidth]{rollback-flow}{Rolling production back to an earlier image and forward again.}{fig:rollback-flow}
+
+The rollback takes seconds and needs no build and no commit. It does not roll back the database, see section~\ref{sec:migrations}. Figure~\ref{fig:rollback-flow} shows the steps.
 
 \section{Secrets}\label{sec:secrets}
 The production passwords and keys are only in one place, the environment variables in Coolify. They are not in the repository, the compose file or the images, and the AI tools cannot read them. Secrets should not be stored in source code or deployed with the app, and environment variables are one way to keep them out of both \cite{microsoft-aspnetcore-app-secrets}. De Sanctis does the same with a settings file that is created directly on the production server \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}.
@@ -127,9 +133,9 @@ Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}
 The part with the question mark matters for security. Without it, a missing variable becomes an empty text and the stack starts anyway with an empty password, and it would look like it works. With it, Compose refuses to start and prints which variable is missing \cite{docker-compose-interpolation}. The compose file also works as a list of the values the server needs, without any of them being written down.
 
 \section{Database Migrations}\label{sec:migrations}
-Changes to the database schema are run as a separate step before the API starts. The API does not run them itself at startup.
+Right now the API runs the missing migrations itself when it starts, both locally and in production. That is simple, but a failed migration shows up as errors in the application instead of as a failed deployment. Appendix 2.1 lists it as an open decision.
 
-The database cannot be reached from outside the Docker network, so we cannot run the EF Core update command from GitHub Actions. Instead the migrations are packed as a migration bundle. It is a program that can run without the .NET SDK and the EF Core tools, and it is one of the two approaches De Sanctis recommends for getting a schema to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}. The bundle runs as its own service inside the network, and the API waits for it:
+The plan is to run the migrations as a separate step before the API starts. The database cannot be reached from outside the Docker network, so we cannot run the EF Core update command from GitHub Actions. Instead the migrations will be packed as a migration bundle. It is a program that can run without the .NET SDK and the EF Core tools, and it is one of the two approaches De Sanctis recommends for getting a schema to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}. The bundle will run as its own service inside the network, and the API will wait for it:
 
 \begin{lstlisting}
 depends_on:
@@ -137,43 +143,46 @@ depends_on:
     condition: service_completed_successfully
 \end{lstlisting}
 
-If a migration fails, the deployment stops and the API does not start against a schema it does not match. If the API ran the migrations itself at startup, a failed migration would show up as errors in the application instead of as a failed deployment.
+Then a failed migration stops the deployment, and the API does not start against a schema it does not match.
 
 \subsection*{Schema Changes Must Work with the Previous Release}
 A rollback changes which image runs, but it does not change the database. If a deployment changed the schema and then failed, a rollback gives us old code on a new schema.
 
 So every schema change has to work with the previous release too. In practice a column is added before it is used and removed one release after we stopped using it. A rename is done as add, copy and later remove. A column is not made required in the same release that starts writing to it. It takes an extra release to remove something, but without the rule a rollback is only safe when the release had no migration, and we would not know which case we were in while production was down.
 
-The migrator service cannot be made before we have a DbContext and a first migration. Until then this section describes what we have decided, and the implementation is its own task.
+This rule applies whether the migrations run in the API or in the migration bundle.
 
 \section{Releasing the Customer App}\label{sec:customer-app}
 The customer app does not run on our server, so Coolify cannot deploy it. It has to be built into an Android app and installed on the phone. We use EAS Build, which is Expo's build service. It builds the app on Expo's servers \cite{expo-eas-json}, so nobody in the group needs Android Studio or a signing key on their own computer.
 
 \subsection{From the Repository to a Phone}
-The build is set up in \texttt{clients/apps/mobile/eas.json}. We have one profile, \texttt{preview}:
-\begin{itemize}
-    \item \texttt{distribution: internal} means the app is shared with a link and not through a store \cite{expo-internal-distribution}.
-    \item \texttt{buildType: apk} gives an APK file, which can be installed directly on Android. The default is an app bundle (AAB), which only Google Play can install \cite{expo-eas-json}.
-    \item \texttt{environment: preview} makes EAS read the addresses of the API and Keycloak from Expo's \texttt{preview} environment \cite{expo-environment-variables}. They are not in the repository, because they are the same production addresses that are set in Coolify.
-\end{itemize}
+The build is set up in the EAS config file in the mobile app's folder. We have one profile, called preview. It shares the app with a link and not through a store \cite{expo-internal-distribution}. It builds an APK file, which can be installed directly on Android. The default is an app bundle (AAB), which only Google Play can install \cite{expo-eas-json}.
+
+The profile also makes EAS read the addresses of the API and Keycloak from Expo's preview environment \cite{expo-environment-variables}. They are not in the repository, because they are the same production addresses that are set in Coolify.
 
 A release then looks like this:
 \begin{enumerate}
-    \item From \texttt{clients/apps/mobile}, a group member runs \texttt{npx eas-cli build --profile preview --platform android}.
+    \item A group member runs the build from the mobile app's folder:
+\begin{lstlisting}
+cd clients/apps/mobile
+npx eas-cli build --profile preview --platform android
+\end{lstlisting}
     \item EAS uploads the code, builds and signs the APK. EAS makes the signing key the first time and keeps it, so all later builds are signed with the same key \cite{expo-internal-distribution}.
     \item EAS gives a link and a QR code to the build.
     \item On the phone, the user opens the link, downloads the APK and accepts that Android installs an app that has not been through Play Store review \cite{expo-internal-distribution}.
 \end{enumerate}
 
-\texttt{EXPO\_PUBLIC\_API\_URL} and \texttt{EXPO\_PUBLIC\_KEYCLOAK\_URL} are built into the app. That is fine, because they are public addresses and not secrets. Expo warns that anything in the app should be seen as readable by anyone \cite{expo-environment-variables}, so we never put a secret in an \texttt{EXPO\_PUBLIC\_} variable. The login also works because the realm allows the redirect \texttt{prepmeup://auth/*} in production (appendix 3.1).
+\drawiofig[0.45\linewidth]{eas-release-flow}{Releasing a new version of the customer app through EAS Build.}{fig:eas-release-flow}
+
+The two variables with the addresses of the API and Keycloak are built into the app. That is fine, because they are public addresses and not secrets. Expo warns that anything in the app should be seen as readable by anyone \cite{expo-environment-variables}, so we never put a secret in a variable whose name starts with EXPO\_PUBLIC\_. The login also works, because the realm allows the app's redirect address in production (appendix 3.1).
 
 \subsection{How It Fits with the Rest of the Pipeline}
-The app build is not started by GitHub Actions. The pipeline deploys the API and Keycloak automatically on every merge to \texttt{main}. The app is built by hand when we want to hand out a new version, for example before a sprint review. The app only depends on the API's public address and the API contract, and the API is always running the newest \texttt{main}. So an old app version keeps working, as long as we do not make breaking changes to the API.
+The app build is not started by GitHub Actions. The pipeline deploys the API and Keycloak automatically on every merge to the main branch. The app is built by hand when we want to hand out a new version, for example before a sprint review. The app only depends on the API's public address and the API contract, and the API always runs the newest version of the main branch. So an old app version keeps working, as long as we do not make breaking changes to the API.
 
-During development we do not use EAS. The app runs from Metro on the developer's computer, in a browser or on an emulator.
+Figure~\ref{fig:eas-release-flow} shows the release. During development we do not use EAS. The app runs from Metro on the developer's computer, in a browser or on an emulator.
 
 \subsection{Why Not Google Play}
-Publishing on Google Play would need a Google Play developer account, a production build as an app bundle (AAB) and a Google service account key, so EAS can upload for us \cite{expo-submit-android}. On top of that comes a store listing and Google's review of each version. That is a lot of work for an app only the group, the supervisor and the examiners will install. EAS can do the upload later with a \texttt{production} profile, so going from internal sharing to Google Play does not mean starting over.
+Publishing on Google Play would need a Google Play developer account, a production build as an app bundle (AAB) and a Google service account key, so EAS can upload for us \cite{expo-submit-android}. On top of that comes a store listing and Google's review of each version. That is a lot of work for an app only the group, the supervisor and the examiners will install. EAS can do the upload later with a production profile, so going from internal sharing to Google Play does not mean starting over.
 
 \section{Setup Outside the Repository}
 Some parts of the pipeline cannot be created from the repository, so a clone is not enough to get a working deployment. We list them here so someone else can set it up again.

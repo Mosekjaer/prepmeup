@@ -1,8 +1,9 @@
 \chapter{Development Process and Method}\label{ch:method}
 
-The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. This
-chapter describes how the group has set up roles, sprints and the product backlog,
-where the setup deviates from the Scrum Guide, and how progress is measured. The
+The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. In
+this chapter we describe how we have set up roles, sprints and the product backlog,
+where we deviate from the Scrum Guide, how we measure progress, how we handle risks
+and how we use AI. The
 practical rules are in Appendix 10.1, and the decisions are logged with dates in
 Appendix 10.2.
 
@@ -14,23 +15,22 @@ The Scrum Guide describes the Product Owner as the one person who orders the pro
 backlog: ``The Product Owner is one person, not a committee''
 \cite[p.~5]{schwaber-scrum-guide-2016}. We deviate from that. Our Product Owner is
 Bodil, a blue toy elephant, and the whole group orders the backlog together at
-sprint planning. Bodil is the one the group talks to when a feature is discussed: the
-question is what Bodil, as a customer, would need. The idea came as advice from a
-previous exam.
+sprint planning. When we discuss a feature, we ask what Bodil, as a customer, would
+need. The idea came as advice from a previous exam.
 
-The cost of the deviation is that no single person settles a disagreement about
+The downside of the deviation is that no single person settles a disagreement about
 priority. The MoSCoW priorities in the requirements specification (Appendix 1.2) are
 therefore the tie-breaker: a MUST requirement goes before a SHOULD, and a task that
 does not trace to a requirement has to be argued for.
 
 \section{Sprints}\label{sec:method-sprints}
 
-A sprint runs from a Wednesday to the Tuesday two weeks later. Two sprints
-deviate: sprint 2 was one week, so it could end with a demo, and sprint 3 is three
-weeks, because the autumn break falls in the middle of it. Sprint 1 ran from 16 to
-29 September, and sprint 6 ends on 8 December, three days before the report is handed
-in. A sprint starts with sprint planning, where the group picks the tasks for the
-sprint and writes a sprint goal, and ends with a sprint review and a retrospective.
+A sprint runs from a Wednesday to the Tuesday two weeks later. Three sprints
+deviate: sprint 2 was one week, so it could end with a demo, sprint 3 was three
+weeks, because the autumn break falls in the middle of it, and sprint 4 is one week.
+Sprint 1 ran from 16 to 29 September, and sprint 6 ends on 1 December, ten days before
+the report is handed in. A sprint starts with sprint planning, where we pick the tasks
+for the sprint and write a sprint goal, and ends with a sprint review and a retrospective.
 The sprint goal is one sentence that names the requirements the sprint delivers, so
 the tasks in a sprint belong together \cite[p.~10]{schwaber-scrum-guide-2016}. The
 last sprint is set aside for the full acceptance test and the report.
@@ -49,9 +49,15 @@ A task moves from the backlog to \emph{To Do} only at sprint planning, and only 
 it is ready: its description starts with the requirements it covers, it has a
 definition of done, a story point estimate, an epic label and an owner. The Scrum
 Guide calls an item ready when it can be done within one sprint
-\cite[p.~14]{schwaber-scrum-guide-2016}; the list above is how we check that. The epic
+\cite[p.~14]{schwaber-scrum-guide-2016}. The list above is how we check that. The epic
 labels follow the grouping of the user stories in the requirements specification, so
 every task can be traced back to a requirement.
+
+\autoref{fig:sprint-flow} shows the way a task takes through a sprint. A task that is
+not done at the sprint review keeps its sprint label and gets the next one as well, so
+spillover is visible on the board.
+
+\drawiofig[0.6\linewidth]{sprint-flow}{The way a task takes from the product backlog through a sprint.}{fig:sprint-flow}
 
 \section{Estimation and Progress}\label{sec:method-progress}
 
@@ -62,11 +68,11 @@ Scrum Guide prescribes, the people who do the work make the estimate
 
 At sprint planning we note the points committed to the sprint, and at the sprint
 review the points done. Together with the size of the whole backlog, the numbers are
-kept in one table (Appendix 10.2), which Figure~\ref{fig:burnup} is drawn from. We use
-a burn-up rather than a burn-down chart. Most of the backlog was not estimated when
-the project started, so the total will grow, and a burn-down chart would show that
-growth as missing progress. A burn-up chart keeps the two apart
-\cite[p.~14]{schwaber-scrum-guide-2016}.
+kept in one table (Appendix 10.2), which Figure~\ref{fig:burnup} is drawn from. The
+Scrum Guide mentions both burn-down and burn-up charts as ways to forecast progress
+\cite[p.~14]{schwaber-scrum-guide-2016}. We use a burn-up chart. Most of the backlog
+was not estimated when the project started, so the total will grow. A burn-down chart
+would show that growth as missing progress, while a burn-up chart keeps the two apart.
 
 \begin{figure}[H]
     \centering
@@ -103,7 +109,81 @@ growth as missing progress. A burn-up chart keeps the two apart
             \addplot[red, mark=square*, forget plot] table[x=sprint, y=donetotal]{\velocitytable};
         \end{axis}
     \end{tikzpicture}
-    \caption[Burn-up per sprint]{Burn-up per sprint. The gap between the lines is the work left; when the
+    \caption[Burn-up per sprint]{Burn-up per sprint. The gap between the lines is the work left. When the
     upper line rises, the backlog has grown, not the progress slowed.}
     \label{fig:burnup}
 \end{figure}
+
+\section{Risk Management}\label{sec:method-risk}
+
+We keep a list of the risks to the project in Appendix 2.3. It uses the risk model
+from Vinje \cite[sec.~5.4]{vinje-projektledelse}. Each risk gets a probability and a
+consequence, and the product of the two decides how soon we act. A risk with a
+product of 9 or more gets a measure straight away, and the rest are assessed. The
+list has three kinds of risk: how we work, the requirements, and the technical
+choices. We go through it at every sprint planning, raise a risk that has happened,
+and add new ones.
+
+The risk list and the MoSCoW priorities in the requirements specification are used
+together when we plan a sprint. MoSCoW says what the product needs most, and the
+risk list says what could stop us from delivering it. At the sprint planning on
+28/10 the two largest risks were both about time. The must-have requirements might
+not be done, and the report was behind the code. We therefore used sprint 4 for the
+report and decided that sprint 5 only plans must-have requirements. If we fall
+behind, the should and could requirements are the first to go.
+
+\section{Use of AI}\label{sec:method-ai}
+
+We use AI tools in the project, mainly Claude Code and Antigravity. This section
+describes how, using the four competencies in the Framework for AI Fluency:
+delegation, description, discernment and diligence
+\cite{dakan-feller-ai-fluency}. The supervisor set the frame at the first meeting on
+15/9. AI is fine to use, as long as we understand everything we hand in.
+
+\subsection{Delegation}
+
+We let AI do work where we already know what the result should look like, and keep
+the work that is a learning goal for ourselves. Four agents look at the code for the
+layer rules, the API, test design and security. They can only read the code and report
+what they find, and the person who owns the code fixes it, so they can explain the fix
+at the exam. Test
+design is a learning goal in software testing, so it is split in two. An agent
+suggests the test cases and argues for them, and only after a person has approved the
+list are the tests written.
+
+The same goes for the board. AI may read, comment on and create tasks, and it moves
+and estimates tasks when a group member asks. It never assigns or deletes tasks, and
+which tasks go into a sprint is decided by the group, because planning the sprint is
+part of what we have to learn. We changed this rule three times during the project,
+see Appendix 10.2. AI also drafts text for the appendices and the report when a group
+member asks for it.
+
+\subsection{Description}
+
+The rules for the project are written down once, in a rules file in the repository,
+and every AI tool reads the same file. It has the layer rules, the language rules,
+the rules for sources and the definition of done, so we do not have to repeat them in
+every prompt. Tasks that we do often, such as adding a feature through all the
+layers, writing tests first or opening a pull request, are written as fixed workflows
+the tool follows step by step. For a larger task we can ask for a plan first, which a
+person reads before any code is written. When we correct the AI, the correction is written down as
+a rule in a lessons file in the repository, so the same mistake is not made again.
+
+\subsection{Discernment}
+
+Everything the AI makes goes through the same checks as our own work. A change is
+merged through a pull request, and only when the build and the tests pass in CI and
+another group member has reviewed it. When AI suggests code, it has to say which part
+of the course material the pattern comes from, or say that it is not in the course.
+Sources in the report are checked by opening them, because a source that looks right
+is not always there. We have also learned that text written by AI tends to be too
+dense and too technical. We rewrote the appendices in plain language for that reason.
+
+\subsection{Diligence}
+
+The person who commits a change has to be able to explain it, also at the exam. Two
+of our workflows quiz a group member on their own commits and on the project, so we
+can practise that. Passwords and keys are never in a file the AI can read. They come
+from environment variables, and Claude Code is set up so it cannot open the files
+where they are kept. We declare our use of AI in the AI declaration in Appendix 11.3, which
+we fill in ourselves.

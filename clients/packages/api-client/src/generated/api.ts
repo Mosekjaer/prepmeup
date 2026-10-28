@@ -129,6 +129,139 @@ export class ItemsClient implements IItemsClient {
     }
 }
 
+export interface ISubscriptionClient {
+
+    /**
+     * @return OK
+     */
+    getSubscription(): Promise<SubscriptionResponse>;
+
+    /**
+     * @return Created
+     */
+    subscribe(): Promise<SubscriptionResponse>;
+}
+
+export class SubscriptionClient implements ISubscriptionClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "http://localhost:5001/";
+    }
+
+    /**
+     * @return OK
+     */
+    getSubscription(): Promise<SubscriptionResponse> {
+        let url_ = this.baseUrl + "/subscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSubscription(_response);
+        });
+    }
+
+    protected processGetSubscription(response: Response): Promise<SubscriptionResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SubscriptionResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SubscriptionResponse>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    subscribe(): Promise<SubscriptionResponse> {
+        let url_ = this.baseUrl + "/subscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processSubscribe(_response);
+        });
+    }
+
+    protected processSubscribe(response: Response): Promise<SubscriptionResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SubscriptionResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = ProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SubscriptionResponse>(null as any);
+    }
+}
+
 export interface IUserClient {
 
     /**
@@ -359,6 +492,58 @@ export interface IItemResponse {
     [key: string]: any;
 }
 
+export class OrderResponse implements IOrderResponse {
+    plannedAt!: string;
+    sentAt!: string | undefined;
+
+    [key: string]: any;
+
+    constructor(data?: IOrderResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.plannedAt = _data["plannedAt"];
+            this.sentAt = _data["sentAt"];
+        }
+    }
+
+    static fromJS(data: any): OrderResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["plannedAt"] = this.plannedAt;
+        data["sentAt"] = this.sentAt;
+        return data;
+    }
+}
+
+export interface IOrderResponse {
+    plannedAt: string;
+    sentAt: string | undefined;
+
+    [key: string]: any;
+}
+
 export class ProblemDetails implements IProblemDetails {
     type?: string | undefined;
     title?: string | undefined;
@@ -474,6 +659,75 @@ export interface ISaveCustomerRequest {
 
     [key: string]: any;
 }
+
+export class SubscriptionResponse implements ISubscriptionResponse {
+    status!: SubscriptionStatus;
+    startedAt!: string;
+    orders!: OrderResponse[];
+
+    [key: string]: any;
+
+    constructor(data?: ISubscriptionResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.orders = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.status = _data["status"];
+            this.startedAt = _data["startedAt"];
+            if (Array.isArray(_data["orders"])) {
+                this.orders = [] as any;
+                for (let item of _data["orders"])
+                    this.orders!.push(OrderResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SubscriptionResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["status"] = this.status;
+        data["startedAt"] = this.startedAt;
+        if (Array.isArray(this.orders)) {
+            data["orders"] = [];
+            for (let item of this.orders)
+                data["orders"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISubscriptionResponse {
+    status: SubscriptionStatus;
+    startedAt: string;
+    orders: OrderResponse[];
+
+    [key: string]: any;
+}
+
+export type SubscriptionStatus = "Active";
 
 export class ValidationProblemDetails implements IValidationProblemDetails {
     type?: string | undefined;

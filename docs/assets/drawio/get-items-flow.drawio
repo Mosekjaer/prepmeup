@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" version="26.0.0">
+  <diagram id="get-items-flow" name="GET /items Flow">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+<mxCell id="title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Forretningskald Flowchart &amp;#x2014; Hentning af Items (GET /items)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Arkitektonisk kald gennem lagene: JWT-validering, Controller, Application Service og SQL Server Database&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
+      <mxGeometry x="40" y="30" width="1360" height="70" as="geometry" />
+    </mxCell>
+<mxCell id="lane_client" value="Klient (Mobil App / Admin Web)" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="125" width="320" height="880" as="geometry" />
+        </mxCell>
+<mxCell id="lane_api" value="PrepMeUp.Api (Auth Middleware &amp; Controller)" style="swimlane;startSize=32;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="380" y="125" width="380" height="880" as="geometry" />
+        </mxCell>
+<mxCell id="lane_app" value="PrepMeUp.Application (ItemService)" style="swimlane;startSize=32;fillColor=#EEF2FF;strokeColor=#C7D2FE;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="780" y="125" width="310" height="880" as="geometry" />
+        </mxCell>
+<mxCell id="lane_db" value="PrepMeUp.Infrastructure &amp; SQL DB" style="swimlane;startSize=32;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="125" width="290" height="880" as="geometry" />
+        </mxCell>
+<mxCell id="c_start" value="Start: Skærm efterspørger vareliste&#xa;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(F.eks. lageroversigt el. indkøbsliste)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="40" y="45" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="c_call_items" value="itemsClient.getItems()&#xa;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;GET /items • Header:&lt;br&gt;'Authorization: Bearer [access_token]'&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="40" y="125" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="c_render_ui" value="Modtag 200 OK med JSON:&#xa;Mapper varer til UI-komponenter&#xa;&lt;span style=&quot;font-size:10px;color:#16A34A;&quot;&gt;(ItemResponse: id, name)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="40" y="715" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="c_finish" value="Slut: Vareliste vises for bruger&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#16A34A;&quot;&gt;(Data fremstår opdateret i UI)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="40" y="800" width="240" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="a_mw_auth" value="ASP.NET Core Authentication Middleware:&#xa;Udtræk Bearer token fra Authorization header" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="125" width="270" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="a_dec_valid" value="Er JWT token gyldigt?&#xa;&lt;span style=&quot;font-size:9px;font-weight:normal;color:#D97706;&quot;&gt;(RS256 signatur mod JWKS, issuer &amp; udløb)&lt;/span&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_api">
+          <mxGeometry x="80" y="210" width="220" height="70" as="geometry" />
+        </mxCell>
+<mxCell id="a_err_401" value="401 Unauthorized&#xa;&lt;span style=&quot;font-size:9px;&quot;&gt;(Ugyldigt el. udløbet token)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
+          <mxGeometry x="240" y="300" width="130" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="a_ctrl_get" value="ItemsController.GetItems:&#xa;Eksekverer endpoint med [Authorize]&#xa;&amp; kalder itemService.GetAllAsync()" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="300" width="175" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="a_ctrl_res" value="Mapper entities til DTOs:&#xa;new ItemResponse(item.Id, item.Name)&#xa;&amp; returnér 200 OK med JSON" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="715" width="270" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="app_service" value="ItemService.GetAllAsync:&#xa;Forretningslogik for varer&#xa;&amp; kalder IItemRepository / DbContext" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4338CA;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_app">
+          <mxGeometry x="35" y="385" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="app_return" value="Modtager entiteter fra database:&#xa;IEnumerable&lt;Item&gt; sendes til controller" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4338CA;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_app">
+          <mxGeometry x="35" y="630" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="db_dbcontext" value="PrepMeUpDbContext:&#xa;Genererer SQL SELECT forespørgsel&#xa;via Entity Framework Core" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
+          <mxGeometry x="30" y="465" width="230" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="db_sql_server" value="SQL Server:&#xa;SELECT [Id], [Name] FROM [Items]&#xa;&lt;span style=&quot;font-size:9px;color:#D97706;&quot;&gt;(Henter registrerede basisvarer)&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
+          <mxGeometry x="30" y="545" width="230" height="60" as="geometry" />
+        </mxCell>
+<mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_start" target="c_call_items">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e2" value="HTTP GET /items" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_call_items" target="a_mw_auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_mw_auth" target="a_dec_valid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e4_no" value="Nej (Ugyldigt)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_dec_valid" target="a_err_401">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e4_yes" value="Ja (Valideret)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_dec_valid" target="a_ctrl_get">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e5" value="Hent varer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_ctrl_get" target="app_service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e6" value="DbContext opslag" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="app_service" target="db_dbcontext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e7" value="Eksekvér SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="db_dbcontext" target="db_sql_server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e8" value="Datasæt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="db_sql_server" target="app_return">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e9" value="List&lt;Item&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="app_return" target="a_ctrl_res">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e10" value="200 OK (JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a_ctrl_res" target="c_render_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_render_ui" target="c_finish">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

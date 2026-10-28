@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" version="26.0.0">
+  <diagram id="onboarding-customer" name="Onboarding: Customer">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="1260" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+<mxCell id="title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Onboarding Flowchart &amp;#x2014; Kundeoprettelse i Kunde-appen&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Samlet forløb: Fra første åbning over Keycloak-registrering ('New user? Register') til profilopslag (404) og stamdata (PUT /user)&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
+      <mxGeometry x="40" y="30" width="1380" height="70" as="geometry" />
+    </mxCell>
+<mxCell id="lane_client" value="Mobil Klient (PrepMeUp App)" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="125" width="350" height="1080" as="geometry" />
+        </mxCell>
+<mxCell id="lane_kc" value="Keycloak Auth Server (IdP)" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="410" y="125" width="340" height="1080" as="geometry" />
+        </mxCell>
+<mxCell id="lane_api" value="PrepMeUp.Api (Backend)" style="swimlane;startSize=32;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="770" y="125" width="360" height="1080" as="geometry" />
+        </mxCell>
+<mxCell id="lane_db" value="SQL Server (Database)" style="swimlane;startSize=32;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="125" width="270" height="1080" as="geometry" />
+        </mxCell>
+<mxCell id="c_start" value="Start: Ny kunde åbner appen&#xa;og trykker 'Sign in'&#xa;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(Appen har ingen egen login-formular)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="45" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="c_open_browser" value="Åbn Keycloak i WebBrowser&#xa;via expo-auth-session&#xa;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(OIDC Auth Request med PKCE)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="125" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="c_receive_token" value="Modtag redirect-callback med tokens:&#xa;• Access Token JWT (indeholder sub ID)&#xa;• Gemmes sikkert i SecureStore" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="445" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="c_call_get" value="HomeScreen kalder&#xa;userClient.getCustomer()&#xa;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(GET /user • Authorization: Bearer)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="530" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="c_catch_404" value="Fanger 404 (isNotFound):&#xa;Omdirigér til OnboardingScreen&#xa;&lt;span style=&quot;font-size:10px;color:#D97706;&quot;&gt;(router.push('/onboarding'))&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="720" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="c_enter_details" value="Bruger udfylder onboarding-felter:&#xa;• Navn (f.eks. 'Alexander')&#xa;• Adresse (f.eks. 'Niels Bohrs Allé 1')" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="800" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="c_click_save" value="Bruger trykker på 'Gem' (Save)&#xa;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(Knappen disables under netværkskald)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="880" width="240" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="c_call_put" value="Send PUT /user&#xa;med SaveCustomerRequest(name, addr)&#xa;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(Authorization: Bearer [token])&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="55" y="950" width="240" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="c_finish_new" value="Modtag 204 NoContent:&#xa;router.back() til HomeScreen&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#16A34A;&quot;&gt;(HomeScreen genindlæser profil: Nu 200 OK &amp; velkomst!)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="45" y="1030" width="260" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="kc_display" value="Vis Keycloak login-side:&#xa;Felter til login samt link i bunden:&#xa;&lt;b style=&quot;color:#7E22CE;&quot;&gt;&quot;New user? Register&quot;&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="50" y="125" width="240" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="kc_click_register" value="Ny bruger trykker på linket:&#xa;&lt;b&gt;'Register'&lt;/b&gt; (Opret ny konto)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="50" y="205" width="240" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="kc_show_form" value="Vis registreringsformular:&lt;br&gt;E-mail, navn og vælg personlig adgangskode" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="50" y="280" width="240" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="kc_submit_reg" value="Bruger indsender registrering&#xa;(Oplysninger valideres af Keycloak)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="50" y="355" width="240" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="kc_auto_login" value="Konto oprettet! Keycloak logger&#xa;bruger automatisk ind med det samme&#xa;&amp; redirecter til prepmeup://auth/callback" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;fontColor=#1E293B;" vertex="1" parent="lane_kc">
+          <mxGeometry x="45" y="445" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="a_rec_get" value="UserController.GetCustomer:&#xa;Validerer token &amp; læser KeycloakId&#xa;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(sub claim fra User.Claims)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="530" width="250" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="a_dec_exist" value="Eksisterer kunden&#xa;i databasen?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_api">
+          <mxGeometry x="85" y="625" width="190" height="65" as="geometry" />
+        </mxCell>
+<mxCell id="a_res_200" value="Ja: 200 OK&#xa;&lt;span style=&quot;font-size:8px;&quot;&gt;(Kunde fundet)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=9;" vertex="1" parent="lane_api">
+          <mxGeometry x="285" y="637.5" width="70" height="40" as="geometry" />
+        </mxCell>
+<mxCell id="a_res_404" value="Returnér 404 Not Found&#xa;&lt;span style=&quot;font-size:10px;color:#DC2626;&quot;&gt;(Kunde mangler stamdata / profil)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="720" width="250" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="a_rec_put" value="UserController.SaveCustomer:&#xa;Validerer input &amp; kalder&#xa;customerService.SaveDetailsAsync(...)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="950" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="a_res_204" value="Returnér 204 NoContent&#xa;&lt;span style=&quot;font-size:10px;color:#16A34A;&quot;&gt;(Succesfuld oprettelse i databasen)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
+          <mxGeometry x="55" y="1030" width="250" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="db_query" value="CustomerRepository.GetAsync:&#xa;SELECT * FROM Customers&#xa;WHERE KeycloakId = @id" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
+          <mxGeometry x="30" y="525" width="210" height="60" as="geometry" />
+        </mxCell>
+<mxCell id="db_save" value="CustomerRepository.SaveAsync:&#xa;INSERT INTO Customers&#xa;(Id, KeycloakId, Name, Address)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
+          <mxGeometry x="30" y="945" width="210" height="65" as="geometry" />
+        </mxCell>
+<mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_start" target="c_open_browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e2" value="Åbn login-side" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_open_browser" target="kc_display">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_display" target="kc_click_register">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_click_register" target="kc_show_form">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_show_form" target="kc_submit_reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_submit_reg" target="kc_auto_login">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e7" value="prepmeup://auth/callback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="kc_auto_login" target="c_receive_token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_receive_token" target="c_call_get">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e9" value="GET /user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_call_get" target="a_rec_get">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e10" value="Opslag på KeycloakId" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_rec_get" target="db_query">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e11" value="Returnér null (ikke fundet)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.8;entryX=0.5;entryY=0;" edge="1" parent="1" source="db_query" target="a_dec_exist">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e12_yes" value="Ja" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_dec_exist" target="a_res_200">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e12_no" value="Nej (Ny kunde)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_dec_exist" target="a_res_404">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e13" value="404 Not Found" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a_res_404" target="c_catch_404">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_catch_404" target="c_enter_details">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_enter_details" target="c_click_save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_click_save" target="c_call_put">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e17" value="PUT /user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_call_put" target="a_rec_put">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e18" value="Gem i DB" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_rec_put" target="db_save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e19" value="OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="db_save" target="a_res_204">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="e20" value="204 NoContent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a_res_204" target="c_finish_new">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

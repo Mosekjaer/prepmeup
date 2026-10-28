@@ -1,4 +1,4 @@
-export { apiConfig, setAccessTokenProvider } from './config';
+export { apiConfig, setAccessTokenProvider, setUnauthorizedHandler } from './config';
 
 // The generated clients are re-exported here once `npm run generate:api-client` has run.
 // Generated code is never edited by hand - change the contract in PrepMeUp.Api and regenerate.

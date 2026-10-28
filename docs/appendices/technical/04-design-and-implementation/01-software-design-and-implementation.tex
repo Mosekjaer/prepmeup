@@ -15,7 +15,8 @@
 \begin{versionhistory}
   1.0 & 21-10-2026 & Group 3 & Roles, onboarding and admin panel login \\
   1.1 & 28-10-2026 & Group 3 & Added flow for saving customer details \\
-  1.2 & 28-10-2026 & Group 3 & Simpler text, corrected roles and token renewal \\
+  1.2 & 28-10-2026 & Group 3 & Added where the mobile app keeps the token \\
+  1.3 & 28-10-2026 & Group 3 & Simpler text, corrected roles and token renewal \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -50,10 +51,15 @@ This gives some extra calls to the database, which costs performance. We accept 
 \section{Keycloak}
 
 \subsection{Login Library in the Admin Panel}
-The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the OpenID Connect standard and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps only differ in how they redirect and how they renew the token.
+The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the OpenID Connect standard and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps only differ in how they redirect and where they keep the token.
 
 \subsection{Where the Admin Panel Keeps the Token}
-The token is kept in memory only, as in the mobile app, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
+The token is kept in memory only, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
+
+\subsection{Where the Mobile App Keeps the Token}
+On the phone we keep the refresh token in Expo SecureStore. On Android SecureStore stores the value in SharedPreferences, encrypted with a key from the Android Keystore. On iOS it stores the value with the Keychain services \cite{expo-securestore}. The key in the Android Keystore never enters the process of the app \cite{android-keystore}. The access token is only kept in memory. When the app starts, it uses the stored refresh token to get a new access token.
+
+A browser has no such storage. A script running on the page can read everything in web storage \cite{owasp-html5-security}, and SecureStore itself is only available on Android and iOS \cite{expo-securestore}. For that reason the mobile app does not support web, and the admin panel keeps its token in memory only.
 
 \subsection{How the Admin Panel Checks the Role}
 After login the admin panel calls the admin ping endpoint. If the answer is 200, the user is let in. If it is 403, the admin panel shows a message that the account has no access. This way only the API knows the rule for who is an admin, and the admin panel does not have to decode the token.
@@ -62,7 +68,7 @@ After login the admin panel calls the admin ping endpoint. If the answer is 200,
 A user who is not logged in sees a sign-in screen with a sign-in button. Sign-out ends the Keycloak session, as in the mobile app, so a customer who is turned away can sign in with another account.
 
 \subsection{Token Refresh}
-The admin panel renews the access token shortly before it expires. It uses the automatic silent renew in react-oidc-context, which uses a refresh token. If the renewal fails or the API answers 401, the user is sent to the sign-in screen. The customer app does not renew its token (appendix 3.1).
+Both apps use the refresh token to renew the access token shortly before it expires. The admin panel uses the automatic silent renew in react-oidc-context. If the renewal fails or the API answers 401, the user is sent to the sign-in screen. The mobile app sets its own timer. If the API answers 401, the app renews the token and sends the request once more. If the answer is still 401, the user is logged out.
 
 \subsection{Tests of the Admin Login}
 We test the admin login with Vitest and mock react-oidc-context and the network, like the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.

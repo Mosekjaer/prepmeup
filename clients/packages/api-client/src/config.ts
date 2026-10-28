@@ -10,16 +10,42 @@ export function setAccessTokenProvider(provider: AccessTokenProvider): void {
   accessTokenProvider = provider;
 }
 
+type UnauthorizedHandler = {
+  renew: () => Promise<string | undefined>;
+  expire: () => void;
+};
+
+let unauthorizedHandler: UnauthorizedHandler | undefined;
+
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | undefined): void {
+  unauthorizedHandler = handler;
+}
+
+function send(url: RequestInfo, init: RequestInit | undefined, token: string | undefined): Promise<Response> {
+  const headers = new Headers(init?.headers);
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return globalThis.fetch(url, { ...init, headers });
+}
+
 export const apiConfig = {
   /** Injected by the generated NSwag client as its fetch implementation. */
   async fetch(url: RequestInfo, init?: RequestInit): Promise<Response> {
-    const token = await accessTokenProvider();
-    const headers = new Headers(init?.headers);
+    const response = await send(url, init, await accessTokenProvider());
 
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+    if (response.status !== 401 || !unauthorizedHandler) {
+      return response;
     }
 
-    return globalThis.fetch(url, { ...init, headers });
+    const retry = await send(url, init, await unauthorizedHandler.renew());
+
+    if (retry.status === 401) {
+      unauthorizedHandler.expire();
+    }
+
+    return retry;
   },
 };

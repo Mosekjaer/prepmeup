@@ -17,6 +17,27 @@ public class CustomerServiceTests
     }
 
     [Test]
+    public async Task GetAsync_KnownCustomer_ReturnsCustomer()
+    {
+        var existing = new Customer("sub-1", "Malthe", "Finlandsgade 22");
+        _repository.GetByKeycloakIdAsync("sub-1", Arg.Any<CancellationToken>()).Returns(existing);
+
+        var result = await _sut.GetAsync("sub-1", CancellationToken.None);
+
+        Assert.That(result, Is.SameAs(existing));
+    }
+
+    [Test]
+    public async Task GetAsync_UnknownCustomer_ReturnsNull()
+    {
+        _repository.GetByKeycloakIdAsync("sub-1", Arg.Any<CancellationToken>()).Returns((Customer?)null);
+
+        var result = await _sut.GetAsync("sub-1", CancellationToken.None);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
     public async Task SaveDetailsAsync_UnknownCustomer_AddsAndSavesNewCustomer()
     {
         _repository.GetByKeycloakIdAsync("sub-1", Arg.Any<CancellationToken>()).Returns((Customer?)null);

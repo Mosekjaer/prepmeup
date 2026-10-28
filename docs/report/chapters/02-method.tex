@@ -2,7 +2,8 @@
 
 The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. In
 this chapter we describe how we have set up roles, sprints and the product backlog,
-where we deviate from the Scrum Guide, and how we measure progress. The
+where we deviate from the Scrum Guide, how we measure progress, how we handle risks
+and how we use AI. The
 practical rules are in Appendix 10.1, and the decisions are logged with dates in
 Appendix 10.2.
 
@@ -112,3 +113,77 @@ would show that growth as missing progress, while a burn-up chart keeps the two 
     upper line rises, the backlog has grown, not the progress slowed.}
     \label{fig:burnup}
 \end{figure}
+
+\section{Risk Management}\label{sec:method-risk}
+
+We keep a list of the risks to the project in Appendix 2.3. It uses the risk model
+from Vinje \cite[sec.~5.4]{vinje-projektledelse}. Each risk gets a probability and a
+consequence, and the product of the two decides how soon we act. A risk with a
+product of 9 or more gets a measure straight away, and the rest are assessed. The
+list has three kinds of risk: how we work, the requirements, and the technical
+choices. We go through it at every sprint planning, raise a risk that has happened,
+and add new ones.
+
+The risk list and the MoSCoW priorities in the requirements specification are used
+together when we plan a sprint. MoSCoW says what the product needs most, and the
+risk list says what could stop us from delivering it. At the sprint planning on
+28/10 the two largest risks were both about time. The must-have requirements might
+not be done, and the report was behind the code. We therefore used sprint 4 for the
+report and decided that sprint 5 only plans must-have requirements. If we fall
+behind, the should and could requirements are the first to go.
+
+\section{Use of AI}\label{sec:method-ai}
+
+We use AI tools in the project, mainly Claude Code and Antigravity. This section
+describes how, using the four competencies in the Framework for AI Fluency:
+delegation, description, discernment and diligence
+\cite{dakan-feller-ai-fluency}. The supervisor set the frame at the first meeting on
+15/9. AI is fine to use, as long as we understand everything we hand in.
+
+\subsection{Delegation}
+
+We let AI do work where we already know what the result should look like, and keep
+the work that is a learning goal for ourselves. Four agents look at the code for the
+layer rules, the API, test design and security. They can only read the code and report
+what they find, and the person who owns the code fixes it, so they can explain the fix
+at the exam. Test
+design is a learning goal in software testing, so it is split in two. An agent
+suggests the test cases and argues for them, and only after a person has approved the
+list are the tests written.
+
+The same goes for the board. AI may read, comment on and create tasks, and it moves
+and estimates tasks when a group member asks. It never assigns or deletes tasks, and
+which tasks go into a sprint is decided by the group, because planning the sprint is
+part of what we have to learn. We changed this rule three times during the project,
+see Appendix 10.2. AI also drafts text for the appendices and the report when a group
+member asks for it.
+
+\subsection{Description}
+
+The rules for the project are written down once, in a rules file in the repository,
+and every AI tool reads the same file. It has the layer rules, the language rules,
+the rules for sources and the definition of done, so we do not have to repeat them in
+every prompt. Tasks that we do often, such as adding a feature through all the
+layers, writing tests first or opening a pull request, are written as fixed workflows
+the tool follows step by step. For a larger task we can ask for a plan first, which a
+person reads before any code is written. When we correct the AI, the correction is written down as
+a rule in a lessons file in the repository, so the same mistake is not made again.
+
+\subsection{Discernment}
+
+Everything the AI makes goes through the same checks as our own work. A change is
+merged through a pull request, and only when the build and the tests pass in CI and
+another group member has reviewed it. When AI suggests code, it has to say which part
+of the course material the pattern comes from, or say that it is not in the course.
+Sources in the report are checked by opening them, because a source that looks right
+is not always there. We have also learned that text written by AI tends to be too
+dense and too technical. We rewrote the appendices in plain language for that reason.
+
+\subsection{Diligence}
+
+The person who commits a change has to be able to explain it, also at the exam. Two
+of our workflows quiz a group member on their own commits and on the project, so we
+can practise that. Passwords and keys are never in a file the AI can read. They come
+from environment variables, and Claude Code is set up so it cannot open the files
+where they are kept. We declare our use of AI in the AI declaration in Appendix 11.3, which
+we fill in ourselves.

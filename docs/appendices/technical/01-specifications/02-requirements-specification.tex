@@ -5,7 +5,7 @@
 \usepackage{../../appendix-style}
 
 \title{1.2 Requirements Specification}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
@@ -13,11 +13,12 @@
 
 \begin{versionhistory}
   1.0 & 02-09-2026 & Group 3 & Initial version \\
-  1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
-  1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
-  1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
-  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items. FR-12 moved to won't have. NFR-09 rewritten for orders and address \\
-  1.5 & 28-10-2026 & Group 3 & Aligned with the system as built: login, registration and passwords are handled by Keycloak, and onboarding asks for name and address. Added FR-19 (next order 14 days before expiry) and FR-20 (notification when the next order is created); deleting an account moved to won't have (FR-21). Epic-to-FR mapping corrected. FR-05 and FR-08 made precise. NFR-03, NFR-05, NFR-07, NFR-08 and NFR-09 made precise. One term per concept \\
+  1.1 & 16-09-2026 & Group 3 & Added epics and scope after review \#1 (group 4) \\
+  1.2 & 16-09-2026 & Group 3 & Decided UI language and platform \\
+  1.3 & 22-09-2026 & Group 3 & Added security NFRs and made the NFRs testable \\
+  1.4 & 30-09-2026 & Group 3 & Orders composed from package types instead of a household profile \\
+  1.5 & 28-10-2026 & Group 3 & Aligned with the system as built \\
+  1.6 & 28-10-2026 & Group 3 & Simpler text, clearer payment requirements \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -62,10 +63,10 @@ The system consists of:
 Customers sign up for a prepping subscription called ``PrepMeUp'' through the customer app. They create their account on the identity provider's login page, which the app opens, and then complete onboarding in the app. The subscription ensures that they always have enough food and water for a three-day emergency.
 
 \subsection{Platform}
-The customer app is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
+The customer app is an Expo (React Native) app. Version 1.0 runs on Android. A web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
-Payment is simulated. The back-end records a payment for each order against the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
+Payment is simulated. The customer pays a subscription fee, and the fee depends on how many adults and children the customer prepares for. The fee is charged to the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
 
 \subsection{Responsibilities}
 The back-end is responsible for persistently storing information on:
@@ -98,7 +99,7 @@ The administrator interface makes it possible to:
 User stories are grouped into epics. Each epic lists the functional requirements (section~\ref{sec:fr}) that realise it.
 
 \begin{enumerate}
-    \item \textbf{Account} (FR-01, FR-08, FR-21). Logging in and changing the password are handled by the identity provider.
+    \item \textbf{Account} (FR-01, FR-08, FR-21). The identity provider handles logging in and changing the password.
     \begin{enumerate}
         \item As a new customer, I want to be able to create an account, so that my user data, subscription, and orders are saved between sessions.
         \item As a customer, I want to log in with my e-mail and password on the PrepMeUp login page, so that only I can see and change my orders.
@@ -141,7 +142,7 @@ User stories are grouped into epics. Each epic lists the functional requirements
 
 \section{Functional Requirements}
 \label{sec:fr}
-Functional requirements are numbered FR-\emph{nn}, non-functional requirements NFR-\emph{nn}, so the two can be told apart later in the report. The numbers are stable: a requirement keeps its number when it moves to another priority, so the numbers are not in order within each priority.
+Functional requirements are numbered FR-\emph{nn} and non-functional requirements NFR-\emph{nn}, so the two can be told apart later in the report. A requirement keeps its number when it moves to another priority. That is why the numbers are not in order within each priority.
 
 \paragraph{MUST HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=1]
@@ -160,7 +161,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
     \item Customer app: See the status of your orders and change a planned order.
     \item Customer app: Change name and address.
     \item Customer app: Choose which package types an order contains, and how many of each.
-    \item Back-end: A simulated card payment method.
+    \item Customer app: Register payment details for a simulated card.
     \item Administrator interface: Create a package type.
 \end{enumerate}
 \begin{enumerate}[label=\reqlabel{FR}, start=20]
@@ -170,7 +171,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \paragraph{COULD HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=13]
     \item Customer app: Add equipment packages, e.g. a flashlight, to an order.
-    \item Back-end: A simulated card subscription method.
+    \item Back-end: Charge the subscription fee to the customer's simulated card.
     \item Administrator interface: Create a new version of a package type with other contents.
     \item Customer app: Web build of the customer app.
 \end{enumerate}
@@ -190,7 +191,7 @@ Functional requirements are numbered FR-\emph{nn}, non-functional requirements N
 \section{Scope and Delimitation}
 We build the software side of the system. Hardware, logistics and the actual grocery supply are outside the project.
 
-\subsection{Version 1.0 -- minimum viable product}
+\subsection{Version 1.0 (Minimum Viable Product)}
 Version 1.0 is the smallest system that lets a customer subscribe and receive a first order. It contains:
 \begin{itemize}
     \item An Android customer app (Expo, React Native) where a customer creates an account, logs in and signs up (FR-01).
@@ -210,7 +211,7 @@ Version 1.0 is the smallest system that lets a customer subscribe and receive a 
 \end{itemize}
 
 \section{Non-functional Requirements}
-Each non-functional requirement is stated so it can be measured rather than judged. How each one is tested is described in appendix 6.1 (Acceptance Test).
+We have written each non-functional requirement so it can be measured, not judged. Appendix 6.1 (Acceptance Test) describes how each one is tested.
 
 \paragraph{Usability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=1]
@@ -220,7 +221,7 @@ Each non-functional requirement is stated so it can be measured rather than judg
 
 \paragraph{Reliability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=3]
-    \item If the back-end is unreachable, the customer app shows a connection error with an option to try again; it does not crash.
+    \item If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash.
     \item If the database is unreachable while the API is running, the API returns HTTP 503 with a body that contains an English error message, instead of failing silently or crashing.
 \end{enumerate}
 

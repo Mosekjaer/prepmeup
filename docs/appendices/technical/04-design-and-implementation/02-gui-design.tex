@@ -11,6 +11,28 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 28-10-2026 & Group 3 & Low-fidelity mockups of the customer app and the admin panel inserted \\
+\end{versionhistory}
+
+\section{Low-fidelity Mockups}
+Before we built the screens, we drew low-fidelity mockups of the customer app and the admin panel in sprint 2. The arrows show how the user moves between the screens, and each screen is marked with the requirements it covers. A dashed border marks a could-have. All text in the mockups is in English (NFR-01).
+
+\subsection{Customer App}
+Figure~\ref{fig:ui-mockup-customer} shows the customer app. A new customer signs in (K1), creates a profile (K2), builds the first order from adult and child packages (K3, K4), pays (K5) and lands on the home screen (K6). From there the customer can see the orders (K7), change the planned order (K8) and the profile (K9). A notification (K10) leads to the planned order.
+
+\drawiofig[\linewidth]{ui-mockup-customer}{Low-fidelity mockup of the customer app.}{fig:ui-mockup-customer}
+
+The mockups were drawn before requirements specification 1.5, so a few details have changed since:
+\begin{itemize}
+    \item Signing in and creating an account happen on the login page of the identity provider (Keycloak), which the app opens. K2 is the onboarding screen that follows.
+    \item The password is changed on the identity provider's page, not in the app (K9).
+    \item Deleting the account (K9) is now a won't-have (FR-21).
+\end{itemize}
+
+\subsection{Admin Panel}
+Figure~\ref{fig:ui-mockup-admin} shows the admin panel. The administrator signs in (A1) and sees the orders to send, sorted by planned date (A2, FR-05). An order can be opened and marked as sent (A3, FR-06). The administrator can also create package types (A4, FR-11) and a new version of a package type, so existing orders keep the old contents (A5, FR-15).
+
+\drawiofig[\linewidth]{ui-mockup-admin}{Low-fidelity mockup of the admin panel.}{fig:ui-mockup-admin}
 
 \end{document}

@@ -1,10 +1,22 @@
 \chapter{Introduction}\label{ch:introduction}
 % Background, problem statement, purpose and scope of the project.
 
+% ------------------------------------------------------------
+% EXAMPLE of inserting a DrawIO diagram:
+% 1. Save/edit the diagram in  assets/drawio/<name>.drawio
+% 2. Reference it with \drawiofig - the PDF is generated
+%    AUTOMATICALLY by latexmk when you compile
+%    (requires draw.io Desktop locally).
+%
+% Usage:          \drawiofig{file-name}{Caption}{fig:label}
+% Optional width: \drawiofig[0.5\linewidth]{...}{...}{...}
+% NOTE: all three arguments are required!
+% ------------------------------------------------------------
+
 \section{Conceptual overview}\label{sec:conceptual-overview}
 \autoref{fig:rich-picture} shows who uses PrepMeUp and what moves between them.
 The customer talks to the system through the customer app, the administrator
 through the admin interface, and the supplier and the payment are simulated
 inside the project.
 
-\drawiofig[\linewidth]{rich-picture}{Rich picture of PrepMeUp. The customer only meets the system through the app and the delivered packages. The dashed boxes are simulated within the project, and the screens are illustrative.}{fig:rich-picture}
+\drawiofig[\linewidth]{rich-picture}{Rich picture of PrepMeUp. The customer only meets the system through the app and the delivered orders. The dashed boxes are simulated within the project, and the screens are illustrative.}{fig:rich-picture}

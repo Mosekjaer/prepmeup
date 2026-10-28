@@ -20,7 +20,8 @@
   1.1 & 23-09-2026 & Group 3 & Deploy job requires HTTPS and status 200 \\
   1.2 & 08-10-2026 & Group 3 & Original sources and simpler text \\
   1.3 & 21-10-2026 & Group 3 & Releasing the customer app through Expo \\
-  1.4 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
+  1.4 & 28-10-2026 & Group 3 & Flowcharts for the pipeline, rollback and release of the customer app \\
+  1.5 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
@@ -43,7 +44,9 @@ Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it st
     \item Coolify calls the API's health endpoint. If it does not answer, the deployment is not marked as healthy.
 \end{enumerate}
 
-Every step depends on the one before it, so there is only one way from a commit to production, and it starts with the tests.
+\drawiofig[0.6\linewidth]{pipeline-flow}{The pipeline from a pushed branch to a running container. Each red end stops the chain.}{fig:pipeline-flow}
+
+Every step depends on the one before it, so there is only one way from a commit to production, and it starts with the tests. Figure~\ref{fig:pipeline-flow} shows the chain.
 
 \section{Why GitHub Actions Decides When We Deploy}
 Coolify can watch the repository itself and deploy on every push to the main branch. That is how we had it at first, and we turned it off.
@@ -112,7 +115,9 @@ We wrote the steps down, so nobody has to figure them out while production is do
     \item When the fix is merged and the main branch is green, delete the variable in Coolify and redeploy. If we forget this, production stays on the old image while all workflows are green.
 \end{enumerate}
 
-The rollback takes seconds and needs no build and no commit. It does not roll back the database, see section~\ref{sec:migrations}.
+\drawiofig[0.7\linewidth]{rollback-flow}{Rolling production back to an earlier image and forward again.}{fig:rollback-flow}
+
+The rollback takes seconds and needs no build and no commit. It does not roll back the database, see section~\ref{sec:migrations}. Figure~\ref{fig:rollback-flow} shows the steps.
 
 \section{Secrets}\label{sec:secrets}
 The production passwords and keys are only in one place, the environment variables in Coolify. They are not in the repository, the compose file or the images, and the AI tools cannot read them. Secrets should not be stored in source code or deployed with the app, and environment variables are one way to keep them out of both \cite{microsoft-aspnetcore-app-secrets}. De Sanctis does the same with a settings file that is created directly on the production server \cite[sec.~12.1.4]{desanctis-web-apis-aspnet-core}.
@@ -167,12 +172,14 @@ npx eas-cli build --profile preview --platform android
     \item On the phone, the user opens the link, downloads the APK and accepts that Android installs an app that has not been through Play Store review \cite{expo-internal-distribution}.
 \end{enumerate}
 
+\drawiofig[0.45\linewidth]{eas-release-flow}{Releasing a new version of the customer app through EAS Build.}{fig:eas-release-flow}
+
 The two variables with the addresses of the API and Keycloak are built into the app. That is fine, because they are public addresses and not secrets. Expo warns that anything in the app should be seen as readable by anyone \cite{expo-environment-variables}, so we never put a secret in a variable whose name starts with EXPO\_PUBLIC\_. The login also works, because the realm allows the app's redirect address in production (appendix 3.1).
 
 \subsection{How It Fits with the Rest of the Pipeline}
 The app build is not started by GitHub Actions. The pipeline deploys the API and Keycloak automatically on every merge to the main branch. The app is built by hand when we want to hand out a new version, for example before a sprint review. The app only depends on the API's public address and the API contract, and the API always runs the newest version of the main branch. So an old app version keeps working, as long as we do not make breaking changes to the API.
 
-During development we do not use EAS. The app runs from Metro on the developer's computer, in a browser or on an emulator.
+Figure~\ref{fig:eas-release-flow} shows the release. During development we do not use EAS. The app runs from Metro on the developer's computer, in a browser or on an emulator.
 
 \subsection{Why Not Google Play}
 Publishing on Google Play would need a Google Play developer account, a production build as an app bundle (AAB) and a Google service account key, so EAS can upload for us \cite{expo-submit-android}. On top of that comes a store listing and Google's review of each version. That is a lot of work for an app only the group, the supervisor and the examiners will install. EAS can do the upload later with a production profile, so going from internal sharing to Google Play does not mean starting over.

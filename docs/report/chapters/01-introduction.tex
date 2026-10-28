@@ -13,10 +13,101 @@
 % NOTE: all three arguments are required!
 % ------------------------------------------------------------
 
-\section{Conceptual overview}\label{sec:conceptual-overview}
+\section{Background}\label{sec:background}
+
+The Danish Emergency Management Agency recommends that every household in Denmark
+can manage on its own for three days during a crisis, such as a power outage, a
+failure in the water supply, severe weather or problems with supply chains
+\cite{brs-forberedt}. The household should keep 3 litres of water per person per
+day and food for three days that keeps outside the fridge \cite{brs-forberedt}.
+
+Far from every household follows the advice. In two surveys from November 2024 and
+April 2025, 30\% and 34\% answered that they had followed it
+\cite{mssb-fou-question-302-2025}. The agency also asks households to use from the
+stock and fill it up again, so the goods do not get too old \cite{brs-forberedt}.
+Keeping an emergency stock is therefore not something you do once. It is a task that
+never ends.
+
+We think the effort is what stops most households, and we see four barriers. First,
+it is hard to work out what to keep and how much. Second, the stock has to match the
+number of adults and children in the household, and that number changes over time.
+Third, expiry dates pass without anyone noticing, so the stock gets old. Finally, it
+is a hassle to remember to buy new goods. These barriers are our own assumptions. We
+have not asked households about them.
+
+\section{Existing Solutions}\label{sec:existing-solutions}
+
+We have looked at three kinds of existing solutions: the agency's own guidance,
+ready-made emergency boxes and online supermarkets.
+
+The agency's web page tells the household what to keep, and it has a calculator that
+works out how much the household needs \cite{brs-forberedt}. It is free and comes from
+the authority behind the recommendation. It is still only advice. The household has to
+buy the goods, store them, and remember to use them and buy new ones.
+
+Ready-made emergency boxes solve the first barrier. Mad til 3 dage, for example, sells
+boxes with long-life meals for three days, including a family box for four people
+\cite{madtil3dage-shop}. The customer gets a complete stock in one purchase without
+having to work out the contents. The box has a fixed size, though, and we found nothing
+on the shop's page about replacing it before it expires. When it does, the customer has
+to notice and buy a new one.
+
+Online supermarkets such as nemlig.com deliver groceries to the door
+\cite{nemlig-online-supermarket}. That removes the trip to the shop, but the customer
+still decides what to buy and how much. The shop does not know what is in the
+customer's stock, or when it expires.
+
+\autoref{tab:existing-solutions} sums up the comparison. Each solution does one or two of
+the three things, but none of them keeps the stock in date.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}lccc@{}}
+        \hline
+        Solution & Decides the contents & Delivers & Replaces before expiry \\
+        \hline
+        The agency's guidance & Yes & No & No \\
+        Ready-made emergency box & Yes & Yes & No \\
+        Online supermarket & No & Yes & No \\
+        PrepMeUp & Yes & Simulated & Yes \\
+        \hline
+    \end{tabular}
+    \caption{The existing solutions compared with PrepMeUp.}
+    \label{tab:existing-solutions}
+\end{table}
+
+\section{Conceptual Overview}\label{sec:conceptual-overview}
 \autoref{fig:rich-picture} shows who uses PrepMeUp and what moves between them.
 The customer talks to the system through the customer app, the administrator
 through the admin interface, and the supplier and the payment are simulated
 inside the project.
 
 \drawiofig[\linewidth]{rich-picture}{Rich picture of PrepMeUp. The customer only meets the system through the app and the delivered orders. The dashed boxes are simulated within the project, and the screens are illustrative.}{fig:rich-picture}
+
+The customer creates an account, signs up for a subscription and puts together an
+order from packages for adults and children, for example a vegetarian package for an
+adult. Equipment such as a flashlight is a package of its own and can be added too.
+The administrator sends the order, and the system records when it expires. Before
+that date, the system plans the next order as a copy of the previous one and notifies
+the customer. Until the next order is sent, the customer can change it, or pause or
+cancel the subscription.
+
+\section{Problem Statement}\label{sec:problem-statement}
+
+The project answers the following question:
+
+\begin{quote}
+How can a subscription service let a customer get an emergency stock that follows the
+Danish Emergency Management Agency's three-day guideline, and keep it in date without
+the customer having to track expiry dates or remember to reorder?
+\end{quote}
+
+We build on two assumptions. The first is that the main barrier is the effort of
+keeping the stock, not the cost. The second is that a fixed package per adult and per
+child is precise enough to meet the guideline.
+
+The system covers food, water and simple equipment such as a flashlight. The grocery
+supplier and the payment are simulated, so no real goods are sent and no money is
+charged. Medicine, other regulated goods and packages made for allergies are out of
+scope. The requirements in chapter~\ref{ch:requirements} are based on this problem
+statement.

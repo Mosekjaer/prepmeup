@@ -16,68 +16,78 @@
   1.1 & 16-09-2026 & Group 3 & Glossary extended, epics, scope for version 1.0, testable NFRs, FR/NFR numbering after review \#1 (group 4) \\
   1.2 & 16-09-2026 & Group 3 & NFR-01: UI language decided (English). NFR-06: Expo \\
   1.3 & 22-09-2026 & Group 3 & Added Security NFRs, and made other NFRs testable, after review against SW4SWD architecture-process material \\
-  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items. FR-12 moved to won't have \\
+  1.4 & 30-09-2026 & Group 3 & Household, household member and diet removed. The customer composes each order from package types, with separate package types for adults and children. A package type that has been ordered is not edited but replaced by a new one. Delivery renamed to order. Item generalised into food and equipment items. FR-12 moved to won't have. NFR-09 rewritten for orders and address \\
+  1.5 & 28-10-2026 & Group 3 & Aligned with the system as built: login, registration and passwords are handled by Keycloak, and onboarding asks for name and address. Added FR-19 (next order 14 days before expiry) and FR-20 (notification when the next order is created); deleting an account moved to won't have (FR-21). Epic-to-FR mapping corrected. FR-05 and FR-08 made precise. NFR-03, NFR-05, NFR-07, NFR-08 and NFR-09 made precise. One term per concept \\
 \end{versionhistory}
 
 \section{Glossary}
 
-\textbf{Customer} = The person who has an account and a subscription
+\textbf{Customer} = A person who has an account. In the identity provider the customer has the role \emph{household}.
 
-\textbf{Administrator} = An employee of PrepMeUp who maintains package types and dispatches orders through the administrator interface
+\textbf{Administrator} = An employee of PrepMeUp who maintains package types and sends orders through the administrator interface. An administrator is a user with the role \emph{admin}, which only an existing administrator can grant.
+
+\textbf{Identity provider} = The service where users create an account, log in and change their password (Keycloak). The customer app and the administrator interface open its login page. Passwords are never sent to the back-end.
+
+\textbf{Onboarding} = The step after the first login where the customer enters name and address before using the customer app.
 
 \textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. Has a status (active, paused, cancelled).
 
 \textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned.
 
-\textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (dispatched by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
+\textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (sent by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
 
 \textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
 
-\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. Equipment, e.g. a flashlight, is offered as its own package type. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
+\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
+
+\textbf{Equipment package} = A package of a package type that only contains equipment items, e.g. a flashlight.
 
 \textbf{Package content} = One item and its quantity in a package type.
 
 \textbf{Item} = A product that can go into a package. An item is either a \emph{food item} (including water) or an \emph{equipment item}.
 
-\textbf{Expiry date} = The date on which the items of an order are no longer considered usable. The system schedules the next order before this date.
+\textbf{Expiry date} = The date on which the items of an order are no longer considered usable. Each order has its own expiry date.
 
 \textbf{Notification} = A message from the system to a customer, e.g. that a new order is about to be sent.
 
 \section{System Description}
-This system constitutes:
+The system consists of:
 \begin{itemize}
-    \item Back-end software
-    \item A user interface for customers
+    \item A back-end
+    \item A customer app
     \item An administrator interface
+    \item An identity provider, where users create an account and log in
 \end{itemize}
 
-Customers can sign up for a prepping subscription called ``PrepMeUp'' through the client app. The subscription ensures that they always have enough food and water for a three-day emergency.
+Customers sign up for a prepping subscription called ``PrepMeUp'' through the customer app. They create their account on the identity provider's login page, which the app opens, and then complete onboarding in the app. The subscription ensures that they always have enough food and water for a three-day emergency.
 
 \subsection{Platform}
-The customer user interface is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
+The customer app is an Expo (React Native) app. Version 1.0 runs on Android; a web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
 Payment is simulated. The back-end records a payment for each order against the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
 
 \subsection{Responsibilities}
-The back-end part of the project is responsible for persistently storing information on:
+The back-end is responsible for persistently storing information on:
 \begin{itemize}
     \item All customers and their subscriptions
-    \item The address of each customer
+    \item The name and address of each customer, linked to their account in the identity provider
     \item The packages in each order and their package types
-    \item The expiration date of the last order
+    \item The expiry date of each order
 \end{itemize}
+
+Accounts, e-mail addresses and passwords are stored by the identity provider, not by the back-end.
 
 The back-end is also responsible for:
 \begin{itemize}
-    \item Creating the next order shortly before the previous one expires
-    \item Alerting the customer that they will soon receive a new order
-    \item Alerting the administration that a new order is ready to be sent
+    \item Creating the next order 14 days before the previous one expires (FR-19)
+    \item Notifying the customer when the next order is created (FR-20)
+    \item Showing the administrator which orders are ready to be sent (FR-05)
 \end{itemize}
 
-The client part of the project provides a user interface for the customer, where they can sign up and compose their order from adult and child packages.
+The customer app lets the customer sign up and compose their order from adult and child packages.
 
-The administrator interface should make it possible to:
+The administrator interface makes it possible to:
 \begin{itemize}
     \item Add package types for the customers to choose between
     \item Replace a package type with a new version with different contents
@@ -88,31 +98,31 @@ The administrator interface should make it possible to:
 User stories are grouped into epics. Each epic lists the functional requirements (section~\ref{sec:fr}) that realise it.
 
 \begin{enumerate}
-    \item \textbf{Account} (FR-01, FR-08)
+    \item \textbf{Account} (FR-01, FR-08, FR-21). Logging in and changing the password are handled by the identity provider.
     \begin{enumerate}
         \item As a new customer, I want to be able to create an account, so that my user data, subscription, and orders are saved between sessions.
-        \item As a customer, I want to log in with my e-mail and password, so that only I can see and change my orders.
+        \item As a customer, I want to log in with my e-mail and password on the PrepMeUp login page, so that only I can see and change my orders.
         \item As a customer, I want to change my password, so that I can keep my account secure.
         \item As a customer, I want to delete my account, so that my personal data is removed when I no longer use the service.
     \end{enumerate}
 
-    \item \textbf{Order contents} (FR-02, FR-08, FR-09, FR-13)
+    \item \textbf{Order contents} (FR-07, FR-09, FR-13)
     \begin{enumerate}
         \item As a customer, I want to choose how many adult and child packages my order contains, so that my orders match the number of people I prepare for.
         \item As a customer, I want to choose the package type of each package, so that one person can get a vegetarian package and another a standard package.
         \item As a customer, I want to add equipment packages, e.g. a flashlight, to my order, so that I get more than food and water.
     \end{enumerate}
 
-    \item \textbf{Subscription and orders} (FR-03, FR-04, FR-07, FR-10)
+    \item \textbf{Subscription and orders} (FR-01, FR-04, FR-07, FR-19)
     \begin{enumerate}
-        \item As a customer, I want to automatically receive a new order before the old one expires, so that I don't have to keep track of the expiration date myself and have a chance to use the soon-to-expire items.
+        \item As a customer, I want to automatically receive a new order before the old one expires, so that I don't have to keep track of the expiry date myself and have a chance to use the soon-to-expire items.
         \item As a customer, I want to see the status of my next order, so that I know when to expect it.
         \item As a customer, I want to pause or cancel my subscription, so that I am not sent orders I do not need.
     \end{enumerate}
 
-    \item \textbf{Notifications} (FR-04)
+    \item \textbf{Notifications} (FR-20)
     \begin{enumerate}
-        \item As a customer, I want to receive a notification shortly before my next order is sent, so that I have a chance to make changes (e.g. number of packages, package types).
+        \item As a customer, I want to receive a notification before my next order is sent, so that I have a chance to make changes (e.g. number of packages, package types).
     \end{enumerate}
 
     \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)
@@ -121,51 +131,60 @@ User stories are grouped into epics. Each epic lists the functional requirements
         \item As an administrator, I want to replace a package type with a new version with other items, so that I can keep the contents up to date without changing past orders.
     \end{enumerate}
 
-    \item \textbf{Dispatch} (FR-05, FR-06)
+    \item \textbf{Dispatch} (FR-05, FR-06, NFR-10)
     \begin{enumerate}
-        \item As an administrator, I want to see the orders that should be sent, sorted by which order should be sent first.
+        \item As an administrator, I want to log in with an administrator account, so that only employees can see and send orders.
+        \item As an administrator, I want to see the orders that should be sent, sorted by which order should be sent first, so that orders are sent before the customer's previous order expires.
         \item As an administrator, I want to mark an order as sent, so that the customer can see it is on its way.
     \end{enumerate}
 \end{enumerate}
 
 \section{Functional Requirements}
 \label{sec:fr}
-Functional requirements are numbered FR-\emph{nn}, non-functional requirements NFR-\emph{nn}, so the two can be told apart later in the report.
+Functional requirements are numbered FR-\emph{nn}, non-functional requirements NFR-\emph{nn}, so the two can be told apart later in the report. The numbers are stable: a requirement keeps its number when it moves to another priority, so the numbers are not in order within each priority.
 
 \paragraph{MUST HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=1]
-    \item Customer UI: The customer can create an account and sign up for a PrepMeUp subscription.
+    \item Customer app: The customer can create an account and sign up for a PrepMeUp subscription.
     \item Back-end: Persistent storage of customers, their subscriptions and their orders.
     \item Back-end: Default package types for a ``normal'' diet, one for adults and one for children.
-    \item Back-end: Keeps track of the expiration dates of the customer's past orders.
-    \item Admin interface: See the next orders that should be sent.
-    \item Admin interface: Register orders as sent.
+    \item Back-end: Keeps track of the expiry date of each of the customer's past orders.
+    \item Administrator interface: See all planned orders, sorted by planned send date, earliest first.
+    \item Administrator interface: Register orders as sent.
 \end{enumerate}
-
+\begin{enumerate}[label=\reqlabel{FR}, start=19]
+    \item Back-end: 14 days before an order's expiry date, the system creates the next order for a customer with an active subscription. The new order contains the same package types and quantities as the previous one.
+\end{enumerate}
 \paragraph{SHOULD HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=7]
-    \item Customer UI: See the status of your orders and change a planned order.
-    \item Customer UI: Change profile settings and address.
-    \item Customer UI: Choose which package types an order contains, and how many of each.
+    \item Customer app: See the status of your orders and change a planned order.
+    \item Customer app: Change name and address.
+    \item Customer app: Choose which package types an order contains, and how many of each.
     \item Back-end: A simulated card payment method.
-    \item Admin interface: Create a package type.
+    \item Administrator interface: Create a package type.
+\end{enumerate}
+\begin{enumerate}[label=\reqlabel{FR}, start=20]
+    \item Back-end: The customer receives a notification when the next order is created (FR-19), so they can change it before it is sent.
 \end{enumerate}
 
 \paragraph{COULD HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=13]
-    \item Customer UI: Add equipment packages, e.g. a flashlight, to an order.
+    \item Customer app: Add equipment packages, e.g. a flashlight, to an order.
     \item Back-end: A simulated card subscription method.
-    \item Admin interface: Create a new version of a package type with other contents.
-    \item Customer UI: Web build of the customer app.
+    \item Administrator interface: Create a new version of a package type with other contents.
+    \item Customer app: Web build of the customer app.
 \end{enumerate}
 
 \paragraph{WON'T HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=12]
-    \item Customer UI: Adjust the number of days the package lasts for. A customer who wants to cover more days orders more packages.
+    \item Customer app: Adjust the number of days the package lasts for. A customer who wants to cover more days orders more packages.
 \end{enumerate}
 \begin{enumerate}[label=\reqlabel{FR}, start=17]
-    \item A custom package for each customer, depending on allergies.
-    \item An integrated API to a real grocery supplier.
+    \item Back-end: A custom package for each customer, depending on allergies.
+    \item Back-end: An integrated API to a real grocery supplier.
+\end{enumerate}
+\begin{enumerate}[label=\reqlabel{FR}, start=21]
+    \item Customer app: Delete the account. Deleting an account means removing both the user in the identity provider and the customer data in the back-end, and the user story is not needed to show the core flow of the product.
 \end{enumerate}
 
 \section{Scope and Delimitation}
@@ -174,10 +193,10 @@ We build the software side of the system. Hardware, logistics and the actual gro
 \subsection{Version 1.0 -- minimum viable product}
 Version 1.0 is the smallest system that lets a customer subscribe and receive a first order. It contains:
 \begin{itemize}
-    \item An Android customer app (Expo, React Native) where a customer creates an account and signs up (FR-01).
+    \item An Android customer app (Expo, React Native) where a customer creates an account, logs in and signs up (FR-01).
     \item A back-end with persistent storage of customers, subscriptions and orders (FR-02).
     \item Default package types for a ``normal'' diet, one for adults and one for children (FR-03).
-    \item Expiry tracking per order, so the next order can be scheduled (FR-04).
+    \item Expiry tracking per order, and the next order created 14 days before expiry (FR-04, FR-19).
     \item An administrator interface that lists upcoming orders and lets the administrator mark them as sent (FR-05, FR-06).
     \item Simulated payment and simulated supplier.
 \end{itemize}
@@ -195,35 +214,35 @@ Each non-functional requirement is stated so it can be measured rather than judg
 
 \paragraph{Usability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=1]
-    \item All text displayed in the UIs is in English, including error messages from the API.
-    \item Every error message shown in a UI is a complete sentence in the UI language that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown.
+    \item All text displayed in the customer app and the administrator interface is in English, including error messages from the API.
+    \item Every error message shown in the customer app or the administrator interface is a complete sentence in English that states what went wrong and what the user can do about it. No stack traces, HTTP status codes or exception names are shown.
 \end{enumerate}
 
 \paragraph{Reliability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=3]
-    \item If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data; it does not crash.
-    \item If the database is unreachable, the API returns HTTP 503 with an error body instead of failing silently or crashing.
+    \item If the back-end is unreachable, the customer app shows a connection error with an option to try again; it does not crash.
+    \item If the database is unreachable while the API is running, the API returns HTTP 503 with a body that contains an English error message, instead of failing silently or crashing.
 \end{enumerate}
 
 \paragraph{Performance}
 \begin{enumerate}[label=\reqlabel{NFR}, start=5]
-    \item Response time is under 1 second for 90\% of requests.
+    \item With 10 concurrent users, 90\% of API requests are answered in under 1 second.
 \end{enumerate}
 
 \paragraph{Portability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=6]
-    \item The customer UI runs as an Android app built with Expo (React Native).
+    \item The customer app runs as an Android app built with Expo (React Native). The platform was decided with the supervisor at the meeting on 15-09-2026.
 \end{enumerate}
 
 \paragraph{Supportability}
 \begin{enumerate}[label=\reqlabel{NFR}, start=7]
-    \item The application refuses to start if a required configuration value is missing, instead of running with an incorrect default.
-    \item Automated tests that cover all endpoints.
+    \item Outside development and test, the API refuses to start if the address of the identity provider or the database connection string is missing, instead of running with an incorrect default.
+    \item Every API endpoint is covered by at least one automated test that runs in CI.
 \end{enumerate}
 
 \paragraph{Security}
 \begin{enumerate}[label=\reqlabel{NFR}, start=9]
-    \item A customer can only view and change their own data (subscription, orders, address). A request for another customer's data is rejected with HTTP 403.
+    \item A customer can only view and change their own data (subscription, orders, name and address). The API identifies the customer from the access token, and a request for a resource that belongs to another customer, e.g. an order, is rejected with HTTP 403.
     \item Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403.
     \item Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401.
 \end{enumerate}

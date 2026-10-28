@@ -102,8 +102,8 @@
     {\ttfamily\scriptsize\color{signal} test} &
     {\ttfamily\scriptsize\color{signal} udvikling} \\
     \textbf{SQL via EF Core} \newline {\scriptsize\color{soft} i Docker, ens på Windows og Linux} &
-    \textbf{NUnit + Vitest} \newline {\scriptsize\color{soft} NSubstitute, GitLab CI} &
-    \textbf{Claude Code} \newline {\scriptsize\color{soft} 10 agenter, 8 skills, Kaneo} \\
+    \textbf{NUnit + Vitest} \newline {\scriptsize\color{soft} NSubstitute, GitHub Actions} &
+    \textbf{Claude Code} \newline {\scriptsize\color{soft} 4 agenter, 11 skills, Kaneo} \\
     \bottomrule
   \end{tabular}
   \bottomnote{Én backend, to brugerflader, én delt klientpakke genereret fra OpenAPI.}
@@ -115,24 +115,24 @@
   \resizebox{0.97\linewidth}{!}{%
   \begin{tikzpicture}
     \node[boxc] (mob) at (0,1.8)
-      {\hd{apps/mobile}\\[2pt] Expo, React Native\\ Expo Router, TanStack Query\\ SecureStore (JWT)\\ iOS, Android};
+      {\hd{apps/mobile}\\[2pt] Expo, React Native\\ Expo Router, expo-auth-session\\ token kun i hukommelsen\\ Android};
     \node[boxc] (adm) at (0,-1.8)
-      {\hd{apps/admin}\\[2pt] React, Vite\\ leveringskø, pakketyper\\ React Router\\ browser};
+      {\hd{apps/admin}\\[2pt] React, Vite\\ kommende ordrer, pakketyper (planlagt)\\ React Router, react-oidc-context\\ browser};
     \node[boxx,text width=26mm] (cli) at (4.2,0)
       {\hd{packages/}\\ \hd{api-client}\\[2pt] genereret fra\\ OpenAPI-schema};
     \node[box] (api) at (8.6,1.6)
       {\hd{Web API}\\[2pt] ASP.NET Core\\ controllers, DI, JWT, CORS\\ Serilog, ProblemDetails\\ Swagger $\rightarrow$ api-client};
     \node[box] (sch) at (8.6,-1.9)
-      {\hd{Scheduler}\\[2pt] BackgroundService\\ tjekker udløb,\\ udløser levering};
+      {\hd{Scheduler (planlagt)}\\[2pt] BackgroundService\\ tjekker udløb,\\ opretter næste ordre};
     \node[boxd,text width=24mm] (db) at (12.6,0)
-      {\hd{Database}\\[2pt] SQL\\ Household, Member\\ Packet, Delivery};
+      {\hd{Database}\\[2pt] SQL Server\\ Customers, Items};
 
     \begin{scope}[on background layer]
       \node[bnd,fit=(mob)(adm)] (b1) {};
       \node[bnd,fit=(api)(sch)] (b2) {};
     \end{scope}
-    \node[bndlbl,above=1mm of b1.north west,anchor=west] {klienter --- TypeScript monorepo};
-    \node[bndlbl,above=1mm of b2.north west,anchor=west] {server --- docker compose};
+    \node[bndlbl,above=1mm of b1.north west,anchor=west] {klienter: TypeScript monorepo};
+    \node[bndlbl,above=1mm of b2.north west,anchor=west] {server: docker compose};
 
     \draw[ln] (mob.east) -- (cli.north west);
     \draw[ln] (adm.east) -- (cli.south west);
@@ -152,7 +152,7 @@
     \node[box,text width=76mm] (l1) at (0,3)
       {\hd{Presentation} \quad {\color{soft}tager imod kald udefra}\\[2pt] controllers, contracts, statuskoder};
     \node[box,text width=76mm] (l2) at (0,1.4)
-      {\hd{Business} \quad {\color{soft}alle regler om problemet}\\[2pt] use cases, domænemodel, leveringsplanlægning};
+      {\hd{Business} \quad {\color{soft}alle regler om problemet}\\[2pt] use cases, domænemodel, ordreplanlægning};
     \node[box,text width=76mm] (l3) at (0,-0.2)
       {\hd{Data} \quad {\color{soft}det eneste lag der kender databasen}\\[2pt] DbContext, repositories, migrations};
     \node[boxd,text width=76mm] (l4) at (0,-1.6)
@@ -167,13 +167,13 @@
        central fejlhåndtering\\[2pt]
        caching\\[2pt]
        konfiguration via env\\[6pt]
-       {\color{faint} rammer alle tre lag ---\\ kan ikke placeres i ét}};
+       {\color{faint} rammer alle tre lag\\ og kan ikke placeres i ét}};
   \end{tikzpicture}}
-  \bottomnote{Reglen er hele pointen: \textbf{et lag må kun bruge laget under sig.} Derfor kan vi skifte database uden at røre reglerne, og teste reglerne uden en database.}
+  \bottomnote{\textbf{Et lag må kun bruge laget under sig.} Derfor kan vi skifte database uden at røre reglerne, og teste reglerne uden en database.}
 \end{frame}
 
 % ---------- 5 lagreglerne ----------
-\begin{frame}{Lagreglerne}{står også i CLAUDE.md, så agenten arbejder efter dem}
+\begin{frame}{Lagreglerne}{står også i AGENTS.md, så agenterne arbejder efter dem}
   \vspace{1mm}
   \scriptsize
   \renewcommand{\arraystretch}{1.35}
@@ -184,7 +184,7 @@
     Api & route, validere, mappe contract mod domæne, statuskoder, autorisation & forretningsregler; kende {\ttfamily DbContext} \\
     Application & orkestrere use cases, definere repository-interfaces, transaktionsgrænser & kende HTTP, {\ttfamily ControllerBase}, EF-typer, SQL \\
     Domain & entiteter, invarianter, vandbehov, pakkeindhold, udløb & referere til noget andet projekt overhovedet \\
-    Infrastructure & EF-konfiguration, queries, migrations & træffe beslutninger --- den henter og gemmer \\
+    Infrastructure & EF-konfiguration, queries, migrations & træffe beslutninger. Den henter og gemmer \\
     clients/apps & kalde API'et via {\ttfamily api-client}, holde UI-state & duplikere forretningsregler; gå uden om klientpakken \\
     \bottomrule
   \end{tabular}
@@ -192,16 +192,16 @@
 \end{frame}
 
 % ---------- 6 modulafhaengigheder ----------
-\begin{frame}{Modulafhængigheder}{de samme fire lag, nu som projekter --- pilen peger mod det, der refereres}
+\begin{frame}{Modulafhængigheder}{de samme fire lag, nu som projekter. Pilen peger mod det, der refereres}
   \centering
   \resizebox{0.88\linewidth}{!}{%
   \begin{tikzpicture}
     \node[box,text width=40mm] (apip) at (4,3)
-      {\hd{PrepMeUp.Api} \; {\color{faint}presentation}\\[2pt] controllers, contracts, middleware\\ Program.cs --- DI + pipeline};
+      {\hd{PrepMeUp.Api} \; {\color{faint}presentation}\\[2pt] controllers, contracts, middleware\\ Program.cs: DI + pipeline};
     \node[box,text width=40mm] (app) at (4,0)
-      {\hd{PrepMeUp.Application} \; {\color{faint}business}\\[2pt] HouseholdService, DeliveryScheduler\\ IHouseholdRepository, IClock};
+      {\hd{PrepMeUp.Application} \; {\color{faint}business}\\[2pt] CustomerService, ItemService\\ ICustomerRepository, IItemRepository};
     \node[box,text width=40mm] (dom) at (4,-3)
-      {\hd{PrepMeUp.Domain} \; {\color{faint}business}\\[2pt] Household, Packet, Delivery\\ ingen projektreferencer};
+      {\hd{PrepMeUp.Domain} \; {\color{faint}business}\\[2pt] Customer, Item\\ ingen projektreferencer};
     \node[boxd,text width=40mm] (inf) at (10.4,0)
       {\hd{PrepMeUp.Infrastructure} \; {\color{faint}data}\\[2pt] DbContext, EF-repositories\\ implementerer interfaces};
     \node[boxc,text width=32mm] (tu) at (-1.8,2.2)
@@ -217,11 +217,11 @@
     \draw[ln] (tu.east) -- (app.west);
     \draw[ln] (ti.east) -- (apip.west);
   \end{tikzpicture}}
-  \bottomnote{\textbf{Domain refererer ingenting.} Derfor kan forretningsreglerne testes uden database, browser eller HTTP --- den gule pil vender ind mod domænet i stedet for ud mod databasen.}
+  \bottomnote{\textbf{Domain refererer ingenting.} Derfor kan forretningsreglerne testes uden database, browser eller HTTP. Den gule pil vender ind mod domænet i stedet for ud mod databasen.}
 \end{frame}
 
 % ---------- 7 EF Core = SQL ----------
-\begin{frame}[fragile]{EF Core --- kort fortalt}{I har haft SQL. EF Core skriver SQL'en for jer.}
+\begin{frame}[fragile]{EF Core kort fortalt}{I har haft SQL. EF Core skriver SQL'en for jer.}
   \vspace{1mm}
   {\scriptsize\color{soft} En \emph{object-relational mapper}: C\#-klasser bliver til tabeller, og LINQ bliver til SQL. Vi kan altid se den genererede SQL og skrive den i hånden, hvor det er nødvendigt.}
   \vspace{3mm}
@@ -231,21 +231,18 @@
       {\tiny\ttfamily\color{moss} vi skriver dette i C\#}\\[1mm]
       \begin{semiverbatim}
 \tiny\ttfamily
-var due = await db.Households
-    .Where(h => h.NextDelivery < frist)
-    .Include(h => h.Members)
-    .ToListAsync();
+var customer = await db.Customers
+    .SingleOrDefaultAsync(
+        c => c.KeycloakId == keycloakId);
       \end{semiverbatim}
     \end{column}
     \begin{column}{0.5\textwidth}
       {\tiny\ttfamily\color{moss} EF Core sender dette til databasen}\\[1mm]
       \begin{semiverbatim}
 \tiny\ttfamily
-SELECT h.*, m.*
-FROM Households AS h
-LEFT JOIN HouseholdMembers AS m
-     ON m.HouseholdId = h.Id
-WHERE h.NextDelivery < @frist
+SELECT TOP(2) c.*
+FROM Customers AS c
+WHERE c.KeycloakId = @keycloakId
       \end{semiverbatim}
     \end{column}
   \end{columns}
@@ -257,8 +254,8 @@ WHERE h.NextDelivery < @frist
     \toprule
     \normalfont\color{soft}\ttfamily i C\# & \color{soft}\ttfamily i SQL & \color{soft}\ttfamily bemærk \\
     \midrule
-    class Household        & {\ttfamily CREATE TABLE Households} & én klasse, én tabel \\
-    List$<$Member$>$ Members & fremmednøgle + {\ttfamily JOIN}    & kaldes en navigation \\
+    class Customer         & {\ttfamily CREATE TABLE Customers} & én klasse, én tabel \\
+    List$<$Order$>$ Orders & fremmednøgle + {\ttfamily JOIN}    & kaldes en navigation (Order er planlagt) \\
     SaveChangesAsync()     & {\ttfamily INSERT}/{\ttfamily UPDATE} i én transaktion & alt eller intet \\
     migration              & versionsstyrede {\ttfamily ALTER TABLE}-scripts & ligger i git \\
     \bottomrule
@@ -266,7 +263,7 @@ WHERE h.NextDelivery < @frist
 \end{frame}
 
 % ---------- 8 sekvens ----------
-\begin{frame}{Ét kald gennem stakken}{POST /api/households}
+\begin{frame}{Ét kald gennem stakken}{PUT /user}
   \centering
   \resizebox{0.95\linewidth}{!}{%
   \begin{tikzpicture}[font=\tiny]
@@ -279,16 +276,17 @@ WHERE h.NextDelivery < @frist
 
     \foreach \n in {c1,c2,c3,c4,c5} \draw[life] (\n.south) -- ($(\n.south)+(0,\yB)$);
 
-    \draw[ln] (0,-1.4) -- node[above]{createHousehold(form)} (3.6,-1.4);
-    \draw[ln] (3.6,-2.4) -- node[above]{POST /api/households} node[below,color=soft]{Authorization: Bearer \ldots} (7.2,-2.4);
-    \draw[ln] (7.2,-3.6) .. controls (8.4,-3.4) and (8.4,-4.2) .. (7.2,-4.1)
-          node[right,xshift=14mm,yshift=2mm,color=soft,align=left]{model binding + validering\\ fejl $\rightarrow$ 400 ProblemDetails};
-    \draw[ln] (7.2,-5.0) -- node[above]{CreateAsync(command)} (10.8,-5.0);
-    \draw[ln] (10.8,-5.9) .. controls (12.0,-5.7) and (12.0,-6.5) .. (10.8,-6.4)
-          node[right,xshift=16mm,yshift=2mm,color=soft,align=left]{Domain: vandbehov for 3 døgn,\\ pakkeindhold, udløbsdato};
-    \draw[ln] (10.8,-7.1) -- node[above]{SaveChangesAsync()} (14.4,-7.1);
-    \draw[lnd] (14.4,-7.7) -- node[above,color=soft]{id} (10.8,-7.7);
-    \draw[lnd] (7.2,-8.4) -- node[above,color=soft]{201 Created, query-cache invalideres} (0,-8.4);
+    \draw[ln] (0,-1.2) -- node[above]{saveCustomer(navn, adresse)} (3.6,-1.2);
+    \draw[ln] (3.6,-2.0) -- node[above]{PUT /user} node[below,color=soft]{Authorization: Bearer \ldots} (7.2,-2.0);
+    \draw[ln] (7.2,-3.0) .. controls (8.4,-2.8) and (8.4,-3.6) .. (7.2,-3.5)
+          node[right,xshift=14mm,yshift=2mm,color=soft,align=left]{token, model binding, validering\\ fejl $\rightarrow$ 401 eller 400 ProblemDetails};
+    \draw[ln] (7.2,-4.3) -- node[above]{SaveDetailsAsync(\ldots)} (10.8,-4.3);
+    \draw[ln] (10.8,-5.0) -- node[above]{GetByKeycloakIdAsync(id)} (14.4,-5.0);
+    \draw[lnd] (14.4,-5.6) -- node[above,color=soft]{kunde eller null} (10.8,-5.6);
+    \draw[ln] (10.8,-6.3) .. controls (12.0,-6.1) and (12.0,-6.9) .. (10.8,-6.8)
+          node[right,xshift=16mm,yshift=2mm,color=soft,align=left]{Domain: ny Customer eller UpdateDetails,\\ regler for navn og adresse};
+    \draw[ln] (10.8,-7.5) -- node[above]{SaveChangesAsync()} node[below,color=soft]{INSERT eller UPDATE} (14.4,-7.5);
+    \draw[lnd] (7.2,-8.4) -- node[above,color=soft]{204 No Content} (0,-8.4);
   \end{tikzpicture}}
   \bottomnote{Læg mærke til, at kaldet går præcis én vej ned gennem lagene og samme vej tilbage.}
 \end{frame}
@@ -301,17 +299,21 @@ WHERE h.NextDelivery < @frist
     \node[boxc,text width=32mm] (cl) at (0,0)
       {\hd{Klientenhed}\\[2pt] Expo Go / dev build\\ eller browser\\ $\rightarrow$ api på :5001};
     \node[box,text width=40mm] (api) at (5.4,0)
-      {\hd{api}\\[2pt] dotnet/aspnet-image\\ :8080 $\rightarrow$ host :5001\\ env: connection string, JWT-nøgle};
+      {\hd{api}\\[2pt] dotnet/aspnet-image\\ :8080 $\rightarrow$ host :5001\\ env: connection string, Keycloak-adresser};
     \node[boxd,text width=40mm] (db) at (10.6,0)
-      {\hd{db}\\[2pt] SQL Server / Postgres\\ :1433 kun internt\\ volume: pmu-data};
+      {\hd{db}\\[2pt] SQL Server 2022\\ :1433 kun internt\\ volume: pmu-data};
+    \node[box,text width=40mm] (kc) at (5.4,-2.6)
+      {\hd{keycloak}\\[2pt] login og roller, realm fra fil\\ :8080 $\rightarrow$ host :8082\\ volume: pmu-keycloak};
     \begin{scope}[on background layer]
-      \node[bnd,fit=(api)(db)] (net) {};
+      \node[bnd,fit=(api)(db)(kc)] (net) {};
     \end{scope}
     \node[bndlbl,above=1mm of net.north west,anchor=west] {docker network: prepmeup-net};
     \draw[ln] (cl) -- node[tag,above]{:5001} (api);
+    \draw[ln] (cl.south) |- node[tag,above,pos=.75]{login :8082} (kc.west);
     \draw[ln] (api) -- node[tag,above]{EF Core} (db);
+    \draw[ln] (api) -- node[tag,right]{nøgler til tokens} (kc);
   \end{tikzpicture}}
-  \bottomnote{Databasen eksponeres ikke til host --- kun \texttt{api} når den, via servicenavnet \texttt{db}. Derfor er opsætningen ens på Windows og Linux. Logning skrives med Serilog til fil og database (BAD, lektion 7).}
+  \bottomnote{Databasen eksponeres ikke til host. Kun api-containeren når den, via servicenavnet db. Derfor er opsætningen ens på Windows og Linux. Logning skrives med Serilog til konsollen.}
 \end{frame}
 
 % ---------- 10 repoet ----------
@@ -320,60 +322,60 @@ WHERE h.NextDelivery < @frist
 \begin{semiverbatim}
 \tiny\ttfamily
 prepmeup/
-|-- CLAUDE.md                     \color{faint}# lagregler, konventioner, definition of done\color{deep}
+|-- AGENTS.md                     \color{faint}# lagregler, konventioner, definition of done\color{deep}
+|-- CLAUDE.md                     \color{faint}# peger paa AGENTS.md + det Claude-specifikke\color{deep}
 |-- .claude/
 |   |-- settings.json             \color{faint}# naegter adgang til .env og noeglefiler\color{deep}
-|   |-- agents/                   \color{faint}# 10 specialiserede reviewere\color{deep}
-|   `-- skills/                   \color{faint}# 8 arbejdsgange\color{deep}
+|   |-- agents/                   \color{faint}# 4 read-only reviewere\color{deep}
+|   `-- skills/                   \color{faint}# 11 arbejdsgange\color{deep}
 |-- src/
 |   |-- PrepMeUp.Domain/          \color{moss}// ingen referencer\color{deep}
 |   |-- PrepMeUp.Application/     \color{moss}// interfaces + use cases\color{deep}
 |   |-- PrepMeUp.Infrastructure/  \color{moss}// EF Core\color{deep}
-|   `-- PrepMeUp.Api/             \color{moss}// HTTP + BackgroundService\color{deep}
+|   `-- PrepMeUp.Api/             \color{moss}// HTTP (BackgroundService planlagt)\color{deep}
 |-- clients/
-|   |-- CLAUDE.md                 \color{faint}# TS strict, ingen forretningslogik i UI\color{deep}
+|   |-- AGENTS.md                 \color{faint}# TS strict, ingen forretningslogik i UI\color{deep}
 |   |-- apps/mobile/              \color{faint}# Expo\color{deep}
 |   |-- apps/admin/               \color{faint}# React + Vite\color{deep}
 |   `-- packages/api-client/      \color{faint}# genereret - redigeres ikke i haanden\color{deep}
 |-- tests/
 |   |-- PrepMeUp.Tests.Unit/
 |   `-- PrepMeUp.Tests.Integration/
-|-- docs/adr/                     \color{faint}# beslutningsreferater til eksamen\color{deep}
+|-- docs/                         \color{faint}# rapport og bilag i LaTeX\color{deep}
 |-- docker-compose.yml
-`-- .gitlab-ci.yml
+`-- .github/workflows/            \color{faint}# CI og tjek af konventioner\color{deep}
 \end{semiverbatim}
 \end{frame}
 
 % ---------- 11 udviklingsopsaetning ----------
-\begin{frame}{Udviklingsopsætning}{værktøj omkring repoet --- kører ikke i produktion}
+\begin{frame}{Udviklingsopsætning}{værktøj omkring repoet, som ikke kører i produktion}
   \centering
   \resizebox{0.95\linewidth}{!}{%
   \begin{tikzpicture}
     \node[boxc,text width=26mm] (dev) at (0,1.4)
       {\hd{Udvikler}\\[2pt] Windows / Linux\\ terminal + editor};
     \node[box,text width=42mm] (cc) at (4.6,1.4)
-      {\hd{Claude Code}\\[2pt] læser CLAUDE.md (rod + clients/)\\ 10 agenter --- review, ikke rettelser\\ 8 skills --- faste arbejdsgange\\ skriver kun i src/, clients/, tests/};
+      {\hd{Claude Code}\\[2pt] læser AGENTS.md (rod, clients/, docs/)\\ 4 agenter: review, ikke rettelser\\ 11 skills: faste arbejdsgange\\ læser ikke .env og nøglefiler};
     \node[boxx,text width=38mm] (wt) at (4.6,-2.4)
       {\hd{Arbejdstræ}\\[2pt] feature-branch\\ dotnet test, vitest lokalt før commit};
     \node[box,text width=38mm] (gl) at (10.4,-2.4)
-      {\hd{GitLab}\\[2pt] merge request + review\\ CI: build, test, rapport\\ grøn pipeline før merge};
+      {\hd{GitHub}\\[2pt] pull request + review\\ GitHub Actions: build, test, deploy\\ grøn CI før merge};
     \node[boxd,text width=38mm] (kn) at (10.4,1.4)
-      {\hd{Kaneo}\\[2pt] selvhostet, REST API\\ agenten læser og kommenterer\\ mennesker flytter kortene};
+      {\hd{Kaneo}\\[2pt] selvhostet, MCP-server\\ Claude læser, kommenterer, opretter\\ flytter kun kort på besked};
     \node[draw=alert,dashed,line width=.6pt,text width=30mm,align=left,inner sep=5pt,font=\tiny] (sec) at (15.0,1.4)
       {{\ttfamily\bfseries\color{alert}secrets}\\[2pt] OS-miljøvariabler\\ / credential manager\\[3pt] {\color{alert}uden for repo og\\ uden for AI-kontekst}};
 
     \draw[ln] (dev) -- (cc);
     \draw[ln] (cc.south) -- (wt.north);
     \draw[ln] (wt) -- node[tag,above]{push} (gl);
-    \draw[lns] (cc.east) -- node[tag,above,color=signal]{HTTPS} (kn.west);
-    \draw[lnd] (sec.west) -- (kn.east);
-    \draw[lnd] (gl.north) -- node[bndlbl,right]{pipeline-status} (kn.south);
+    \draw[lns] (cc.east) -- node[tag,above,color=signal]{MCP} (kn.west);
+    \draw[lnd] (gl.north) -- node[bndlbl,right]{PR linker kortet} (kn.south);
   \end{tikzpicture}}
-  \bottomnote{Tokenet kommer fra miljøet --- aldrig fra en fil, agenten kan læse.}
+  \bottomnote{Kaneo-login sker med device-login i browseren, så der ligger intet Kaneo-token i miljøet eller i en fil. Secrets til databasen og Keycloak kommer fra miljøet og aldrig fra en fil, agenten kan læse.}
 \end{frame}
 
 % ---------- 12 agenterne ----------
-\begin{frame}{Agenterne}{ti specialister --- alle read-only på nær adr-scribe}
+\begin{frame}{Agenterne}{fire reviewere, alle read-only}
   \vspace{1mm}
   \tiny
   \renewcommand{\arraystretch}{1.4}
@@ -381,59 +383,56 @@ prepmeup/
     \toprule
     \normalfont\color{soft}\ttfamily agent & \color{soft}\ttfamily rolle & \color{soft}\ttfamily kaldes \\
     \midrule
-    architecture-guardian & fanger brud på lagreglerne og afhængighedsretningen & før hver merge request \\
-    api-designer          & ressourcenavne, verber, statuskoder, contracts & før et endpoint bygges \\
-    test-designer         & testtilfælde med ækvivalensklasser og grænseværdier & før tests skrives \\
-    data-modeler          & EF-model, relationer, normalisering, N+1 & ved ændring i datamodellen \\
-    frontend-reviewer     & hooks, typer, loading/tom/fejl, logik i klienten & ved klientændringer \\
-    refactoring-scout     & design smells til konkret refactoring med pris & ved iterationsafslutning \\
-    security-reviewer     & auth, adgangskontrol, hemmeligheder, validering & før deployment \\
-    adr-scribe            & beslutningsreferater i docs/adr & når en beslutning er truffet \\
-    integration-planner   & afhængighedstræ og integrationsplan & før integrationstest \\
-    oral-examiner         & eksaminerer jer i jeres eget projekt & før eksamen \\
+    architecture-reviewer & lagregler, afhængighedsretning, SOLID, design smells & før hver pull request \\
+    backend-reviewer      & REST, statuskoder, model binding, EF-model, N+1, migrations & ved nye endpoints og før merge \\
+    test-designer         & ækvivalensklasser, grænseværdier, fakes, integrationsplan & før tests skrives \\
+    security-reviewer     & auth (Keycloak, JWT), adgangskontrol, secrets, validering & før deployment \\
     \bottomrule
   \end{tabular}
 \end{frame}
 
 % ---------- 13 skills ----------
-\begin{frame}{Skills}{otte faste arbejdsgange}
-  \vspace{2mm}
+\begin{frame}{Skills}{elleve faste arbejdsgange}
+  \vspace{1mm}
   \scriptsize
-  \renewcommand{\arraystretch}{1.3}
+  \renewcommand{\arraystretch}{1.0}
   \begin{tabular}{@{}>{\ttfamily\color{deep}}p{32mm}p{95mm}@{}}
     \toprule
     \normalfont\color{soft}\ttfamily skill & \color{soft}\ttfamily hvad den gør \\
     \midrule
-    vertical-slice   & ny funktion gennem alle fire lag i rigtig rækkefølge --- Domain først \\
-    tdd-loop         & red-green-refactor med NUnit og NSubstitute \\
-    api-contract     & holder OpenAPI-schema og api-client i sync \\
-    expo-screen      & ny skærm med routing, query og alle fire tilstande \\
-    git-flow         & branch, commit, pull--test--push, merge request \\
-    kaneo            & læser og kommenterer opgaver via API'et \\
-    domain-modelling & faciliterer domænemodellen med spørgsmål \\
-    report-check     & tegngrænse, kapitelstruktur, skriveregler \\
+    vertical-slice   & ny funktion gennem alle lag i rigtig rækkefølge, Domain først og skærmen til sidst \\
+    tdd-loop         & red-green-refactor med NUnit og NSubstitute, testtilfældene godkendes først \\
+    api-contract     & holder OpenAPI-dokumentet og api-client i sync (NSwag) \\
+    git-workflow     & branch fra main, commit, pull request mod main, release-tag \\
+    plan             & ny plan i .plans/ med en interaktiv HTML-side \\
+    report-check     & kritik af rapporten og optælling mod 72.000 tegn \\
+    student-voice    & omskriver et bilag til almindelig studenterstemme \\
+    meeting-docs     & dagsordener og referater på dansk i LaTeX \\
+    drawio-skill     & draw.io-diagrammer til rapport og bilag \\
+    oral-examiner    & eksaminerer jer i jeres eget projekt \\
+    defend-my-code   & forbereder dig på at forklare dine egne commits \\
     \bottomrule
   \end{tabular}
 \end{frame}
 
 % ---------- 14 graenser ----------
 \begin{frame}{Grænserne vi har sat}{tre bevidste begrænsninger på hvad agenten må}
-  \vspace{3mm}
-  \begin{itemize}\setlength\itemsep{5mm}
-    \punkt{Agenterne retter ikke koden}{De rapporterer fund med fil, linje og forslag. Et fund du selv retter, er et fund du kan forklare til eksamen.}
-    \punkt{Testdesign er delt i to}{\texttt{test-designer} foreslår testtilfældene og begrunder dem. Først når et menneske har godkendt listen, implementerer \texttt{tdd-loop} dem. Testdesign er et læringsmål i softwaretest.}
-    \punkt{Kaneo-agenten flytter ikke kort}{Den læser og kommenterer. Statusskift er gruppens beslutning --- den iterative proces er et læringsmål, og tavlens historik bliver procesbilag i rapporten.}
+  \vspace{1mm}
+  \begin{itemize}\setlength\itemsep{4mm}
+    \punkt{Agenterne retter ikke koden}{De rapporterer fund med fil, linje og forslag. Når du selv retter fundet, kan du forklare det til eksamen.}
+    \punkt{Testdesign er delt i to}{Agenten test-designer foreslår testtilfældene og begrunder dem. Først når et menneske har godkendt listen, implementerer skillen tdd-loop dem. Testdesign er et læringsmål i softwaretest.}
+    \punkt{Claude flytter kun kort på besked}{Claude læser, kommenterer og opretter kort. Når et gruppemedlem beder om det, flytter og estimerer Claude dem, men tildeler eller sletter aldrig. Hvilke kort der flyttes, er gruppens beslutning. Den iterative proces er et læringsmål, og tavlens historik bliver procesbilag i rapporten.}
   \end{itemize}
-  \bottomnote{Samme princip i \texttt{domain-modelling} og \texttt{report-check}: de stiller spørgsmål og kritiserer, men producerer hverken modellen eller rapportprosaen.}
+  \bottomnote{Samme princip gælder report-check, oral-examiner og defend-my-code: de stiller spørgsmål og kritiserer, men skriver ikke rapportprosaen.}
 \end{frame}
 
 % ---------- 15 ordforklaring ----------
 \begin{frame}{Tre ord der er faldet undervejs}{}
   \vspace{3mm}
   \begin{itemize}\setlength\itemsep{5mm}
-    \punkt{Vertical slice}{Vi bygger én funktion hele vejen igennem --- fra skærm til database --- frem for ét lag ad gangen. Hver iteration ender med noget, der virker, i stedet for tre færdige lag og ingen funktion.}
-    \punkt{Clean Architecture}{Et udbredt navn for den lagdeling, vi bruger, hvor afhængighederne peger ind mod domænet. Kurset kalder det \emph{Layers} --- og det er kursets ord, vi bruger i rapporten.}
-    \punkt{MediatR}{Et bibliotek, der lægger et mellemled ind mellem controller og logik. \textbf{Vi bruger det ikke:} det løser et problem, vi ikke har endnu, og det står ikke i pensum.}
+    \punkt{Vertical slice}{Vi bygger én funktion hele vejen igennem, fra skærm til database, frem for ét lag ad gangen. Hver iteration ender med noget, der virker, i stedet for tre færdige lag og ingen funktion.}
+    \punkt{Clean Architecture}{Et udbredt navn for den lagdeling, vi bruger, hvor afhængighederne peger ind mod domænet. Kurset kalder det \emph{Layers}, og det er det ord, vi bruger i rapporten.}
+    \punkt{MediatR}{Et bibliotek, der lægger et mellemled ind mellem controller og logik. \textbf{Vi bruger det ikke}, fordi det løser et problem, vi ikke har endnu, og det står ikke i pensum.}
   \end{itemize}
 \end{frame}
 

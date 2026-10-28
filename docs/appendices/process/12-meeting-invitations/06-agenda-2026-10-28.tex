@@ -1,0 +1,103 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 06-agenda-2026-10-28.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
+
+\title{12.6 Dagsorden -- 28-10}
+\author{SW4PRJ4 -- Group 3}
+\date{28-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 28-10-2026 (onsdag)
+
+\textbf{Tid:} 10:00
+
+\textbf{Sted:} Incuba
+
+\section*{Dagsordenspunkter}
+
+\begin{enumerate}
+    \item \textbf{Sprint review -- sprint 3 (7/10 -- 27/10)} (ca. 45 min)
+    \begin{itemize}
+        \item Sprint goal fra 6/10 og 7/10: onboarding af en ny bruger og helt styr på Keycloak-flowet, herunder claims, roller og admin-login i admin-panelet. Blev det nået?
+        \item Demo: hver af os gennemgår det, vi selv har lavet i sprinten.
+        \begin{itemize}
+            \item Login i kunde-appen med Keycloak (PMU-70) og onboarding af en ny kunde med navn og adresse gennem \texttt{GET} og \texttt{PUT /user} (PMU-74).
+            \item Realm-roller som claims i backend og et admin-endpoint, der kun svarer en admin (PMU-75).
+            \item Admin-login i admin-panelet med Keycloak (PMU-76).
+            \item Udgivelse af kunde-appen gennem Expo og EAS Build (PMU-82).
+            \item Originale kilder i stedet for slides (PMU-81) og gruppesangen (PMU-85).
+        \end{itemize}
+        \item \textbf{Klar til godkendelse:} PMU-70, PMU-74, PMU-75, PMU-76, PMU-81 og PMU-82 er merget via PR og står i \emph{In Review}. PMU-74 og PMU-76 har ``vist til sprint review'' i deres definition of done. Efter demoen godkender vi dem og flytter dem til \emph{Done}.
+        \item PMU-85 (gruppesangen) er merget, men står stadig i \emph{To Do}. Er den færdig?
+        \item PMU-76 er færdig uden deployment: DoD-linjen om det deployede admin-panel er flyttet til det nye kort PMU-86 (deploy admin-panelet).
+        \item Ikke færdigt: PMU-77 auth-flow (3 point) og PMU-79 Keycloak-features (2 point) står i \emph{In Progress}. PMU-78 flowdiagram for gem-flow (2 point) og PMU-80 zombie-brugere (\emph{? pt}, ikke afklaret) er ikke startet.
+        \item Uden for sprinten: PMU-87 (controllere kalder kun services, 1 point) blev merget 28/10 og har ingen sprint-label.
+        \item Velocity for sprint 3: committed 31,5 point, done 24,5 point, spillover 7 point, scope 91,5 point. Done forudsætter, at de syv kort ovenfor godkendes. PMU-80 er ikke talt med, fordi det ikke er estimeret. Tallene står i \texttt{docs/assets/data/sprint-velocity.csv}.
+        \item Vi blev færdige med 60 \% af det, vi tog ind i sprint 1, 89 \% i sprint 2 og 78 \% i sprint 3. Figur~\ref{fig:velocity} viser de tre sprints ved siden af hinanden.
+    \end{itemize}
+
+    \begin{figure}[H]
+        \centering
+        \pgfplotstableread[col sep=comma]{../../../assets/data/sprint-velocity.csv}\velocitytable
+        \begin{tikzpicture}
+            \begin{axis}[
+                ybar, bar width=14pt,
+                width=0.8\textwidth, height=6cm,
+                xlabel={Sprint}, ylabel={Point},
+                xmin=0.5, xmax=6.5, xtick={1,...,6}, ymin=0,
+                legend pos=north east,
+                nodes near coords, nodes near coords style={font=\footnotesize},
+            ]
+                \addplot[fill=blue!35, draw=blue] table[x=sprint, y=committed]{\velocitytable};
+                \addlegendentry{Committed}
+                \addplot[fill=red!45, draw=red] table[x=sprint, y=done]{\velocitytable};
+                \addlegendentry{Done}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Velocity pr. sprint. Sprint 3 var tre uger med efterårsferie. Det, der ikke blev færdigt, er de tre rapportkort om flows og Keycloak.}
+        \label{fig:velocity}
+    \end{figure}
+    \item \textbf{Retrospective} (ca. 30 min)
+    \begin{itemize}
+        \item Opfølgning på sidste retrospective: har vi arbejdet test først (PMU-83)? Er målet og testtilfældene skrevet på kortet, før implementeringen startede?
+        \item Næsten alt kode blev merget samme dag (21/10). Hvorfor kom det så sent, og hvordan får vi mindre PR'er ind løbende?
+        \item Alle tre rapportkort fra vejledermødet er ikke færdige, mens kodekortene er. Prioriterer vi rapporten for lavt?
+        \item Kortene blev ikke flyttet på boardet, efterhånden som de blev færdige. Hvordan holder vi boardet ajour?
+        \item Hvad gik godt?
+        \item Hvad gik skidt?
+        \item Hvad ændrer vi i sprint 4? Hver handling bliver et kort i Kaneo.
+    \end{itemize}
+    \item \textbf{Sprint planning -- sprint 4 (28/10 -- 10/11)} (ca. 60 min)
+    \begin{itemize}
+        \item Kapacitet: hvor mange timer har hver af os i de to uger? Gennemsnittet af done i sprint 1 -- 3 er 27,8 point, men sprint 3 var en uge længere.
+        \item Spillover: PMU-77, PMU-78, PMU-79 og PMU-80 beholder label \emph{Sprint 3} og får \emph{Sprint 4} oveni. Frist flyttes til 10/11.
+        \item PMU-80 (zombie-brugere) skal afklares og estimeres, før den kan regnes med. Spørger vi Michel?
+        \item PMU-86 (deploy admin-panelet) mangler point-label, epic-label og undergruppe. Skal den med i sprint 4?
+        \item PMU-87: tæller vi den med i sprint 4, eller står den uden for sprintene?
+        \item \textbf{Backloggen er tom.} Kortene PMU-24 -- PMU-33, PMU-73 og PMU-83 findes ikke længere i Kaneo. Vi skal oprette nye kort ud fra de must-have-krav, der ikke er påbegyndt:
+        \begin{itemize}
+            \item FR-02: kunder, abonnementer og ordrer gemmes i databasen.
+            \item FR-03: standard-pakketyper for voksne og børn.
+            \item FR-04: udløbsdato pr. ordre, så næste ordre kan planlægges.
+            \item FR-05 og FR-06: admin-panelet viser de næste ordrer, der skal sendes, og admin kan markere en ordre som sendt.
+        \end{itemize}
+        \item Rapport: hvilke kapitler skal have et udkast i sprint 4?
+        \item Planning poker på de nye kort.
+        \item Ready-kort fra backlog til \emph{To Do}: \texttt{Krav: FR-xx} som første linje, definition of done, point-label, epic-label og ejer.
+        \item Sprint goal (én sætning, der nævner de krav sprinten leverer).
+        \item Ejer og undergruppe på hvert kort.
+        \item Point i \emph{To Do} (committed).
+    \end{itemize}
+    \item \textbf{Næste vejledermøde}
+    \item \textbf{Eventuelt}
+\end{enumerate}
+
+\end{document}

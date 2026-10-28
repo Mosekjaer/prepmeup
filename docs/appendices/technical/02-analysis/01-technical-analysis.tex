@@ -19,7 +19,8 @@
   1.3 & 30-09-2026 & Group 3 & Added client technologies \\
   1.4 & 30-09-2026 & Group 3 & Added backend architecture and data access \\
   1.5 & 08-10-2026 & Group 3 & Replaced slide references with original sources \\
-  1.6 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 (customers and orders instead of households and deliveries) and the code: role mapping, migrations at startup, integration tests without a database, login libraries in the apps, more known weaknesses and open decisions \\
+  1.6 & 28-10-2026 & Group 3 & Added Keycloak features \\
+  1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 (customers and orders instead of households and deliveries) and the code: role mapping, migrations at startup, integration tests without a database, login libraries in the apps, more known weaknesses and open decisions \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -177,9 +178,87 @@ Keycloak & Open source and free. Runs in our own compose. Uses standard OpenID C
 
 We chose Keycloak, mostly because we already host everything else ourselves. Kaneo, the API and the database all run on our own server, so Keycloak is just one more container. It also means that customers' names, addresses and orders do not end up at Google or another company, which makes GDPR simpler.
 
-Another reason is that the apps log in with a standard flow (Authorization Code with PKCE, which is what is recommended for mobile and browser apps \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}), and the API only checks a normal JWT. If we ever switch provider, the API code does not change much. Logging in by sending the password directly through the app is turned off \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}. Finally, the household and admin roles are put into the token \cite[sec.~Role scope mappings]{keycloak-server-admin-guide}, so the API can use them. Keycloak stores them in a different claim (realm\_access) than ASP.NET Core expects, so the API maps them to normal ASP.NET Core roles before the role checks run.
+Another reason is that the apps log in with a standard flow (Authorization Code with PKCE, which is what is recommended for mobile and browser apps \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}), and the API only checks a normal JWT. If we ever switch provider, the API code does not change much. Logging in by sending the password directly through the app is turned off \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}. Finally, the household and admin roles are put into the token \cite[sec.~Role scope mappings]{keycloak-server-admin-guide}, so the API can use them. Keycloak stores them in a different claim than ASP.NET Core expects, so the API maps them to normal roles before it checks them.
 
 The price is that Keycloak takes more work to set up and uses more memory than the API itself. We think that is fine, because the realm file makes the setup the same for everyone, and learning to use a real login provider is something we want to get out of the project.
+
+\section{Keycloak Features}
+\label{sec:keycloak-features}
+Keycloak can do a lot more than we need. At the meeting on 6/10 the supervisor asked us to write down which features we use, which we have chosen not to use, and why. The setup is in the realm file, which Keycloak reads when it starts the first time \cite{keycloak-import-export}. Anything that is not in the file has Keycloak's default value. This section will be updated as we start using more of Keycloak.
+
+\subsection{Features We Use}
+\begin{center}
+\begin{tabular}{@{}p{4cm} p{10.4cm}@{}}
+\textbf{Feature} & \textbf{Why} \\
+\hline
+Realm file with environment variables & The whole setup is in the repository, so everyone gets the same realm. Addresses that differ between local and production are filled in from environment variables \cite[sec.~Using Environment Variables within the Realm Configuration Files]{keycloak-import-export}. \\
+\hline
+Authorization Code flow with PKCE (S256) & The recommended flow for apps that cannot keep a secret \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}. Keycloak is set to require S256, so a login without PKCE is refused \cite[sec.~Capability Config]{keycloak-server-admin-guide}. \\
+\hline
+Two public clients & One for the customer app and one for the admin panel, each with its own redirect addresses. Neither can keep a client secret, because the code runs on the user's phone or in the browser. \\
+\hline
+Self-registration with email as username & A new customer must be able to create an account without an administrator (FR-01). Keycloak adds a register link to its login page \cite[sec.~Allowing users to self-register]{keycloak-server-admin-guide}. \\
+\hline
+Realm roles and a default role & Household and admin are realm roles, see appendix 4.1. Every new user gets the household role automatically \cite[sec.~Using default roles]{keycloak-server-admin-guide}. \\
+\hline
+Audience mapper & Puts our API's name in the token's audience claim \cite[sec.~Hardcoded audience]{keycloak-server-admin-guide}, so the API can refuse tokens that were made for something else \cite[sec.~2.3]{ietf-rfc9700-oauth-security-bcp}. \\
+\hline
+Token lifetimes & Access tokens live 15 minutes. The login session ends after 30 minutes without use and after 10 hours at most \cite[sec.~Session and token timeouts]{keycloak-server-admin-guide}. \\
+\hline
+Logout through Keycloak & The app ends the session at Keycloak and is sent back to an address that is allowed in the realm \cite[sec.~RP-Initiated Logout]{keycloak-server-admin-guide}. \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Features We Have Chosen Not to Use}
+\begin{center}
+\begin{tabular}{@{}p{4cm} p{10.4cm}@{}}
+\textbf{Feature} & \textbf{Why not} \\
+\hline
+Password grant (Direct Access Grants) & The app would get the user's password. It must not be used \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}, and it is turned off on both clients. \\
+\hline
+Implicit flow & Sends the token in the URL. It should not be used \cite[sec.~2.1.2]{ietf-rfc9700-oauth-security-bcp}, and it is turned off. \\
+\hline
+Token introspection & The API would ask Keycloak about every token. Keycloak only allows this for confidential clients \cite[sec.~Introspection endpoint]{keycloak-securing-apps-oidc}, and it costs a network call per request. We check the token locally instead, see section~\ref{sec:block-token}. \\
+\hline
+Client roles & We only have two roles that mean the same in both apps, so realm roles are enough (appendix 4.1). \\
+\hline
+Login with Google and other providers & Keycloak can let users log in through another provider \cite[sec.~Social Identity Providers]{keycloak-server-admin-guide}. We chose Keycloak to keep user data out of Google and similar companies (section~\ref{sec:auth}), so this would go against that. \\
+\hline
+User federation (LDAP) & Used when users already exist in another directory \cite[sec.~Lightweight Directory Access Protocol (LDAP) and Active Directory]{keycloak-server-admin-guide}. All our users are new. \\
+\hline
+Two-factor login (OTP) & Not needed for customers. It may make sense for administrators later \cite[sec.~One Time Password (OTP) policies]{keycloak-server-admin-guide}. \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Not Set Up Yet}
+Some features are off only because the realm file does not mention them. We have not decided against them, and most of them should be turned on before the system is used for real.
+
+Brute force detection is off by default \cite[sec.~Brute force attacks]{keycloak-server-admin-guide}. Since Keycloak is on a public server, it should be on. There is also no password policy, so any password is accepted \cite[sec.~Password policies]{keycloak-server-admin-guide}.
+
+Email verification and password reset need an SMTP server \cite[sec.~Configuring email for a realm]{keycloak-server-admin-guide}. Password reset is turned on in the realm, but we have no SMTP server yet, so the email cannot be sent. Without email verification anyone can register with an address they do not own, which is part of the zombie user problem (PMU-80).
+
+Refresh tokens can be reused until they expire. For public clients they should be rotated \cite[sec.~2.2.2]{ietf-rfc9700-oauth-security-bcp}, which Keycloak calls Revoke Refresh Token \cite[sec.~Session and token timeouts]{keycloak-server-admin-guide}. The admin panel already renews its access token with a refresh token, so this should be turned on now. The customer app does not use refresh tokens yet.
+
+Finally, Keycloak only logs errors by default and does not save login events \cite[sec.~Auditing user events]{keycloak-server-admin-guide}.
+
+\subsection{Blocking a Token Before It Expires}
+\label{sec:block-token}
+There are good reasons to want to block a token: it may have been stolen, the user may have been removed as admin, or the account may have been closed. The problem is that the API checks the token on its own. It has Keycloak's public key and only looks at the signature and the claims, so Keycloak cannot take a token back once it is issued. The token works until its expiry time \cite[sec.~4.1.4]{ietf-rfc7519-jwt}. Even if all of a user's sessions are signed out in Keycloak, access tokens already issued are still valid until they expire \cite[sec.~Signing out all active sessions]{keycloak-server-admin-guide}.
+
+We looked at three ways to block tokens. The first is introspection \cite{ietf-rfc7662-token-introspection}, where the API asks Keycloak on every request whether the token is still active. It works, but every request depends on Keycloak, and the API would need its own confidential client.
+
+The second is revocation \cite{ietf-rfc7009-token-revocation}. A client can tell Keycloak to revoke a token \cite[sec.~Token Revocation endpoint]{keycloak-securing-apps-oidc}. For a token the API checks itself, that only helps if the API also asks Keycloak, so it comes back to introspection \cite[sec.~3]{ietf-rfc7009-token-revocation}.
+
+The third is Keycloak's not-before policy. Keycloak can mark all tokens issued before a certain time as invalid and push this to the apps. The push only reaches apps that use Keycloak's own adapter \cite[sec.~Revoking active sessions]{keycloak-server-admin-guide}. Our API uses Microsoft's JWT validation, so it would not know.
+
+We chose short tokens instead, which is the alternative RFC 7009 mentions \cite[sec.~3]{ietf-rfc7009-token-revocation}. A stolen token works for at most 15 minutes, and a user who loses the admin role keeps it in the API for at most 15 minutes. We accept that for PrepMeUp, because a customer's data is not critical enough to justify a call to Keycloak on every request.
+
+\subsection{IP Checks}
+Keycloak 26.3 has no built-in way to allow or refuse a login based on the user's IP address. The conditions that can be used in a login flow look at the user, its roles and attributes, the client scope and the user's credentials, not the network \cite[sec.~Available conditions]{keycloak-server-admin-guide}. Brute force detection locks the user's account, not an IP address. Keycloak's own advice is to log failed logins with the IP address and let other software block the address in the firewall \cite[sec.~Downside of Keycloak brute force detection]{keycloak-server-admin-guide}.
+
+We do not check IP addresses. Our customers use the app on their phones, and a phone changes IP address all the time, so a list of allowed addresses would not work for them. If we want to block addresses that try many passwords, it should be done in front of Keycloak, in Coolify's proxy or the server's firewall, and not in Keycloak itself.
 
 \section{Choice of Deployment}
 \label{sec:deployment}
@@ -348,6 +427,7 @@ These are things we know are not good enough yet. They are also listed under ope
     \item Run the migrations as a migration bundle before the API starts, as described in appendix 10.3, or keep running them at startup and change appendix 10.3.
     \item How a customer is notified when the next order is created (FR-20), for example push notifications through Expo, e-mail or only a message in the app.
     \item Integration tests of the repositories against SQL Server when more tables are added (PMU-91).
+    \item Turn on brute force detection, a password policy, refresh token rotation and email in Keycloak (section~\ref{sec:keycloak-features}).
 \end{itemize}
 
 \section*{Sources}

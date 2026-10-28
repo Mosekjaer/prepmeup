@@ -15,13 +15,12 @@
 \addbibresource{../../../assets/references.bib}
 
 \title{10.2 Method and Process}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
 \maketitle
 
-% Content goes here...
 \begin{itemize}
     \item Frederik volunteered to be Scrummaster. Everyone was in agreement.
     \item Product owner is a blue elephant named Bodil.
@@ -30,17 +29,17 @@
 
 \subsection*{2/9}
 \begin{itemize}
-    \item We went with User Stories to try something else than fully dressed use cases. User Stories appealed to the team since this is as close to the consumer as possible, expressed in the customer's own words and language, which made it easier to validate requirements and keep the focus on delivering what the consumer wants.
-    \item Requirement-specification $\rightarrow$ A lot of thought went into the database. What relations should be between each ``member'' of the database.
-    \item Created user stories before the beginning of sprint\#1. We followed the setup from brightspace.
-    \item During requirement specifications the group spend a lot of time on discussing the scope of the project and how the database should be constructed. Should every customer be able to swap a single food item or should it be x amount of packets which content is irreplaceable? We chose certain packets with irreplaceable content since we presumed that the vast majority of customers would pick either a ``standard package'', a ``vegetarian package'' or ``gluten-free'' package. Whole household = one package. One package per person was probably feasible as well, but we chose to get with it as a ``Could'' in MoSCoW since we deemed it a minor modification to the system.
+    \item We went with user stories to try something other than fully dressed use cases. User stories appealed to the team, because they are written in the customer's own words, as close to the consumer as possible. That made it easier to validate the requirements and keep the focus on delivering what the consumer wants.
+    \item In the requirements specification, a lot of thought went into the database: which relations there should be between the ``members'' of the database.
+    \item We created user stories before sprint 1 began. We followed the setup from Brightspace.
+    \item During the requirements specification the group spent a lot of time discussing the scope of the project and how the database should be built. Should every customer be able to swap a single food item, or should there be a fixed number of packages whose content cannot be replaced? We chose packages with fixed content, because we assumed that most customers would pick a ``standard package'', a ``vegetarian package'' or a ``gluten-free package''. One package covers the whole household. One package per person would probably also work, but we made it a ``Could'' in MoSCoW, because we saw it as a small change to the system.
     \item Concept clarification started.
 \end{itemize}
 
 \subsection*{9/9}
 \begin{itemize}
-    \item Fred presents how the project could be shaped using AI as development-tool. Unanimous agreement. See \href{run:./Arkitektur-ide.pdf}{Arkitektur-idé}.
-    \item Moreover, Notion was ditched and Kaneo was chosen. Kaneo is an open-source alternative to Trello. It is easy to use and has what we need, without the information overload of larger tools such as Jira. It is also compatible with Claude. This way, Claude will be able to create and chose tickets and complete these.
+    \item Fred presented how the project could be shaped with AI as a development tool. Everyone agreed. The slides are in the architecture pitch.
+    \item We also dropped Notion and chose Kaneo. Kaneo is an open-source alternative to Trello. It is easy to use and has what we need, without the information overload of larger tools such as Jira. It also works with Claude, so Claude would be able to create and pick tickets and complete them.
 \end{itemize}
 
 \subsection*{15/9}
@@ -74,15 +73,21 @@
     \item Tasks in the backlog have no sprint label. The label is added when a task is pulled into a sprint.
 \end{itemize}
 
+\subsection*{6/10}
+\begin{itemize}
+    \item We changed the rule for Claude and Kaneo again. Claude may now move tasks between the backlog and the board when a group member asks. Which tasks are moved, and when, is still decided by the group.
+\end{itemize}
+
 \subsection*{7/10}
 \begin{itemize}
     \item Sprint 3 was extended by one week to 27/10, because the autumn break falls in the middle of it. Sprints 4 to 6 moved one week later, so sprint 6 ends on 8/12.
+    \item Claude may now estimate a task and set its story point label when a group member asks. The group corrects the estimate if it disagrees.
 \end{itemize}
 
 \section*{Velocity}
 Committed is the sum of story points in \emph{To Do} at sprint planning. Done is the sum in \emph{Done} at sprint review. Spillover is the points that move on to the next sprint. Backlog size is the sum of all estimated points in the project at sprint review.
 
-The numbers are kept in \texttt{docs/assets/data/sprint-velocity.csv}. The table below and the burn-up chart in chapter~2 of the report are both generated from that file, so it is the only place the numbers are entered.
+The numbers are kept in one CSV file in the docs folder. The table below and the burn-up chart in chapter~2 of the report are both generated from that file, so it is the only place the numbers are entered.
 
 \begin{center}
 \pgfplotstabletypeset[
@@ -101,10 +106,10 @@ The numbers are kept in \texttt{docs/assets/data/sprint-velocity.csv}. The table
 \begin{center}
 \begin{tabular}{@{}llp{9cm}@{}}
 Sprint & Period & Sprint goal \\ \hline
-1 & 16/9 -- 29/9 & \\
-2 & 30/9 -- 6/10 & \\
-3 & 7/10 -- 27/10 & \\
-4 & 28/10 -- 10/11 & \\
+1 & 16/9 -- 29/9 & Not recorded \\
+2 & 30/9 -- 6/10 & Finish sprint 1 and deliver an E/R diagram and a low-fidelity UI mock-up. \\
+3 & 7/10 -- 27/10 & Onboarding of a new user and the whole Keycloak flow in place, including claims, roles and admin login in the admin panel. \\
+4 & 28/10 -- 10/11 & Finish the tasks left from sprint 3, and bring the report up to date with the code with diagrams and rewritten documents. \\
 5 & 11/11 -- 24/11 & \\
 6 & 25/11 -- 8/12 & \\
 \end{tabular}

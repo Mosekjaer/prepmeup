@@ -20,7 +20,7 @@
   1.4 & 30-09-2026 & Group 3 & Added backend architecture and data access \\
   1.5 & 08-10-2026 & Group 3 & Replaced slide references with original sources \\
   1.6 & 28-10-2026 & Group 3 & Added Keycloak features \\
-  1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 (customers and orders instead of households and deliveries) and the code: role mapping, migrations at startup, integration tests without a database, login libraries in the apps, more known weaknesses and open decisions \\
+  1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and the code \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -180,7 +180,7 @@ We chose Keycloak, mostly because we already host everything else ourselves. Kan
 
 Another reason is that the apps log in with a standard flow (Authorization Code with PKCE, which is what is recommended for mobile and browser apps \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}), and the API only checks a normal JWT. If we ever switch provider, the API code does not change much. Logging in by sending the password directly through the app is turned off \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}. Finally, the household and admin roles are put into the token \cite[sec.~Role scope mappings]{keycloak-server-admin-guide}, so the API can use them. Keycloak stores them in a different claim than ASP.NET Core expects, so the API maps them to normal roles before it checks them.
 
-The price is that Keycloak takes more work to set up and uses more memory than the API itself. We think that is fine, because the realm file makes the setup the same for everyone, and learning to use a real login provider is something we want to get out of the project.
+The downside is that Keycloak takes more work to set up and uses more memory than the API itself. We think that is fine, because the realm file makes the setup the same for everyone, and learning to use a real login provider is something we want to get out of the project.
 
 \section{Keycloak Features}
 \label{sec:keycloak-features}

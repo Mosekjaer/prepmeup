@@ -7,7 +7,7 @@
 \addbibresource{../../../assets/references.bib}
 
 \title{1.1 Project Thesis}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
@@ -16,27 +16,27 @@
 \begin{versionhistory}
   1.0 & 02-09-2026 & Group 3 & Initial version \\
   1.1 & 16-09-2026 & Group 3 & Rich picture, system components and sources added after review \#1 (group 4) \\
-  1.2 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5: household profile, diet and deliveries replaced by orders composed from package types. Problem statement added. System components described by function instead of technology. Claims without sources toned down \\
+  1.2 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and added problem statement \\
+  1.3 & 28-10-2026 & Group 3 & Simpler text \\
 \end{versionhistory}
 
 \section*{Background}
-The Danish Emergency Management Agency recommends that every Danish household keep a
-supply of water, food and other essentials sufficient to cover the household for at
-least three days during emergencies such as power outages, water supply failures,
-severe weather or disruptions to supply chains~\cite{brs-forberedt}. The agency's
-guideline is 3 litres of water per person per day and food that keeps without
-refrigeration and needs no cooking~\cite{brs-forberedt}. We expect that many households
-have not built such a stock, and we see these barriers:
+The Danish Emergency Management Agency recommends that every household in Denmark keeps
+enough water, food and other essentials to manage on its own for at least three days.
+That could be during a power outage, a failure in the water supply, severe weather or
+problems with supply chains~\cite{brs-forberedt}. The guideline is 3 litres of water per
+person per day and food that keeps without a fridge and needs no cooking~\cite{brs-forberedt}.
+We expect that many households have not built such a stock, and we see these barriers:
 \begin{itemize}[nosep]
-  \item It is hard to work out \emph{what} and \emph{how much} one should keep in stock.
-  \item The stock has to match the number of adults and children one prepares for.
+  \item It is hard to work out \emph{what} to keep in stock and \emph{how much}.
+  \item The stock has to match the number of adults and children in the household.
   \item The number of people changes over time, and the stock has to change with it.
-  \item Expiry dates quietly pass, and the stock becomes outdated without anyone noticing.
-  \item Having to remember to reorder manually is inconvenient.
+  \item Expiry dates pass, and the stock gets old without anyone noticing.
+  \item It is a hassle to remember to reorder by hand.
 \end{itemize}
-Online grocery shops deliver food to the door, but they leave it to the customer to decide
-what to buy and to watch the expiry dates. None of the barriers above is solved by
-delivery alone.
+Online grocery shops deliver food to the door, but the customer still has to decide
+what to buy and keep an eye on the expiry dates. Delivery alone does not remove any of
+the barriers above.
 
 \section*{Problem Statement}
 How can a subscription service let a customer get an emergency stock that follows the
@@ -47,9 +47,9 @@ We assume that the main barrier is the effort of maintaining the stock, not the 
 that a fixed package per adult and per child is precise enough to meet the guideline.
 
 \section*{Project Description}
-The project develops PrepMeUp, a subscription service that sends a customer an
-emergency stock made of packages and replaces it before it expires. The grocery supplier
-and the payment are simulated within the project.
+In the project we develop PrepMeUp. It is a subscription service that sends the customer
+an emergency stock made of packages and replaces it before it expires. The grocery
+supplier and the payment are simulated in the project.
 
 \subsection*{Rich Picture}
 Figure~\ref{fig:rich-picture} shows the actors around the system and what flows between them.
@@ -62,26 +62,25 @@ Figure~\ref{fig:rich-picture} shows the actors around the system and what flows 
 
 \subsection*{System Components}
 \begin{itemize}[nosep]
-  \item \textbf{Customer app}: sign-up, composing and changing orders, subscription status and notifications.
-  \item \textbf{Administrator interface}: maintain package types, and see and send upcoming orders.
-  \item \textbf{PrepMeUp system}: stores customers, subscriptions, orders and package types, plans the next order before the previous one expires, and notifies customers and administrators.
-  \item \textbf{Simulated supplier and payment}: a product catalogue and a mock card payment. No real supplier or payment provider is integrated.
+  \item In the customer app, the customer signs up, composes and changes orders, and sees the subscription status and notifications.
+  \item In the administrator interface, the administrator maintains the package types and sees and sends upcoming orders.
+  \item The PrepMeUp system stores customers, subscriptions, orders and package types. It plans the next order before the previous one expires and notifies customers and administrators.
+  \item The supplier and the payment are simulated with a product catalogue and a fake card payment. No real supplier or payment provider is connected.
 \end{itemize}
 
 \subsection*{Core Flow}
 \begin{enumerate}[nosep]
   \item The customer creates an account and signs up for a subscription.
-  \item The customer composes the order from package types, choosing how many adult and child packages it contains and of which type, e.g. \emph{Vegetarian -- Adult}. Equipment such as a flashlight can be added as its own package type.
+  \item The customer composes the order from package types. The customer chooses how many adult and child packages it contains and of which type, for example \emph{Vegetarian -- Adult}. Equipment such as a flashlight is its own package type and can be added too.
   \item The administrator sends the order, and the system records the order's expiry date.
   \item Before the order expires, the system plans the next order as a copy of the previous one and notifies the customer.
   \item While the next order is planned, the customer can change it, or pause or cancel the subscription.
 \end{enumerate}
 
 \subsection*{Scope}
-The system covers food, water and simple equipment such as a flashlight. The system does
-not integrate with an actual grocery supplier or payment provider; both are simulated.
-Medicine and other prescription or regulated goods, and packages tailored to allergies,
-are out of scope.
+The system covers food, water and simple equipment such as a flashlight. There is no
+real grocery supplier or payment provider. Both are simulated. Medicine, other
+prescription or regulated goods, and packages made for allergies are out of scope.
 
 \printbibliography[heading=bibintoc]
 

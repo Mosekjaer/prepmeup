@@ -8,7 +8,3 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
-
-interface Window {
-  __CONFIG__?: { apiUrl: string; keycloakUrl: string };
-}

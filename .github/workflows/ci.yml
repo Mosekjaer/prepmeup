@@ -66,6 +66,9 @@ jobs:
           - image: prepmeup-keycloak
             context: ./infra/keycloak
             file: infra/keycloak/Dockerfile
+          - image: prepmeup-admin
+            context: ./clients
+            file: clients/apps/admin/Dockerfile
     steps:
       - uses: actions/checkout@v4
 

@@ -2,7 +2,7 @@ import { InMemoryWebStorage, WebStorageStateStore } from 'oidc-client-ts';
 import type { ReactNode } from 'react';
 import { AuthProvider as OidcProvider, type AuthProviderProps } from 'react-oidc-context';
 
-const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL ?? 'http://localhost:8082';
+import { keycloakUrl } from './config';
 
 const oidcConfig: AuthProviderProps = {
   authority: `${keycloakUrl}/realms/prepmeup`,

@@ -177,7 +177,7 @@ Keycloak & Open source and free. Runs in our own compose. Uses standard OpenID C
 
 We chose Keycloak, mostly because we already host everything else ourselves. Kaneo, the API and the database all run on our own server, so Keycloak is just one more container. It also means that customers' names, addresses and household information do not end up at Google or another company, which makes GDPR simpler.
 
-Another reason is that the apps log in with a standard flow (Authorization Code with PKCE, which is what is recommended for mobile and browser apps \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}), and the API only checks a normal JWT. If we ever switch provider, the API code does not change much. Logging in by sending the password directly through the app is turned off \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}. Finally, the household and admin roles are put into the token \cite[sec.~Role scope mappings]{keycloak-server-admin-guide}, so the API can use them. Keycloak stores them in a different claim than ASP.NET Core expects, so we have to map them before role checks work.
+Another reason is that the apps log in with a standard flow (Authorization Code with PKCE, which is what is recommended for mobile and browser apps \cite[sec.~2.1.1]{ietf-rfc9700-oauth-security-bcp}), and the API only checks a normal JWT. If we ever switch provider, the API code does not change much. Logging in by sending the password directly through the app is turned off \cite[sec.~2.4]{ietf-rfc9700-oauth-security-bcp}. Finally, the household and admin roles are put into the token \cite[sec.~Role scope mappings]{keycloak-server-admin-guide}, so the API can use them. Keycloak stores them in a different claim than ASP.NET Core expects, so the API maps them to normal roles before it checks them.
 
 The price is that Keycloak takes more work to set up and uses more memory than the API itself. We think that is fine, because the realm file makes the setup the same for everyone, and learning to use a real login provider is something we want to get out of the project.
 
@@ -417,7 +417,6 @@ These are things we know are not good enough yet. They are also listed under ope
     \item Whether to pin GitHub Actions to specific commits.
     \item Use SQL Server Express in production instead of Developer (section~\ref{sec:data}).
     \item Make the image tag required in Coolify, so production cannot fall back to the newest image.
-    \item Map Keycloak's roles to ASP.NET Core roles before the first role check (NFR-10).
     \item Turn on brute force detection, a password policy, refresh token rotation and email in Keycloak (section~\ref{sec:keycloak-features}).
 \end{itemize}
 

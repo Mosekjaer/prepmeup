@@ -1,0 +1,63 @@
+<mxfile host="65bd71144e">
+    <diagram id="save-customer-flow" name="Save customer details">
+        <mxGraphModel dx="1020" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="720" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=middle;labelPosition=left;align=right;verticalAlign=middle;spacingRight=8;html=1;fontSize=13;fontStyle=1;strokeColor=#333333;" value="User" vertex="1">
+                    <mxGeometry height="60" width="30" x="125" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="client" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=10;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Customer app&lt;/b&gt;&lt;br&gt;(Expo)&lt;br&gt;&lt;br&gt;Onboarding screen&lt;br&gt;api-client" vertex="1">
+                    <mxGeometry height="480" width="200" x="40" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="apibox" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=8;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;PrepMeUp API&lt;/b&gt; (ASP.NET Core)" vertex="1">
+                    <mxGeometry height="540" width="480" x="520" y="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="api" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffffff;strokeColor=#82b366;" value="&lt;b&gt;Api&lt;/b&gt;&lt;br&gt;Checks the token and the input&lt;br&gt;UserController.SaveCustomer" vertex="1">
+                    <mxGeometry height="130" width="420" x="550" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="app" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffffff;strokeColor=#82b366;" value="&lt;b&gt;Application&lt;/b&gt;&lt;br&gt;CustomerService.SaveDetailsAsync" vertex="1">
+                    <mxGeometry height="80" width="420" x="550" y="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="domain" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffffff;strokeColor=#82b366;" value="&lt;b&gt;Domain&lt;/b&gt;&lt;br&gt;Customer&lt;br&gt;(name and address rules)" vertex="1">
+                    <mxGeometry height="80" width="190" x="550" y="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="infra" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffffff;strokeColor=#82b366;" value="&lt;b&gt;Infrastructure&lt;/b&gt;&lt;br&gt;CustomerRepository&lt;br&gt;(EF Core)" vertex="1">
+                    <mxGeometry height="80" width="190" x="780" y="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="db" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;" value="&lt;b&gt;SQL Server&lt;/b&gt;&lt;br&gt;Customers" vertex="1">
+                    <mxGeometry height="100" width="130" x="1160" y="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" edge="1" parent="1" source="user" target="client" style="endArrow=block;endFill=1;html=1;fontSize=11;strokeWidth=1.5;align=left;labelPosition=right;spacingLeft=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="&lt;b&gt;1&lt;/b&gt;  Types name + address, taps Save">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e2" edge="1" parent="1" source="client" target="api" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;exitX=1;exitY=0.104;exitDx=0;exitDy=0;entryX=0;entryY=0.231;entryDx=0;entryDy=0;" value="&lt;b&gt;2&lt;/b&gt;  PUT /user&lt;br&gt;{ name, address }&lt;br&gt;Authorization: Bearer &amp;lt;token&amp;gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" edge="1" parent="1" source="api" target="app" style="endArrow=block;endFill=1;html=1;fontSize=11;strokeWidth=1.5;align=left;labelPosition=right;spacingLeft=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="&lt;b&gt;3&lt;/b&gt;  SaveDetailsAsync(...)&lt;br&gt;with the user id from the token">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e4" edge="1" parent="1" source="app" target="infra" style="endArrow=block;endFill=1;html=1;fontSize=11;strokeWidth=1.5;align=left;labelPosition=right;spacingLeft=6;exitX=0.833;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="&lt;b&gt;4&lt;/b&gt;  Find customer&lt;br&gt;&lt;b&gt;6&lt;/b&gt;  Save">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e5" edge="1" parent="1" source="app" target="domain" style="endArrow=block;endFill=1;html=1;fontSize=11;strokeWidth=1.5;align=left;labelPosition=right;spacingLeft=6;exitX=0.167;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="&lt;b&gt;5&lt;/b&gt;  New customer&lt;br&gt;or UpdateDetails">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e6" edge="1" parent="1" source="infra" target="db" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="&lt;b&gt;4&lt;/b&gt;  SELECT by KeycloakId&lt;br&gt;&lt;b&gt;6&lt;/b&gt;  INSERT or UPDATE">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" edge="1" parent="1" source="api" target="client" style="endArrow=block;endFill=1;html=1;fontSize=11;labelBackgroundColor=#ffffff;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.846;exitDx=0;exitDy=0;entryX=1;entryY=0.271;entryDx=0;entryDy=0;" value="&lt;b&gt;7&lt;/b&gt;  204 saved, app goes back&lt;br&gt;400 bad input  |  401 bad token">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

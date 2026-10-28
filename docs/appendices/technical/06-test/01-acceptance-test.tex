@@ -37,90 +37,119 @@
 \begin{versionhistory}
   1.0 & 22-09-2026 & Group 3 & Initial version: acceptance tests for non-functional requirements (NFR-01--11) in appendix 1.2 \\
   1.1 & 30-09-2026 & Group 3 & First draft of tests for the must-have functional requirements. NFR-09 updated to requirements specification 1.4 \\
+  1.2 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5: FR-01 rewritten for registration in the identity provider and onboarding, FR-19 added, FR-03--06 made decidable, NFR-02--05 and NFR-07--11 rewritten. Test environment section added \\
 \end{versionhistory}
 
+\section{Test Environment}
+The tests are run against the deployed system, from a device outside the server. The customer app is installed on an Android device from the latest EAS build, and the administrator interface is opened in a browser.
+
+\begin{itemize}
+    \item \textbf{Accounts.} Customer A and customer B register through the customer app (FR-01) and get the role household. Administrator ADM is a user who has been given the role admin in the Keycloak admin console.
+    \item \textbf{Access tokens.} Tests that call the API directly need an access token. The clients do not allow logging in with a password from the command line, so the tester logs in through the administrator interface, opens the browser's developer tools and copies the Authorization header from a request to the API. A token is valid for 15 minutes.
+    \item \textbf{Test data.} Tests that need orders with given dates use test data inserted in the database before the test. The data is described in the precondition of each test, and all dates are relative to the day the test is run.
+    \item \textbf{Stopping a service.} NFR-03, NFR-04 and NFR-07 stop or start a single container, which requires access to the server.
+\end{itemize}
+
 \section{Functional Requirements}
-This section tests the must-have functional requirements (FR-01--06) in appendix 1.2 (Requirements Specification). Each test is a scenario that is run step by step against the deployed system. The actual result and the verdict are filled in when the test is run. The should-have and could-have requirements get tests when they are planned into a sprint.
+This section tests the must-have functional requirements (FR-01--06 and FR-19) in appendix 1.2 (Requirements Specification). Each test is a scenario that is run step by step against the deployed system. The actual result and the verdict are filled in when the test is run. The should-have and could-have requirements get tests when they are planned into a sprint.
 
 \subsection{FR-01: Create account and subscription}
 \scenarioinfo{FR-01}
-  {Main scenario: A new customer creates an account and signs up for a subscription.}
-  {The customer app is installed on an Android device. The customer does not have an account.}
-  {The customer is logged in and has an active subscription.}
+  {Main scenario: A new customer creates an account, completes onboarding and signs up for a subscription.}
+  {The customer app is installed on an Android device. The tester has an e-mail address that is not registered yet.}
+  {The customer has an account, name and address are stored, and the customer has an active subscription.}
 \begin{steps}
-1 & The customer opens the app and chooses to create an account. & The app shows a form for e-mail, password and address. & & \\
+1 & The customer opens the app and taps Sign in. & The PrepMeUp login page of the identity provider opens, with a link to register. & & \\
 \hline
-2 & The customer fills in the form and submits it. & The account is created and the customer is logged in. & & \\
+2 & The customer registers with the e-mail address and a password. & The app opens again and shows the onboarding screen, which asks for name and address. & & \\
 \hline
-3 & The customer chooses to sign up for a subscription. & The app shows the subscription with status active. & & \\
+3 & The customer saves onboarding with an empty name. & The details are not saved, and a message says that the name is missing. & & \\
 \hline
-4 & The customer closes the app and opens it again. & The customer is still signed up, and the subscription is still active. & & \\
+4 & The customer enters name and address and saves. & The app shows the home screen with the customer's name. & & \\
+\hline
+5 & The customer chooses to sign up for a subscription. & The app shows the subscription with status active. & & \\
+\hline
+6 & The customer closes the app, opens it again and signs in. & The app does not show onboarding again. The subscription is still active, and name and address are the ones from step 4. & & \\
 \hline
 \end{steps}
 
 \subsection{FR-02: Persistent storage}
 \scenarioinfo{FR-02}
   {Main scenario: Customers, subscriptions and orders are kept when the back-end restarts.}
-  {A customer with an active subscription and at least one order exists (FR-01).}
+  {Customer A has completed onboarding and has an active subscription, one sent order and one planned order (test data).}
   {The data is unchanged after the restart.}
 \begin{steps}
-1 & The tester notes the customer's subscription status and orders in the customer app. & The app shows the subscription and the orders. & & \\
+1 & The tester signs in as A and writes down name, address, subscription status and, for each order, its status and packages. & The values are written in the actual result column. & & \\
 \hline
-2 & The tester restarts the API and the database containers. & Both containers start again without errors. & & \\
+2 & The tester restarts the API and the database containers without removing their volumes. & Both containers are running again within 2 minutes. & & \\
 \hline
-3 & The customer logs in again. & The app shows the same subscription status and the same orders as in step 1. & & \\
+3 & The tester signs in as A again. & Name, address, subscription status and both orders are the same as in step 1. & & \\
 \hline
 \end{steps}
 
 \subsection{FR-03: Default package types}
 \scenarioinfo{FR-03}
-  {Main scenario: The customer can choose the default package types for a normal diet.}
+  {Main scenario: The default package types for a normal diet exist without an administrator creating them.}
   {The system has just been deployed with an empty database. No administrator has created a package type.}
   {None.}
 \begin{steps}
-1 & The customer logs in and starts composing an order. & The app lists a package type for adults and a package type for children, both with a normal diet. & & \\
+1 & The tester signs in as ADM and opens the list of package types (or requests it through the API). & Exactly one package type for adults and one for children are listed, both for a normal diet. & & \\
 \hline
-2 & The customer opens each of the two package types. & Each package type shows its contents: items and quantities. & & \\
+2 & The tester opens each of the two package types. & Each package type contains at least one item with a quantity greater than 0. & & \\
 \hline
 \end{steps}
 
 \subsection{FR-04: Expiry date of orders}
 \scenarioinfo{FR-04}
-  {Main scenario: The system registers the expiry date of an order when it is sent.}
-  {A customer has a planned order.}
-  {The sent order has an expiry date, and the next order can be scheduled from it.}
+  {Main scenario: The system registers an expiry date for each order when it is sent.}
+  {Customer A has two planned orders, O1 and O2 (test data). ADM is signed in.}
+  {Each sent order has its own expiry date.}
 \begin{steps}
-1 & The administrator marks the customer's order as sent (FR-06). & The order is registered as sent. & & \\
+1 & ADM marks O1 as sent (FR-06). & O1 is registered as sent with today's date. & & \\
 \hline
-2 & The tester looks up the order through the API. & The order has an expiry date after the sent date. & & \\
+2 & The tester looks up O1 through the API with ADM's token. & O1 has a sent date and an expiry date that is later than the sent date. & & \\
 \hline
-3 & The administrator marks a second order for the same customer as sent. & Both orders keep their own expiry date. The first one is not overwritten. & & \\
+3 & ADM marks O2 as sent, and the tester looks up both orders again. & O2 has its own expiry date. The expiry date of O1 is unchanged. & & \\
 \hline
 \end{steps}
 
 \subsection{FR-05: See the next orders to send}
 \scenarioinfo{FR-05}
-  {Main scenario: The administrator sees the planned orders, sorted by which one should be sent first.}
-  {The administrator is logged in. At least three planned orders from different customers exist, and at least one sent order exists.}
+  {Main scenario: The administrator sees the planned orders, sorted by planned send date, earliest first.}
+  {ADM is signed in. Test data: planned orders for customers A (send date today+9), B (today+2) and C (today+5), and one sent order for customer D.}
   {None.}
 \begin{steps}
-1 & The administrator opens the list of orders to send. & The list shows all planned orders and no sent orders. & & \\
+1 & ADM opens the list of orders to send. & The list shows exactly three orders, in the order B, C, A. The order for D is not shown. & & \\
 \hline
-2 & The administrator reads the order of the list. & The order that should be sent first is at the top. & & \\
+2 & ADM marks B's order as sent and reloads the list. & The list shows C, then A. & & \\
 \hline
 \end{steps}
 
 \subsection{FR-06: Register an order as sent}
 \scenarioinfo{FR-06}
   {Main scenario: The administrator marks an order as sent.}
-  {The administrator is logged in. A planned order is shown in the list of orders to send (FR-05).}
-  {The order is sent and can no longer be changed by the customer.}
+  {ADM is signed in. A planned order for customer A is shown in the list of orders to send (FR-05).}
+  {The order has a sent date and is no longer planned.}
 \begin{steps}
-1 & The administrator marks the first order in the list as sent. & The order disappears from the list of orders to send. & & \\
+1 & ADM marks the order as sent. & The order disappears from the list of orders to send. & & \\
 \hline
-2 & The administrator reloads the page. & The order is still gone from the list. & & \\
+2 & ADM reloads the page. & The order is still gone from the list. & & \\
 \hline
-3 & The customer who owns the order opens the app. & The order is shown as sent. & & \\
+3 & The tester looks up the order through the API with ADM's token. & The order has today's date as sent date. & & \\
+\hline
+\end{steps}
+
+\subsection{FR-19: Next order 14 days before expiry}
+\scenarioinfo{FR-19}
+  {Main scenario: The system creates the next order for a customer with an active subscription 14 days before the previous order expires.}
+  {Test data: customers C15, C14 and CP each have one sent order with 2 adult packages and 1 child package, and no planned order. The order of C15 expires today+15, the orders of C14 and CP expire today+14. C15 and C14 have an active subscription, CP has a paused subscription. ADM is signed in.}
+  {C14 has exactly one new planned order. C15 and CP have none.}
+\begin{steps}
+1 & The tester waits until the back-end has checked the expiry dates, and ADM opens the list of orders to send. & The list contains a planned order for C14 and none for C15 or CP. & & \\
+\hline
+2 & ADM opens the new order for C14. & The order contains 2 adult packages and 1 child package of the same package types as the previous order. & & \\
+\hline
+3 & The tester waits until the back-end has checked the expiry dates again, and ADM reloads the list. & C14 still has exactly one planned order. & & \\
 \hline
 \end{steps}
 
@@ -134,9 +163,9 @@ This section tests the non-functional requirements specified in appendix 1.2 (Re
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-01 & All text in the customer app and the administrator interface, including API error messages, is in English. & Review every screen in the customer app and the administrator interface and confirm every visible string is English. & & \\
+NFR-01 & All text in the customer app and the administrator interface, including API error messages, is in English. & Set the language of the device and the browser to Danish. Review the login and registration pages, every screen in the customer app and the administrator interface, and the error messages from NFR-02. Confirm every visible string is English. & & \\
 \hline
-NFR-02 & Every error message is a complete sentence stating what went wrong and what the user can do, with no stack traces, HTTP status codes or exception names. & Trigger every error state in the customer app and the administrator interface (e.g. wrong password, network error, validation error) and review the message shown. & & \\
+NFR-02 & Every error message is a complete sentence in English stating what went wrong and what the user can do, with no stack traces, HTTP status codes or exception names. & Trigger these errors and read the message shown: wrong password at login, onboarding with an empty name, the API stopped (NFR-03), a customer account in the administrator interface (NFR-10). For each message confirm that it is a complete sentence, says what went wrong and what to do, and contains no status code, exception name or stack trace. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -148,9 +177,9 @@ NFR-02 & Every error message is a complete sentence stating what went wrong and 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-03 & If the back-end is unreachable, the customer app shows a connection error and keeps showing the last loaded data instead of crashing. & Stop the API, open the customer app, and confirm a connection error is shown while previously loaded data stays visible. & & \\
+NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again; it does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & & \\
 \hline
-NFR-04 & If the database is unreachable, the API returns HTTP 503 with an error body. & Stop the database container, call an API endpoint, and confirm the response is HTTP 503 with an error body. & & \\
+NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -162,7 +191,7 @@ NFR-04 & If the database is unreachable, the API returns HTTP 503 with an error 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-05 & Response time is under 1 second for 90\% of requests. & Run a load-testing tool (e.g. k6) against the deployed API with 10 concurrent users over 1 minute and confirm the 90th percentile response time is under 1 second. & & \\
+NFR-05 & With 10 concurrent users, 90\% of API requests are answered in under 1 second. & Run k6 from a machine outside the server against the deployed API, with 10 virtual users for 1 minute calling GET /user with a customer token. Confirm that the 90th percentile of the response time is under 1 second and that no request failed. Copy the k6 summary to the actual result. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -174,7 +203,7 @@ NFR-05 & Response time is under 1 second for 90\% of requests. & Run a load-test
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-06 & The customer UI runs as an Android app built with Expo (React Native). & Build and run the customer app on an Android device or emulator and confirm it starts and is usable. & & \\
+NFR-06 & The customer app runs as an Android app built with Expo (React Native). & Install the APK from the latest EAS build on an Android device, start the app and complete steps 1--4 of FR-01. Confirm the app starts and the steps complete without a crash. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -186,9 +215,9 @@ NFR-06 & The customer UI runs as an Android app built with Expo (React Native). 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-07 & The application refuses to start if a required configuration value is missing, instead of running with an incorrect default. & Remove a required configuration value (e.g. the connection string) and start the container. Confirm it fails to start with a clear error. & & \\
+NFR-07 & Outside development and test, the API refuses to start if the identity provider address or the database connection string is missing. & Start the API image on the server with the environment set to Production, first without the identity provider address and then without the connection string. Confirm each time that the process stops with an error that names the missing value. & & \\
 \hline
-NFR-08 & Automated tests cover all endpoints. & Check the test project and confirm every API endpoint has at least one corresponding automated test. & & \\
+NFR-08 & Every API endpoint is covered by at least one automated test that runs in CI. & List every endpoint in the API's OpenAPI document. For each endpoint, name a test in the test projects that calls it, and confirm that the latest CI run on the main branch ran the tests and was green. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -200,11 +229,11 @@ NFR-08 & Automated tests cover all endpoints. & Check the test project and confi
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only view and change their own data. A request for another customer's data is rejected with HTTP 403. & Authenticate as customer A, request an order belonging to customer B, and confirm the response is HTTP 403. & & \\
+NFR-09 & A customer can only view and change their own data. The API identifies the customer from the access token, and a request for another customer's resource is rejected with HTTP 403. & With A's token, call GET /user and confirm only A's name and address are returned. Request an order that belongs to customer B with A's token and confirm the response is HTTP 403. & & \\
 \hline
-NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Authenticate as a customer, call an administrator-only endpoint, and confirm the response is HTTP 403. & & \\
+NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
 \hline
-NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call a protected endpoint without an \texttt{Authorization} header and confirm the response is HTTP 401. & & \\
+NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /user without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & & \\
 \hline
 \end{tabular}
 \end{center}

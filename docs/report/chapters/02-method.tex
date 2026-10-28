@@ -1,8 +1,8 @@
 \chapter{Development Process and Method}\label{ch:method}
 
-The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. This
-chapter describes how the group has set up roles, sprints and the product backlog,
-where the setup deviates from the Scrum Guide, and how progress is measured. The
+The project follows Scrum \cite{schwaber-scrum-guide-2016} in two-week sprints. In
+this chapter we describe how we have set up roles, sprints and the product backlog,
+where we deviate from the Scrum Guide, and how we measure progress. The
 practical rules are in Appendix 10.1, and the decisions are logged with dates in
 Appendix 10.2.
 
@@ -14,11 +14,10 @@ The Scrum Guide describes the Product Owner as the one person who orders the pro
 backlog: ``The Product Owner is one person, not a committee''
 \cite[p.~5]{schwaber-scrum-guide-2016}. We deviate from that. Our Product Owner is
 Bodil, a blue toy elephant, and the whole group orders the backlog together at
-sprint planning. Bodil is the one the group talks to when a feature is discussed: the
-question is what Bodil, as a customer, would need. The idea came as advice from a
-previous exam.
+sprint planning. When we discuss a feature, we ask what Bodil, as a customer, would
+need. The idea came as advice from a previous exam.
 
-The cost of the deviation is that no single person settles a disagreement about
+The downside of the deviation is that no single person settles a disagreement about
 priority. The MoSCoW priorities in the requirements specification (Appendix 1.2) are
 therefore the tie-breaker: a MUST requirement goes before a SHOULD, and a task that
 does not trace to a requirement has to be argued for.
@@ -29,8 +28,8 @@ A sprint runs from a Wednesday to the Tuesday two weeks later. Two sprints
 deviate: sprint 2 was one week, so it could end with a demo, and sprint 3 is three
 weeks, because the autumn break falls in the middle of it. Sprint 1 ran from 16 to
 29 September, and sprint 6 ends on 8 December, three days before the report is handed
-in. A sprint starts with sprint planning, where the group picks the tasks for the
-sprint and writes a sprint goal, and ends with a sprint review and a retrospective.
+in. A sprint starts with sprint planning, where we pick the tasks for the sprint and
+write a sprint goal, and ends with a sprint review and a retrospective.
 The sprint goal is one sentence that names the requirements the sprint delivers, so
 the tasks in a sprint belong together \cite[p.~10]{schwaber-scrum-guide-2016}. The
 last sprint is set aside for the full acceptance test and the report.
@@ -49,7 +48,7 @@ A task moves from the backlog to \emph{To Do} only at sprint planning, and only 
 it is ready: its description starts with the requirements it covers, it has a
 definition of done, a story point estimate, an epic label and an owner. The Scrum
 Guide calls an item ready when it can be done within one sprint
-\cite[p.~14]{schwaber-scrum-guide-2016}; the list above is how we check that. The epic
+\cite[p.~14]{schwaber-scrum-guide-2016}. The list above is how we check that. The epic
 labels follow the grouping of the user stories in the requirements specification, so
 every task can be traced back to a requirement.
 
@@ -62,11 +61,11 @@ Scrum Guide prescribes, the people who do the work make the estimate
 
 At sprint planning we note the points committed to the sprint, and at the sprint
 review the points done. Together with the size of the whole backlog, the numbers are
-kept in one table (Appendix 10.2), which Figure~\ref{fig:burnup} is drawn from. We use
-a burn-up rather than a burn-down chart. Most of the backlog was not estimated when
-the project started, so the total will grow, and a burn-down chart would show that
-growth as missing progress. A burn-up chart keeps the two apart
-\cite[p.~14]{schwaber-scrum-guide-2016}.
+kept in one table (Appendix 10.2), which Figure~\ref{fig:burnup} is drawn from. The
+Scrum Guide mentions both burn-down and burn-up charts as ways to forecast progress
+\cite[p.~14]{schwaber-scrum-guide-2016}. We use a burn-up chart. Most of the backlog
+was not estimated when the project started, so the total will grow. A burn-down chart
+would show that growth as missing progress, while a burn-up chart keeps the two apart.
 
 \begin{figure}[H]
     \centering
@@ -103,7 +102,7 @@ growth as missing progress. A burn-up chart keeps the two apart
             \addplot[red, mark=square*, forget plot] table[x=sprint, y=donetotal]{\velocitytable};
         \end{axis}
     \end{tikzpicture}
-    \caption[Burn-up per sprint]{Burn-up per sprint. The gap between the lines is the work left; when the
+    \caption[Burn-up per sprint]{Burn-up per sprint. The gap between the lines is the work left. When the
     upper line rises, the backlog has grown, not the progress slowed.}
     \label{fig:burnup}
 \end{figure}

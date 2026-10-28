@@ -11,6 +11,17 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
+\end{versionhistory}
+
+\section{Dependency Tree}
+Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which. We use it to decide the order in which the parts are integrated and tested together. A part can be integrated when the parts below it are in place.
+
+\drawiofig[0.8\linewidth]{dependency-tree}{Dependency tree of the system as it is built today.}{fig:dependency-tree}
+
+At the bottom are the database and the DbContext. The repositories in Infrastructure use the DbContext, the services in Application use the repositories, and the controllers in the API use the services. The two apps call the controllers through the generated api-client.
+
+Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
 
 \end{document}

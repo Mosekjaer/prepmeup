@@ -1,0 +1,138 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" pages="2">
+  <diagram id="keycloak-login-flowchart" name="Login flowchart">
+    <mxGraphModel dx="553" dy="541" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fc_title_banner" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Keycloak Login Flowchart &amp;#x2014; Activities and Decisions&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Login with PKCE: redirect to Keycloak, sign-in and token exchange&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="1060" x="40" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_client" parent="1" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" value="PrepMeUp client (customer app or admin panel)" vertex="1">
+          <mxGeometry height="970" width="500" x="40" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="node_start" parent="lane_client" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" value="1. Start: user clicks&lt;br&gt;'Log in'" vertex="1">
+          <mxGeometry height="45" width="180" x="160" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="node_pkce_gen" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" value="2. Generate PKCE and state:&#10;• code_verifier (random)&#10;• code_challenge = SHA256(code_verifier)&#10;• random state value" vertex="1">
+          <mxGeometry height="65" width="260" x="120" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="node_open_browser" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="3. Open the Keycloak login page&#10;with client_id, redirect_uri,&#10;code_challenge and state" vertex="1">
+          <mxGeometry height="55" width="250" x="125" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_callback" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="8. Receive the redirect&#10;and read code and state" vertex="1">
+          <mxGeometry height="55" width="250" x="125" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_dec_state" parent="lane_client" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="9. Does state match&#10;the stored value?" vertex="1">
+          <mxGeometry height="70" width="210" x="145" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_err_csrf" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="Stop the login&#10;(no token request)" vertex="1">
+          <mxGeometry height="46" width="110" x="10" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_post_token" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="10. POST /token&#10;with code and code_verifier" vertex="1">
+          <mxGeometry height="55" width="250" x="125" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_save_token" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="13. Store the tokens and&#10;update the auth state" vertex="1">
+          <mxGeometry height="55" width="250" x="125" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="node_client_finish" parent="lane_client" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;" value="14. End: the user&#10;is signed in" vertex="1">
+          <mxGeometry height="45" width="220" x="140" y="905" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_kc" parent="1" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" value="Keycloak (realm: prepmeup)" vertex="1">
+          <mxGeometry height="970" width="520" x="580" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_display" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="4. Show the Keycloak login page&#10;(e-mail and password)" vertex="1">
+          <mxGeometry height="55" width="250" x="135" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_submit" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="5. User enters e-mail and password&#10;and submits the form" vertex="1">
+          <mxGeometry height="50" width="250" x="135" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_dec_creds" parent="lane_kc" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="6. Are e-mail and&#10;password correct?" vertex="1">
+          <mxGeometry height="70" width="210" x="155" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_err_creds" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="Show an error&#10;on the login page" vertex="1">
+          <mxGeometry height="46" width="115" x="395" y="382" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_gen_code" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="7. Create SSO session and issue&#10;a one-time authorization code" vertex="1">
+          <mxGeometry height="50" width="250" x="135" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_redirect" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=10;fontColor=#1E293B;" value="8. Redirect the browser to&#10;redirect_uri?code=...&amp;state=..." vertex="1">
+          <mxGeometry height="55" width="260" x="130" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_dec_pkce" parent="lane_kc" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="11. Does SHA256(code_verifier)&#10;match code_challenge?" vertex="1">
+          <mxGeometry height="70" width="210" x="155" y="722.5" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_err_pkce" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="400 Bad Request&#10;(invalid_grant)" vertex="1">
+          <mxGeometry height="45" width="125" x="390" y="735" as="geometry" />
+        </mxCell>
+        <mxCell id="node_kc_issue_tokens" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" value="12. Issue tokens:&#10;• access token JWT (aud: prepmeup-api)&#10;• ID token and refresh token" vertex="1">
+          <mxGeometry height="55" width="250" x="135" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e1" edge="1" parent="1" source="node_start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_pkce_gen" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e2" edge="1" parent="1" source="node_pkce_gen" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_open_browser" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e3" edge="1" parent="1" source="node_open_browser" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_display" value="Redirect to Keycloak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e4" edge="1" parent="1" source="node_kc_display" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_submit" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e5" edge="1" parent="1" source="node_kc_submit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_dec_creds" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e6_yes" edge="1" parent="1" source="node_kc_dec_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_gen_code" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e6_no" edge="1" parent="1" source="node_kc_dec_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_err_creds" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fc_e6_retry" edge="1" parent="1" source="node_kc_err_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" target="node_kc_display" value="Try again">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-32" as="offset" />
+            <Array as="points">
+              <mxPoint x="1085" y="362.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fc_e7" edge="1" parent="1" source="node_kc_gen_code" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_redirect" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e8" edge="1" parent="1" source="node_kc_redirect" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_callback" value="redirect_uri?code=...&amp;state=...">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e9" edge="1" parent="1" source="node_client_callback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_dec_state" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e10_no" edge="1" parent="1" source="node_client_dec_state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_err_csrf" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fc_e10_yes" edge="1" parent="1" source="node_client_dec_state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_post_token" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e11" edge="1" parent="1" source="node_client_post_token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_dec_pkce" value="POST /token (code, code_verifier)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e12_yes" edge="1" parent="1" source="node_kc_dec_pkce" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_issue_tokens" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e12_no" edge="1" parent="1" source="node_kc_dec_pkce" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_err_pkce" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fc_e13" edge="1" parent="1" source="node_kc_issue_tokens" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_save_token" value="Access, ID and refresh token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fc_e14" edge="1" parent="1" source="node_client_save_token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_finish" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

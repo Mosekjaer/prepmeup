@@ -11,6 +11,24 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 28-10-2026 & Group 3 & Domain model inserted and explained \\
+\end{versionhistory}
+
+\section{Domain Model}
+Figure~\ref{fig:domain-model} shows the domain model. It describes the concepts in the requirements specification (appendix 1.2) and how they relate, seen from the user's side. It says nothing about technology or how the concepts are stored.
+
+\drawiofig[\linewidth]{domain-model}{Domain model of PrepMeUp.}{fig:domain-model}
+
+A customer lives at one address and has at most one subscription. The subscription schedules the orders. An order contains one or more packages, and each package is described by a package type, for example an adult or a child package. The administrator maintains the package types and dispatches the orders.
+
+A package type contains one or more package contents, and each package content refers to an item and gives its quantity. An item is either a food item or an equipment item, so equipment such as a flashlight is offered in the same way as food.
+
+The customer has at most one payment method, and an order is paid by at most one payment, which is charged via the payment method. Payment is simulated in the project. A notification announces an order to the customer.
+
+The expiry date and the status of an order are derived, which is why they are marked with a slash. The status follows from whether the order has a sent date, and the expiry date follows from the items in the order.
+
+\section{Changes Along the Way}
+The first domain model had a household with household members and a diet, and the system calculated a package from the household. In version 1.4 of the requirements specification we removed the household, the members and the diet. Instead, the customer composes each order from package types, and adult and child versions are separate package types. This made the model smaller, and the customer decides how many people the order covers. Delivery was renamed to order at the same time.
 
 \end{document}

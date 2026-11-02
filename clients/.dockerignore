@@ -1,0 +1,7 @@
+**/node_modules/
+**/dist/
+**/.expo/
+**/.env.local
+**/*.tsbuildinfo
+apps/mobile/**
+!apps/mobile/package.json

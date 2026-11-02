@@ -21,6 +21,7 @@
   1.5 & 08-10-2026 & Group 3 & Replaced slide references with original sources \\
   1.6 & 28-10-2026 & Group 3 & Added Keycloak features \\
   1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and the code \\
+  1.8 & 28-10-2026 & Group 3 & The admin panel is deployed as a container \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -136,7 +137,7 @@ In Expo Router each file in the app folder is a screen \cite{expo-router-introdu
 
 \subsection{Admin Panel}
 The admin panel is a normal React app built with Vite, and it uses React Router for navigation \cite[ch.~13]{mardan-react-quickly}.
-The admin panel is not deployed yet (appendix 10.3). One thing we need to remember when we deploy it: the web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[sec.~13.2.3]{mardan-react-quickly}.
+The admin panel is deployed as a container with the nginx web server (appendix 10.3). The web server has to return the same page for every URL, otherwise a user who opens a sub page directly gets a 404 \cite[sec.~13.2.3]{mardan-react-quickly}. nginx does that.
 
 \subsection{Why Two Apps}
 Since Expo can also build for the web, one app could in theory be used by both customers and administrators. We decided not to do that. The two users need different screens and have different roles, so a shared app would need role checks on every screen, and the admin screens would end up inside the customer app. The admin panel only has to run in a browser, and for that a plain React app with Vite is simpler than React Native running on the web. Having two apps also means each has its own Keycloak client (section~\ref{sec:auth}).
@@ -420,7 +421,7 @@ These are things we know are not good enough yet. They are also listed under ope
     \item A separate database user for the API instead of sa.
     \item Make the API refuse to start without a Keycloak address or a connection string outside development (NFR-07).
     \item Check that Coolify's proxy does not serve the API over plain HTTP, and that Keycloak redirects to HTTPS.
-    \item Where and how the admin panel is deployed, and that it redirects to HTTPS.
+    \item That the admin panel redirects to HTTPS in production.
     \item Whether to pin GitHub Actions to specific commits.
     \item Use SQL Server Express in production instead of Developer (section~\ref{sec:ops}).
     \item Make the image tag required in Coolify, so production cannot fall back to the newest image, and fix the PostgreSQL image to a minor version.

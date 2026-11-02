@@ -17,12 +17,13 @@
   1.1 & 08-10-2026 & Group 3 & Simpler text \\
   1.2 & 28-10-2026 & Group 3 & Login flow with diagram \\
   1.3 & 28-10-2026 & Group 3 & Token renewal in the customer app \\
+  1.4 & 28-10-2026 & Group 3 & The admin panel as a container \\
 \end{versionhistory}
 
 \section{Overview}
 PrepMeUp runs as a set of Docker containers started with docker compose. There are two setups, each with its own compose file: one for local development and one for production on our server with Coolify. In both, all containers are on the same Docker network and find each other by service name, for example db and keycloak. Why we chose Keycloak and Coolify is described in appendix 2.1.
 
-The two clients are not containers in compose. The customer app runs on the phone, and the admin panel runs in the browser. Both talk to the API over HTTP(S), and both send the user to Keycloak to log in.
+The customer app is not a container. It runs on the phone. The admin panel runs in the browser, but in production its files are served from a container (appendix 10.3). Both clients talk to the API over HTTP(S), and both send the user to Keycloak to log in.
 
 \section{Local Development}
 
@@ -33,10 +34,11 @@ The two clients are not containers in compose. The customer app runs on the phon
 api & built from the Api project & 5001 & ASP.NET Core Web API \\
 db & SQL Server 2022 & none & Application data \\
 keycloak & Keycloak 26.3 & 8082 & Login and roles, runs in dev mode \\
+admin & built from the admin panel & 5173 & Web server for the admin panel, only started with the admin profile \\
 \end{tabular}
 \end{center}
 
-The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The admin panel (Vite, port 5173) and the Expo app (port 8081) run outside Docker, and the API's CORS policy allows these two addresses. The data from the database and Keycloak is kept in two Docker volumes.
+The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The Expo app (port 8081) runs outside Docker. The admin panel normally runs with Vite on port 5173, also outside Docker. It can also run as a container from the compose file with the admin profile. The container uses the same port, so the API's CORS policy and the Keycloak realm are the same in both cases. The data from the database and Keycloak is kept in two Docker volumes.
 
 \subsection{Token Validation}
 The browser and the phone reach Keycloak on port 8082 on localhost, but inside Docker the API reaches it by its service name on port 8080. The token says it was issued by the localhost address, so the API is configured with two addresses. The first is the public address, which must match the issuer in the token. The second is the internal address, where the API fetches Keycloak's configuration and signing keys.
@@ -51,12 +53,13 @@ api & built from the Api project & ASP.NET Core Web API \\
 db & SQL Server 2022 & Application data \\
 keycloak & Keycloak 26.3 & Login and roles, runs in production mode \\
 keycloak-db & PostgreSQL 17 & Keycloak's own data (users, sessions) \\
+admin & built from the admin panel & Web server for the admin panel \\
 \end{tabular}
 \end{center}
 
-No container publishes a port. Coolify's reverse proxy receives the traffic from the internet on HTTPS and forwards it to the API and Keycloak on port 8080 inside the network. Because HTTPS ends at the proxy, Keycloak reads the forwarded headers to know the original address and scheme. The two databases can only be reached from inside the network.
+No container publishes a port. Coolify's reverse proxy receives the traffic from the internet on HTTPS and forwards it to the API, Keycloak and the admin panel on port 8080 inside the network. Because HTTPS ends at the proxy, Keycloak reads the forwarded headers to know the original address and scheme. The two databases can only be reached from inside the network.
 
-The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. All services are set to restart, so they start again after a crash or a server restart.
+The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. The admin panel also needs the public URL of the API, which is set the same way. The panel reads its addresses when the container starts (appendix 10.3). All services are set to restart, so they start again after a crash or a server restart.
 
 \section{Login Flow}
 Both clients log in with the Authorization Code flow with PKCE \cite{ietf-rfc6749-oauth2,ietf-rfc7636-pkce}. Figure~\ref{fig:auth-flow} shows the flow as boxes and numbered arrows. The text on each arrow is what is actually sent.
@@ -89,7 +92,7 @@ Both clients renew the access token in the background with a refresh token, so t
 The app's address scheme is just the word prepmeup. The standard for native apps says the scheme should be a reversed domain name that we own \cite[sec.~7.1]{ietf-rfc8252-native-apps}. With a plain word, another app could register the same scheme and receive the code. PKCE stops that app from using the code \cite[sec.~8.1]{ietf-rfc8252-native-apps}, but we should still change the scheme.
 
 \subsection{What Was Checked}
-We checked the first half of the flow in the browser against the local stack. The request to the login page asked for a code with an S256 challenge, and the redirect back carried the code and the state. The token request and the API call in the figure are drawn from the client code and the API's setup, and have not been checked in the browser's developer tools yet.
+We checked the first half of the flow in the browser against the local stack. The request to the login page asked for a code with an S256 challenge, and the redirect back carried the code and the state. The token request and the API call in the figure are drawn from the client code and the API's setup, and have not been checked in the browser's developer tools yet. For the admin panel we have also seen the end of the flow in the API's log, when the panel ran as a container on the local stack. An admin got 200 on the admin ping, and a customer got 403.
 
 \printbibliography
 

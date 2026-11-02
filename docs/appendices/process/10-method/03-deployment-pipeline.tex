@@ -22,12 +22,13 @@
   1.3 & 21-10-2026 & Group 3 & Releasing the customer app through Expo \\
   1.4 & 28-10-2026 & Group 3 & Flowcharts for the pipeline, rollback and release of the customer app \\
   1.5 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
+  1.6 & 28-10-2026 & Group 3 & Releasing the admin panel as a container \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
 
 \section{Scope}
-The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak and Keycloak's own PostgreSQL database. The admin panel is not part of the pipeline yet. When it is added, it will be one more image to build and one more service in the compose file. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
+The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak, Keycloak's own PostgreSQL database and the admin panel. The admin panel is a container with a web server, see section~\ref{sec:admin-panel}. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
 
 We have left out a staging environment, blue/green and canary releases, automatic rollback and monitoring. That is too much for a project that lasts one semester.
 
@@ -38,7 +39,7 @@ Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it st
     \item A developer pushes a branch. The CI workflow builds the backend and the clients and runs all tests. A second workflow checks the branch name and the pull request title.
     \item The pull request can only be merged when the checks are green and another group member has reviewed it.
     \item After the squash merge, the CI workflow runs again on the main branch.
-    \item If build and tests are green, the publish job builds the API image and the Keycloak image and pushes them to GitHub Container Registry (GHCR).
+    \item If build and tests are green, the publish job builds the API, Keycloak and admin panel images and pushes them to GitHub Container Registry (GHCR).
     \item If the publish job succeeded, the deploy job calls Coolify's deploy webhook. The job fails unless Coolify answers 200.
     \item Coolify fetches the production compose file from the repository, pulls the images and starts the stack.
     \item Coolify calls the API's health endpoint. If it does not answer, the deployment is not marked as healthy.
@@ -66,7 +67,7 @@ A green deploy job should mean that Coolify started a deployment. In the first v
 
 Now the job refuses to call an address that is not HTTPS, and it only passes if the answer is exactly 200. The answer is printed in the log, so we can see what Coolify or the proxy said. It also means the token is never sent over plain HTTP, even if the address is saved wrong again.
 
-\section{Why CI Builds the Images}
+\section{Why CI Builds the Images}\label{sec:ci-builds}
 The images are built once, by the publish job, and pushed to GHCR. Coolify only pulls them.
 
 If Coolify built the image itself after CI had run, there would be two images: the one the tests ran against and the one the users get. They would be built from the same code, but at different times, and a base image can change between the two builds. Then the image in production has never been tested. When we build once and deploy that image, production runs exactly what the tests approved.
@@ -75,7 +76,7 @@ It also makes a rollback cheaper. If Coolify builds, there is no old image to go
 
 The downside is that CI has to log in to a registry and Coolify has to be able to pull from it. CI pushes with the token GitHub Actions creates for each run, so we do not store an extra password. Our packages on GHCR are public, so Coolify can pull without logging in. That is one secret less that can expire or be set up wrong. It does mean that anyone can download our images. We think that is fine, because the images do not contain any secrets (section~\ref{sec:secrets}). What can be downloaded is the compiled application, and it gives no access to our system.
 
-We build the Keycloak image the same way, because it contains our realm file. That way a change to the login setup is reviewed in a pull request like any other change. Both images are built by the same job from the same commit, so they always get the same tag and move forward and back together.
+We build the Keycloak image the same way, because it contains our realm file. That way a change to the login setup is reviewed in a pull request like any other change. All the images are built by the same job from the same commit, so they always get the same tag and move forward and back together. The admin panel image is built the same way, see section~\ref{sec:admin-panel}.
 
 \section{Why We Keep One Compose File}
 In Coolify we could also create each container separately in the web interface. We keep the whole stack as one compose application, with the production compose file from the repository as the source. The only thing we changed is that the API and Keycloak are now pulled as images instead of being built by Coolify.
@@ -109,7 +110,7 @@ We wrote the steps down, so nobody has to figure them out while production is do
 \begin{enumerate}
     \item Find the SHA that worked. Under Actions on GitHub, find the last run on the main branch that deployed without problems, which is the run before the one that broke production, and copy the full commit SHA. The package page on GitHub also lists all tags with a timestamp.
     \item In Coolify, open the PrepMeUp resource and set the environment variable PMU\_IMAGE\_TAG to that SHA. Use the full SHA and not main.
-    \item Press Deploy. Coolify pulls the two images with that tag and restarts the stack, so the API and Keycloak go back together.
+    \item Press Deploy. Coolify pulls the three images with that tag and restarts the stack, so the API, Keycloak and the admin panel go back together.
     \item Check that it works. The health endpoint must answer 200 and Healthy. Then log in through the app, because the API can be healthy while Keycloak is broken.
     \item Fix the bug on a normal branch. The rollback did not change anything in git, so the main branch is left alone.
     \item When the fix is merged and the main branch is green, delete the variable in Coolify and redeploy. If we forget this, production stays on the old image while all workflows are green.
@@ -184,13 +185,55 @@ Figure~\ref{fig:eas-release-flow} shows the release. During development we do no
 \subsection{Why Not Google Play}
 Publishing on Google Play would need a Google Play developer account, a production build as an app bundle (AAB) and a Google service account key, so EAS can upload for us \cite{expo-submit-android}. On top of that comes a store listing and Google's review of each version. That is a lot of work for an app only the group, the supervisor and the examiners will install. EAS can do the upload later with a production profile, so going from internal sharing to Google Play does not mean starting over.
 
+\section{Releasing the Admin Panel}\label{sec:admin-panel}
+The admin panel is a web app that runs in the browser. Vite builds it into a folder of plain files, and something has to hand those files to the browser. We put them in a container with the nginx web server. Coolify runs the container next to the API and Keycloak.
+
+\subsection{From the Repository to a Browser}
+The admin panel has its own Dockerfile with two stages \cite{docker-multi-stage-builds}. The first stage installs the packages and runs the same build as on a developer's computer. The second stage is an nginx image that only gets the finished files. So the image that runs in production has no Node and no source code.
+
+We use the unprivileged version of the nginx image. It does not run as root, and it listens on port 8080 \cite{nginx-docker-unprivileged}. That is the same port as the API and Keycloak, so Coolify's proxy forwards to it in the same way.
+
+The web server has three jobs:
+\begin{itemize}
+    \item It returns the main page for every address that is not a file. The panel uses React Router, so an address like /orders is not a file on the server, and a user who opens it directly would get a 404 \cite[sec.~13.2.3]{mardan-react-quickly}. In nginx we try the file first and fall back to the main page \cite{nginx-http-core-module}.
+    \item It lets the browser keep the files in the assets folder for a year. Vite puts a hash in their names, so a new version always gets new names. The main page is checked again every time, so a new version shows right after a deployment.
+    \item It answers 404 for a missing file in the assets folder. Otherwise the browser would get the main page and try to run it as JavaScript.
+\end{itemize}
+
+Vite also has a preview command, but it is not meant as a production server \cite{vite-static-deploy}, so we do not use it.
+
+\subsection{Why the Addresses Are Read at Startup}
+The panel needs the public addresses of the API and Keycloak. Vite replaces the variables that start with VITE\_ with their values when it builds, so the values end up in the code \cite{vite-env-and-mode}. Then we would need one image for each address, or CI would have to know the addresses, and they would be set in two places. That goes against the rule in section~\ref{sec:ci-builds}: build once, and run the image the tests approved.
+
+So we read the addresses when the container starts instead. A small script writes a file called config.js from two environment variables, PMU\_API\_PUBLIC\_URL and PMU\_KEYCLOAK\_PUBLIC\_URL. The main page loads the file before the app starts, and the app reads the addresses from it. If a variable is missing, the container refuses to start, in the same way as the compose file does for the other services (section~\ref{sec:secrets}). On a developer's computer the file is empty, and the app uses the VITE\_ variables or the local addresses.
+
+The customer app does it the other way. Its addresses are built into the app by EAS (section~\ref{sec:customer-app}). An app on a phone cannot read environment variables when it starts, so it has no other choice. A container can, so one image is enough for every environment.
+
+The addresses are public, and anyone can read them in the browser. We never put a secret in them. Vite gives the same warning for its own variables \cite{vite-env-and-mode}. As for the customer app, the production values are only in Coolify, and the example environment file only shows the local ones.
+
+\subsection{Why Not the API or Coolify}
+There are two other ways to serve the files. The API could do it. That saves a container, but then every change to the panel needs a new API image, and the panel gets the API's address, so the login and the CORS policy have to change. It would also mix two jobs in one container, and in the rest of the stack each container has one job.
+
+Coolify can also build and serve a static site on its own. Then Coolify builds the panel, and we have an image that has not been through CI, which is the problem described in section~\ref{sec:ci-builds}. The panel would also not be part of the compose file, so nobody could review its setup in a pull request.
+
+\subsection{How It Fits with the Rest of the Pipeline}
+The admin panel image is built by the same publish job as the other two images, and it gets the same two tags. Coolify pulls it with the rest of the stack, so a rollback with PMU\_IMAGE\_TAG moves all three images together. In the production compose file the admin panel has no port, like the API. Coolify's proxy sends the traffic from the admin panel's address to port 8080.
+
+Locally the admin panel is a service in the compose file too. It only starts with the admin profile \cite{docker-compose-profiles}, so a normal docker compose up does not take port 5173 from Vite.
+
+\subsection{What Was Checked}
+We built the image the way CI builds it and started it. The server returns the main page for an address like /orders and 404 for a missing file in the assets folder, it runs as a normal user and not as root, and the config file has the right addresses. Without the addresses the container does not start. We also ran the whole stack locally. An admin logged in, and the API answered the admin ping with 200. A customer logged in, and the API answered 403, which makes the panel show that the account has no access.
+
+We have not tried it in production yet. That needs the new variable and the admin panel's address in Coolify, and the new package on GHCR must be made public first.
+
 \section{Setup Outside the Repository}
 Some parts of the pipeline cannot be created from the repository, so a clone is not enough to get a working deployment. We list them here so someone else can set it up again.
 
 \begin{itemize}
-    \item The two GHCR packages, prepmeup-api and prepmeup-keycloak, must exist and be public before the compose file uses them. A new package is private by default. If this is forgotten, CI and the webhook are green, and the error only shows up in Coolify's deployment log as denied or manifest unknown. It can be checked with docker pull from a machine that is not logged in to GitHub.
+    \item The three GHCR packages, prepmeup-api, prepmeup-keycloak and prepmeup-admin, must exist and be public before the compose file uses them. A new package is private by default. If this is forgotten, CI and the webhook are green, and the error only shows up in Coolify's deployment log as denied or manifest unknown. It can be checked with docker pull from a machine that is not logged in to GitHub.
     \item Automatic deployment on git push must be turned off in Coolify. Otherwise Coolify still builds on every push to the main branch, and our gate does nothing. It can be tested by pushing a commit that only changes documentation and checking that Coolify does not deploy before the webhook is called.
-    \item The webhook address and an API token with only the deploy permission must be saved as repository secrets on GitHub, with the names COOLIFY\_DEPLOY\_WEBHOOK and COOLIFY\_API\_TOKEN. The address must start with https. All variables the compose file marks as required must be set in Coolify.
+    \item The webhook address and an API token with only the deploy permission must be saved as repository secrets on GitHub, with the names COOLIFY\_DEPLOY\_WEBHOOK and COOLIFY\_API\_TOKEN. The address must start with https. All variables the compose file marks as required must be set in Coolify. The admin panel needs the public address of the API in PMU\_API\_PUBLIC\_URL. The address of the admin panel itself must be the same as PMU\_ADMIN\_ORIGIN, because the API's CORS policy and the Keycloak realm use that variable.
+    \item The admin panel's domain must be attached to the admin service in Coolify, on port 8080.
     \item The health check on the API's health endpoint is set up in Coolify. It cannot be a health check in the compose file, because the ASP.NET image has neither curl nor wget.
     \item The main branch must be protected on GitHub: the build, test and conventions checks are required, one review is needed, and nobody can push directly. Without it the whole pipeline can be skipped with a push to the main branch. The local git hooks do not prevent that, because they run on the developer's own machine and can be skipped.
     \item Old GHCR packages and Coolify resources that are no longer used should be deleted, so there is only one place a deployment can come from.

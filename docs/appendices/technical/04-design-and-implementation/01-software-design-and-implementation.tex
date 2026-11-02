@@ -63,7 +63,7 @@ After this, the controllers can protect an endpoint with the admin role in the n
 We have chosen that onboarding status is solely stored in the database. So at any point when the Client needs to know the onboarding status of the user, it has to make a call to the API.
 We are aware that this causes extra "unnecessary" calls to the database, which hurts performance. However our choice satisfies clean architecture in the sense that data is kept in domain (in backend) \textit{and} that avoid flooding the token with information. This is good for maintainability of our system.
 
-\section{Keycloak}
+\section{Keycloak decisions}
 
 \textbf{Login library in the admin panel}
 
@@ -93,6 +93,37 @@ The admin panel uses the automatic silent renew of react-oidc-context, which use
 \textbf{Tests of the admin login}
 
 We test the admin login with Vitest and mock react-oidc-context and the network, as the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
+
+\section{Login flow}
+
+The flowdiagram below shows how login flows for both a regular customer and for an administrator.
+
+The diagram assumes that the user has opened the client app.
+When the app starts, the client app fetches the URL to keycloak's login-page from WHERE?
+\begin{enumerate}
+    \item In Client, the User (either customer or admin) clicks 'Log in'
+    \item Client generates PKCE-values and state and saves them locally. They are:
+        \begin{itemize}
+            \item code\_verifier: a random string that stays with the client. It is sent later.
+            \item code\_challenge: a SHA-256-hash of the code\_verifier. It is sent in step 3.
+            \item state: another random string. It is sent as it is in step 3 (non-hashed).
+        \end{itemize}
+    \item Client builds and opens the login-URL for Keycloaks /auth-endpoint. It attaches (among others) the following values:
+        \begin{itemize}
+            \item client\_id: a string that is either `prepmeup-mobile' (if login is requested from customer app) or `prepmeup-admin' (if login is requested from admin panel).
+            \item redirect\_uri: The address that Keycloak should send the user \textit{back} to.
+            \item code\_challenge and state (generated in step 2)
+        \end{itemize}
+    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see step WHAT), and displays it's own login page.
+    \item User types email and password and clicks 'log in'.
+    \item Keycloak validerer login-oplysningerne: Er de korrekte?
+        \begin{itemize}
+            \item Nej: Keycloak viser en fejl på login-siden og bruger forsøger igen.
+            \item Ja: Keycloak slår brugerens realm-roller op. Det er 'household' for kunder og 'admin' for administratorer. I trin 12, kommer disse roller med i jwt token.
+        \end{itemize}
+    \item Keycloak does to things:
+    \item Næste
+\end{enumerate}
 
 \printbibliography
 

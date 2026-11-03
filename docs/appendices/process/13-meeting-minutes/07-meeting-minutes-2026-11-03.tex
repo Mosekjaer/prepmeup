@@ -1,0 +1,111 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 07-meeting-minutes-2026-11-03.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{13.7 Mødereferat -- 03-11}
+\author{SW4PRJ4 -- Group 3}
+\date{03-11-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 03-11-2026 (tirsdag)
+
+\textbf{Tid:} 13:00
+
+\textbf{Sted:} 5125-110
+
+\textbf{Referent:} Frederik
+
+\section*{Deltagere}
+
+\begin{itemize}
+    \item Gruppe 3
+    \item Vejleder Michel
+\end{itemize}
+
+\textbf{Fraværende:}
+
+\begin{itemize}
+    \item Ingen
+\end{itemize}
+
+\section*{Dagsorden}
+
+\begin{enumerate}
+    \item Status siden sidste vejledermøde (6/10)
+    \item Spørgsmål til vejleder
+    \item Næste vejledermøde
+    \item Eventuelt
+\end{enumerate}
+
+\section*{Noter}
+
+\subsection*{1. Status siden sidste vejledermøde}
+
+\begin{itemize}
+    \item Formålet med mødet var at finde det næste skridt i projektet.
+    \item Vi har undersøgt ``zombie-brugere'': brugere, der findes i Keycloak, men ikke i selve applikationens database. Vi har fået klarlagt, om det kan lade sig gøre, men vi behøver ikke nødvendigvis at håndtere det. Det udskydes, og i rapporten skriver vi, hvad vi har fundet ud af.
+    \item Risikoanalysen skal vise, at vi har elimineret risici med de små proof of concepts, hvor vi har afprøvet teknologierne lidt ad gangen, fx hvordan Keycloak fungerer.
+    \item Opdager vi en risiko senere i forløbet, kan den skrives ind i risikoanalysen, som om den blev identificeret fra starten, så rækkefølgen i rapporten hænger sammen.
+\end{itemize}
+
+\subsection*{2. Spørgsmål til vejleder}
+
+\begin{itemize}
+    \item \textbf{Diagrammer i rapporten:} Processen skal beskrives overordnet, og deployment-diagrammet og lignende diagrammer er vigtige at få med i selve rapporten.
+    \item \textbf{Rapport og bilag:} Censor bliver ikke betalt for at læse bilagene, så rapporten skal indeholde pointerne fra dem. Lange og meget indviklede ting hører i bilag, men alt i bilagene skal også stå i rapporten i kondenseret form. Rapporten skal tydeligt henvise til bilaget, når noget er uddybet der.
+    \item \textbf{User stories i rapporten:} De vigtigste user stories, de centrale ``knuder'', skal med i rapporten.
+    \item \textbf{Kode eller rapport i en kort sprint:} Vi skal skrive løbende på rapporten, så vi ikke sidder til sidst og skal skrive hele rapporten på én gang.
+    \item \textbf{Sprint 5:} Vi skal tage fat i de rigtige user stories nu og få styr på hele vores forretningsgrundlag. Vi arbejder videre, indtil vi når et niveau, vi selv synes er passende, og begynder derefter at skrive og forfine.
+    \item \textbf{Kun must-have-krav:} Michel svarede ikke direkte på, om vi kan nøjes med must-have-kravene. Hans råd om selv at nå et niveau, vi synes er passende, peger på, at omfanget er vores beslutning, så længe vi begrunder det.
+    \item \textbf{Test:} Michel anbefaler, at vi tester løbende, fordi det tager lang tid. Der skal være forskellige niveauer af test, fra unit-tests til integrationstests med en in-memory-database og fulde API-tests. Til API-testene kan vi selv vælge værktøj, fx et eget program eller Postman. Testene skal vise, at det virker, og at man får det forventede resultat. Vi skal afprøve forskellige variationer i et vist omfang, men vi behøver ikke 100\,\% coverage i alle tests.
+    \item \textbf{Forklaring af koden:} Vi skal kunne forklare al den kode, der er skrevet, også den der er skrevet med AI.
+    \item \textbf{Klientgenerering:} Vi skal beskrive, hvordan vi genererer TypeScript-pakker ud fra vores C\#-API, og forklare hvordan det virker, i rapporten og et bilag.
+    \item \textbf{Deployment-strategi:} Arbejder man rigtig agilt, deployer man efter hver sprint. Michel spurgte, hvad vores deployment-strategi er: deployer vi efter hver sprint, og har vi både et produktions- og et testmiljø?
+\end{itemize}
+
+\subsection*{3. Næste vejledermøde}
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsection*{4. Eventuelt}
+
+\begin{itemize}
+    \item Ingen punkter.
+\end{itemize}
+
+\section*{Beslutninger}
+
+\begin{itemize}
+    \item Håndtering af zombie-brugere udskydes. Rapporten beskriver, at vi har klarlagt, om det kan lade sig gøre.
+    \item Sprint 5 bruges på de rigtige user stories og forretningsgrundlaget.
+    \item Vi tester løbende på flere niveauer uden krav om 100\,\% coverage.
+    \item Rapporten skrives løbende og henviser tydeligt til bilag, hvor noget er uddybet.
+\end{itemize}
+
+\section*{Opgaver}
+
+\begin{itemize}
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Skriv afsnit i rapporten om zombie-brugere og hvad vi har klarlagt
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Implementér de centrale user stories og forretningsgrundlaget \textbf{Frist:} sprint 5
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Skriv unit-, integrations- og API-tests løbende \textbf{Frist:} løbende
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Beskriv generering af TypeScript-klienten fra C\#-API'et i rapport og bilag
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Opdatér risikoanalysen med de risici, vores proof of concepts har elimineret
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Beslut og beskriv vores deployment-strategi (frekvens, produktions- og testmiljø)
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Sæt deployment-diagram, overordnet procesbeskrivelse og de vigtigste user stories ind i rapporten
+\end{itemize}
+
+\section*{Næste møde}
+
+\begin{itemize}
+    \item Onsdag 4/11: sprint review, retrospective og sprint planning for sprint 5.
+\end{itemize}
+
+\end{document}

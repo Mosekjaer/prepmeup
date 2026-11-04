@@ -1,0 +1,74 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 08-agenda-2026-11-04.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{12.8 Dagsorden -- 04-11}
+\author{SW4PRJ4 -- Group 3}
+\date{04-11-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 04-11-2026 (onsdag)
+
+\textbf{Tid:} 10:00
+
+\textbf{Sted:} Incuba
+
+\textbf{Deltagere:} Gruppe 3 (internt møde)
+
+\section*{Dagsordenspunkter}
+
+\begin{enumerate}
+    \item \textbf{Opfølgning på vejledermødet 3/11}
+    \begin{itemize}
+        \item Hvad svarede Michel om diagrammer, om kode eller rapport, om sprint 5 og om at droppe should-haves? Se referatet fra 3/11.
+    \end{itemize}
+    \item \textbf{Sprint review for sprint 4 (28/10 til 3/11)} (ca. 30 min)
+    \begin{itemize}
+        \item Sprint goal fra 28/10 var at gøre kortene fra sprint 3 færdige og få rapporten op på niveau med koden med diagrammer og gennemskrevne dokumenter. Nåede vi det?
+        \item Vi viser login og onboarding sammen med diagrammerne. Demoen blev udskudt fra 28/10.
+        \item Bagefter gennemgår vi login med Keycloak ud fra diagrammet, så alle forstår, hvordan det hænger sammen med resten af systemet.
+        \item 16 kort fra sprint 4 venter på godkendelse i \emph{In Review}, i alt 37 point. Efter demoen godkender vi dem og flytter dem til \emph{Done}.
+        \item Tre kort er ikke færdige. Databasen (5 point) og integrationsplanen (2 point) er i gang. Netværksarkitekturen (1 point) er ikke startet.
+        \item Integrationsplanen og et dependency tree blev merget 28/10 (PR \#40). Hvad mangler der på kortet?
+        \item Kortet med sprint goals og velocity (1 point) er færdigt, når tallene for sprint 4 er skrevet ind.
+        \item Kortet om at huske login på telefonen (5 point) venter på godkendelse, men har ingen sprint-label. Tæller den med i sprint 4?
+        \item Kortet om sproget i apps'ene har ingen beskrivelse, point eller labels. Vi har allerede valgt engelsk, så skal vi lukke den?
+        \item Vi committede 46,5 point i sprint 4, og hele backloggen er nu på 186 point. Godkender vi alt i \emph{In Review}, og bliver kortet med velocity færdigt, er vi færdige med 38,5 point, og 8 point går videre. Tallene skrives i velocity-filen.
+    \end{itemize}
+    \item \textbf{Retrospective} (ca. 20 min)
+    \begin{itemize}
+        \item Sidst aftalte vi at bruge dependency trees og det fra undervisningen i softwaretest, når vi skriver tests. Gjorde vi det?
+        \item Vi aftalte også, at hver person selv flytter sine kort på boardet. Gjorde vi det?
+        \item Databasen var lovet til vejledermødet. Nåede vi det, og hvis ikke, hvorfor?
+        \item Hvad gik godt?
+        \item Hvad gik skidt?
+        \item Hvad ændrer vi i sprint 5? Hver ting bliver et kort i Kaneo.
+    \end{itemize}
+    \item \textbf{Sprint planning for sprint 5 (4/11 til 17/11)} (ca. 45 min)
+    \begin{itemize}
+        \item Sprint 5 er den sidste sprint med nye funktioner, og vi planlægger kun must-have-krav. Skal planen rettes efter det, Michel sagde?
+        \item Hvor mange timer har hver af os de næste to uger? I sprint 1 til 3 blev vi i gennemsnit færdige med 27,8 point.
+        \item Kort, der går videre fra sprint 4, beholder label \emph{Sprint 4} og får \emph{Sprint 5} oveni.
+        \item Kortet om zombie-brugere er stadig ikke estimeret. Estimerer vi den, eller dropper vi den?
+        \item Kort fra backloggen, vi kan tage ind:
+        \begin{itemize}
+            \item Standard-pakketyper (5 point) og udløbsdato og næste ordre (5 point).
+            \item Tilmelding til abonnement (3 point) og kundens første ordre (5 point).
+            \item Listen over ordrer i admin-panelet (3 point) og at markere en ordre som sendt (2 point).
+            \item C4 Context-diagram (1 point), deploymentdiagram (2 point), kapitel 3 (2 point) og kapitel 4 (3 point).
+        \end{itemize}
+        \item Et kort må kun flyttes til \emph{To Do}, når det er klar. Det kræver kravnummeret som første linje, definition of done, point, epic og en ejer.
+        \item Vi skriver et sprint goal på én sætning, der nævner de krav, sprinten leverer.
+        \item Hvert kort får en ejer og en undergruppe.
+        \item Vi lægger point i \emph{To Do} sammen, så vi har committed.
+    \end{itemize}
+    \item \textbf{Eventuelt}
+\end{enumerate}
+
+\end{document}

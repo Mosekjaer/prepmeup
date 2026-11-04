@@ -15,6 +15,7 @@
       "httpClass": "HttpClient",
       "promiseType": "Promise",
       "dateTimeType": "String",
+      "enumStyle": "StringLiteral",
       "nullValue": "Undefined",
       "generateClientClasses": true,
       "generateClientInterfaces": true,

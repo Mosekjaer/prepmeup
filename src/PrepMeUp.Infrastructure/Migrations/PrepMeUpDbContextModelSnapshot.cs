@@ -65,6 +65,74 @@ namespace PrepMeUp.Infrastructure.Migrations
 
                     b.ToTable("Items");
                 });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("PlannedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("SentAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("Orders", (string)null);
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Order", b =>
+                {
+                    b.HasOne("PrepMeUp.Domain.Subscription", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>
+                {
+                    b.HasOne("PrepMeUp.Domain.Customer", null)
+                        .WithOne()
+                        .HasForeignKey("PrepMeUp.Domain.Subscription", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>
+                {
+                    b.Navigation("Orders");
+                });
 #pragma warning restore 612, 618
         }
     }

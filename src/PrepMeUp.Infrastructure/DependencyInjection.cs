@@ -20,6 +20,8 @@ public static class DependencyInjection
         // -> When a controller needs IItemRepository needs it for its constructor, the program provides ItemRepository and instantiates automatically
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddSingleton<IClock, SystemClock>();
 
         return services;
     }

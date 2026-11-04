@@ -5,7 +5,7 @@
 \usepackage{../../appendix-style}
 
 \title{4.2 GUI Design}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
@@ -13,6 +13,7 @@
 
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Low-fidelity mockups of the customer app and the admin panel inserted \\
+  1.1 & 04-11-2026 & Group 3 & Added navigation \\
 \end{versionhistory}
 
 \section{Low-fidelity Mockups}
@@ -34,5 +35,10 @@ The mockups were drawn before requirements specification 1.5, so a few details h
 Figure~\ref{fig:ui-mockup-admin} shows the admin panel. The administrator signs in (A1) and sees the orders to send, sorted by planned date (A2, FR-05). An order can be opened and marked as sent (A3, FR-06). The administrator can also create package types (A4, FR-11) and a new version of a package type, so existing orders keep the old contents (A5, FR-15).
 
 \drawiofig[\linewidth]{ui-mockup-admin}{Low-fidelity mockup of the admin panel.}{fig:ui-mockup-admin}
+
+\section{Navigation}
+Both clients have the same navigation on every main screen, as the mockups show. The admin panel has a sidebar with two tabs, the dispatch queue and the package types, and a sign out button under them. The open tab is highlighted, and the start page sends the administrator to the dispatch queue (A2, A4).
+
+The customer app has a bar at the bottom with three tabs: Home, Orders and Profile (K6, K7, K9). The other screens, like building an order and paying, open on top of the tabs and have a back arrow instead.
 
 \end{document}

@@ -24,6 +24,8 @@
   1.5 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
   1.6 & 28-10-2026 & Group 3 & Releasing the admin panel as a container \\
   1.7 & 04-11-2026 & Group 3 & Local and production setup moved here from appendix 3.1 \\
+  1.8 & 04-11-2026 & Group 3 & Deployment strategy \\
+  1.9 & 04-11-2026 & Group 3 & Deployment diagrams for the local and the production setup \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
@@ -31,12 +33,15 @@ In this appendix we describe what happens from the moment a pull request is merg
 \section{Scope}
 The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak, Keycloak's own PostgreSQL database and the admin panel. The admin panel is a container with a web server, see section~\ref{sec:admin-panel}. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
 
-We have left out a staging environment, blue/green and canary releases, automatic rollback and monitoring. That is too much for a project that lasts one semester.
+We have left out a staging environment, blue/green and canary releases, automatic rollback and monitoring. That is too much for a project that lasts one semester. Why we have no staging environment is explained in section~\ref{sec:strategy}.
 
 \section{The Local and the Production Setup}\label{sec:environments}
 There are two setups, each with its own compose file: one for local development and one for production on our server with Coolify. In both, all containers are on the same Docker network and find each other by service name, for example db and keycloak. How the login works between the containers is described in appendix 3.1.
 
 \subsection{Local Development}
+Figure~\ref{fig:deployment-local} shows the local setup as a UML deployment diagram, and the table lists the containers in the compose file.
+
+\drawiofig[\linewidth]{deployment-local}{Deployment diagram of the local setup. The dashed admin container only starts with the admin profile, and then serves the admin panel instead of the Vite dev server.}{fig:deployment-local}
 
 \begin{center}
 \begin{tabular}{@{}l l l p{5.5cm}@{}}
@@ -52,6 +57,9 @@ admin & built from the admin panel & 5173 & Web server for the admin panel, only
 The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The Expo app (port 8081) runs outside Docker. The admin panel normally runs with Vite on port 5173, also outside Docker. It can also run as a container from the compose file with the admin profile. The container uses the same port, so the API's CORS policy and the Keycloak realm are the same in both cases. The data from the database and Keycloak is kept in two Docker volumes.
 
 \subsection{Production}
+Figure~\ref{fig:deployment-production} shows the production setup on our server, and the table lists the containers in the production compose file.
+
+\drawiofig[\linewidth]{deployment-production}{Deployment diagram of the production setup. Only the Coolify proxy can be reached from the internet.}{fig:deployment-production}
 
 \begin{center}
 \begin{tabular}{@{}l p{4.5cm} p{5.5cm}@{}}
@@ -69,7 +77,38 @@ No container publishes a port. Coolify's reverse proxy receives the traffic from
 
 The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. The admin panel also needs the public URL of the API, which is set the same way. The panel reads its addresses when the container starts (section~\ref{sec:admin-panel}). All services are set to restart, so they start again after a crash or a server restart.
 
-\section{From Push to Running Container}
+\section{Deployment Strategy}\label{sec:strategy}
+Our supervisor asked how often we deploy, and whether we have both a test and a production environment. The short answer is that the server part is deployed every time a pull request is merged, that there is only one environment besides the developers' own computers, and that the customer app is released once per sprint.
+
+\subsection{How Often We Deploy}
+Working agile is often described as deploying after each sprint. Scrum asks that the increment is in usable condition at the end of every sprint, whether or not it is released \cite[p.~15]{schwaber-scrum-guide-2016}. We deploy more often than that. Every pull request that is merged to the main branch and passes the tests goes to production a few minutes later, without anyone pressing a button. The steps are in section~\ref{sec:pipeline}.
+
+This follows from the way we chose our git workflow in appendix 2.1. We chose GitHub Flow because we deliver one web application continuously and only have one version running, which is the kind of team Driessen recommends a simpler workflow for \cite{driessen-git-branching-model}. In GitHub Flow the main branch should always be deployable \cite{chacon-github-flow-2011}. If it always is, there is no reason to wait until the end of the sprint before we deploy it. Waiting would only mean that two weeks of changes go out at once, and if something breaks, it is harder to find the pull request that did it. When each merge is deployed on its own, a problem in production points to one pull request, and we can roll back to the image from the commit before (section~\ref{sec:rollback}).
+
+It also makes the sprint review safer. The version we show at the review is the one that is already running, so the review does not depend on a deployment going well that day.
+
+The downside is that a merge reaches production with only the tests and one review as protection. That is acceptable for us, because only the group, the supervisor and the examiners use the system, and a rollback takes seconds.
+
+\subsection{One Environment}
+We have one production environment on our server and a local setup on each developer's computer (section~\ref{sec:environments}). There is no test or staging environment between the two.
+
+A test environment is a copy of production where a change is checked before it reaches the users. We get most of that in other ways. The tests run in CI before anything is deployed, every change is reviewed, and the local setup runs the same containers as production. We also have no real users who would be hurt by a bug that slipped through.
+
+A test environment has a cost too. In Coolify it would be a second resource made from the same production compose file, with its own domains, its own two databases, its own secrets and its own redirect addresses in the Keycloak realm. That doubles the setup outside the repository (section~\ref{sec:setup}) and the number of places where a variable can be set wrong. It also changes the flow. A change would first go to the test environment, and someone would have to decide when it moves on to production. That is the kind of extra release step we left out when we did not choose Git Flow.
+
+The downside is that a problem that only shows up on the server is first found in production. That happened with the realm file for Keycloak, which worked locally but was not imported on Coolify. The report describes it in the discussion chapter.
+
+If we need a test environment later, the pipeline already has what it takes. The images are tagged with the commit they were built from, so a test environment could run the main tag, and production could be locked to a commit with PMU\_IMAGE\_TAG and moved forward by hand after a check. Nothing in the images or the workflow would have to change.
+
+\subsection{Release Tags at the End of a Sprint}
+At the sprint review we put a tag on the main branch, for example v0.5.0 (appendix 10.1). The tag does not start a deployment, because that commit is already running. It marks the version we showed at the review. Every image is tagged with the commit it was built from, so the release tag also tells us which image to roll back to if we want the version from an earlier sprint review.
+
+Sprints 1 to 4 are tagged v0.1.0 to v0.4.0, each on the last commit on the main branch in that sprint. The admin panel image has only been built since sprint 4. So with the current compose file, a rollback can only go back to v0.4.0. Before that, there is no admin panel image with the same tag.
+
+\subsection{The Customer App Follows the Sprint}
+The customer app is the exception. The pipeline cannot deploy it, because it is installed on the phone, so it is built by hand with EAS (section~\ref{sec:customer-app}). We build a new version before each sprint review. That way the app follows the sprint rhythm, while the server is deployed on every merge. It works because an older version of the app keeps working against the newest API, as long as we do not make breaking changes to the API.
+
+\section{From Push to Running Container}\label{sec:pipeline}
 Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it starts when something happens in the repository, for example a push \cite{github-understanding-actions}. The steps are:
 
 \begin{enumerate}
@@ -263,7 +302,7 @@ We built the image the way CI builds it and started it. The server returns the m
 
 We have not tried it in production yet. That needs the new variable and the admin panel's address in Coolify, and the new package on GHCR must be made public first.
 
-\section{Setup Outside the Repository}
+\section{Setup Outside the Repository}\label{sec:setup}
 Some parts of the pipeline cannot be created from the repository, so a clone is not enough to get a working deployment. We list them here so someone else can set it up again.
 
 \begin{itemize}

@@ -17,6 +17,7 @@
   1.1 & 28-10-2026 & Group 3 & Added flow for saving customer details \\
   1.2 & 28-10-2026 & Group 3 & Added where the mobile app keeps the token \\
   1.3 & 28-10-2026 & Group 3 & Simpler text, corrected roles and token renewal \\
+  1.4 & 04-11-2026 & Group 3 & Added onboarding flows for customers and administrators \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -170,6 +171,54 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
         \end{itemize}
     \item User is now logged in.
 \end{enumerate}
+
+\section{Onboarding Flow: Customer}\label{sec:onboarding-customer}
+This section shows what happens the first time a new customer uses the app. It starts when the customer creates an account in Keycloak and ends when their name and address are saved in our database (FR-01). In the requirements specification, onboarding is the step after the first login where the customer enters name and address (appendix 1.2).
+
+\drawiofig[\linewidth]{onboarding-customer}{Onboarding of a new customer, from registration in Keycloak to saved name and address.}{fig:onboarding-customer}
+
+Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak, the API and the database. The flow has six parts.
+
+\paragraph{1. Sign in.} The customer opens the app and taps Sign in. The app has no login form of its own. It opens Keycloak's login page in the browser, in the same way as in Figure~\ref{fig:keycloak-login-flowchart}.
+
+\paragraph{2. Create the account in Keycloak.} At the bottom of the login page there is a link, New user? Register. The customer taps it, fills in email, name and a password, and sends the form. Keycloak checks the input and creates the account. We have turned on registration in the realm, and the email is used as the username. Every new user gets the household role automatically (see Realm Roles). Keycloak then logs the customer in right away and sends the browser back to the app with an authorization code. The app exchanges the code for tokens as described in the login flow above.
+
+At this point the customer exists in Keycloak, but the API does not know them yet. Keycloak only knows how to log them in. The name and address belong to our domain, so they are stored in our own database.
+
+\paragraph{3. Ask the API for the profile.} The home screen calls GET /user with the access token. The API reads the user id from the token and asks the customer service for the customer with that id. The repository looks the customer up in the database. For a new customer nothing is found, and the API answers 404 Not Found.
+
+For the app, this 404 is not an error. It means that the customer has not finished onboarding. This is how we read the onboarding status, as described in Onboarding Status: we do not keep a flag in the token, we ask the database. If the call fails for another reason, the home screen shows an error and a button to try again.
+
+\paragraph{4. Fill in name and address.} When the app gets the 404, it opens the onboarding screen. The customer types a name and an address and taps Save. The button is disabled while the request is running, so the customer cannot send it twice.
+
+\paragraph{5. Save.} The app sends the name and address to the API as PUT /user. The steps through the layers of the API are described in the Saving Data section and Figure~\ref{fig:save-customer-flow}. For a new customer the service creates a new customer, EF Core writes an INSERT, and the API answers 204 No Content.
+
+\paragraph{6. Back to the home screen.} The app goes back to the home screen. The home screen loads the profile every time it is shown, so it calls GET /user again. This time the customer is found, the API answers 200 OK with the name and address, and the home screen welcomes the customer. Onboarding is done.
+
+The next time the customer opens the app, GET /user answers 200 right away, and the onboarding screen is not shown. If the customer leaves the onboarding screen or closes the app before they save, the API still answers 404 the next time the home screen is shown, and the app opens the onboarding screen again. So a customer cannot use the app without a name and address.
+
+\section{Onboarding Flow: Administrator}\label{sec:onboarding-admin}
+This section shows how a new administrator gets access to the admin panel. An administrator cannot register themselves like a customer. Only an existing administrator can make someone an administrator, so the flow assumes that at least one administrator already exists. The first one is created by hand (see How a User Gets a Role).
+
+\drawiofig[\linewidth]{onboarding-admin}{Onboarding of a new administrator, from creation in the Keycloak Admin Console to access to the admin panel.}{fig:onboarding-admin}
+
+Figure~\ref{fig:onboarding-admin} has four lanes: the existing administrator, the new administrator, Keycloak and the admin panel with the API. The flow has five parts.
+
+\paragraph{1. Create the user in Keycloak.} The existing administrator logs in to the Keycloak Admin Console. Users are created there, because the admin panel has no page for it yet. Our admin role only gives access to the admin panel and the admin endpoints of the API. It does not give access to the Admin Console by itself, so the existing administrator also needs a Keycloak account that is allowed to manage users.
+
+In the Admin Console the existing administrator creates a user in the prepmeup realm with email, first name and last name. Keycloak gives the user the household role automatically, as it does for every new user (see Realm Roles).
+
+\paragraph{2. Temporary password and admin role.} The existing administrator sets a temporary password for the user. Because the password is temporary, Keycloak marks the user with a required action, Update Password. Then the existing administrator gives the user the realm role admin. From now on, every token Keycloak issues for this user has the admin role in the realm\_access claim.
+
+\paragraph{3. Hand over the login.} The existing administrator gives the new administrator their email and temporary password. This happens outside the system, for example in person. Keycloak cannot send an invitation email, because we have not set up an email server for the realm.
+
+\paragraph{4. First login.} The new administrator opens the admin panel and clicks Sign in. The admin panel sends them to Keycloak's login page with the Authorization Code flow and PKCE, as in Figure~\ref{fig:keycloak-login-flowchart}. They log in with the temporary password. Keycloak sees the required action and asks for a new password before it lets them continue. When the new password is saved, Keycloak removes the required action and sends the browser back to the admin panel with an authorization code. The admin panel exchanges the code for tokens and keeps them in memory only (see Where the Admin Panel Keeps the Token). The temporary password cannot be used after this.
+
+\paragraph{5. Check the role.} The admin panel calls GET /admin/ping with the access token. The API first checks the token. Then the claims transformation turns the roles in realm\_access into role claims, and the admin policy checks that the user has the admin role. If the role is there, the API answers 200 OK, and the admin panel shows the dashboard. The new administrator is now onboarded.
+
+If the existing administrator forgot to give the admin role, the API answers 403 Forbidden. The admin panel then shows that the account has no access and offers a sign-out button. The user is not signed out automatically, so they can see why they were turned away.
+
+The admin panel has no onboarding screen like the customer app. An administrator has no name or address in our database, because everything the API needs to know about them is in the token.
 
 \printbibliography
 

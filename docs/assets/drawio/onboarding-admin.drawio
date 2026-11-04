@@ -1,113 +1,158 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" version="26.0.0">
-  <diagram id="onboarding-admin" name="Onboarding: Admin">
-    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="920" math="0" shadow="0">
+<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="Electron" agent="draw.io" version="26.0.0">
+  <diagram id="onboarding-admin" name="Onboarding: Administrator">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="1460" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-<mxCell id="title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Onboarding Flowchart &amp;#x2014; Administrator (fra nr. 2 og frem)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Rollebaseret oprettelse: Administration i Keycloak, invitation, aktivering og adgangsvalidering (GET /admin/ping)&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
-      <mxGeometry x="40" y="30" width="1380" height="70" as="geometry" />
-    </mxCell>
-<mxCell id="lane_admin1" value="Eksisterende Administrator (Admin #1)" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="40" y="125" width="320" height="750" as="geometry" />
+        <mxCell id="title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Onboarding Flowchart — Administrator&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;An existing admin creates the user in the Keycloak Admin Console, temporary password, first login with a new password and access check (GET /admin/ping)&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="1380" height="70" as="geometry" />
         </mxCell>
-<mxCell id="lane_kc" value="Keycloak Auth Server (Realm: prepmeup)" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="380" y="125" width="350" height="750" as="geometry" />
+        <mxCell id="lane_kcadmin" value="Existing administrator" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="125" width="310" height="1300" as="geometry" />
         </mxCell>
-<mxCell id="lane_admin2" value="Ny Administrator (Admin #2)" style="swimlane;startSize=32;fillColor=#F0F9FF;strokeColor=#BAE6FD;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="750" y="125" width="310" height="750" as="geometry" />
+        <mxCell id="lane_admin2" value="New administrator" style="swimlane;startSize=32;fillColor=#F0F9FF;strokeColor=#BAE6FD;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="370" y="125" width="310" height="1300" as="geometry" />
         </mxCell>
-<mxCell id="lane_web_api" value="Admin Web &amp; API (PrepMeUp)" style="swimlane;startSize=32;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="1080" y="125" width="340" height="750" as="geometry" />
+        <mxCell id="lane_kc" value="Keycloak (realm: prepmeup)" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="700" y="125" width="310" height="1300" as="geometry" />
         </mxCell>
-<mxCell id="a1_start" value="Start: Eksisterende admin logger ind&#xa;i Keycloak Admin Console" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_admin1">
-          <mxGeometry x="40" y="45" width="240" height="50" as="geometry" />
+        <mxCell id="lane_web" value="Admin panel and API" style="swimlane;startSize=32;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="125" width="390" height="1300" as="geometry" />
         </mxCell>
-<mxCell id="a1_create" value="Opret ny bruger i realm prepmeup:&#xa;• E-mail, Fornavn, Efternavn&#xa;• Sæt 'Required Action: Update Password'" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_admin1">
-          <mxGeometry x="40" y="125" width="240" height="55" as="geometry" />
+        <mxCell id="k_start" value="Start: logs in to the Keycloak Admin Console&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(account that can manage users)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_kcadmin">
+          <mxGeometry x="35" y="45" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="a1_assign_role" value="Tildel Realm-rolle: 'admin'&#xa;&lt;span style=&quot;font-size:10px;color:#7E22CE;&quot;&gt;(Role Mapping: Bruger får 'admin'-claim)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin1">
-          <mxGeometry x="40" y="210" width="240" height="50" as="geometry" />
+        <mxCell id="k_create" value="Create user in realm prepmeup:&lt;br&gt;email, first name, last name" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kcadmin">
+          <mxGeometry x="35" y="125" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="kc_create" value="Opret bruger-entitet&#xa;&amp; klargør invitationslink" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="55" y="125" width="240" height="55" as="geometry" />
+        <mxCell id="k_pwd" value="Set a temporary password&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(Credentials: Temporary = On)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kcadmin">
+          <mxGeometry x="35" y="205" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="kc_role_set" value="Knyt 'admin' rolle til bruger&#xa;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(Indlejres i JWT realm_access.roles)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="55" y="210" width="240" height="50" as="geometry" />
+        <mxCell id="k_role" value="Assign the realm role 'admin'&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(Role mapping)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kcadmin">
+          <mxGeometry x="35" y="285" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="kc_send_mail" value="Send aktiverings-e-mail&#xa;med engangslink til ny admin" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="55" y="295" width="240" height="50" as="geometry" />
+        <mxCell id="k_handover" value="Give email and temporary password&lt;br&gt;to the new admin &lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(outside the system)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kcadmin">
+          <mxGeometry x="35" y="365" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="kc_save_pwd" value="Validér password-politik,&#xa;gem credentials &amp; aktivér konto" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="55" y="385" width="240" height="50" as="geometry" />
+        <mxCell id="c_create" value="Create user&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(gets 'household' automatically as default role)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="125" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="kc_auth_ready" value="Konto er nu aktiv!&#xa;Keycloak er klar til OIDC login" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="55" y="475" width="240" height="50" as="geometry" />
+        <mxCell id="c_pwd" value="Save password and set&lt;br&gt;required action: Update Password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="205" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="a2_receive" value="Modtag invitation i indbakke&#xa;&amp; klik på aktiveringslink" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
-          <mxGeometry x="35" y="295" width="240" height="50" as="geometry" />
+        <mxCell id="c_role" value="Add 'admin' to the user&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(put in the token as realm_access.roles)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="285" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="a2_enter_pwd" value="Vælg personlig adgangskode&#xa;i Keycloak browser-vindue" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
-          <mxGeometry x="35" y="385" width="240" height="50" as="geometry" />
+        <mxCell id="c_page" value="Show login page" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="535" width="240" height="40" as="geometry" />
         </mxCell>
-<mxCell id="a2_open_app" value="Åbn PrepMeUp Admin Web&#xa;&amp; klik 'Sign in' (browser)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
-          <mxGeometry x="35" y="475" width="240" height="50" as="geometry" />
+        <mxCell id="c_check" value="Check email and password;&lt;br&gt;required action is pending:&lt;br&gt;show form for a new password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="685" width="240" height="60" as="geometry" />
         </mxCell>
-<mxCell id="w_login_ping" value="AuthGate: Gennemfør OIDC login&#xa;&amp; send GET /admin/ping (Bearer token)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_web_api">
-          <mxGeometry x="45" y="475" width="250" height="50" as="geometry" />
+        <mxCell id="c_save" value="Save new password,&lt;br&gt;remove required action&lt;br&gt;and redirect with authorization code" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="845" width="240" height="60" as="geometry" />
         </mxCell>
-<mxCell id="w_dec_role" value="AdminController:&#xa;Har bruger gyldig 'admin' rolle?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_web_api">
-          <mxGeometry x="45" y="560" width="180" height="65" as="geometry" />
+        <mxCell id="c_token" value="Check code and PKCE&lt;br&gt;and issue tokens" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="35" y="935" width="240" height="45" as="geometry" />
         </mxCell>
-<mxCell id="w_err_403" value="403 Forbidden:&#xa;Vis 'Access Denied'&#xa;&amp; log ud" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_web_api">
-          <mxGeometry x="235" y="570" width="95" height="45" as="geometry" />
+        <mxCell id="n_receive" value="Receive email and&lt;br&gt;temporary password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
+          <mxGeometry x="35" y="365" width="240" height="50" as="geometry" />
         </mxCell>
-<mxCell id="w_ok_200" value="200 OK: Adgang godkendt!&#xa;Vis Admin Dashboard&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#16A34A;&quot;&gt;(Slut: Ny admin er fuldt onboardet)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_web_api">
-          <mxGeometry x="30" y="665" width="210" height="50" as="geometry" />
+        <mxCell id="n_open" value="Open the admin panel and click 'Sign in'" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
+          <mxGeometry x="35" y="450" width="240" height="40" as="geometry" />
         </mxCell>
-<mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a1_start" target="a1_create">
+        <mxCell id="n_login" value="Enter email and&lt;br&gt;temporary password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
+          <mxGeometry x="35" y="610" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="n_newpwd" value="Choose a new personal password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_admin2">
+          <mxGeometry x="35" y="770" width="240" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="w_redirect" value="AuthGate: signinRedirect()&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(client prepmeup-admin, PKCE)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_web">
+          <mxGeometry x="35" y="445" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w_callback" value="Receive code and exchange for tokens&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(POST /token with code and code_verifier)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_web">
+          <mxGeometry x="35" y="845" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="w_store" value="Tokens are kept in memory only" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_web">
+          <mxGeometry x="35" y="1010" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_ping" value="AuthGate calls adminClient.ping()&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(GET /admin/ping • Authorization: Bearer)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_web">
+          <mxGeometry x="35" y="1080" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w_policy" value="AdminOnly policy:&lt;br&gt;does the token have 'admin'?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_web">
+          <mxGeometry x="70" y="1145" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="w_ok" value="200 OK: show dashboard&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(new admin is onboarded)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;fontSize=10;" vertex="1" parent="lane_web">
+          <mxGeometry x="65" y="1240" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w_denied" value="403 Forbidden:&lt;br&gt;show &quot;no access&quot;&lt;br&gt;and Sign out" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=11;fontStyle=1;fontSize=10;" vertex="1" parent="lane_web">
+          <mxGeometry x="255" y="1150" width="125" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="k_start" target="k_create">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e2" value="Opret bruger" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a1_create" target="kc_create">
+        <mxCell id="e2" value="Create user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="k_create" target="c_create">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a1_create" target="a1_assign_role">
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="k_create" target="k_pwd">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e3_kc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_create" target="kc_role_set">
+        <mxCell id="e4" value="Temporary password" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="k_pwd" target="c_pwd">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e4" value="Tildel 'admin'" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a1_assign_role" target="kc_role_set">
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="k_pwd" target="k_role">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_role_set" target="kc_send_mail">
+        <mxCell id="e6" value="Role 'admin'" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="k_role" target="c_role">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e6" value="Invitationsmail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="kc_send_mail" target="a2_receive">
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="k_role" target="k_handover">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a2_receive" target="a2_enter_pwd">
+        <mxCell id="e8" value="Handover" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="k_handover" target="n_receive">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e8" value="Indsend password" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a2_enter_pwd" target="kc_save_pwd">
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_receive" target="n_open">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e9" value="Aktivér" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_save_pwd" target="kc_auth_ready">
+        <mxCell id="e10" value="Sign in" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_open" target="w_redirect">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e10" value="Konto aktiv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="kc_auth_ready" target="a2_open_app">
+        <mxCell id="e11" value="Redirect to /auth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="w_redirect" target="c_page">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e11" value="Start login" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a2_open_app" target="w_login_ping">
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_page" target="n_login">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="w_login_ping" target="w_dec_role">
+        <mxCell id="e13" value="Log in" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="n_login" target="c_check">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e13_no" value="Nej" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="w_dec_role" target="w_err_403">
+        <mxCell id="e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="c_check" target="n_newpwd">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-<mxCell id="e13_yes" value="Ja (Admin bekræftet)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="w_dec_role" target="w_ok_200">
+        <mxCell id="e15" value="New password" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_newpwd" target="c_save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="Redirect with code" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_save" target="w_callback">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="POST /token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.8;entryX=1;entryY=0.5;" edge="1" parent="1" source="w_callback" target="c_token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" value="access, refresh and ID token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_token" target="w_store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="w_store" target="w_ping">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="Token validated by JWT middleware" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="w_ping" target="w_policy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="w_policy" target="w_ok">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="w_policy" target="w_denied">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>

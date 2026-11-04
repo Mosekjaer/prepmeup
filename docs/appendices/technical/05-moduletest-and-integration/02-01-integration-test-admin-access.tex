@@ -1,0 +1,79 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 02-01-integration-test-admin-access.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage{../../appendix-style}
+
+\title{5.2.1 Integration Test -- Admin Access}
+\author{SW4PRJ4 -- Group 3}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{versionhistory}
+  1.0 & 04-11-2026 & Group 3 & First version \\
+\end{versionhistory}
+
+\section{Purpose}
+This appendix belongs to appendix 5.2. It describes the integration test of step 1 in the plan, admin access. The admin endpoint is the endpoint that only an admin may call. We test it with many different tokens, because it is the smallest place where we can check that the API trusts the right tokens and nobody else.
+
+\section{Setup}
+The test calls the admin controller through a real HTTP request to the API. The token check, the role reader and the admin policy are the real ones. Keycloak is faked, because we do not want the tests to need a running Keycloak server.
+
+Instead, the tests make their own tokens and sign them with a key that only the tests know. The API is told to trust this key, and to expect the same issuer and audience as in the real setup. A second key, which the API does not trust, is used to make tokens that must be refused.
+
+The token settings are the same as in production. The API requires the right issuer, the right audience, a valid signature and a token that has not expired. We allow 30 seconds of clock difference between the API and the token.
+
+The API reads the roles of the user from the realm roles in the token, which is where Keycloak puts them. The admin policy requires the role admin.
+
+\section{Test Cases}
+We split the cases in two stages. In the first stage the token is wrong in some way, and the answer must be unauthorized (401). In the second stage the token is valid and only the roles change, so the answer is forbidden (403) or ok (200).
+
+\subsection{Stage 1: The Token Check}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}l p{4.8cm} p{4.6cm} c@{}}
+\textbf{ID} & \textbf{Request} & \textbf{What it checks} & \textbf{Expected} \\
+\hline
+A1 & No token at all & The endpoint is closed to anonymous users & 401 \\
+A2 & A token that is not a JWT & The API does not crash on garbage & 401 \\
+A3 & Signed with a key the API does not trust & The signature is checked & 401 \\
+A4 & Valid, but expired five minutes ago & The expiry is checked & 401 \\
+A5 & Valid, but made for another audience & The audience is checked & 401 \\
+A6 & Valid, but made by another issuer & The issuer is checked & 401 \\
+\end{tabular}
+\caption{Test cases where the token is wrong.}
+\label{tab:admin-token-cases}
+\end{table}
+
+The tokens in A3 to A6 all carry the admin role. This is on purpose. If the API gave ok to one of them, we would know that the role was not the reason, and the token check was the problem.
+
+\subsection{Stage 2: The Role Check}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}l p{4.8cm} p{4.6cm} c@{}}
+\textbf{ID} & \textbf{Request} & \textbf{What it checks} & \textbf{Expected} \\
+\hline
+B1 & Valid token with the role household & A normal user cannot use the admin endpoint & 403 \\
+B2 & Valid token with no roles at all & A token without roles is not an admin & 403 \\
+B3 & Valid token with the role Admin, with a capital A & The role name is case sensitive & 403 \\
+B4 & Valid token where admin is only a client role & Only the realm roles count & 403 \\
+B5 & Valid token with the role admin & An admin gets in & 200 \\
+B6 & Valid token with the roles household and admin & Extra roles do not stop an admin & 200 \\
+\end{tabular}
+\caption{Test cases where the token is valid and the roles change.}
+\label{tab:admin-role-cases}
+\end{table}
+
+Case B4 is there because Keycloak can also put roles under a client. Our role reader only looks at the realm roles, so a user who is admin for one client only is not an admin in our API. Case B3 is there because role names in Keycloak are case sensitive, and we want the API to behave the same way.
+
+\section{Result}
+The twelve cases are twelve tests in the admin endpoint test class in the integration test project. The name of each test ends with the answer we expect, so a case can be found from the table. We ran them on 04-11-2026 and all twelve passed.
+
+\section{What the Tests Do Not Cover}
+The tests do not use a real Keycloak, so a wrong setup of the realm is not found here. The same goes for the keys that Keycloak publishes, because the tests use their own key instead. We also do not test a token that is not valid yet, since the tokens in the tests are always valid from a few minutes in the past.
+
+\end{document}

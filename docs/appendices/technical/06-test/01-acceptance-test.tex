@@ -109,7 +109,7 @@ This section tests the must-have functional requirements in appendix 1.2, which 
 \begin{steps}
 1 & ADM marks O1 as sent (FR-06). & O1 is registered as sent with today's date. & & \\
 \hline
-2 & The tester looks up O1 through the API with ADM's token. & O1 has a sent date and an expiry date that is later than the sent date. & & \\
+2 & The tester looks up O1 through the API with ADM's token. & O1 has today's date as sent date and an expiry date exactly one year later. & & \\
 \hline
 3 & ADM marks O2 as sent, and the tester looks up both orders again. & O2 has its own expiry date. The expiry date of O1 is unchanged. & & \\
 \hline

@@ -117,17 +117,17 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
             \item redirect\_uri: The address that Keycloak should send the user \textit{back} to.
             \item code\_challenge and state (generated in step 2)
         \end{itemize}
-    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see steps 8 and 11), and displays it's own login page.
+    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see step 8), and displays it's own login page.
     \item User types email and password and clicks 'log in'.
     \item Keycloak validerer login-oplysningerne: Er de korrekte?
         \begin{itemize}
-            \item Nej: Keycloak viser en fejl på login-siden og bruger forsøger igen.
-            \item Ja: Keycloak slår brugerens realm-roller op. Det er 'household' for kunder og 'admin' for administratorer. I trin 12, kommer disse roller med i jwt token.
+            \item No: Keycloak shows an error on the login page and user tries again.
+            \item Yes: Keycloak looks up the users realm roles.It is 'household' for customers and 'admin' for administrators. In step 12, these roles into the jwt token.
         \end{itemize}
-    \item Keycloak does to things:
+    \item Keycloak does two things:
         \begin{itemize}
             \item starts a an SSO-session by putting an SSO-cookie in the browser, so that the user is logged in \textit{at keycloak}. As long as the SSO session is up, Keycloak will supply a new access token on a refresh token. The purpose of this, is then the user doesn't have to re-login everytime the jwt token expires.
-            \item generates a random and short-lived authorization code. It is used in step 10 to exhange for an access token. This authorization code is bound to the client\_id, redirect\_id and code\_challenge that client sent along in the URL in step 3.
+            \item generates a random and short-lived authorization code. It is used in step 10 to exhange for an access token. This authorization code is bound to the client\_id, redirect\_uri and code\_challenge that client sent along in the URL in step 3.
         \end{itemize}
     \item On this step, something happens first on Keycloak-side and then on Client-side:
         \begin{itemize}
@@ -166,7 +166,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
     \item Client stores the three recieved tokens in a way that depends if it's mobile-app (for customer) or admin-panel.
     Then the Client registers a function with the api-client that returns the current access token. The effect of this, is that before every request the api-client calls that function and can therefore add a non-expired token to the http request.
         \begin{itemize}
-            \item admin-panel: Alle threee tokens are kept in the browsers memory and are lost when the page is reloaded. Admin has to click 'log in' again.
+            \item admin-panel: All threee tokens are kept in the browsers memory and are lost when the page is reloaded. Admin has to click 'log in' again.
             \item mobile-app: access token and ID token are kept in memory and are lost when the app is closed. The refresh token is saved to persistent storage on the phone, so the user stays signed in when reopening the app.
         \end{itemize}
     \item User is now logged in.

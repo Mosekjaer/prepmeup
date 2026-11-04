@@ -101,7 +101,7 @@ The flowdiagram below shows how login flows for both a regular customer and for 
 \drawiofig[\linewidth]{keycloak-login-flowchart}{Login with Keycloak for the customer app and the admin panel. The numbers match the steps below.}{fig:keycloak-login-flowchart}
 
 The diagram assumes that the user has opened the client app.
-When the app starts, the client app fetches the URL to keycloak's login-page from WHERE?
+When the app starts, the client app fetches the URL to keycloak's login-page from Keycloak's discovery document \cite{openid-connect-discovery}.
 \begin{enumerate}
     \item In Client, the User (either customer or admin) clicks 'Log in'
     \item Client generates PKCE-values and state and saves them locally. They are:
@@ -116,7 +116,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
             \item redirect\_uri: The address that Keycloak should send the user \textit{back} to.
             \item code\_challenge and state (generated in step 2)
         \end{itemize}
-    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see step WHAT), and displays it's own login page.
+    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see steps 8 and 11), and displays it's own login page.
     \item User types email and password and clicks 'log in'.
     \item Keycloak validerer login-oplysningerne: Er de korrekte?
         \begin{itemize}

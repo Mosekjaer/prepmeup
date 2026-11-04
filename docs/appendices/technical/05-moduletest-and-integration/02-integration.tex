@@ -90,6 +90,8 @@ The class that reads the roles from the token is already tested alone. The integ
   \item The admin policy, which must give unauthorized without a token and forbidden without the admin role.
 \end{itemize}
 
+The test cases and the result are in appendix 5.2.1.
+
 If one of these is wrong, the tests of the single classes still pass, but the endpoint gives the wrong answer. If we forget to register the role reader, an admin gets the answer forbidden.
 
 We build the tests in two stages. Each stage adds one more real part, so an error always points to the part that was added last.

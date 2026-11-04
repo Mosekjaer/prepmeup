@@ -7,13 +7,14 @@ export function AppLayout() {
 
   return (
     <div className="layout">
-      <header className="layout__header">
-        <strong>PrepMeUp Admin</strong>
-        <nav>
-          <NavLink to="/">Dashboard</NavLink>
+      <aside className="layout__sidebar">
+        <strong className="layout__brand">PrepMeUp Admin</strong>
+        <nav className="layout__nav">
+          <NavLink to="/dispatch">Dispatch queue</NavLink>
+          <NavLink to="/package-types">Package types</NavLink>
+          <button onClick={signOut}>Sign out</button>
         </nav>
-        <button onClick={signOut}>Sign out</button>
-      </header>
+      </aside>
       <main className="layout__main">
         <Outlet />
       </main>

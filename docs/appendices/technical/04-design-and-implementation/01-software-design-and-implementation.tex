@@ -48,7 +48,7 @@ We store the onboarding status only in the database. So whenever the client need
 
 This gives some extra calls to the database, which costs performance. We accept that. It fits clean architecture, because the data stays in the domain in the backend, and we avoid filling the token with information. That makes the system easier to maintain.
 
-\section{Keycloak}
+\section{Keycloak decisions}
 
 \subsection{Login Library in the Admin Panel}
 The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the OpenID Connect standard and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps only differ in how they redirect and where they keep the token.
@@ -93,6 +93,83 @@ The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 \paragraph{7. Answer.} The API answers 204 No Content. The app then goes back to the previous screen. If the request fails, the app shows an error and the customer can try again.
 
 The admin panel does not save anything yet. Its only call is a check that the user is an admin, so there is no admin save flow to draw.
+
+\section{Keycloak Login flow: Client and admin}
+
+The flowdiagram below shows how login flows for both a regular customer and for an administrator.
+
+\drawiofig[\linewidth]{keycloak-login-flowchart}{Login with Keycloak for the customer app and the admin panel. The numbers match the steps below.}{fig:keycloak-login-flowchart}
+
+The diagram assumes that the user has opened the client app.
+When the app starts, the client app fetches the URL to keycloak's login-page from Keycloak's discovery document \cite{openid-connect-discovery}.
+\begin{enumerate}
+    \item In Client, the User (either customer or admin) clicks 'Log in'
+    \item Client generates PKCE-values and state and saves them locally. They are:
+        \begin{itemize}
+            \item code\_verifier: a random string that stays with the client. It is sent later.
+            \item code\_challenge: a SHA-256-hash of the code\_verifier. It is sent in step 3.
+            \item state: another random string. It is sent as it is in step 3 (non-hashed).
+        \end{itemize}
+    \item Client builds and opens the login-URL for Keycloaks /auth-endpoint. It attaches (among others) the following values:
+        \begin{itemize}
+            \item client\_id: a string that is either `prepmeup-mobile' (if login is requested from customer app) or `prepmeup-admin' (if login is requested from admin panel).
+            \item redirect\_uri: The address that Keycloak should send the user \textit{back} to.
+            \item code\_challenge and state (generated in step 2)
+        \end{itemize}
+    \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see steps 8 and 11), and displays it's own login page.
+    \item User types email and password and clicks 'log in'.
+    \item Keycloak validerer login-oplysningerne: Er de korrekte?
+        \begin{itemize}
+            \item Nej: Keycloak viser en fejl på login-siden og bruger forsøger igen.
+            \item Ja: Keycloak slår brugerens realm-roller op. Det er 'household' for kunder og 'admin' for administratorer. I trin 12, kommer disse roller med i jwt token.
+        \end{itemize}
+    \item Keycloak does to things:
+        \begin{itemize}
+            \item starts a an SSO-session by putting an SSO-cookie in the browser, so that the user is logged in \textit{at keycloak}. As long as the SSO session is up, Keycloak will supply a new access token on a refresh token. The purpose of this, is then the user doesn't have to re-login everytime the jwt token expires.
+            \item generates a random and short-lived authorization code. It is used in step 10 to exhange for an access token. This authorization code is bound to the client\_id, redirect\_id and code\_challenge that client sent along in the URL in step 3.
+        \end{itemize}
+    \item On this step, something happens first on Keycloak-side and then on Client-side:
+        \begin{itemize}
+            \item Keycloak sends the browser back to redirect\_uri, which was provided by client in url in step 3. It sends back the authorization code and also the state back, which client provided in step 3.
+            \item Client recieves the redirect with a state value and the authoriation code.
+        \end{itemize}
+    \item Client checks that state is the same as what was sent to Keycloak in step 3. This is how the client can tell that the response actually came from Keycloak and not some hacker.
+        \begin{itemize}
+            \item No: The login-process is stopped and the client doesn't ask keycloak for access token.
+            \item Yes: Client continues to step 10.
+        \end{itemize}
+    \item Client sends a POST http request to Keycloaks token-endpoint. The request contains:
+        \begin{itemize}
+            \item grant\_type=authorization\_code: This tells keycloak that client would like to exchange \textit{some} code to \textit{some} token.
+            \item code: The authorization code. This was recieved from Keycloak in step 9.
+            \item code\_verifier: The secret string from step 2 (un-hashed).
+            \item same client\_id and redirect\_uri as in step 3.
+        \end{itemize}
+    \item Keycloak checks the following:
+        \begin{itemize}
+            \item Is the authorization code even valid? As in unused and not expired?
+            \item Are client\_id and redirect\_id the same as in step 3?
+            \item Makes a PKCE-check: Keycloak hashes code\_verifier with the SHA-256 algorithm and compares it to code\_challenge, which it saved in step 4. If a hacker has somehow gotten hold of the authorization code in step 8 their request will fail here, because they have at most the code\_challenge, which was the hashed version of code\_verifier, and you cannot calculate backwards from SHA-256-hash \cite[sec.~1]{nist-fips-180-4}.
+        \end{itemize}
+        Is the request valid?
+        \begin{itemize}
+            \item No: Keycloak answers client with 400 Bad Request with the error invalid\_grant. The authorization code cannot be reused.
+            \item Yes: Keycloak moves on to issue tokens in step 12.
+        \end{itemize}
+    \item Keycloak issues \textit{three} tokens:
+        \begin{itemize}
+            \item Access token of type jwt "Json Web Token" signed by keycloak. It contains bl.a. the users UUID, realm-roles (household and/or admin) and \textit{audience} (which is prepmeup-api). This jwt is valid for 15 minutes.
+            \item Refresh token, which client can use to get a new access token, when the old one expires \textit{without} having to log in again. This, however, is only possible as long as the SSO-session (started in step 7) lives.
+            \item ID token, which tells the client who is logged in. This info is only  used for logout.
+        \end{itemize}
+    \item Client stores the three recieved tokens in a way that depends if it's mobile-app (for customer) or admin-panel.
+    Then the Client registers a function with the api-client that returns the current access token. The effect of this, is that before every request the api-client calls that function and can therefore add a non-expired token to the http request.
+        \begin{itemize}
+            \item admin-panel: Alle threee tokens are kept in the browsers memory and are lost when the page is reloaded. Admin has to click 'log in' again.
+            \item mobile-app: access token and ID token are kept in memory and are lost when the app is closed. The refresh token is saved to persistent storage on the phone, so the user stays signed in when reopening the app.
+        \end{itemize}
+    \item User is now logged in.
+\end{enumerate}
 
 \printbibliography
 

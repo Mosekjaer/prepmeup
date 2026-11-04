@@ -1,0 +1,4 @@
+window.__CONFIG__ = {
+  apiUrl: "${PMU_API_PUBLIC_URL}",
+  keycloakUrl: "${PMU_KEYCLOAK_PUBLIC_URL}",
+};

@@ -58,6 +58,19 @@ services:
     networks:
       - prepmeup-net
 
+  admin:
+    build:
+      context: ./clients
+      dockerfile: apps/admin/Dockerfile
+    profiles: ["admin"]
+    environment:
+      PMU_API_PUBLIC_URL: "${PMU_API_PUBLIC_URL:-http://localhost:5001}"
+      PMU_KEYCLOAK_PUBLIC_URL: "${PMU_KEYCLOAK_PUBLIC_URL:-http://localhost:8082}"
+    ports:
+      - "5173:8080"
+    networks:
+      - prepmeup-net
+
 volumes:
   pmu-data:
     name: prepmeup-data

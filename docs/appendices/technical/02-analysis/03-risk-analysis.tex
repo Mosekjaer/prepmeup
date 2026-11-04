@@ -4,13 +4,119 @@
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
 
+\addbibresource{../../../assets/references.bib}
+
 \title{2.3 Risk Analysis}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 28-10-2026 & Group 3 & First version \\
+\end{versionhistory}
+
+\section{Purpose}
+This appendix lists the things that could stop us from delivering PrepMeUp on time, and what we do about them. Chapter 2 of the report describes how we use the list when we plan.
+
+We started the list at sprint planning on 28/10, so some of the risks below have already happened once. We have included them anyway, because they can happen again.
+
+\section{Method}
+We use the risk model from Vinje \cite[sec.~5.4]{vinje-projektledelse}. Each risk gets two numbers:
+
+\begin{itemize}[nosep]
+  \item Probability (S): 1 if it is possible but probably will not happen, 2 if it is as likely to happen as not, and 3 if it will probably happen.
+  \item Consequence (K): 1 if the current plan can absorb it, 3 if we have to do something extra to limit the damage, and 10 if the plan fails.
+\end{itemize}
+
+The product P is S times K. Vinje's rule is that a risk with P of 9 or more is acted on straight away, while the rest are assessed \cite[sec.~5.4]{vinje-projektledelse}. We follow that rule. A measure can either lower the risk before it happens, or say what we do if it happens.
+
+We split the risks in three groups, like the report template does: risks in how we work, risks in the requirements, and technical risks.
+
+\section{Risks}
+
+\subsection{How We Work}
+
+\begin{center}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{5.2cm} c c c >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\textbf{ID} & \textbf{Risk} & \textbf{S} & \textbf{K} & \textbf{P} & \textbf{Measure} \\
+\hline
+W1 & The must-have requirements are not done in time. On 28/10 the backend has customers and items, but no subscriptions, orders or package types, and sprint 5 is the last sprint with new features. & 3 & 10 & 30 & Sprint 5 only plans must-have requirements (decided 28/10). The database has to be in place for the supervisor meeting on 3/11. If we fall behind, the should and could requirements go first. \\
+\hline
+W2 & The report falls behind the code. None of the report tasks in sprint 3 were done (minutes 28/10). & 3 & 10 & 30 & Sprint 4 is mainly for the report, sprint 6 is for the acceptance test and the report, and the days from 2/12 to the hand-in are a buffer. Every report task is a card with a definition of done, like a code task. \\
+\hline
+W3 & Some parts of the system are only known by one or two of us, and the server belongs to one group member. If one of them is ill, the others cannot take over. & 2 & 10 & 20 & Every sprint review has a demo, so everyone knows the parts they did not build (decided 30/9). Every pull request is reviewed by someone who did not write it. \\
+\hline
+W4 & We only work together on Wednesdays. Most pull requests are merged on the same day, and a review can wait a week. & 3 & 3 & 9 & Each person moves their own cards when they change status (decided 28/10), so the board shows which pull requests are waiting for review. One card per pull request keeps the reviews small. \\
+\hline
+W5 & Code or text made with AI ends up in the project without anyone in the group being able to explain it. The supervisor said on 15/9 that AI is fine, as long as we understand everything we hand in. & 2 & 10 & 20 & The rules in chapter 2 of the report. The review agents only report findings and do not change the code, and test cases are approved by a person before the tests are written. The person who commits a change has to be able to explain it. \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Requirements}
+
+\begin{center}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{5.2cm} c c c >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\textbf{ID} & \textbf{Risk} & \textbf{S} & \textbf{K} & \textbf{P} & \textbf{Measure} \\
+\hline
+R1 & The requirements change while we build. The order model changed from a household profile to package types on 30/9, and the requirements were aligned with the system on 28/10 (appendix 1.2). & 2 & 3 & 6 & Changes are decided at sprint planning and get a new version of the requirements specification. A requirement keeps its number when its priority changes, so cards and tests still point to the right one. \\
+\hline
+R2 & FR-20 does not say how the customer is notified. Email needs a mail server, which we do not have yet (appendix 2.1). & 2 & 3 & 6 & We decide how to notify at sprint planning for sprint 5. FR-20 is a should-have, so the core flow still works without it. \\
+\hline
+R3 & NFR-05 fails, because the API, the database and Keycloak share one server. & 1 & 3 & 3 & The load test in appendix 6.1 is run against the deployed API, so we measure on the real server and not on a laptop. \\
+\hline
+R4 & FR-19 depends on time, and a test cannot wait 14 days for an order to expire. & 1 & 3 & 3 & The acceptance test uses test data with expiry dates relative to today, for example today plus 14 days (appendix 6.1). \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Technical}
+
+\begin{center}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{5.2cm} c c c >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\textbf{ID} & \textbf{Risk} & \textbf{S} & \textbf{K} & \textbf{P} & \textbf{Measure} \\
+\hline
+T1 & Keycloak takes more time than planned. The sprint 3 goal was the Keycloak flow, and two Keycloak tasks moved on to sprint 4. & 3 & 3 & 9 & The realm is kept in a file in the repository, so everyone gets the same setup. The apps log in through standard libraries instead of our own code. The features we use and do not use are listed in appendix 2.1. \\
+\hline
+T2 & The deployed system behaves differently from the local one. It has already happened once, when Keycloak started without our realm on Coolify (report chapter 8). & 3 & 3 & 9 & CI builds and tests before anything is deployed (appendix 10.3). We test on the deployed system and not only locally, and the realm file is now part of the Keycloak image. \\
+\hline
+T3 & Everything runs on one server that one group member owns. If it fails before a demo or the exam, the system is down. & 1 & 10 & 10 & The whole system starts locally with one docker compose command, so it can be shown from a laptop. The compose files and the realm file are in the repository, so the system can be set up on another server. \\
+\hline
+T4 & Keycloak is on a public server without brute force detection, a password policy or email verification (appendix 2.1). Anyone can register with an address they do not own. & 2 & 3 & 6 & Turn on brute force detection and a password policy in the realm file. The zombie user problem has its own card (PMU-80). \\
+\hline
+T5 & The apps and the API drift apart when the API changes. & 1 & 3 & 3 & The API client is generated from the API, and the type check in CI fails if an app still uses something that was removed (appendix 2.1). \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Risk Matrix}
+Table~\ref{tab:risk-matrix} places each risk by probability and consequence. The further up and to the right a risk is, the larger it is.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}r|*{3}{>{\centering\arraybackslash}p{2.6cm}|}@{}}
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{S = 1} & \multicolumn{1}{c}{S = 2} & \multicolumn{1}{c}{S = 3} \\
+\cline{2-4}
+K = 10 & T3 & W3, W5 & W1, W2 \\
+\cline{2-4}
+K = 3 & R3, R4, T5 & R1, R2, T4 & W4, T1, T2 \\
+\cline{2-4}
+K = 1 & & & \\
+\cline{2-4}
+\end{tabular}
+\caption{Risk matrix. S is probability and K is consequence.}
+\label{tab:risk-matrix}
+\end{table}
+
+Eight risks have P of 9 or more: W1 to W5, T1, T2 and T3. The two largest, W1 and W2, are both about time, and they pull in different directions. Sprint 4 is used for the report, which lowers W2 but leaves only sprint 5 for the must-have requirements in W1. We accept that, because a system without a report cannot be handed in, while a should-have requirement can be left out.
+
+None of the risks have K = 1. We have not listed small risks the plan can absorb, because they do not need a measure.
+
+\section{Follow-up}
+We go through the list at each sprint planning. A risk that has happened gets a higher probability, a measure that has worked lowers it, and new risks are added with an ID that is not reused. A change to the list gets a new version in the version history.
+
+\printbibliography
 
 \end{document}

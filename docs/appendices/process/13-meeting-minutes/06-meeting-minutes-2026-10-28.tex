@@ -1,0 +1,138 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 06-meeting-minutes-2026-10-28.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{13.6 Mødereferat -- 28-10}
+\author{SW4PRJ4 -- Group 3}
+\date{28-10-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 28-10-2026 (onsdag)
+
+\textbf{Tid:} 10:00
+
+\textbf{Sted:} Incuba
+
+\textbf{Referent:} Frederik
+
+\section*{Deltagere}
+
+\begin{itemize}
+    \item Alexander H
+    \item Alexander D
+    \item Frederik
+    \item Ida D
+    \item Ida F
+    \item Malthe
+    \item Marie
+    \item Oskar
+\end{itemize}
+
+\textbf{Fraværende:}
+
+\begin{itemize}
+    \item Ingen
+\end{itemize}
+
+\section*{Dagsorden}
+
+\begin{enumerate}
+    \item Sprint review -- sprint 3
+    \item Retrospective
+    \item Sprint planning -- sprint 4
+    \item Næste vejledermøde
+    \item Eventuelt
+\end{enumerate}
+
+\section*{Noter}
+\subsection*{1. Sprint review}
+
+\begin{itemize}
+    \item Velocity for sprint 3: committed 31,5 point, done 24,5 point, spillover 7 point, scope 91,5 point.
+    \item PMU-70, PMU-74, PMU-75, PMU-76, PMU-81, PMU-82 og PMU-85 er merget og flyttes til \emph{Done}.
+    \item PMU-77, PMU-78, PMU-79 og PMU-80 er ikke færdige og går videre til sprint 4.
+    \item Kaneo er opdateret, så det, vi ikke nåede, står på boardet.
+    \item Alle kort i \emph{In Review} er godkendt.
+    \item Vi viste ikke en demo i dag. Den bliver i stedet vist til næste sprint review, når de resterende kort er færdige, og diagrammerne er lavet.
+\end{itemize}
+
+\subsection*{2. Retrospective}
+
+\begin{itemize}
+    \item \textbf{Opfølgning:} Vi har arbejdet test først, og det fungerede rigtig godt.
+    \item \textbf{Mange PR'er samme dag:} Det skyldes, at vi kun arbejder sammen om onsdagen, og derfor bliver det meste merget på én dag.
+    \item \textbf{Rapportkortene:} Det er hovedsageligt Frederik og Oskar, der har haft travlt i sprinten, og derfor er rapportkortene ikke nået. Der bliver fokuseret mere på rapporten i sprint 4.
+    \item \textbf{Hvad gik godt?}
+    \begin{itemize}
+        \item Vi har fået en bedre forståelse af Keycloak.
+        \item Gruppefordelingen fungerer godt. Undergrupperne har en god størrelse, og opgaverne er godt spredt ud.
+    \end{itemize}
+    \item \textbf{Hvad gik skidt?}
+    \begin{itemize}
+        \item Lokalet i Incuba ligger langt fra kaffemaskinen.
+        \item Vi opdagede, at controllerne kaldte repository-klasserne direkte og dermed ikke gik gennem services, som arkitekturen kræver. Det er rettet i PMU-87.
+        \item Integrationstestene er skrevet uden en egentlig plan, fordi vi endnu ikke har haft om integrationstest i undervisningen.
+    \end{itemize}
+    \item \textbf{Hvad ændrer vi?}
+    \begin{itemize}
+        \item Vi bruger dependency trees og det øvrige fra undervisningen i softwaretest, når vi skriver tests fremover.
+        \item Hver person flytter selv sine kort på boardet, når de skifter status.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{3. Sprint planning}
+
+\begin{itemize}
+    \item Sprint 4 bliver en sprint på én uge (28/10 -- 3/11), så vi kan få de sidste ting fra sprint 3 gjort færdige.
+    \item \textbf{Sprint goal:} De ufærdige kort fra sprint 3 gøres færdige, og rapporten bringes op på niveau med koden med diagrammer og gennemskrevne dokumenter.
+    \item \textbf{Committed:}
+    \item Indhold i sprinten:
+    \begin{itemize}
+        \item Diagrammer generelt, fx flowdiagrammer, sekvensdiagrammer og pakkediagram.
+        \item Dokumenterne gennemgås, og der skrives mere i dem.
+        \item De kort fra sprint 3, vi ikke nåede.
+        \item Databasen skal på plads inden mødet med vejlederen tirsdag.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{4. Næste vejledermøde}
+
+\begin{itemize}
+    \item Næste vejledermøde er tirsdag 3/11.
+    \item Spørgsmål til vejlederen:
+    \begin{itemize}
+        \item Hvilke diagrammer forventes der i rapporten ud over flow-, sekvens- og pakkediagrammer?
+        \item Vil han anbefale mere kode i en sprint på én uge, eller skal den bruges på rapporten?
+        \item Hvad anbefaler han, at vi går i gang med i næste sprint?
+    \end{itemize}
+\end{itemize}
+
+\section*{Beslutninger}
+
+\begin{itemize}
+    \item Spillover-kortene PMU-77 -- PMU-80 beholder label \emph{Sprint 3} og får \emph{Sprint 4} oveni.
+    \item Sprint 4 forkortes til én uge (28/10 -- 3/11), så de resterende kort fra sprint 3 og rapportarbejdet kan blive færdigt, inden vi starter på ny funktionalitet.
+    \item Demoen udskydes til næste sprint review, så den kan vise det færdige flow sammen med diagrammerne.
+\end{itemize}
+
+\section*{Opgaver}
+
+\begin{itemize}
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Flyt kort på boardet, når de skifter status \textbf{Frist:} løbende
+    \item \textbf{Ansvarlig:} Alle \textbf{Opgave:} Database på plads til vejledermødet \textbf{Frist:} tirsdag 3/11
+\end{itemize}
+
+\section*{Næste møde}
+
+\begin{itemize}
+    \item Tirsdag 3/11: vejledermøde.
+    \item Onsdag 4/11: sprint review med demo, retrospective og sprint planning for sprint 5.
+\end{itemize}
+
+\end{document}

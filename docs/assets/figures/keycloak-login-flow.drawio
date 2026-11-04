@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" version="26.0.0">
+  <diagram id="keycloak-login-sequence" name="1. Sekvensdiagram (OIDC PKCE)">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+<mxCell id="title_banner" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Keycloak Login Flow &amp;#x2014; OpenID Connect (OIDC) &amp;amp; PKCE&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;PrepMeUp Systemarkitektur: Autentificeringsflow mellem Mobil Klient / Web og Keycloak IdP (Realm: prepmeup)&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0F172A;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
+      <mxGeometry x="40" y="30" width="1340" height="70" as="geometry" />
+    </mxCell>
+<mxCell id="phase_0" value="" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#F0F7FF;strokeColor=#B3D7FF;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#B3D7FF;" vertex="1" parent="1">
+          <mxGeometry x="50" y="215" width="980" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="phase_0_lbl" value="&lt;b&gt;FASE 1: Initialisering &amp; OIDC Authorization Request (PKCE)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#B3D7FF;fontSize=11;fontFamily=Arial;" vertex="1" parent="phase_0">
+          <mxGeometry x="5" y="0" width="600" height="26" as="geometry" />
+        </mxCell>
+<mxCell id="phase_1" value="" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#FAF5FF;strokeColor=#D8B4FE;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#D8B4FE;" vertex="1" parent="1">
+          <mxGeometry x="50" y="455" width="980" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="phase_1_lbl" value="&lt;b&gt;FASE 2: Brugerautentificering hos Keycloak (Direkte browser-interaktion)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#D8B4FE;fontSize=11;fontFamily=Arial;" vertex="1" parent="phase_1">
+          <mxGeometry x="5" y="0" width="600" height="26" as="geometry" />
+        </mxCell>
+<mxCell id="phase_2" value="" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#FDE68A;" vertex="1" parent="1">
+          <mxGeometry x="50" y="730" width="980" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="phase_2_lbl" value="&lt;b&gt;FASE 3: Authorization Code Grant, PKCE Validering &amp; Token Udstedelse&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#FDE68A;fontSize=11;fontFamily=Arial;" vertex="1" parent="phase_2">
+          <mxGeometry x="5" y="0" width="600" height="26" as="geometry" />
+        </mxCell>
+<mxCell id="ll_user" value="Bruger / Slutbruger&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#555;&quot;&gt;(Kunde eller Admin)&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;participant=umlActor;verticalAlign=bottom;spacingBottom=-12;labelBackgroundColor=#ffffff;fillColor=#ECEFF1;strokeColor=#455A64;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="125" width="140" height="950" as="geometry" />
+        </mxCell>
+<mxCell id="ll_app" value="PrepMeUp Klient&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#1565C0;&quot;&gt;(Mobil App / Admin Web)&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="125" width="190" height="950" as="geometry" />
+        </mxCell>
+<mxCell id="ll_kc" value="Keycloak Auth Server&#xa;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#6A1B9A;&quot;&gt;(IdP &amp;#x2014; Realm: prepmeup)&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;fillColor=#F3E5F5;strokeColor=#6A1B9A;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="125" width="200" height="950" as="geometry" />
+        </mxCell>
+<mxCell id="act_user_1" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_user">
+          <mxGeometry x="64" y="125" width="12" height="35" as="geometry" />
+        </mxCell>
+<mxCell id="act_app_1" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_app">
+          <mxGeometry x="89" y="125" width="12" height="140" as="geometry" />
+        </mxCell>
+<mxCell id="act_kc_1" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_kc">
+          <mxGeometry x="94" y="235" width="12" height="220" as="geometry" />
+        </mxCell>
+<mxCell id="act_user_2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_user">
+          <mxGeometry x="64" y="425" width="12" height="35" as="geometry" />
+        </mxCell>
+<mxCell id="act_app_2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_app">
+          <mxGeometry x="89" y="635" width="12" height="290" as="geometry" />
+        </mxCell>
+<mxCell id="act_kc_2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" vertex="1" parent="ll_kc">
+          <mxGeometry x="94" y="730" width="12" height="120" as="geometry" />
+        </mxCell>
+<mxCell id="m1" value="1. Bruger åbner app og trykker 'Log ind'" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="250" as="sourcePoint" />
+            <mxPoint x="515" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m2_self" value="2. Generér PKCE (code_verifier &amp; challenge [S256]) + unikt state" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="280" as="sourcePoint" />
+            <mxPoint x="515" y="320" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="555" y="280" />
+              <mxPoint x="555" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m3" value="3. GET /protocol/openid-connect/auth (client_id=prepmeup-mobile, redirect_uri, code_challenge, state)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="360" as="sourcePoint" />
+            <mxPoint x="880" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m4" value="4. Viser Keycloak login-formular (i sikker browser-session)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="490" as="sourcePoint" />
+            <mxPoint x="150" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m5" value="5. Indtaster legitimationsoplysninger (e-mail &amp; adgangskode)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="550" as="sourcePoint" />
+            <mxPoint x="880" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m6_self" value="6. Verificerer bruger &amp; password; indlæser realm-roller" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="590" as="sourcePoint" />
+            <mxPoint x="880" y="630" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="920" y="590" />
+              <mxPoint x="920" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m7_self" value="7. Opretter aktiv SSO-session &amp; udsteder midlertidig Authorization Code" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="650" as="sourcePoint" />
+            <mxPoint x="880" y="686" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="920" y="650" />
+              <mxPoint x="920" y="686" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m8" value="8. Redirect til callback: prepmeup://auth/callback?code=AUTH_CODE&amp;state=STATE" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="760" as="sourcePoint" />
+            <mxPoint x="515" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m9_self" value="9. Validerer modtaget state mod forventet lokalt state (CSRF-beskyttelse)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="795" as="sourcePoint" />
+            <mxPoint x="515" y="831" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="555" y="795" />
+              <mxPoint x="555" y="831" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m10" value="10. POST /protocol/openid-connect/token (code, code_verifier, client_id, redirect_uri)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="855" as="sourcePoint" />
+            <mxPoint x="880" y="855" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m11_self" value="11. PKCE Validering: Tjekker SHA256(code_verifier) == code_challenge" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="895" as="sourcePoint" />
+            <mxPoint x="880" y="931" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="920" y="895" />
+              <mxPoint x="920" y="931" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m12" value="12. Returnerer tokens: Access Token (JWT), ID Token (OIDC) &amp; Refresh Token" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="955" as="sourcePoint" />
+            <mxPoint x="515" y="955" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m13_self" value="13. Gemmer tokens i SecureStore &amp; opdaterer AuthProvider tilstand" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="995" as="sourcePoint" />
+            <mxPoint x="515" y="1035" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="555" y="995" />
+              <mxPoint x="555" y="1035" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+<mxCell id="m14" value="14. Login fuldført: Viser appens startskærm for brugeren" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1045" as="sourcePoint" />
+            <mxPoint x="150" y="1045" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+<mxCell id="note_pkce" value="&lt;b style=&quot;color:#B45309;&quot;&gt;PKCE Sikkerhed (RFC 7636):&lt;/b&gt;&lt;br&gt;Offentlige klienter (mobile apps) kan ikke beskytte en &lt;i&gt;client_secret&lt;/i&gt;. PKCE forhindrer opsnapning af auth-koden ved at binde udstedelsen til &lt;i&gt;code_verifier&lt;/i&gt;, som kun appen kender." style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="240" width="300" height="140" as="geometry" />
+        </mxCell>
+<mxCell id="note_state" value="&lt;b style=&quot;color:#B45309;&quot;&gt;CSRF-Beskyttelse via State:&lt;/b&gt;&lt;br&gt;&lt;i&gt;state&lt;/i&gt; sendes til Keycloak og returneres uændret i callbacket. Appen validerer at det matcher det lokalt gemte state, så login-svaret med garanti stammer fra appens egen forespørgsel." style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="480" width="300" height="120" as="geometry" />
+        </mxCell>
+<mxCell id="note_jwt" value="&lt;b style=&quot;color:#B45309;&quot;&gt;Tokens &amp;amp; Sikker Lagring:&lt;/b&gt;&lt;br&gt;Tokens udstedes kryptografisk signeret af Keycloak (RS256). Mobilklienten gemmer dem i enhedens hardware-krypterede nøglering (&lt;i&gt;expo-secure-store&lt;/i&gt;)." style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="780" width="300" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="keycloak-login-flowchart" name="2. Aktivitetsflow (Flowchart)">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+<mxCell id="fc_title_banner" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Keycloak Login Flowchart &amp;#x2014; Aktivitets- &amp;amp; Beslutningsproces&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Logisk procesforløb: PKCE-sikkerhed, browser-omdirigering og token-udveksling i PrepMeUp&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
+      <mxGeometry x="40" y="30" width="1060" height="70" as="geometry" />
+    </mxCell>
+<mxCell id="lane_client" value="PrepMeUp Klient (Mobil App / Web)" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="125" width="500" height="970" as="geometry" />
+        </mxCell>
+<mxCell id="lane_kc" value="Keycloak Identity Provider (Realm: prepmeup)" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="580" y="125" width="520" height="970" as="geometry" />
+        </mxCell>
+<mxCell id="node_start" value="Start: Bruger vælger&#xa;'Log ind'" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="160" y="45" width="180" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="node_pkce_gen" value="Generér PKCE &amp; CSRF state:&#xa;• code_verifier (kryptografisk tilfældig)&#xa;• code_challenge = SHA256(verifier)&#xa;• Unikt CSRF state parameter" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_client">
+          <mxGeometry x="120" y="115" width="260" height="65" as="geometry" />
+        </mxCell>
+<mxCell id="node_open_browser" value="Åbn Keycloak login i WebBrowser&#xa;med client_id, redirect_uri,&#xa;code_challenge &amp; state" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="125" y="210" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_callback" value="Modtag redirect-callback&#xa;og udtræk parametre (code, state)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="125" y="545" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_dec_state" value="Matcher modtaget&#xa;state det gemte state?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="145" y="630" width="210" height="70" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_err_csrf" value="Afbryd login: Muligt CSRF!&#xa;Vis sikkerhedsfejl" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_client">
+          <mxGeometry x="15" y="642" width="110" height="46" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_post_token" value="Send POST til /token&#xa;med code &amp; code_verifier" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="125" y="730" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_save_token" value="Gem tokens i SecureStore&#xa;og opdater AuthProvider" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
+          <mxGeometry x="125" y="825" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_client_finish" value="Slut: Bruger logget ind&#xa;Aktiv session i appen" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
+          <mxGeometry x="140" y="905" width="220" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_display" value="Vis Keycloak login-formular&#xa;(E-mail &amp; Password)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="135" y="210" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_submit" value="Bruger indtaster legitimationsoplysninger&#xa;og indsender formular" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="135" y="295" width="250" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_dec_creds" value="Er e-mail &amp; kodeord&#xa;korrekte?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_kc">
+          <mxGeometry x="155" y="370" width="210" height="70" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_err_creds" value="Vis fejl på login-side&#xa;(Prøv igen)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_kc">
+          <mxGeometry x="390" y="382" width="115" height="46" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_gen_code" value="Opret SSO-session &amp; generér&#xa;midlertidig Authorization Code" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
+          <mxGeometry x="135" y="465" width="250" height="50" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_redirect" value="Redirect browser til app-callback:&#xa;prepmeup://auth/callback?code=...&amp;state=..." style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=10;fontColor=#1E293B;" vertex="1" parent="lane_kc">
+          <mxGeometry x="130" y="545" width="260" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_dec_pkce" value="Stemmer SHA256(verifier)&#xa;med challenge?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_kc">
+          <mxGeometry x="155" y="722.5" width="210" height="70" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_err_pkce" value="400 Bad Request&#xa;(Invalid Grant / PKCE fejl)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_kc">
+          <mxGeometry x="385" y="735" width="125" height="45" as="geometry" />
+        </mxCell>
+<mxCell id="node_kc_issue_tokens" value="Udsted tokens med claims:&#xa;• Access Token JWT (aud: prepmeup-api)&#xa;• ID Token &amp; Refresh Token" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_kc">
+          <mxGeometry x="135" y="825" width="250" height="55" as="geometry" />
+        </mxCell>
+<mxCell id="fc_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_start" target="node_pkce_gen">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_pkce_gen" target="node_open_browser">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e3" value="Omdirigér til IdP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="node_open_browser" target="node_kc_display">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_kc_display" target="node_kc_submit">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_kc_submit" target="node_kc_dec_creds">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e6_yes" value="Ja (Gyldig)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_kc_dec_creds" target="node_kc_gen_code">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e6_no" value="Nej (Ugyldig)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="node_kc_dec_creds" target="node_kc_err_creds">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e6_retry" value="Prøv igen" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" edge="1" parent="1" source="node_kc_err_creds" target="node_kc_display">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1085" y="362.5" /></Array></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_kc_gen_code" target="node_kc_redirect">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e8" value="prepmeup://auth/callback?code=...&amp;state=..." style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="node_kc_redirect" target="node_client_callback">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_client_callback" target="node_client_dec_state">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e10_no" value="Nej (Mismatch)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="node_client_dec_state" target="node_client_err_csrf">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e10_yes" value="Ja (Gyldigt)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_client_dec_state" target="node_client_post_token">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e11" value="Back-channel POST /token (code + verifier)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="node_client_post_token" target="node_kc_dec_pkce">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e12_yes" value="Ja (Verificeret)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_kc_dec_pkce" target="node_kc_issue_tokens">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e12_no" value="Nej (Ugyldig PKCE)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="node_kc_dec_pkce" target="node_kc_err_pkce">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e13" value="Returnér JWT &amp; Refresh Token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="node_kc_issue_tokens" target="node_client_save_token">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+<mxCell id="fc_e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="node_client_save_token" target="node_client_finish">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -55,7 +55,7 @@
                 <mxCell id="rp-p3" parent="rp-hh" style="html=1;strokeColor=#173330;fontColor=#173330;shape=umlActor;fillColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;fontSize=12;" value="" vertex="1">
                     <mxGeometry height="38" width="18" x="272" y="136" as="geometry"/>
                 </mxCell>
-                <mxCell id="rp-hhl" parent="rp-hh" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Customer&lt;/b&gt; (household)" vertex="1">
+                <mxCell id="rp-hhl" parent="rp-hh" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Customer&lt;/b&gt;" vertex="1">
                     <mxGeometry height="24" width="300" y="200" as="geometry"/>
                 </mxCell>
                 <mxCell id="rp-phl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Customer app&lt;/b&gt; &lt;i&gt;(Android)&lt;/i&gt;" vertex="1">
@@ -76,7 +76,7 @@
                 <mxCell id="rp-ph-bell" parent="rp-ph" style="html=1;strokeWidth=2;strokeColor=#173330;fillColor=none;shadow=0;dashed=0;shape=mxgraph.ios7.icons.bell;" value="" vertex="1">
                     <mxGeometry height="23" width="24" x="20" y="77" as="geometry"/>
                 </mxCell>
-                <mxCell id="rp-ph-notet" parent="rp-ph" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=10;align=left;verticalAlign=middle;" value="Crispbread expires soon. Reorder planned." vertex="1">
+                <mxCell id="rp-ph-notet" parent="rp-ph" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=10;align=left;verticalAlign=middle;" value="Your order expires soon. Next order planned." vertex="1">
                     <mxGeometry height="54" width="104" x="50" y="62" as="geometry"/>
                 </mxCell>
                 <mxCell id="rp-ph-r0" parent="rp-ph" style="html=1;strokeColor=#173330;fontColor=#173330;rounded=1;arcSize=12;fillColor=#FFFFFF;" value="" vertex="1">
@@ -115,7 +115,7 @@
                 <mxCell id="rp-system" parent="1" style="html=1;strokeColor=#173330;fontColor=#173330;whiteSpace=wrap;rounded=1;arcSize=6;container=1;collapsible=0;fillColor=#E8F0EE;strokeWidth=2;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=6;" value="PrepMeUp" vertex="1">
                     <mxGeometry height="230" width="260" x="740" y="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="rp-api" parent="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;whiteSpace=wrap;rounded=1;fillColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;Back-end API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;calculates packages, schedules reorders before expiry, sends notifications&lt;/font&gt;" vertex="1">
+                <mxCell id="rp-api" parent="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;whiteSpace=wrap;rounded=1;fillColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;Back-end API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;stores orders, plans the next order before expiry, sends notifications&lt;/font&gt;" vertex="1">
                     <mxGeometry height="70" width="220" x="20" y="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="rp-db" parent="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;whiteSpace=wrap;shape=cylinder3;boundedLbl=1;size=10;fillColor=#FFFFFF;fontSize=12;" value="Database" vertex="1">
@@ -310,7 +310,7 @@
                 <mxCell id="rp-tr-w1" parent="rp-truck" style="html=1;strokeColor=#173330;fontColor=#173330;ellipse;fillColor=#FFFFFF;strokeWidth=2;" value="" vertex="1">
                     <mxGeometry height="20" width="20" x="98" y="44" as="geometry"/>
                 </mxCell>
-                <mxCell id="rp-dl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=11;align=center;verticalAlign=middle;" value="packages delivered" vertex="1">
+                <mxCell id="rp-dl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#173330;whiteSpace=wrap;fontSize=11;align=center;verticalAlign=middle;" value="orders delivered" vertex="1">
                     <mxGeometry height="20" width="160" x="300" y="790" as="geometry"/>
                 </mxCell>
                 <mxCell id="rp-e-worry" edge="1" parent="1" source="rp-worry" style="html=1;strokeColor=#173330;fontColor=#173330;dashed=1;endArrow=none;exitX=0.4;exitY=0.95;exitDx=0;exitDy=0;entryX=0.3333;entryY=0;entryDx=0;entryDy=0;" target="rp-hh" value="">
@@ -322,22 +322,22 @@
                 <mxCell id="rp-e-adminuses" edge="1" parent="1" source="rp-admin" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.48;entryDx=0;entryDy=0;" target="rp-br" value="">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="rp-e-profile" edge="1" parent="1" source="rp-ph" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=1;exitY=0.28125;exitDx=0;exitDy=0;entryX=0;entryY=0.26087;entryDx=0;entryDy=0;" target="rp-system" value="household profile,&lt;br&gt;diet, changes">
+                <mxCell id="rp-e-profile" edge="1" parent="1" source="rp-ph" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=1;exitY=0.28125;exitDx=0;exitDy=0;entryX=0;entryY=0.26087;entryDx=0;entryDy=0;" target="rp-system" value="account, order contents,&lt;br&gt;pause/cancel">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint y="-20" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="rp-e-notify" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0;exitY=0.56522;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="rp-ph" value="notifications,&lt;br&gt;delivery status">
+                <mxCell id="rp-e-notify" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0;exitY=0.56522;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="rp-ph" value="notifications,&lt;br&gt;order status">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint y="20" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="rp-e-manage" edge="1" parent="1" source="rp-br" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0;exitY=0.36;exitDx=0;exitDy=0;entryX=1;entryY=0.26087;entryDx=0;entryDy=0;" target="rp-system" value="package types,&lt;br&gt;mark delivery sent">
+                <mxCell id="rp-e-manage" edge="1" parent="1" source="rp-br" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0;exitY=0.36;exitDx=0;exitDy=0;entryX=1;entryY=0.26087;entryDx=0;entryDy=0;" target="rp-system" value="package types,&lt;br&gt;mark order sent">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint y="-20" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="rp-e-tosend" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=1;exitY=0.56522;exitDx=0;exitDy=0;entryX=0;entryY=0.64;entryDx=0;entryDy=0;" target="rp-br" value="deliveries to send">
+                <mxCell id="rp-e-tosend" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=1;exitY=0.56522;exitDx=0;exitDy=0;entryX=0;entryY=0.64;entryDx=0;entryDy=0;" target="rp-br" value="orders to send">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint y="14" as="offset"/>
                     </mxGeometry>
@@ -347,7 +347,7 @@
                         <mxPoint x="70" y="40" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="rp-e-charge" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="rp-pay" value="charge per&lt;br&gt;delivery">
+                <mxCell id="rp-e-charge" edge="1" parent="1" source="rp-system" style="html=1;strokeColor=#173330;fontColor=#173330;endArrow=block;endSize=8;fontSize=11;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="rp-pay" value="subscription&lt;br&gt;fee">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="40" as="offset"/>
                     </mxGeometry>

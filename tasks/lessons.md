@@ -51,3 +51,15 @@
 **Pattern:** Skrev gruppesangen (PMU-85) med lange linjer på 8-12 ord. Frederik: "korte sætninger og ikke lange tak. Så lyder det bedre" og "maks 3-4 ord per linje".
 **Rule:** Skriv sangtekster til Suno med højst 3-4 ord pr. linje. Del lange sætninger over flere linjer eller skær dem til. Hold citater korte nok til at passe i samme mål.
 **Context:** PMU-85, `docs/standalone/group-song.tex`. Stil: dansk klub anno 2010'erne, 128 bpm.
+
+## 2026-11-02 — Vejledermøde og sprintskifte er to møder
+
+**Pattern:** Lagde sprint review, retrospective og planning ind i dagsordenen til vejledermødet tirsdag 3/11, fordi Frederik skrev "vi afslutter sprint 4 i morgen". Referatet 13.6 sagde allerede onsdag 4/11. Frederik: "Tirsdag er bare med vejleder."
+**Rule:** Læg aldrig review, retro og planning i en vejledermøde-dagsorden. De holdes om onsdagen i en egen dagsorden. Tjek "Næste møde" i seneste referat, før møder lægges sammen.
+**Context:** `meeting-docs`, `12-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
+
+## 2026-11-02 — Ingen PMU-numre i dagsordener
+
+**Pattern:** Skrev Kaneo-numre (PMU-xx) ved hvert punkt i dagsordenerne til 3/11 og 4/11. Frederik: "Du behøver ikke skrive PMU'er på."
+**Rule:** Skriv ikke PMU-numre i dagsordener. Omtal kortet ved dets emne ("kortet om zombie-brugere", "databasen") og angiv point, hvor det er relevant.
+**Context:** `meeting-docs`, `12-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.

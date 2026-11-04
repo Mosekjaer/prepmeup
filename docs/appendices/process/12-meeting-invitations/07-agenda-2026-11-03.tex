@@ -1,0 +1,48 @@
+% Standalone appendix document - compiles on its own:
+%   latexmk -pdf -outdir=build 07-agenda-2026-11-03.tex
+\documentclass[a4paper,11pt]{article}
+\usepackage[danish]{babel}
+\usepackage{../../appendix-style}
+
+\title{12.7 Dagsorden -- 03-11}
+\author{SW4PRJ4 -- Group 3}
+\date{03-11-2026}
+
+\begin{document}
+\maketitle
+
+\section*{Mødeinformation}
+
+\textbf{Dato:} 03-11-2026 (tirsdag)
+
+\textbf{Tid:} 13:00
+
+\textbf{Sted:} 5125-110
+
+\textbf{Deltagere:} Gruppe 3 og vejleder Michel
+
+\section*{Dagsordenspunkter}
+
+\begin{enumerate}
+    \item \textbf{Status siden sidste vejledermøde (6/10)}
+    \begin{itemize}
+        \item I sprint 3 fik vi login med Keycloak i kunde-appen og admin-panelet. En ny kunde kan oprette sig med navn og adresse, og backend kender forskel på en kunde og en admin.
+        \item Kunde-appen husker nu login sikkert på telefonen, og admin-panelet er deployet.
+        \item Controllerne går nu gennem services og ikke direkte til databasen.
+        \item Vi har tegnet diagrammer i draw.io over login med Keycloak, onboarding af kunde og admin, hentning af items, hvordan en kunde bliver gemt, pakkerne i koden, pipeline og rollback, sprint-forløbet og et rich picture. De fleste er sat ind i rapporten og bilagene. Til login, onboarding og hentning af items mangler vi stadig at skrive teksten.
+        \item I rapporten har vi skrevet kapitel 1 og risikoanalysen. Vi har også gennemgået den tekniske analyse, kravspecifikationen og accepttesten.
+        \item Vi lovede at have abonnementer og ordrer i databasen til i dag. Vi fortæller, hvor langt vi er.
+        \item Sprint 3 sluttede med 24,5 af 31,5 point. Vi gjorde sprint 4 en uge kort, så vi kunne gøre kortene fra sprint 3 færdige og få rapporten til at passe med koden.
+    \end{itemize}
+    \item \textbf{Spørgsmål til vejleder}
+    \begin{enumerate}
+        \item Hvilke diagrammer forventes der i rapporten ud over flow-, sekvens- og pakkediagrammer?
+        \item Skal en sprint på én uge bruges på mere kode eller på rapporten?
+        \item Hvad synes han, vi skal gå i gang med i sprint 5?
+        \item Vi vil gerne kun lave must-have-kravene færdige og droppe should-haves (FR-07 til FR-11 og FR-20) og could-haves. Så kan sprint 6 bruges på accepttest og rapport. Er det i orden, hvis vi begrunder det i diskussionen?
+    \end{enumerate}
+    \item \textbf{Næste vejledermøde}
+    \item \textbf{Eventuelt}
+\end{enumerate}
+
+\end{document}

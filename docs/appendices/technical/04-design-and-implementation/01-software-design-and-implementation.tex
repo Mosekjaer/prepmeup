@@ -6,93 +6,93 @@
 \addbibresource{../../../assets/references.bib}
 
 \title{4.1 Software Design and Implementation}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
 \maketitle
 
+\begin{versionhistory}
+  1.0 & 21-10-2026 & Group 3 & Roles, onboarding and admin panel login \\
+  1.1 & 28-10-2026 & Group 3 & Added flow for saving customer details \\
+  1.2 & 28-10-2026 & Group 3 & Added where the mobile app keeps the token \\
+  1.3 & 28-10-2026 & Group 3 & Simpler text, corrected roles and token renewal \\
+\end{versionhistory}
+
 \section{Roles and Claims}
 This section describes how the API tells a customer from an administrator (NFR-10). The login flow itself is in appendix 3.1.
 
 \subsection{Realm Roles}
-We have two roles: household and admin.
-\begin{itemize}
-    \item A household is a customer who owns a household and a subscription.
-    \item An admin is someone who works in the admin panel.
-\end{itemize}
+We have two roles, household and admin. The household role is for customers. It is still called household from before the requirements were changed (appendix 1.2). An admin is someone who works in the admin panel.
 
-\textbf{How a user gets a role}
+\subsubsection{How a User Gets a Role}
+Every new user gets the household role automatically, and only an admin can give someone the admin role. So a customer only has the household role, while an admin has the household role \textit{and} the admin role.
 
-Every new user gets the household role automatically, and only an admin can give someone the admin role.
-So plainly put: a household is only a household, whereas an admin is a household \textit{and} an admin.
+We will create the first admin in the system by hand. After the release, new admins can only be added by an existing admin.
 
-Note that we will create the first admin in the system manually. After the system's release, new admins can only be added by an existing admin.
+\subsubsection{Choice of Role Type}
+Keycloak has two kinds of roles. A realm role belongs to the whole realm, so every app in it sees the same role. A client role belongs to one app only \cite{keycloak-server-admin-guide}.
 
-\textbf{Choice of role types from Keycloak}
+We chose realm roles for two reasons. The roles say what a person is, not which app they are using. Also, the API does not need to know which app a token came from to decide if a request is allowed.
 
-Keycloak has two kinds of roles.
-\begin{itemize}
-    \item A realm role belongs to the whole realm, so every app in it sees the same role.
-    \item A client role belongs to one app only \cite{keycloak-server-admin-guide}.
-\end{itemize}
-We have chosen to use realm roles because:
-\begin{itemize}
-    \item The roles say what a person is, not which app they are using.
-    \item The API does not need to know which app a token came from to decide if a request is allowed.
-\end{itemize}
+\subsubsection{Risk}
+There is a risk we accept. Both apps are public clients, and their tokens are meant for the same API. A customer can therefore log in through the admin panel and get a valid token. What \textit{stops} them is the admin role, which the API checks on every admin endpoint. Without the role the API answers 403 (NFR-10). The admin panel should also send users without the role away, but that is only for the user's benefit. It is not what keeps the data safe.
 
-\textbf{Risk}
+\subsubsection{How the API Reads the Role}
+Keycloak puts the realm roles in the token as a list called roles inside a claim called realm\_access. ASP.NET Core does not understand this format, so a check like ``is this user an admin'' would always fail. We therefore have a claims transformation in the API that runs on every authenticated request. It reads the list of roles from the realm\_access claim and adds each role as an ordinary role claim that ASP.NET Core understands. It skips roles the user already has, and it does nothing if the claim is missing or cannot be read.
 
-There is a risk we accept: both apps are public clients, and their tokens are meant for the same API. A customer can therefore log in through the admin panel and get a valid token. What \textit{stops} them is the admin role, which the API checks on every admin endpoint and answers with 403 (NFR-10). The admin panel should also send users without the role away, but that is only for the user's benefit. It is not what keeps the data safe.
-
-\textbf{How the role appears in the token and how the API reads it}
-
-Keycloak puts the realm roles in the token as a list called roles inside a claim called realm\_access. ASP.NET Core does not understand this format, so a check like "is this user an admin" would always fail. We therefore have a claims transformation in the API that runs on every authenticated request:
-\begin{itemize}
-    \item It reads the list of roles from the realm\_access claim.
-    \item It adds each role as an ordinary role claim that ASP.NET Core understands.
-    \item It skips roles the user already has, and it does nothing if the claim is missing or cannot be read.
-\end{itemize}
 After this, the controllers can protect an endpoint with the admin role in the normal ASP.NET Core way, without knowing anything about Keycloak's token format.
 
-\subsection{Onboarding}
+\subsection{Onboarding Status}
+We store the onboarding status only in the database. So whenever the client needs to know if the user has finished onboarding, it has to ask the API.
 
-\textbf{Onboarding status}
-
-We have chosen that onboarding status is solely stored in the database. So at any point when the Client needs to know the onboarding status of the user, it has to make a call to the API.
-We are aware that this causes extra "unnecessary" calls to the database, which hurts performance. However our choice satisfies clean architecture in the sense that data is kept in domain (in backend) \textit{and} that avoid flooding the token with information. This is good for maintainability of our system.
+This gives some extra calls to the database, which costs performance. We accept that. It fits clean architecture, because the data stays in the domain in the backend, and we avoid filling the token with information. That makes the system easier to maintain.
 
 \section{Keycloak}
 
-\textbf{Login library in the admin panel}
+\subsection{Login Library in the Admin Panel}
+The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the OpenID Connect standard and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps only differ in how they redirect and where they keep the token.
 
-The admin panel logs in with react-oidc-context, which is built on oidc-client-ts. It follows the standard OpenID Connect and does not depend on Keycloak. The mobile app also uses standard OpenID Connect, so the two apps differ only in how they redirect and where they keep the token.
+\subsection{Where the Admin Panel Keeps the Token}
+The token is kept in memory only, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
 
-\textbf{Where the admin panel keeps the token}
+\subsection{Where the Mobile App Keeps the Token}
+On the phone we keep the refresh token in Expo SecureStore. On Android SecureStore stores the value in SharedPreferences, encrypted with a key from the Android Keystore. On iOS it stores the value with the Keychain services \cite{expo-securestore}. The key in the Android Keystore never enters the process of the app \cite{android-keystore}. The access token is only kept in memory. When the app starts, it uses the stored refresh token to get a new access token.
 
-The token is kept in memory only, as in the mobile app, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
+A browser has no such storage. A script running on the page can read everything in web storage \cite{owasp-html5-security}, and SecureStore itself is only available on Android and iOS \cite{expo-securestore}. For that reason the mobile app does not support web, and the admin panel keeps its token in memory only.
 
-\textbf{How the admin panel checks the role}
+\subsection{How the Admin Panel Checks the Role}
+After login the admin panel calls the admin ping endpoint. If the answer is 200, the user is let in. If it is 403, the admin panel shows a message that the account has no access. This way only the API knows the rule for who is an admin, and the admin panel does not have to decode the token.
 
-After login the admin panel calls the admin ping endpoint. A 200 lets the user in and a 403 shows a message that the account has no access. This way only the API knows the rule for who is an admin, and the admin panel does not have to decode the token.
+\subsection{Sign-in Screen and Sign-out}
+A user who is not logged in sees a sign-in screen with a sign-in button. Sign-out ends the Keycloak session, as in the mobile app, so a customer who is turned away can sign in with another account.
 
-\textbf{Sign-in screen and sign-out}
+\subsection{Token Refresh}
+Both apps use the refresh token to renew the access token shortly before it expires. The admin panel uses the automatic silent renew in react-oidc-context. If the renewal fails or the API answers 401, the user is sent to the sign-in screen. The mobile app sets its own timer. If the API answers 401, the app renews the token and sends the request once more. If the answer is still 401, the user is logged out.
 
-An unauthenticated user sees a sign-in screen with a sign-in button. Sign-out ends the Keycloak session, as in the mobile app, so a customer who is turned away can sign in with another account.
+\subsection{Tests of the Admin Login}
+We test the admin login with Vitest and mock react-oidc-context and the network, like the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
 
-\textbf{Token refresh}
+\section{Saving Data}
+This section shows how data travels from the customer app to the database. The example is the onboarding screen, where the customer saves a name and an address. It is the only place in the system where data is saved so far.
 
-The client should refresh the access token in the following cases
-\begin{itemize}
-    \item Shortly before the access token expires.
-    \item When the API replies with 401.
-\end{itemize}
-The admin panel uses the automatic silent renew of react-oidc-context, which uses a refresh token. If the renewal fails or the API replies with 401, the user is sent to the sign-in screen.
+\drawiofig[\linewidth]{save-customer-flow}{Saving a customer's name and address, from the app through the layers of the API to the database.}{fig:save-customer-flow}
 
-\textbf{Tests of the admin login}
+The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 
-We test the admin login with Vitest and mock react-oidc-context and the network, as the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
+\paragraph{1 and 2. The app sends the data.} The customer types a name and an address and taps Save. The app sends both to the API as PUT /user through the generated API client, with the access token in the Authorization header. The login flow that gives the app the token is in appendix 3.1.
+
+\paragraph{3. The Api layer checks the request.} Before the controller runs, ASP.NET Core checks the token and the request body. A missing or invalid token gives 401. An empty name or address, or one that is too long, gives 400. The controller then takes the user id from the token and calls the customer service. The id is never sent in the body, so a customer can only change their own data.
+
+\paragraph{4. Find the customer.} The service asks the repository for the customer with that user id. The repository is an interface in the Application layer. The Infrastructure layer implements it with EF Core, which turns the call into a SELECT.
+
+\paragraph{5. Create or update.} If no customer is found, the service creates a new customer. Otherwise it updates the name and address on the one it found. The rules for name and address live in the customer entity in the Domain layer, so they hold no matter who calls it. The Api layer checks the same limits first, so a bad request stops with 400 before it reaches the domain.
+
+\paragraph{6. Save.} The service asks the repository to save. EF Core writes an INSERT for a new customer or an UPDATE for an existing one.
+
+\paragraph{7. Answer.} The API answers 204 No Content. The app then goes back to the previous screen. If the request fails, the app shows an error and the customer can try again.
+
+The admin panel does not save anything yet. Its only call is a check that the user is an admin, so there is no admin save flow to draw.
 
 \printbibliography
 

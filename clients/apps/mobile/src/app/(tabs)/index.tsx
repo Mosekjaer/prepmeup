@@ -3,8 +3,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 
-import { isNotFound, userClient } from '../lib/api';
-import { useAuth } from '../lib/auth';
+import { isNotFound, userClient } from '../../lib/api';
+import { useAuth } from '../../lib/auth';
 
 export default function HomeScreen() {
   const router = useRouter();

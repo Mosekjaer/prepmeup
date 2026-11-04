@@ -3,57 +3,54 @@
 
 \section{Assumptions About the Deployment Platform}\label{sec:deployment-assumptions}
 
-Authentication was the first part of the system where a component behaved
-differently in deployment than it did locally, and the difference was silent.
+Authentication was the first part of the system that worked locally but not in
+deployment. Nothing failed with an error, so it took a while before we noticed.
 
-The Keycloak realm is kept in version control as \texttt{realm-prepmeup.json} so
-the identity configuration can be recreated rather than clicked together by hand.
-The container imports it at startup with \texttt{-{}-import-realm}, and locally
-this worked: the file was made available to the container through a bind mount
-declared in the compose file. Deployed on Coolify, the same declaration produced
-a realm that did not exist. Requests to
-\texttt{/realms/prepmeup/.well-known/openid-configuration} returned 404, while
-the container reported a healthy startup and logged no error.
+We keep the Keycloak realm in a file in the repository, so the login setup can be
+recreated instead of clicked together by hand. Keycloak imports the file when the
+container starts. Locally, the compose file gave the container the realm file
+through a bind mount, and it worked. On Coolify the same compose file gave us a
+Keycloak without our realm. The realm's discovery endpoint returned 404, while the
+container reported a healthy start and logged no errors.
 
-The cause was the relative path in the bind mount. Coolify resolves such paths
-against its own working directory rather than against the cloned repository, so
-Docker found no file at the source path. Rather than failing, it created an empty
-directory at the mount target, which was confirmed on the server:
+The cause was the relative path in the bind mount. Coolify resolves relative paths
+from its own folder for the deployment, and a file from the repository is only kept
+there if Coolify is told to keep the repository during deployment
+\cite{coolify-docker-compose}. Docker therefore found no file at the path. Instead of
+failing, it created a directory with the same name and mounted that
+\cite{coolify-docker-compose}. We confirmed it on the server:
 
 \begin{verbatim}
 $ docker exec <keycloak-container> ls -la /opt/keycloak/data/import/
 drwxr-xr-x 2 root root 4096 Sep 16 12:25 realm-prepmeup.json
 \end{verbatim}
 
-The directory bit in \texttt{drwxr-xr-x} shows that the realm file had become a
-directory. Keycloak scanned an empty import folder, found nothing to import, and
-started normally. Every individual component behaved as documented; the failure
-lived in the assumption that a relative path means the same thing on both sides
-of a deployment.
+The first letter, d, means directory, so the realm file had become an empty
+directory. Keycloak found nothing to import and started normally. Each part did what
+its documentation says. The mistake was ours. We had assumed that a relative path
+means the same thing on a developer machine and on the server.
 
-The fix was to stop depending on the platform's path handling and copy the realm
-into a thin image layered on the Keycloak base image, so the file is part of the
-build artefact rather than something mounted at run time. A second constraint
-surfaced during the same fix: \texttt{-{}-import-realm} only imports against an
-uninitialised database, so the existing Keycloak volume had to be discarded
-before the corrected configuration took effect. That cost nothing at this stage,
-but it would have been a destructive operation with real users in the system, and
-it is the reason the realm file is treated as the source of truth rather than the
-running database.
+We fixed it by not depending on how the platform handles paths. We now build a small
+image on top of the Keycloak image with the realm file copied in, so the file is part
+of the image and not something that is mounted when the container starts. The fix
+showed one more thing. Keycloak skips the import if a realm with the same name is
+already in its database \cite{keycloak-import-export}, so we deleted the Keycloak
+volume before the new image was deployed. That did not cost anything at this stage,
+but with real users in the system it would have deleted their data. That is why we
+treat the realm file as the source of truth, and not the running database.
 
-Two lessons carry forward. The first is that a deployment platform is part of the
-system under test: a configuration that works under \texttt{docker compose} on a
-developer machine has not been shown to work in production, because the platform
-resolves paths, networks and volumes on its own terms. The second is that silent
-success is more expensive to diagnose than a crash. Keycloak treated an empty
-import directory as an empty task rather than a misconfiguration, so the defect
-only became visible one layer up, when the API could not be pointed at an issuer
-that did not exist.
+We take two lessons from this. The first is that the deployment platform is part of
+what we have to test. A setup that works with docker compose on a developer machine
+has not been shown to work in production, because the platform handles paths,
+networks and volumes in its own way. The second is that a problem that does not
+crash anything is harder to find than one that does. Keycloak treated the empty
+import folder as nothing to do, not as a mistake, so we only saw the problem one
+layer up, when the API could not use an issuer that did not exist.
 
-This informed how JWT validation was then configured. The API pins the expected
-issuer explicitly instead of inferring it from the discovery document, because
-the two addresses legitimately differ in deployment: discovery is fetched over
-the internal container network, while the tokens clients present carry the public
-issuer. Making that distinction explicit in configuration means the mismatch
-becomes a validation error with an obvious cause, rather than another failure
-that depends on where the code happens to be running.
+This changed how we set up the JWT validation afterwards. The expected issuer is
+written in the API's configuration instead of being read from the discovery
+document. In deployment the two addresses are different. The API fetches the
+discovery document over the internal container network, while the tokens from the
+clients carry the public address. Because the issuer is set explicitly, a mismatch
+gives a validation error with a clear cause, and it does not depend on where the
+code runs.

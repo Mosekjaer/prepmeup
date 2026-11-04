@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="Page-1" id="dependency-tree">
-    <mxGraphModel dx="753" dy="736" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="2102" dy="1473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -41,6 +41,9 @@
         <mxCell id="4fWCAmU35WWUpRch_PBp-38" edge="1" parent="1" source="4fWCAmU35WWUpRch_PBp-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="4fWCAmU35WWUpRch_PBp-7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-8" edge="1" parent="1" source="4fWCAmU35WWUpRch_PBp-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="1BELLwbzQPqna2odoSqf-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="4fWCAmU35WWUpRch_PBp-6" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;api-client&lt;/b&gt;&lt;br&gt;&lt;div&gt;clients/packages/api-client/&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="160" x="480" y="240" as="geometry" />
         </mxCell>
@@ -48,7 +51,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="4fWCAmU35WWUpRch_PBp-7" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;AdminController&lt;/b&gt;" vertex="1">
-          <mxGeometry height="80" width="160" x="960" y="400" as="geometry" />
+          <mxGeometry height="80" width="160" x="920" y="400" as="geometry" />
         </mxCell>
         <mxCell id="4fWCAmU35WWUpRch_PBp-32" edge="1" parent="1" source="4fWCAmU35WWUpRch_PBp-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-24">
           <mxGeometry relative="1" as="geometry" />
@@ -123,6 +126,36 @@
         </mxCell>
         <mxCell id="4fWCAmU35WWUpRch_PBp-47" parent="1" style="shape=note;strokeWidth=2;fontSize=14;size=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;" value="api controllers don&#39;t depend on keycloak directly, but they depend on the request being authenticated" vertex="1">
           <mxGeometry height="110" width="200" x="460" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-1" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="1BELLwbzQPqna2odoSqf-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-2" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="1BELLwbzQPqna2odoSqf-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-10" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-3" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionController&lt;/b&gt;&lt;div&gt;Api&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="160" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-9" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="4fWCAmU35WWUpRch_PBp-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-4" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionRepository&lt;/b&gt;&lt;div&gt;Infrastructure&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="160" x="40" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-5" edge="1" parent="1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="1BELLwbzQPqna2odoSqf-6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="159.99999999999977" y="721" as="sourcePoint" />
+            <mxPoint x="64" y="880" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-7" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1BELLwbzQPqna2odoSqf-6" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionService&lt;/b&gt;&lt;div&gt;Application&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="160" x="40" y="720" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -23,6 +23,7 @@
   1.4 & 28-10-2026 & Group 3 & Flowcharts for the pipeline, rollback and release of the customer app \\
   1.5 & 28-10-2026 & Group 3 & Simpler text, migrations as they run today \\
   1.6 & 28-10-2026 & Group 3 & Releasing the admin panel as a container \\
+  1.7 & 04-11-2026 & Group 3 & Local and production setup moved here from appendix 3.1 \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
@@ -31,6 +32,42 @@ In this appendix we describe what happens from the moment a pull request is merg
 The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak, Keycloak's own PostgreSQL database and the admin panel. The admin panel is a container with a web server, see section~\ref{sec:admin-panel}. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
 
 We have left out a staging environment, blue/green and canary releases, automatic rollback and monitoring. That is too much for a project that lasts one semester.
+
+\section{The Local and the Production Setup}\label{sec:environments}
+There are two setups, each with its own compose file: one for local development and one for production on our server with Coolify. In both, all containers are on the same Docker network and find each other by service name, for example db and keycloak. How the login works between the containers is described in appendix 3.1.
+
+\subsection{Local Development}
+
+\begin{center}
+\begin{tabular}{@{}l l l p{5.5cm}@{}}
+\textbf{Service} & \textbf{Image} & \textbf{Host port} & \textbf{Purpose} \\
+\hline
+api & built from the Api project & 5001 & ASP.NET Core Web API \\
+db & SQL Server 2022 & none & Application data \\
+keycloak & Keycloak 26.3 & 8082 & Login and roles, runs in dev mode \\
+admin & built from the admin panel & 5173 & Web server for the admin panel, only started with the admin profile \\
+\end{tabular}
+\end{center}
+
+The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The Expo app (port 8081) runs outside Docker. The admin panel normally runs with Vite on port 5173, also outside Docker. It can also run as a container from the compose file with the admin profile. The container uses the same port, so the API's CORS policy and the Keycloak realm are the same in both cases. The data from the database and Keycloak is kept in two Docker volumes.
+
+\subsection{Production}
+
+\begin{center}
+\begin{tabular}{@{}l p{4.5cm} p{5.5cm}@{}}
+\textbf{Service} & \textbf{Image} & \textbf{Purpose} \\
+\hline
+api & prebuilt image from GHCR & ASP.NET Core Web API \\
+db & SQL Server 2022 & Application data \\
+keycloak & our Keycloak 26.3 image from GHCR, with the realm file inside & Login and roles, runs in production mode \\
+keycloak-db & PostgreSQL 17 & Keycloak's own data (users, sessions) \\
+admin & prebuilt image from GHCR & Web server for the admin panel \\
+\end{tabular}
+\end{center}
+
+No container publishes a port. Coolify's reverse proxy receives the traffic from the internet on HTTPS and forwards it to the API, Keycloak and the admin panel on port 8080 inside the network. Because HTTPS ends at the proxy, Keycloak reads the forwarded headers to know the original address and scheme. The two databases can only be reached from inside the network.
+
+The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. The admin panel also needs the public URL of the API, which is set the same way. The panel reads its addresses when the container starts (section~\ref{sec:admin-panel}). All services are set to restart, so they start again after a crash or a server restart.
 
 \section{From Push to Running Container}
 Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it starts when something happens in the repository, for example a push \cite{github-understanding-actions}. The steps are:
@@ -81,7 +118,7 @@ We build the Keycloak image the same way, because it contains our realm file. Th
 \section{Why We Keep One Compose File}
 In Coolify we could also create each container separately in the web interface. We keep the whole stack as one compose application, with the production compose file from the repository as the source. The only thing we changed is that the API and Keycloak are now pulled as images instead of being built by Coolify.
 
-The compose file describes the network, the start order, the health checks, the volumes and which environment variables are needed. If we created the containers one by one in Coolify, all of that would only exist in a web interface. Nobody could review a change to it in a pull request or compare it with an earlier version, and we could not run the same setup locally. The compose file also matches the deployment view of our architecture (appendix 3.1), so the documentation and the running system stay the same.
+The compose file describes the network, the start order, the health checks, the volumes and which environment variables are needed. If we created the containers one by one in Coolify, all of that would only exist in a web interface. Nobody could review a change to it in a pull request or compare it with an earlier version, and we could not run the same setup locally. The compose file also matches the tables in section~\ref{sec:environments}, so the documentation and the running system stay the same.
 
 Compose is also made for this. A multi-container application is defined in one YAML file \cite{docker-compose-overview}, and each service can be replaced independently of the others \cite{docker-compose-services}. Waiting for a database is done with a health check and a condition on the service that depends on it \cite{docker-compose-startup-order}. Our stack uses that for both databases.
 
@@ -134,7 +171,7 @@ Password=${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD}
 The part with the question mark matters for security. Without it, a missing variable becomes an empty text and the stack starts anyway with an empty password, and it would look like it works. With it, Compose refuses to start and prints which variable is missing \cite{docker-compose-interpolation}. The compose file also works as a list of the values the server needs, without any of them being written down.
 
 \section{Database Migrations}\label{sec:migrations}
-Right now the API runs the missing migrations itself when it starts, both locally and in production. That is simple, but a failed migration shows up as errors in the application instead of as a failed deployment. Appendix 2.1 lists it as an open decision.
+Right now the API runs the missing migrations itself when it starts, both locally and in production. At the same time it adds a few items to the catalogue, so a new database needs no manual setup. That is simple, but a failed migration shows up as errors in the application instead of as a failed deployment. Appendix 2.1 lists it as an open decision.
 
 The plan is to run the migrations as a separate step before the API starts. The database cannot be reached from outside the Docker network, so we cannot run the EF Core update command from GitHub Actions. Instead the migrations will be packed as a migration bundle. It is a program that can run without the .NET SDK and the EF Core tools, and it is one of the two approaches De Sanctis recommends for getting a schema to production \cite[sec.~12.4.4]{desanctis-web-apis-aspnet-core}. The bundle will run as its own service inside the network, and the API will wait for it:
 
@@ -175,7 +212,7 @@ npx eas-cli build --profile preview --platform android
 
 \drawiofig[0.45\linewidth]{eas-release-flow}{Releasing a new version of the customer app through EAS Build.}{fig:eas-release-flow}
 
-The two variables with the addresses of the API and Keycloak are built into the app. That is fine, because they are public addresses and not secrets. Expo warns that anything in the app should be seen as readable by anyone \cite{expo-environment-variables}, so we never put a secret in a variable whose name starts with EXPO\_PUBLIC\_. The login also works, because the realm allows the app's redirect address in production (appendix 3.1).
+The two variables with the addresses of the API and Keycloak are built into the app. That is fine, because they are public addresses and not secrets. Expo warns that anything in the app should be seen as readable by anyone \cite{expo-environment-variables}, so we never put a secret in a variable whose name starts with EXPO\_PUBLIC\_. The login also works, because the realm allows the app's redirect address in production (section~\ref{sec:environments}).
 
 \subsection{How It Fits with the Rest of the Pipeline}
 The app build is not started by GitHub Actions. The pipeline deploys the API and Keycloak automatically on every merge to the main branch. The app is built by hand when we want to hand out a new version, for example before a sprint review. The app only depends on the API's public address and the API contract, and the API always runs the newest version of the main branch. So an old app version keeps working, as long as we do not make breaking changes to the API.

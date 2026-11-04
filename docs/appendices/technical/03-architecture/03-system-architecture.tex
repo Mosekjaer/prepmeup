@@ -3,6 +3,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
+\addbibresource{../../../assets/references.bib}
 
 \title{3.3 System Architecture}
 \author{SW4PRJ4 -- Group 3}
@@ -11,6 +12,45 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 04-11-2026 & Group 3 & System context and containers (C4 levels 1 and 2) \\
+\end{versionhistory}
+
+\section{Overview}
+This appendix describes PrepMeUp from the outside and in, with the C4 model \cite{brown-c4-model}. The C4 model has four levels. Level 1 shows the system and its surroundings, and level 2 shows the parts that run on their own. We draw these two levels here.
+
+We do not draw levels 3 and 4 as C4 diagrams, because other diagrams already cover them. The layers inside the Web API are shown in the package diagram, and the structure of the code and the data is shown in the domain model in appendix 2.2 and in the E/R diagram. How the containers run locally and in production is described in appendix 10.3, and how a user logs in is described in appendix 3.1.
+
+\section{System Context}
+Figure~\ref{fig:c4-context} shows what PrepMeUp is and what lies outside it. Blue is the system we build, and grey is the system it depends on.
+
+\drawiofig[\linewidth]{c4-context}{System context of PrepMeUp (C4 level 1).}{fig:c4-context}
+
+PrepMeUp has two users, the same two as in the requirements specification in appendix 1.2. The customer manages the household, the subscription and the orders. The administrator maintains the package types and sends the orders.
+
+Keycloak is the identity provider. Both users log in on Keycloak's own login page, so PrepMeUp never sees a password. Keycloak runs in our own deployment, but it is a product we configure and do not program, so we draw it outside the system. Why we chose Keycloak is described in appendix 2.1.
+
+The arrow between PrepMeUp and Keycloak only points one way. PrepMeUp gets access tokens from Keycloak and validates them with OpenID Connect and PKCE \cite{keycloak-securing-apps-oidc}. Keycloak sends codes and tokens back, but only as answers. It never contacts PrepMeUp on its own, so there is no arrow from Keycloak to PrepMeUp. The single steps of the login belong at a lower level and are shown in appendix 3.1.
+
+There is no grocery supplier and no payment provider in the diagram, because PrepMeUp does not integrate with either. The administrator marks an order as sent in the admin panel. A real version of PrepMeUp would add a supplier and a payment provider as external systems.
+
+\section{Containers}
+Figure~\ref{fig:c4-containers} zooms in on PrepMeUp and shows its containers. In the C4 model a container is a part that runs on its own and that the other parts talk to over the network. It is not the same as a Docker container. The customer app is a C4 container even though it runs on the phone and not in Docker.
+
+\drawiofig[\linewidth]{c4-containers}{Containers in PrepMeUp (C4 level 2). The dashed frame is the boundary of the system.}{fig:c4-containers}
+
+PrepMeUp consists of four containers:
+\begin{itemize}
+  \item The \textbf{customer app} is an Expo app written in TypeScript. It runs on Android.
+  \item The \textbf{admin panel} is a React app built with Vite. It runs in the browser, and in production its files are served by nginx.
+  \item The \textbf{Web API} is an ASP.NET Core application. It holds the business rules and is the only container that talks to the database.
+  \item The \textbf{database} is SQL Server. The Web API reads and writes it through EF Core.
+\end{itemize}
+
+Both clients call the Web API with JSON over HTTPS. They do it through the api-client package, which is generated from the API's OpenAPI document, so the clients and the API share one contract. The api-client is a library inside the clients and not a container of its own.
+
+Each client gets its own access token from Keycloak with the authorization code flow with PKCE, and sends the token with every call to the Web API. The Web API checks the token's signature with Keycloak's public signing keys, which it fetches from Keycloak. It does not ask Keycloak about each single request. Keycloak keeps its own data in a separate database in production, but that database belongs to Keycloak, so it is not drawn.
+
+\printbibliography
 
 \end{document}

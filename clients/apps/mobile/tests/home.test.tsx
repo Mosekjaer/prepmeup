@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
-import HomeScreen from '../src/app/index';
+import HomeScreen from '../src/app/(tabs)/index';
 
 const mocks = vi.hoisted(() => ({
   token: undefined as string | undefined,

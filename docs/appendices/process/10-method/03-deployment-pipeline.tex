@@ -25,6 +25,7 @@
   1.6 & 28-10-2026 & Group 3 & Releasing the admin panel as a container \\
   1.7 & 04-11-2026 & Group 3 & Local and production setup moved here from appendix 3.1 \\
   1.8 & 04-11-2026 & Group 3 & Deployment strategy \\
+  1.9 & 04-11-2026 & Group 3 & Deployment diagrams for the local and the production setup \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
@@ -38,6 +39,9 @@ We have left out a staging environment, blue/green and canary releases, automati
 There are two setups, each with its own compose file: one for local development and one for production on our server with Coolify. In both, all containers are on the same Docker network and find each other by service name, for example db and keycloak. How the login works between the containers is described in appendix 3.1.
 
 \subsection{Local Development}
+Figure~\ref{fig:deployment-local} shows the local setup as a UML deployment diagram, and the table lists the containers in the compose file.
+
+\drawiofig[\linewidth]{deployment-local}{Deployment diagram of the local setup. The dashed admin container only starts with the admin profile, and then serves the admin panel instead of the Vite dev server.}{fig:deployment-local}
 
 \begin{center}
 \begin{tabular}{@{}l l l p{5.5cm}@{}}
@@ -53,6 +57,9 @@ admin & built from the admin panel & 5173 & Web server for the admin panel, only
 The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The Expo app (port 8081) runs outside Docker. The admin panel normally runs with Vite on port 5173, also outside Docker. It can also run as a container from the compose file with the admin profile. The container uses the same port, so the API's CORS policy and the Keycloak realm are the same in both cases. The data from the database and Keycloak is kept in two Docker volumes.
 
 \subsection{Production}
+Figure~\ref{fig:deployment-production} shows the production setup on our server, and the table lists the containers in the production compose file.
+
+\drawiofig[\linewidth]{deployment-production}{Deployment diagram of the production setup. Only the Coolify proxy can be reached from the internet.}{fig:deployment-production}
 
 \begin{center}
 \begin{tabular}{@{}l p{4.5cm} p{5.5cm}@{}}

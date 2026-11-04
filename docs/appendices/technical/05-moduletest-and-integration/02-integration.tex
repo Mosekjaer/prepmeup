@@ -13,15 +13,95 @@
 
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
+  1.1 & 04-11-2026 & Group 3 & Integration strategy and plan added \\
 \end{versionhistory}
 
+\section{Purpose}
+An integration test checks that parts of the system work together through their interfaces. This appendix gives us one strategy for all our integration tests, so we can plan them and build them in a fixed order. We start integrating a class when its unit tests pass.
+
 \section{Dependency Tree}
-Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which. We use it to decide the order in which the parts are integrated and tested together. A part can be integrated when the parts below it are in place.
+Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which. It is used to decide the order in which the parts are integrated and tested together. A part can be integrated when the parts below it are in place.
 
 \drawiofig[0.8\linewidth]{dependency-tree}{Dependency tree of the system as it is built today.}{fig:dependency-tree}
 
 At the bottom are the database and the DbContext. The repositories in Infrastructure use the DbContext, the services in Application use the repositories, and the controllers in the API use the services. The two apps call the controllers through the generated api-client.
 
 Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
+
+\section{Strategy}
+We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
+
+Inside a feature we integrate from the bottom. When a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. For example, the subscription repository is tested against the database before the subscription endpoint is tested. If a test fails, we then know which connection is wrong.
+
+The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
+
+\section{Rules}
+\begin{itemize}
+  \item A step drives one top part. The test calls the system the way a user would, through an endpoint or a service.
+  \item The parts below the top are real, unless a rule below says otherwise.
+  \item Keycloak is always faked with test tokens. It is outside our system, and we do not want the tests to need a running server.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
+\end{itemize}
+
+\section{Plan}
+Table~\ref{tab:integration-plan} shows one step for each feature we have today. T is the part the test drives, X is a real part and S is a fake. An empty cell means the part is not used by the feature.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}l c c c c@{}}
+\textbf{Part} & \textbf{1 Admin access} & \textbf{2 Get items} & \textbf{3 Onboard} & \textbf{4 Subscribe} \\
+\hline
+Keycloak & S & S & S & S \\
+Authentication and roles & X & X & X & X \\
+Admin controller & T & & & \\
+Items controller & & T & & \\
+User controller & & & T & \\
+Subscription controller & & & & T \\
+Item service & & X & & \\
+Customer service & & & X & \\
+Subscription service & & & & X \\
+Item repository & & X & & \\
+Customer repository & & & X & X \\
+Subscription repository & & & & X \\
+System clock & & & & X \\
+DbContext & & X & X & X \\
+\end{tabular}
+\caption{Integration plan for the features we have today.}
+\label{tab:integration-plan}
+\end{table}
+
+A last step goes through every connection in the dependency tree and checks that at least one of the steps above uses it. A connection that no step uses becomes a new test.
+
+\section{Test Cases}
+There is no tool that measures how many connections an integration test covers, so we choose the test cases ourselves. For each step we start from the feature and test what a user can do with it, including the cases where it must fail. We also look at how the unit tests of the lower classes use their interfaces, and we check that the same cases can be sent through the top part.
+
+\section{Example: Admin Access}
+Step 1 in the plan is the admin endpoint. Only a user with the admin role may call it. A request without a valid token must get the answer unauthorized, and a request with a valid token but without the admin role must get the answer forbidden.
+
+The admin controller is the top part (T). The authentication and the role check are real (X). Keycloak is faked (S). The tests make their own tokens with a test key, and the API is set to trust that key.
+
+The class that reads the roles from the token is already tested alone. The integration test checks the connections around it. They only exist when the API runs, so a test of a single class cannot find an error in them:
+
+\begin{itemize}
+  \item The token settings in the API: the key, the issuer, the audience and the expiry.
+  \item The order of the middleware, with authentication before authorization.
+  \item The registration of the role reader, so the roles from the token reach the policy.
+  \item The admin policy, which must give unauthorized without a token and forbidden without the admin role.
+\end{itemize}
+
+If one of these is wrong, the tests of the single classes still pass, but the endpoint gives the wrong answer. If we forget to register the role reader, an admin gets the answer forbidden.
+
+We build the tests in two stages. Each stage adds one more real part, so an error always points to the part that was added last.
+
+\begin{enumerate}
+  \item \emph{The token check.} We send requests where the token is missing, is not a JWT, is signed with another key, has expired, or is made for another audience or issuer. All of them must give unauthorized. The role check is never reached here, so a failure is an error in the token settings or in the order of the middleware.
+  \item \emph{The role check.} The token is valid, and only the roles change. A token without the admin role must give forbidden, and a token with the admin role must give ok, also when the user has more roles. The token check is already tested, so a failure is an error in the registration of the role reader or in the policy.
+\end{enumerate}
+
+If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
+
+\section{What the Plan Does Not Cover}
+The tests with SQLite do not test the migrations, because the database is created from the model. They also do not test the apps calling the API. We leave both out of this plan.
 
 \end{document}

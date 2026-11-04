@@ -18,48 +18,13 @@
   1.2 & 28-10-2026 & Group 3 & Login flow with diagram \\
   1.3 & 28-10-2026 & Group 3 & Token renewal in the customer app \\
   1.4 & 28-10-2026 & Group 3 & The admin panel as a container \\
+  1.5 & 04-11-2026 & Group 3 & Local and production setup moved to appendix 10.3, session lengths and token validation corrected \\
 \end{versionhistory}
 
 \section{Overview}
-PrepMeUp runs as a set of Docker containers started with docker compose. There are two setups, each with its own compose file: one for local development and one for production on our server with Coolify. In both, all containers are on the same Docker network and find each other by service name, for example db and keycloak. Why we chose Keycloak and Coolify is described in appendix 2.1.
+PrepMeUp runs as a set of Docker containers started with docker compose. How the containers are set up locally and in production is described in appendix 10.3. This appendix is about how the clients, Keycloak and the API talk to each other, how a user logs in, and how the API checks the token. Why we chose Keycloak is described in appendix 2.1.
 
 The customer app is not a container. It runs on the phone. The admin panel runs in the browser, but in production its files are served from a container (appendix 10.3). Both clients talk to the API over HTTP(S), and both send the user to Keycloak to log in.
-
-\section{Local Development}
-
-\begin{center}
-\begin{tabular}{@{}l l l p{5.5cm}@{}}
-\textbf{Service} & \textbf{Image} & \textbf{Host port} & \textbf{Purpose} \\
-\hline
-api & built from the Api project & 5001 & ASP.NET Core Web API \\
-db & SQL Server 2022 & none & Application data \\
-keycloak & Keycloak 26.3 & 8082 & Login and roles, runs in dev mode \\
-admin & built from the admin panel & 5173 & Web server for the admin panel, only started with the admin profile \\
-\end{tabular}
-\end{center}
-
-The database has no host port, so only the API can reach it. The API waits until the database health check passes before it starts. Keycloak imports our realm file at startup. The Expo app (port 8081) runs outside Docker. The admin panel normally runs with Vite on port 5173, also outside Docker. It can also run as a container from the compose file with the admin profile. The container uses the same port, so the API's CORS policy and the Keycloak realm are the same in both cases. The data from the database and Keycloak is kept in two Docker volumes.
-
-\subsection{Token Validation}
-The browser and the phone reach Keycloak on port 8082 on localhost, but inside Docker the API reaches it by its service name on port 8080. The token says it was issued by the localhost address, so the API is configured with two addresses. The first is the public address, which must match the issuer in the token. The second is the internal address, where the API fetches Keycloak's configuration and signing keys.
-
-\section{Production}
-
-\begin{center}
-\begin{tabular}{@{}l l p{7cm}@{}}
-\textbf{Service} & \textbf{Image} & \textbf{Purpose} \\
-\hline
-api & built from the Api project & ASP.NET Core Web API \\
-db & SQL Server 2022 & Application data \\
-keycloak & Keycloak 26.3 & Login and roles, runs in production mode \\
-keycloak-db & PostgreSQL 17 & Keycloak's own data (users, sessions) \\
-admin & built from the admin panel & Web server for the admin panel \\
-\end{tabular}
-\end{center}
-
-No container publishes a port. Coolify's reverse proxy receives the traffic from the internet on HTTPS and forwards it to the API, Keycloak and the admin panel on port 8080 inside the network. Because HTTPS ends at the proxy, Keycloak reads the forwarded headers to know the original address and scheme. The two databases can only be reached from inside the network.
-
-The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. The admin panel also needs the public URL of the API, which is set the same way. The panel reads its addresses when the container starts (appendix 10.3). All services are set to restart, so they start again after a crash or a server restart.
 
 \section{Login Flow}
 Both clients log in with the Authorization Code flow with PKCE \cite{ietf-rfc6749-oauth2,ietf-rfc7636-pkce}. Figure~\ref{fig:auth-flow} shows the flow as boxes and numbered arrows. The text on each arrow is what is actually sent.
@@ -74,11 +39,11 @@ The numbers below match the arrows in the figure.
 
 \paragraph{3. Back to the client.} Keycloak sends the browser back to the redirect address with a one-time code and the same state value. The client checks that the state matches what it sent.
 
-\paragraph{4 and 5. Swap the code for a token.} The client sends the code and the code verifier from step 1 to Keycloak's token endpoint. Keycloak hashes the verifier and compares it with the challenge. Someone who steals the code cannot use it, because they do not have the verifier \cite[sec.~1]{ietf-rfc7636-pkce}. If it matches, Keycloak returns an access token. The token is a JWT that is valid for 15 minutes and names our API as its audience.
+\paragraph{4 and 5. Swap the code for a token.} The client sends the code and the code verifier from step 1 to Keycloak's token endpoint. Keycloak hashes the verifier and compares it with the challenge. Someone who steals the code cannot use it, because they do not have the verifier \cite[sec.~1]{ietf-rfc7636-pkce}. If it matches, Keycloak returns an access token and a refresh token. The access token is a JWT that is valid for 15 minutes and names our API as its audience.
 
 \paragraph{6. Call the API.} The client sends the token in the Authorization header as a bearer token \cite[sec.~2.1]{ietf-rfc6750-bearer}.
 
-\paragraph{7. Get Keycloak's keys.} The first time, the API fetches Keycloak's public signing keys and keeps them. After that it does not ask Keycloak again.
+\paragraph{7. Get Keycloak's keys.} The first time, the API fetches Keycloak's public signing keys and keeps them. After that it only fetches them again when it sees a key it does not know, or after a long time.
 
 \paragraph{8. Check the token and answer.} The API checks the token on its own: the signature, who issued it, that it is meant for our API, and that it has not expired \cite{ietf-rfc7519-jwt}. It then reads the user's roles from the token. A missing or invalid token gives 401. A valid token without the admin role gives 403 on admin endpoints.
 
@@ -87,12 +52,19 @@ So the password only travels between the user and Keycloak, and the API only eve
 \subsection{Customer App and Admin Panel}
 The two clients follow the same eight steps, each with its own client in Keycloak. The customer app is sent back to the app through the app's own address scheme, which the phone opens in the app. The admin panel is sent back to its web address, and the browser calls the token endpoint from JavaScript, so Keycloak must allow the admin panel's origin.
 
-Both clients renew the access token in the background with a refresh token, so the user does not have to log in again when the token runs out after 15 minutes. The customer app also keeps the refresh token on the phone, so the user stays logged in when the app is restarted (appendix 4.1).
+Both clients renew the access token in the background with a refresh token, so the user does not have to log in again when the token runs out after 15 minutes. The customer app also keeps the refresh token on the phone, so the user stays logged in when the app is restarted (appendix 4.1). This only works as long as the user's session in Keycloak is alive. The session ends after 30 minutes without use, and never lasts longer than 10 hours. We do not ask for offline access, so after that the user has to log in again.
 
 The app's address scheme is just the word prepmeup. The standard for native apps says the scheme should be a reversed domain name that we own \cite[sec.~7.1]{ietf-rfc8252-native-apps}. With a plain word, another app could register the same scheme and receive the code. PKCE stops that app from using the code \cite[sec.~8.1]{ietf-rfc8252-native-apps}, but we should still change the scheme.
 
 \subsection{What Was Checked}
 We checked the first half of the flow in the browser against the local stack. The request to the login page asked for a code with an S256 challenge, and the redirect back carried the code and the state. The token request and the API call in the figure are drawn from the client code and the API's setup, and have not been checked in the browser's developer tools yet. For the admin panel we have also seen the end of the flow in the API's log, when the panel ran as a container on the local stack. An admin got 200 on the admin ping, and a customer got 403.
+
+\section{Token Validation}
+The browser and the phone reach Keycloak on a public address, but the API reaches it on an internal address inside the Docker network. In the local setup these are port 8082 on localhost and the service name keycloak on port 8080. The token says it was issued by the public address, so the API is configured with two addresses. The first is the public address, which must match the issuer in the token. The second is the internal address, where the API fetches Keycloak's configuration and signing keys.
+
+Keycloak is set up in the local stack so that its configuration points to the internal address for the keys. The internal address uses plain HTTP, because it is only reached inside the Docker network. The API is therefore told that HTTP is allowed for this fetch. The same setting is used in production.
+
+The API only turns on token checking when an address for Keycloak is configured. Without it, the API has no way to validate tokens.
 
 \printbibliography
 

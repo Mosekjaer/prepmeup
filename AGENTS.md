@@ -151,7 +151,7 @@ Aflevering fredag 11/12 kl. 13.00. Dagene 2/12 – 11/12 er ikke en sprint, men 
 | Ikke-krav | `Teknisk`, `Rapport` | grå |
 | Undergruppe | `Gruppe 1`, `Gruppe 2`, `Alle` | lilla, gul, mørkegrå |
 
-Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point i hele backloggen ved review). Tabellen i bilag 10.2 og burn-up-figuren i kap. 2 genereres fra filen.
+Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point på alle kort, der har været med i en sprint til og med denne, uanset kolonne. Kort i Backlog-visningen uden sprint-label tæller ikke med). Tabellen i bilag 10.2 og burn-up-figuren i kap. 2 genereres fra filen.
 
 ## Secrets
 

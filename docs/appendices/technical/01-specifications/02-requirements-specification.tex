@@ -19,6 +19,7 @@
   1.4 & 30-09-2026 & Group 3 & Orders composed from package types instead of a household profile \\
   1.5 & 28-10-2026 & Group 3 & Aligned with the system as built \\
   1.6 & 28-10-2026 & Group 3 & Simpler text, clearer payment requirements \\
+  1.7 & 04-11-2026 & Group 3 & Expiry date set to one year after the sent date \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -47,7 +48,7 @@
 
 \textbf{Item} = A product that can go into a package. An item is either a \emph{food item} (including water) or an \emph{equipment item}.
 
-\textbf{Expiry date} = The date on which the items of an order are no longer considered usable. Each order has its own expiry date.
+\textbf{Expiry date} = The date on which the items of an order are no longer considered usable. It is set when the order is sent and is always one year after the sent date, whatever items the order contains. Each order has its own expiry date.
 
 \textbf{Notification} = A message from the system to a customer, e.g. that a new order is about to be sent.
 
@@ -149,7 +150,7 @@ Functional requirements are numbered FR-\emph{nn} and non-functional requirement
     \item Customer app: The customer can create an account and sign up for a PrepMeUp subscription.
     \item Back-end: Persistent storage of customers, their subscriptions and their orders.
     \item Back-end: Default package types for a ``normal'' diet, one for adults and one for children.
-    \item Back-end: Keeps track of the expiry date of each of the customer's past orders.
+    \item Back-end: When an order is sent, the system sets its expiry date to one year after the sent date and keeps it for each of the customer's past orders.
     \item Administrator interface: See all planned orders, sorted by planned send date, earliest first.
     \item Administrator interface: Register orders as sent.
 \end{enumerate}

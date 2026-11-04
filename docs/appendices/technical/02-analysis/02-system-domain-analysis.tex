@@ -26,7 +26,7 @@ A package type contains one or more package contents, and each package content r
 
 The customer has at most one payment method, and an order is paid by at most one payment, which is charged via the payment method. Payment is simulated in the project. A notification announces an order to the customer.
 
-The expiry date and the status of an order are derived, which is why they are marked with a slash. The status follows from whether the order has a sent date, and the expiry date follows from the items in the order.
+The status of an order is derived, which is why it is marked with a slash. It follows from whether the order has a sent date. The expiry date is stored on the order. It is set to one year after the sent date, so it does not depend on the items, and the next order is created 14 days before it.
 
 \section{Changes Along the Way}
 The first domain model had a household with household members and a diet, and the system calculated a package from the household. In version 1.4 of the requirements specification we removed the household, the members and the diet. Instead, the customer composes each order from package types, and adult and child versions are separate package types. This made the model smaller, and the customer decides how many people the order covers. Delivery was renamed to order at the same time.

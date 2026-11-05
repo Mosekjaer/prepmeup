@@ -91,6 +91,8 @@ context/                       kursusmateriale + INDEX.md
 
 ## Kommandoer
 
+`Makefile` i roden samler kommandoerne nedenfor. `make help` lister målene: `up`/`down`, `admin`, `mobile`, `android` (headless emulator + `adb reverse` for 5001, 8082 og 8081), `check` (samme trin som CI), `api-client`, `report`, `clean` (kun gitignorerede build-mapper, aldrig `.env`) og `db-reset`.
+
 | Kommando | Hvad |
 |---|---|
 | `dotnet build` | bygger hele solution |

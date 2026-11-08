@@ -53,8 +53,8 @@ function endRejectedSession(error: unknown, setTokens: (tokens: TokenResponse | 
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const discovery = useAutoDiscovery(issuer);
-  const [request, response, promptAsync] = useAuthRequest({ clientId, redirectUri, scopes: ['openid'] }, discovery);
+  const discovery = useAutoDiscovery(issuer); // Get from Keycloak: addresses for e.g. login-page, token-endpoint
+  const [request, response, promptAsync] = useAuthRequest({ clientId, redirectUri, scopes: ['openid'] }, discovery); // generate PKCE-values and state and save them locally in request. Build login-URL. promptAsync open login-URL. response is left empty until the redirect from Keycloak, where authorization code and state is saved.
   const [tokens, setTokens] = useState<TokenResponse>();
   const token = tokens?.accessToken;
   const tokensRef = useRef(tokens);
@@ -62,14 +62,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!discovery) {
+      // App doesn't have discovery document yet
       return;
     }
 
     SecureStore.getItemAsync(refreshTokenKey).then((stored) => {
       if (!stored) {
+        // App doesn't have a refresh token
         return;
       }
 
+      // Get new acess token via refresh token
       refreshAsync({ clientId, refreshToken: stored }, discovery)
         .then((result) => startSession(result, setTokens))
         .catch((error: unknown) => endRejectedSession(error, setTokens));

@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="Page-1" id="dependency-tree">
-    <mxGraphModel dx="2102" dy="1473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="950" dy="737" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -139,7 +139,7 @@
         <mxCell id="1BELLwbzQPqna2odoSqf-3" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionController&lt;/b&gt;&lt;div&gt;Api&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="160" x="40" y="400" as="geometry" />
         </mxCell>
-        <mxCell id="1BELLwbzQPqna2odoSqf-9" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="4fWCAmU35WWUpRch_PBp-20">
+        <mxCell id="1BELLwbzQPqna2odoSqf-9" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-20">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="1BELLwbzQPqna2odoSqf-4" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionRepository&lt;/b&gt;&lt;div&gt;Infrastructure&lt;/div&gt;" vertex="1">

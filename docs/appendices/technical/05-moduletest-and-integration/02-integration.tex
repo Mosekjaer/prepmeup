@@ -29,14 +29,7 @@ At the bottom are the database and the DbContext. The repositories in Infrastruc
 
 Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
 
-\section{Strategy}
-We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
-
-Inside a feature we integrate from the bottom. When a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. For example, the subscription repository is tested against the database before the subscription endpoint is tested. If a test fails, we then know which connection is wrong.
-
-The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
-
-\section{Rules for all plans}
+\section{Rules for all integration plans}
 \begin{itemize}
   \item A part is integrated only when its unit tests pass.
   \item The parts below the top are real, unless stated otherwise.
@@ -50,20 +43,23 @@ The weak spot of collaboration integration is that some connections in the tree 
     \end{itemize}
 \end{itemize}
 
-\subsection{Rules for the Authentication Plan}
-These rules apply to the plan in Section~\ref{sec:auth-plan}.
-\begin{itemize}
-  \item Steps 1--5 are automated and run without a real Keycloak. Keycloak is faked with test tokens, because we do not want the automated tests to need a running server.
-  \item A part below the top may be a stub when the real part cannot run in the test, for example JwtBearer in step 1 and the API in steps 4--5.
-  \item Step 6 uses a real Keycloak, because that is the only way to check real access tokens.
-\end{itemize}
+\section{Integration plan: Features}
 
-\section{Plan}
+\subsection{Strategy}
+We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
+
+Inside a feature we integrate from the bottom. When a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. For example, the subscription repository is tested against the database before the subscription endpoint is tested. If a test fails, we then know which connection is wrong.
+
+The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
+
+
+\subsection{Plan}
 Table~\ref{tab:integration-plan} shows one step for each feature we have today. T is the part the test drives, X is a real part and S is a fake. An empty cell means the part is not used by the feature.
 
 \begin{table}[H]
 \centering
 \small
+\rowcolors{2}{gray!15}{white}
 \begin{tabular}{@{}l c c c c@{}}
 \textbf{Part} & \textbf{1 Admin access} & \textbf{2 Get items} & \textbf{3 Onboard} & \textbf{4 Subscribe} \\
 \hline
@@ -88,10 +84,10 @@ DbContext & & X & X & X \\
 
 A last step goes through every connection in the dependency tree and checks that at least one of the steps above uses it. A connection that no step uses becomes a new test.
 
-\section{Test Cases}
+\subsection{Test Cases}
 There is no tool that measures how many connections an integration test covers, so we choose the test cases ourselves. For each step we start from the feature and test what a user can do with it, including the cases where it must fail. We also look at how the unit tests of the lower classes use their interfaces, and we check that the same cases can be sent through the top part.
 
-\section{Example: Admin Access}
+\subsection{Example: Admin Access}
 Step 1 in the plan is the admin endpoint. Only a user with the admin role may call it. A request without a valid token must get the answer unauthorized, and a request with a valid token but without the admin role must get the answer forbidden.
 
 The admin controller is the top part (T). The authentication and the role check are real (X). Keycloak is faked (S). The tests make their own tokens with a test key, and the API is set to trust that key.
@@ -118,7 +114,7 @@ We build the tests in two stages. Each stage adds one more real part, so an erro
 
 If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
 
-\section{Authentication and Authorization}
+\section{Integration plan: Authentication and Authorization}
 \label{sec:auth-plan}
 
 \subsection{Scope}
@@ -133,24 +129,32 @@ The isolated integration plan for testing authentication and authorization follo
 \end{itemize}
 
 However, the decision to separately test the flow of these components is part of the ``collaboration'' strategy, which applies to the whole project overall.
+\subsection{Rules}
+These rules apply to the plan in Section~\ref{sec:auth-plan}.
+\begin{itemize}
+  \item Steps 1--5 are automated and run without a real Keycloak. Keycloak is faked with test tokens, because we do not want the automated tests to need a running server.
+  \item A part below the top may be a stub when the real part cannot run in the test, for example JwtBearer in step 1 and the API in steps 4--5.
+  \item Step 6 uses a real Keycloak, because that is the only way to check real access tokens.
+\end{itemize}
 
 \subsection{Plan}
 Table~\ref{tab:auth-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
 
 \begin{table}[H]
 \centering
-\footnotesize
-\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\small
 \rowcolors{2}{gray!15}{white}
-\begin{tabular}{@{}c C{1.4cm} C{1.4cm} C{2.1cm} C{1.7cm} C{1.6cm} C{1.7cm} C{1.4cm} C{1cm}@{}}
-\textbf{Step} & \textbf{Keycloak} & \textbf{Jwt\-Bearer} & \textbf{Keycloak-\newline RoleClaims-\newline Transformation} & \textbf{AdminOnly} & \textbf{Admin-\newline Controller} & \textbf{Controllers} & \textbf{api-client} & \textbf{Apps} \\
+\begin{tabular}{@{}l c c c c c c@{}}
+\textbf{Part} & \textbf{Step 1} & \textbf{Step 2} & \textbf{Step 3} & \textbf{Step 4} & \textbf{Step 5} & \textbf{Step 6} \\
 \hline
-1 &   & S & T &   &   &   &   &   \\
-2 & S & X & X & X & T &   &   &   \\
-3 & S & X &   &   &   & T &   &   \\
-4 &   &   &   &   & S & S & T &   \\
-5 & S &   &   &   & S & S & X & T \\
-6 & X & X & X & X & X & X & X & T \\
+Apps                             &   &   &   &   & T & T \\
+api-client                       &   &   &   & T & X & X \\
+Controllers                      &   &   & T & S & S & X \\
+AdminController                  &   & T &   & S & S & X \\
+AdminOnly                        &   & X &   &   &   & X \\
+KeycloakRoleClaimsTransformation & T & X &   &   &   & X \\
+JwtBearer                        & S & X & X &   &   & X \\
+Keycloak                         &   & S & S &   & S & X \\
 \end{tabular}
 \caption{Integration plan for authentication and authorization.}
 \label{tab:auth-integration-plan}

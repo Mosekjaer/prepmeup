@@ -110,12 +110,6 @@
         <mxCell id="4fWCAmU35WWUpRch_PBp-25" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;ItemRepository&lt;/b&gt;" vertex="1">
           <mxGeometry height="80" width="160" x="720" y="1080" as="geometry" />
         </mxCell>
-        <mxCell id="4fWCAmU35WWUpRch_PBp-26" edge="1" parent="1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-12" value="">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="359.9999999999998" y="961" as="sourcePoint" />
-            <mxPoint x="264" y="1120" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="4fWCAmU35WWUpRch_PBp-12" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;CustomerService&lt;/b&gt;" vertex="1">
           <mxGeometry height="80" width="160" x="240" y="960" as="geometry" />
         </mxCell>
@@ -142,12 +136,6 @@
         </mxCell>
         <mxCell id="1BELLwbzQPqna2odoSqf-4" parent="1" style="html=1;whiteSpace=wrap;" value="&lt;b&gt;SubscriptionRepository&lt;/b&gt;" vertex="1">
           <mxGeometry height="80" width="160" x="40" y="1080" as="geometry" />
-        </mxCell>
-        <mxCell id="1BELLwbzQPqna2odoSqf-5" edge="1" parent="1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="1BELLwbzQPqna2odoSqf-6" value="">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="159.99999999999977" y="961" as="sourcePoint" />
-            <mxPoint x="64" y="1120" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="1BELLwbzQPqna2odoSqf-7" edge="1" parent="1" source="1BELLwbzQPqna2odoSqf-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=none;endFill=0;" target="4fWCAmU35WWUpRch_PBp-13">
           <mxGeometry relative="1" as="geometry" />

@@ -36,12 +36,26 @@ Inside a feature we integrate from the bottom. When a class has another real cla
 
 The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
 
-\section{Rules}
+\section{Rules for all plans}
 \begin{itemize}
-  \item A step drives one top part. The test calls the system the way a user would, through an endpoint or a service.
-  \item The parts below the top are real, unless a rule below says otherwise.
-  \item Keycloak is always faked with test tokens. It is outside our system, and we do not want the tests to need a running server.
+  \item A part is integrated only when its unit tests pass.
+  \item The parts below the top are real, unless stated otherwise.
+  \item We are allowed to use a stub instead of Keycloak, since it is outside our system.
   \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
+  \item In a table representing an integration plan:
+    \begin{itemize}
+      \item T is the "top module" that the test drives.
+      \item X is a module that is included.
+      \item S is a stub.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Rules for the Authentication Plan}
+These rules apply to the plan in Section~\ref{sec:auth-plan}.
+\begin{itemize}
+  \item Steps 1--5 are automated and run without a real Keycloak. Keycloak is faked with test tokens, because we do not want the automated tests to need a running server.
+  \item A part below the top may be a stub when the real part cannot run in the test, for example JwtBearer in step 1 and the API in steps 4--5.
+  \item Step 6 uses a real Keycloak, because that is the only way to check real access tokens.
 \end{itemize}
 
 \section{Plan}
@@ -105,6 +119,7 @@ We build the tests in two stages. Each stage adds one more real part, so an erro
 If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
 
 \section{Authentication and Authorization}
+\label{sec:auth-plan}
 
 \subsection{Scope}
 This plan covers authentication and authorization in the API and the clients. The login flow against a real Keycloak is only tested manually in the final step. Onboarding is not part of this plan.

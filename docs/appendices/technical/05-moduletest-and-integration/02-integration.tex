@@ -14,6 +14,7 @@
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
   1.1 & 04-11-2026 & Group 3 & Integration strategy and plan added \\
+  1.2 & 09-11-2026 & Group 3 & Authentication and authorization plan added \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -102,6 +103,66 @@ We build the tests in two stages. Each stage adds one more real part, so an erro
 \end{enumerate}
 
 If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
+
+\section{Authentication and Authorization}
+
+\subsection{Scope}
+This plan covers authentication and authorization in the API and the clients. The login flow against a real Keycloak is only tested manually in the final step. Onboarding is not part of this plan.
+
+\subsection{Strategy}
+The isolated integration plan for testing authentication and authorization follows the strategy ``sandwich''.
+\begin{itemize}
+  \item Steps 1--3: Bottom-up, from JwtBearer to the API.
+  \item Steps 4--5: Top-down, from the apps to the API.
+  \item Step 6: Top and bottom meet in the middle.
+\end{itemize}
+
+However, the decision to separately test the flow of these components is part of the ``collaboration'' strategy, which applies to the whole project overall.
+
+\subsection{Plan}
+Table~\ref{tab:auth-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\begin{tabular}{@{}c C{1.4cm} C{1.4cm} C{2.1cm} C{1.7cm} C{1.6cm} C{1.7cm} C{1.4cm} C{1cm}@{}}
+\textbf{Step} & \textbf{Keycloak} & \textbf{Jwt\-Bearer} & \textbf{Keycloak-\newline RoleClaims-\newline Transformation} & \textbf{AdminOnly} & \textbf{Admin-\newline Controller} & \textbf{Controllers} & \textbf{api-client} & \textbf{Apps} \\
+\hline
+1 &   & S & T &   &   &   &   &   \\
+2 & S & X & X & X & T &   &   &   \\
+3 & S & X &   &   &   & T &   &   \\
+4 &   &   &   &   & S & S & T &   \\
+5 & S &   &   &   & S & S & X & T \\
+6 & X & X & X & X & X & X & X & T \\
+\end{tabular}
+\caption{Integration plan for authentication and authorization.}
+\label{tab:auth-integration-plan}
+\end{table}
+
+\subsection{Steps}
+
+\subsubsection*{Step 1 -- Can KeycloakRoleClaimsTransformation correctly translate the realm roles in ClaimsPrincipal?}
+Since Transformation is T (top module), JwtBearer must be S (stub), because there is no http-request to the API, which is what would have triggered an automatic call of JwtBearer and its conversion of an access token to a ClaimsPrincipal. Instead of JwtBearer, the test builds the ClaimsPrincipal itself.
+
+\subsubsection*{Step 2 -- Is the AdminOnly policy correctly enforced based on the access token's validity and roles?}
+This time, JwtBearer is X, because the test sends an http-request to AdminController. Keycloak is S (stub), because the tests run without a real Keycloak. The stub for Keycloak consists of two parts:
+\begin{itemize}
+  \item The RSA key pair: A private key used to sign the access token and a public key that is later used to verify the signature on the access token.
+  \item A method that provides signed access tokens.
+\end{itemize}
+
+\subsubsection*{Step 3 -- Is access to a non-admin controller correctly enforced based on the access token's validity?}
+KeycloakRoleClaimsTransformation does run automatically, since it is registered as IClaimsTransformation and runs (only) when JwtBearer has approved the access token. However, the result of the transformation does not make a difference in the test. What matters for the request to reach the controller is if JwtBearer sets IsAuthenticated to true in the ClaimsPrincipal that it builds from the access token.
+
+\subsubsection*{Step 4 -- When we call methods on api-client, does it attach the access token and handle a 401 response from the API correctly?}
+The API is S (stub), and the test driver writes the http response itself.
+
+\subsubsection*{Step 5 -- Do the apps sign in, store the tokens and react correctly to the API's responses?}
+Keycloak and the API are S. The apps cannot run against Keycloak in automated tests.
+
+\subsubsection*{Step 6 -- Manual test with all components}
+Keycloak is no longer stubbed, nor is any other component. This is the final step where the sandwich meets in the middle. Note that this is the only step that checks real access tokens from Keycloak.
 
 \section{What the Plan Does Not Cover}
 The tests with SQLite do not test the migrations, because the database is created from the model. They also do not test the apps calling the API. We leave both out of this plan.

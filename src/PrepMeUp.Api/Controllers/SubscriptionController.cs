@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.Contracts;
 using PrepMeUp.Application;
 
@@ -17,7 +17,13 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SubscriptionResponse>> GetSubscription(CancellationToken cancellationToken)
     {
-        var subscription = await subscriptionService.GetAsync(KeycloakId, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        var subscription = await subscriptionService.GetAsync(keycloakId, cancellationToken);
         if (subscription is null)
         {
             return NotFound();
@@ -33,7 +39,13 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<SubscriptionResponse>> Subscribe(CancellationToken cancellationToken)
     {
-        var result = await subscriptionService.SubscribeAsync(KeycloakId, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await subscriptionService.SubscribeAsync(keycloakId, cancellationToken);
 
         switch (result)
         {
@@ -43,9 +55,7 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
                 return Conflict();
         }
 
-        var subscription = await subscriptionService.GetAsync(KeycloakId, cancellationToken);
+        var subscription = await subscriptionService.GetAsync(keycloakId, cancellationToken);
         return Created("/subscription", SubscriptionResponse.From(subscription!));
     }
-
-    private string KeycloakId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 }

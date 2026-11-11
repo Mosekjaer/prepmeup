@@ -6,7 +6,9 @@ import { AuthProvider } from '../lib/auth';
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerTitle: 'PrepMeUp' }} />
+      <Stack screenOptions={{ headerTitle: 'PrepMeUp' }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
       <StatusBar style="auto" />
     </AuthProvider>
   );

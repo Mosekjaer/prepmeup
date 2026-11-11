@@ -1,137 +1,68 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" pages="2">
-  <diagram id="keycloak-login-flowchart" name="Login flowchart">
-    <mxGraphModel dx="553" dy="541" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1200" math="0" shadow="0">
+<mxfile host="drawio">
+  <diagram id="keycloak-login-flowchart" name="Keycloak login">
+    <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1100" math="0" shadow="0">
       <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="fc_title_banner" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Keycloak Login Flowchart &amp;#x2014; Activities and Decisions&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;Login with PKCE: redirect to Keycloak, sign-in and token exchange&lt;/span&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="70" width="1060" x="40" y="30" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_client" parent="1" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" value="PrepMeUp client (customer app or admin panel)" vertex="1">
-          <mxGeometry height="970" width="500" x="40" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="node_start" parent="lane_client" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" value="1. Start: user clicks&lt;br&gt;'Log in'" vertex="1">
-          <mxGeometry height="45" width="180" x="160" y="45" as="geometry" />
-        </mxCell>
-        <mxCell id="node_pkce_gen" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" value="2. Generate PKCE and state:&#10;• code_verifier (random)&#10;• code_challenge = SHA256(code_verifier)&#10;• random state value" vertex="1">
-          <mxGeometry height="65" width="260" x="120" y="115" as="geometry" />
-        </mxCell>
-        <mxCell id="node_open_browser" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="3. Open the Keycloak login page&#10;with client_id, redirect_uri,&#10;code_challenge and state" vertex="1">
-          <mxGeometry height="55" width="250" x="125" y="210" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_callback" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="8. Receive the redirect&#10;and read code and state" vertex="1">
-          <mxGeometry height="55" width="250" x="125" y="545" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_dec_state" parent="lane_client" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="9. Does state match&#10;the stored value?" vertex="1">
-          <mxGeometry height="70" width="210" x="145" y="630" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_err_csrf" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="Stop the login&#10;(no token request)" vertex="1">
-          <mxGeometry height="46" width="110" x="10" y="642" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_post_token" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="10. POST /token&#10;with code and code_verifier" vertex="1">
-          <mxGeometry height="55" width="250" x="125" y="730" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_save_token" parent="lane_client" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" value="13. Store the tokens and&#10;update the auth state" vertex="1">
-          <mxGeometry height="55" width="250" x="125" y="825" as="geometry" />
-        </mxCell>
-        <mxCell id="node_client_finish" parent="lane_client" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;fontStyle=1;" value="14. End: the user&#10;is signed in" vertex="1">
-          <mxGeometry height="45" width="220" x="140" y="905" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_kc" parent="1" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" value="Keycloak (realm: prepmeup)" vertex="1">
-          <mxGeometry height="970" width="520" x="580" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_display" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="4. Show the Keycloak login page&#10;(e-mail and password)" vertex="1">
-          <mxGeometry height="55" width="250" x="135" y="210" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_submit" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="5. User enters e-mail and password&#10;and submits the form" vertex="1">
-          <mxGeometry height="50" width="250" x="135" y="295" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_dec_creds" parent="lane_kc" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="6. Are e-mail and&#10;password correct?" vertex="1">
-          <mxGeometry height="70" width="210" x="155" y="370" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_err_creds" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="Show an error&#10;on the login page" vertex="1">
-          <mxGeometry height="46" width="115" x="395" y="382" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_gen_code" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" value="7. Create SSO session and issue&#10;a one-time authorization code" vertex="1">
-          <mxGeometry height="50" width="250" x="135" y="465" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_redirect" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=10;fontColor=#1E293B;" value="8. Redirect the browser to&#10;redirect_uri?code=...&amp;state=..." vertex="1">
-          <mxGeometry height="55" width="260" x="130" y="545" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_dec_pkce" parent="lane_kc" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" value="11. Does SHA256(code_verifier)&#10;match code_challenge?" vertex="1">
-          <mxGeometry height="70" width="210" x="155" y="722.5" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_err_pkce" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=10;" value="400 Bad Request&#10;(invalid_grant)" vertex="1">
-          <mxGeometry height="45" width="125" x="390" y="735" as="geometry" />
-        </mxCell>
-        <mxCell id="node_kc_issue_tokens" parent="lane_kc" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" value="12. Issue tokens:&#10;• access token JWT (aud: prepmeup-api)&#10;• ID token and refresh token" vertex="1">
-          <mxGeometry height="55" width="250" x="135" y="825" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e1" edge="1" parent="1" source="node_start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_pkce_gen" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e2" edge="1" parent="1" source="node_pkce_gen" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_open_browser" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e3" edge="1" parent="1" source="node_open_browser" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_display" value="Redirect to Keycloak">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e4" edge="1" parent="1" source="node_kc_display" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_submit" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e5" edge="1" parent="1" source="node_kc_submit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_dec_creds" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e6_yes" edge="1" parent="1" source="node_kc_dec_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_gen_code" value="Yes">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e6_no" edge="1" parent="1" source="node_kc_dec_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_err_creds" value="No">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="fc_e6_retry" edge="1" parent="1" source="node_kc_err_creds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" target="node_kc_display" value="Try again">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-32" as="offset" />
-            <Array as="points">
-              <mxPoint x="1085" y="362.5" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="fc_e7" edge="1" parent="1" source="node_kc_gen_code" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_redirect" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e8" edge="1" parent="1" source="node_kc_redirect" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_callback" value="redirect_uri?code=...&amp;state=...">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e9" edge="1" parent="1" source="node_client_callback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_dec_state" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e10_no" edge="1" parent="1" source="node_client_dec_state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_err_csrf" value="No">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="fc_e10_yes" edge="1" parent="1" source="node_client_dec_state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_post_token" value="Yes">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e11" edge="1" parent="1" source="node_client_post_token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_dec_pkce" value="POST /token (code, code_verifier)">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e12_yes" edge="1" parent="1" source="node_kc_dec_pkce" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_kc_issue_tokens" value="Yes">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e12_no" edge="1" parent="1" source="node_kc_dec_pkce" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_kc_err_pkce" value="No">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="fc_e13" edge="1" parent="1" source="node_kc_issue_tokens" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="node_client_save_token" value="Access, ID and refresh token">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fc_e14" edge="1" parent="1" source="node_client_save_token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="node_client_finish" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="lane_client" value="Customer app or Admin panel" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="0" y="0" width="340" height="912" as="geometry"/></mxCell>
+        <mxCell id="lane_kc" value="Keycloak" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="340" y="0" width="360" height="912" as="geometry"/></mxCell>
+        <mxCell id="node_start" value="" style="ellipse;html=1;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_client"><mxGeometry x="113" y="42" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="node_click" value="1. Click Sign in" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="84" width="220" height="36" as="geometry"/></mxCell>
+        <mxCell id="node_pkce_gen" value="2. Generate code_verifier, code_challenge and state" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="140" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_open_browser" value="3. Open login URL with client_id, redirect_uri, code_challenge and state" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="204" width="220" height="56" as="geometry"/></mxCell>
+        <mxCell id="node_kc_display" value="4. Show login page" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="15" y="212" width="220" height="40" as="geometry"/></mxCell>
+        <mxCell id="node_kc_submit" value="5. User enters email and password" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="15" y="272" width="220" height="40" as="geometry"/></mxCell>
+        <mxCell id="node_kc_dec_creds" value="6. Credentials&lt;br&gt;correct?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="lane_kc"><mxGeometry x="45" y="332" width="160" height="64" as="geometry"/></mxCell>
+        <mxCell id="node_kc_err_creds" value="Show error" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="252" y="292" width="96" height="40" as="geometry"/></mxCell>
+        <mxCell id="node_kc_gen_code" value="7. Start SSO session, issue authorization code" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="15" y="420" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_kc_redirect" value="8. Redirect to redirect_uri with code and state" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="15" y="488" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_client_callback" value="8. Receive code and state" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="490" width="220" height="40" as="geometry"/></mxCell>
+        <mxCell id="node_client_dec_state" value="9. State matches?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="lane_client"><mxGeometry x="50" y="556" width="150" height="64" as="geometry"/></mxCell>
+        <mxCell id="node_client_err_csrf" value="Stop login" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F6E3E1;strokeColor=#8A2F25;fontColor=#8A2F25;fontSize=12;fontFamily=Arial;spacingLeft=2;spacingRight=2;" vertex="1" parent="lane_client"><mxGeometry x="240" y="568" width="92" height="40" as="geometry"/></mxCell>
+        <mxCell id="node_client_end_csrf" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_client"><mxGeometry x="273" y="626" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="node_client_post_token" value="10. Send code and code_verifier to token endpoint" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="652" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_kc_dec_pkce" value="11. Code and&lt;br&gt;PKCE valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="lane_kc"><mxGeometry x="45" y="642" width="160" height="64" as="geometry"/></mxCell>
+        <mxCell id="node_kc_err_pkce" value="Answer 400 invalid_grant" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F6E3E1;strokeColor=#8A2F25;fontColor=#8A2F25;fontSize=12;fontFamily=Arial;spacingLeft=2;spacingRight=2;" vertex="1" parent="lane_kc"><mxGeometry x="252" y="652" width="96" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_kc_end_pkce" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_kc"><mxGeometry x="287" y="718" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="node_kc_issue_tokens" value="12. Issue access token, refresh token and ID token" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="15" y="740" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_client_save_token" value="13. Store tokens, give access token to API client" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="740" width="220" height="44" as="geometry"/></mxCell>
+        <mxCell id="node_client_finish" value="14. User is signed in" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="15" y="810" width="220" height="36" as="geometry"/></mxCell>
+        <mxCell id="node_end" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_client"><mxGeometry x="112" y="870" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="fc_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_start" target="node_click"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_click" target="node_pkce_gen"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_pkce_gen" target="node_open_browser"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_open_browser" target="node_kc_display"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_display" target="node_kc_submit"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_submit" target="node_kc_dec_creds"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e6_no" value="[no]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_dec_creds" target="node_kc_err_creds"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="640" y="364"/></Array></mxGeometry></mxCell>
+        <mxCell id="fc_e6_retry" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_err_creds" target="node_kc_display"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="640" y="232"/></Array></mxGeometry></mxCell>
+        <mxCell id="fc_e6_yes" value="[yes]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_dec_creds" target="node_kc_gen_code"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_gen_code" target="node_kc_redirect"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_redirect" target="node_client_callback"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_callback" target="node_client_dec_state"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e10_no" value="[no]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_dec_state" target="node_client_err_csrf"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e10_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_err_csrf" target="node_client_end_csrf"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e10_yes" value="[yes]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_dec_state" target="node_client_post_token"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_post_token" target="node_kc_dec_pkce"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e12_no" value="[no]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_dec_pkce" target="node_kc_err_pkce"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e12_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_err_pkce" target="node_kc_end_pkce"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e12_yes" value="[yes]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_dec_pkce" target="node_kc_issue_tokens"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_kc_issue_tokens" target="node_client_save_token"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_save_token" target="node_client_finish"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="fc_e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_client_finish" target="node_end"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="legend" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;align=left;verticalAlign=top;container=1;collapsible=0;fontSize=11;fontStyle=1;fontColor=#173330;fontFamily=Arial;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="0" y="924" width="700" height="62" as="geometry"/></mxCell>
+        <mxCell id="legend_sym0" value="" style="ellipse;html=1;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="legend"><mxGeometry x="10" y="32" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="legend_txt0" value="Start" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="30" y="24" width="34" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym1" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="legend"><mxGeometry x="72" y="31" width="18" height="18" as="geometry"/></mxCell>
+        <mxCell id="legend_txt1" value="End" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="94" y="24" width="26" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym2" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="legend"><mxGeometry x="128" y="30" width="34" height="20" as="geometry"/></mxCell>
+        <mxCell id="legend_txt2" value="Action" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="166" y="24" width="42" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym3" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#F6E3E1;strokeColor=#8A2F25;fontColor=#8A2F25;fontSize=12;fontFamily=Arial;spacingLeft=2;spacingRight=2;" vertex="1" parent="legend"><mxGeometry x="216" y="30" width="34" height="20" as="geometry"/></mxCell>
+        <mxCell id="legend_txt3" value="Failure step" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="254" y="24" width="72" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym4" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="legend"><mxGeometry x="334" y="29" width="30" height="22" as="geometry"/></mxCell>
+        <mxCell id="legend_txt4" value="Decision with [guards]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="368" y="24" width="135" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;" edge="1" parent="legend"><mxGeometry relative="1" as="geometry"><mxPoint x="511" y="40" as="sourcePoint"/><mxPoint x="545" y="40" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="legend_txt5" value="Control flow" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="549" y="24" width="78" height="32" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

@@ -114,6 +114,27 @@ would show that growth as missing progress, while a burn-up chart keeps the two 
     \label{fig:burnup}
 \end{figure}
 
+\section{Deployment Strategy}\label{sec:method-deployment}
+
+The server part is deployed every time a pull request is merged to the main branch
+and the tests pass, not once per sprint. We use GitHub Flow, where the main branch
+should always be deployable \cite{chacon-github-flow-2011}, so there is nothing to gain
+from waiting until the sprint ends. When each merge is deployed on its own, a problem
+in production points to one pull request, and a rollback to the image before takes
+seconds. Scrum asks that the increment is usable at the end of every sprint
+\cite[p.~15]{schwaber-scrum-guide-2016}, and with this setup it always is. At the
+sprint review we tag the version we show on the main branch, and we build a new
+version of the customer app, because it is installed on the phone and the pipeline
+cannot deploy it.
+
+We have one production environment and no test environment. The tests in CI, the
+review of every pull request and a local setup that runs the same containers as
+production cover most of what a test environment would catch, while a second
+environment would double the setup on the server. The downside is that a problem
+that only exists on the server is first found in production, as described in
+Section~\ref{sec:deployment-assumptions}. The strategy and the pipeline behind it
+are described in Appendix 10.3.
+
 \section{Risk Management}\label{sec:method-risk}
 
 We keep a list of the risks to the project in Appendix 2.3. It uses the risk model

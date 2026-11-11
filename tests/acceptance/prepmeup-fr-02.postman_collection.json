@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-02 persistent storage",
+    "description": "Acceptance test for FR-02 (appendix 6.1). Run the folder 'Before restart', restart the database and then the API, and run the folder 'After restart'. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      { "key": "grant_type", "value": "authorization_code_with_pkce", "type": "string" },
+      { "key": "authUrl", "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth", "type": "string" },
+      { "key": "accessTokenUrl", "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token", "type": "string" },
+      { "key": "clientId", "value": "prepmeup-admin", "type": "string" },
+      { "key": "scope", "value": "openid", "type": "string" },
+      { "key": "redirect_uri", "value": "http://localhost:5173/", "type": "string" },
+      { "key": "challengeAlgorithm", "value": "S256", "type": "string" },
+      { "key": "client_authentication", "value": "body", "type": "string" },
+      { "key": "addTokenTo", "value": "header", "type": "string" },
+      { "key": "tokenName", "value": "PrepMeUp local", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5001" },
+    { "key": "keycloakUrl", "value": "http://localhost:8082" },
+    { "key": "customerName", "value": "FR-02 Test" },
+    { "key": "customerAddress", "value": "Testvej 1, 8000 Aarhus C" }
+  ],
+  "item": [
+    {
+      "name": "Before restart",
+      "item": [
+        {
+          "name": "1 Save customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{customerName}}\",\n  \"address\": \"{{customerAddress}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["user"]
+            },
+            "description": "Saves name and address for the signed-in customer. Run once, before the restart."
+          },
+          "response": []
+        },
+        {
+          "name": "2 Subscribe",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var body = pm.response.json();",
+                  "pm.test('Subscription is active with one planned order', function () {",
+                  "    pm.expect(body.status).to.eql('Active');",
+                  "    pm.expect(body.orders.length).to.eql(1);",
+                  "    pm.expect(body.orders[0].sentAt).to.eql(null);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": ["{{baseUrl}}"],
+              "path": ["subscription"]
+            },
+            "description": "Creates the subscription and its first order. Run once, before the restart. A second run answers with AlreadySubscribed."
+          },
+          "response": []
+        },
+        {
+          "name": "3 Get subscription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var body = pm.response.json();",
+                  "pm.collectionVariables.set('beforeStatus', body.status);",
+                  "pm.collectionVariables.set('beforeStartedAt', body.startedAt);",
+                  "pm.collectionVariables.set('beforeOrders', JSON.stringify(body.orders));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": ["{{baseUrl}}"],
+              "path": ["subscription"]
+            },
+            "description": "Reads the subscription and keeps status, start date and orders in collection variables, so the folder 'After restart' can compare against them."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "After restart",
+      "item": [
+        {
+          "name": "4 Get subscription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var body = pm.response.json();",
+                  "pm.test('Subscription is the same as before the restart', function () {",
+                  "    pm.expect(body.status).to.eql(pm.collectionVariables.get('beforeStatus'));",
+                  "    pm.expect(body.startedAt).to.eql(pm.collectionVariables.get('beforeStartedAt'));",
+                  "    pm.expect(JSON.stringify(body.orders)).to.eql(pm.collectionVariables.get('beforeOrders'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": ["{{baseUrl}}"],
+              "path": ["subscription"]
+            },
+            "description": "Run after the database and the API have been restarted. A new token is needed if the old one has expired (15 minutes)."
+          },
+          "response": []
+        },
+        {
+          "name": "5 Get customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var body = pm.response.json();",
+                  "pm.test('Name and address are the same as before the restart', function () {",
+                  "    pm.expect(body.name).to.eql(pm.collectionVariables.get('customerName'));",
+                  "    pm.expect(body.address).to.eql(pm.collectionVariables.get('customerAddress'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["user"]
+            },
+            "description": "Run after the restart."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 \addbibresource{../../../assets/references.bib}
 
 \title{3.2 Software Architecture}
-\author{SW4PRJ4 -- Group 3}
+\author{SW4PRJ4 - Group 3}
 \date{\today}
 
 \begin{document}
@@ -17,49 +17,51 @@
 \end{versionhistory}
 
 \section{Overview}
-The customer app and the admin panel do not contain any hand-written code for calling the API. Instead they use the package api-client, which is generated from the API's own description of itself. This appendix describes how that works: the chain from the C\# code to the two apps, when the client is generated again, and what happens when the API changes in a way that breaks the clients. Why we chose a generated client is described in appendix 2.1.
+The customer app and the admin panel have no hand-written code for calling the API. They use the API client package instead, and that package is generated from the API's own description of itself. This appendix describes how that works. It covers the chain from the C\# code to the two apps, when we generate the client again, and what happens when the API changes in a way that breaks the apps. Why we chose a generated client is described in appendix 2.1.
 
 \section{From C\# to the Apps}
 Figure~\ref{fig:api-client-generation} shows the chain from top to bottom. The top zone is C\# in the Web API, the bottom zone is TypeScript in the API client and the two apps, and NSwag is the generation step in between.
 
 \drawiofig[\linewidth]{api-client-generation}{How the TypeScript API client is generated from the C\# API.}{fig:api-client-generation}
 
-\paragraph{1. Controllers and contracts.} The contract is written in C\# in the Api project. Each controller defines its routes, and the contracts define the data in requests and responses. Each action has a name, for example Items\_GetItems, and the attributes on the action state which status codes it can return and which type comes back. These details are what end up in the client.
+\paragraph{1. Controllers and contracts.} We write the contract in C\# in the Api project. The controllers define the routes, and the contracts define the data in requests and responses. Each action also has a name and states which status codes it can return and what type comes back. All of this ends up in the client.
 
-\paragraph{2. The OpenAPI document.} The controllers and contracts do not produce the document themselves, and the document is not a file in the repository. It is built by ASP.NET Core's OpenAPI package while the API runs. When someone asks for the document, the package looks at the controllers, their attributes and the contract types, and writes an OpenAPI document that describes every endpoint \cite{microsoft-aspnetcore-openapi}\cite[sec.~3.2.1]{desanctis-web-apis-aspnet-core}. OpenAPI is a standard, language-neutral format for describing an HTTP API \cite{openapi-specification}. The API serves the document at /openapi/v1.json, but only when it runs in Development, so it is not public in production.
+\paragraph{2. The OpenAPI document.} The controllers do not produce the document themselves, and the document is not a file in the repository. ASP.NET Core's OpenAPI package builds it while the API runs. When someone asks for the document, the package looks at the controllers, their attributes and the contract types, and writes an OpenAPI document that describes every endpoint \cite{microsoft-aspnetcore-openapi}\cite[sec.~3.2.1]{desanctis-web-apis-aspnet-core}. OpenAPI is a standard format for describing an HTTP API, and it does not depend on a programming language \cite{openapi-specification}. The API only serves the document when it runs in Development, so it is not public in production.
 
-\paragraph{3. NSwag.} NSwag reads the document and writes a TypeScript client \cite{nswag-typescript-client-generator}. It runs as a local .NET tool with a fixed version (14.7.1), so everybody in the group generates exactly the same code. The settings are in the file nswag.json in the package. The most important ones are:
+\paragraph{3. NSwag.} NSwag reads the document and writes a TypeScript client \cite{nswag-typescript-client-generator}. We run it as a local .NET tool with a fixed version, 14.7.1, so everybody in the group generates exactly the same code. Its settings are in a file in the package. The most important ones are:
 \begin{itemize}
-  \item The client uses the browser's fetch function, which works both in the browser and in React Native.
-  \item There is one client class per controller, for example ItemsClient, and the first part of the action name decides the class. The action Items\_GetItems therefore becomes the method getItems on ItemsClient.
+  \item The client uses the standard fetch function, which works both in the browser and in React Native.
+  \item There is one client class for each controller. The name of an action decides which class it goes in and what the method is called, so the action that lists the items becomes a method on the client for items.
   \item Each client class also gets an interface, so a test can replace it with a fake.
 \end{itemize}
 
-\paragraph{4. The generated client.} NSwag writes all the clients and types to one file in the package. The file is never edited by hand. If something in the client looks wrong, the fix is made in the C\# code, and the client is generated again.
+\paragraph{4. The generated client.} NSwag writes all the clients and types to one file in the package. Nobody edits that file by hand. If something in the client looks wrong, we fix the C\# code and generate the client again.
 
-\paragraph{5. The client configuration.} One small file in the package is written by hand. It gives the generated clients the fetch function they use, and that function adds the user's access token to every call and tries to renew the token if the API answers 401. Each app tells the package where its token is kept, so the generated code does not know anything about Keycloak or about where the app stores the token.
+\paragraph{5. The client configuration.} One small file in the package is written by hand. It gives the generated clients the fetch function they use. That function adds the user's access token to every call, and if the API answers 401, it tries to renew the token once. Each app tells the package where its token is kept, so the generated code does not need to know anything about Keycloak or about how the app stores the token.
 
-\paragraph{6. The apps.} An app creates the clients it needs with the address of the API and the shared configuration, and then calls the methods like any other TypeScript function. The response comes back as a typed object, so the app does not build URLs, parse JSON or declare its own types for the data.
+\paragraph{6. The apps.} An app creates the clients it needs with the address of the API and the shared configuration. After that it calls the methods like any other TypeScript function and gets typed objects back. The app does not build URLs, parse JSON or write its own types for the data.
 
 \section{When the Client Is Generated Again}
-The client is generated again every time the contract changes: a new endpoint, a changed route, a new or changed field, or a new status code. It is done in three steps:
+We generate the client again every time the contract changes. That is when an endpoint is added, a route changes, a field is added or changed, or an action gets a new status code. It takes three steps:
 \begin{enumerate}
   \item Start the API locally with docker compose, so it serves the OpenAPI document.
   \item Run npm run generate:api-client from the clients folder.
   \item Commit the generated file in the same pull request as the change in the API.
 \end{enumerate}
 
-The generated file is committed, because the CI pipeline cannot generate it. That would require a running API inside the pipeline. Instead CI type checks both apps against the committed client. The weak point is step 1 to 3: if a developer changes the API and forgets to generate the client again, CI does not notice, and the client is out of date until somebody does it. The development guidelines in appendix 10.1 include the command, and a pull request that changes the API should also change the generated file.
+We commit the generated file because the CI pipeline cannot generate it. It would need a running API inside the pipeline to do that. Instead CI type checks both apps against the committed client.
+
+The weak point is the three steps. If a developer changes the API and forgets to generate the client again, CI does not notice, and the client stays out of date until somebody does it. The development guidelines in appendix 10.1 include the command, and a pull request that changes the API should also change the generated file.
 
 \section{Breaking Changes}
-A change is breaking when a client that worked before stops working. Examples are a removed or renamed endpoint, a removed or renamed field, a field that changes type, and a changed action name, because the action name becomes the method name in the client. A new endpoint or a new optional field is not breaking.
+A change is breaking when an app that worked before stops working. That happens when an endpoint or a field is removed or renamed, when a field changes type, or when an action gets a new name, because the action name becomes the method name in the client. A new endpoint or a new optional field is not breaking.
 
-Because the client is generated, a breaking change shows up at once. When the client is generated again, the TypeScript compiler fails in every place in the apps that uses what was removed or changed, and the type check in CI fails until the apps are fixed. The API change, the new client and the fixes in the apps therefore go into the same pull request. Our commits follow Conventional Commits (appendix 10.1), so the commit is marked as breaking with an exclamation mark after the type, for example feat(api)!, and a line that explains what breaks.
+Because the client is generated, we see a breaking change right away. When we generate the client again, the TypeScript compiler fails everywhere in the apps that uses something that was removed or changed. The type check in CI then fails until the apps are fixed. So the change in the API, the new client and the fixes in the apps go into the same pull request. Our commits follow Conventional Commits (appendix 10.1), so we mark the commit as breaking with an exclamation mark after the type, for example feat(api)!, and a line that explains what breaks.
 
-We do not version the API, because both apps live in the same repository as the API and are changed together. There is one exception. The customer app is installed on the user's phone, and an old version can still be in use after a new API is deployed. A breaking change can therefore stop old versions of the app from working until the user updates. We accept that in a prototype. A real product would need a versioned API or a period where both the old and the new endpoint exist.
+We do not version the API, because both apps are in the same repository as the API and are changed together. There is one exception. The customer app is installed on the user's phone, so an old version can still be in use after we deploy a new API. A breaking change can then stop old versions of the app from working until the user updates. We accept that in a prototype. A real product would need a versioned API, or a period where both the old and the new endpoint exist.
 
 \section{Why One Source for the Contract}
-ASP.NET Core builds the OpenAPI document from the C\# code, and NSwag generates the client from the document. The contract is therefore only written once, in C\#. There are no hand-written types in the apps that can drift away from the API, and a mismatch is caught by the compiler instead of by a user. The cost is the extra generation step and the risk of forgetting it, as described above.
+ASP.NET Core builds the OpenAPI document from the C\# code, and NSwag generates the client from the document. That means we only write the contract once, in C\#. There are no hand-written types in the apps that can drift away from the API, and if something does not match, the compiler tells us before a user finds out. The downside is the extra generation step, and that we can forget it.
 
 \printbibliography
 

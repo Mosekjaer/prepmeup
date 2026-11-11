@@ -4,7 +4,7 @@ namespace PrepMeUp.Tests.Unit;
 
 public class PackageTypeTests
 {
-    private static Item NewItem(string name) => new() { Id = Guid.NewGuid(), Name = name };
+    private static Item NewItem(string name) => new() { Id = Guid.NewGuid(), Name = name, Type = ItemType.Food };
 
     [Test]
     public void Create_ValidInput_IsActiveWithName()

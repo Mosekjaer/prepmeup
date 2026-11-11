@@ -2,10 +2,12 @@ namespace PrepMeUp.Domain;
 
 public class PackageType
 {
+    private List<PackageContent> _contents = [];
+
     public Guid Id { get; init; }
     public string Name { get; private set; } = string.Empty;
     public PackageTypeStatus Status { get; private set; }
-    public IReadOnlyList<PackageContent> Contents { get; private set; } = [];
+    public IReadOnlyList<PackageContent> Contents => _contents;
 
     private PackageType()
     {
@@ -24,7 +26,7 @@ public class PackageType
             Id = Guid.NewGuid(),
             Name = name.Trim(),
             Status = PackageTypeStatus.Active,
-            Contents = contentList
+            _contents = contentList
         };
     }
 

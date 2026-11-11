@@ -82,17 +82,6 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("PrepMe
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
     dbContext.Database.Migrate();
-
-    // Seed the same items the PMU-9 spike hardcoded, so the endpoint has
-    // real data to return the first time the table is created.
-    if (!dbContext.Items.Any())
-    {
-        dbContext.Items.AddRange(
-            new Item { Id = Guid.NewGuid(), Name = "torch" },
-            new Item { Id = Guid.NewGuid(), Name = "water" },
-            new Item { Id = Guid.NewGuid(), Name = "radio" });
-        dbContext.SaveChanges();
-    }
 }
 
 app.UseExceptionHandler();

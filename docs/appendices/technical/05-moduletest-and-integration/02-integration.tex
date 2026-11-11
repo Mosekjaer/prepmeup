@@ -40,6 +40,7 @@ We use collaboration integration. Each column in Table~\ref{tab:integration-over
   \item A part is integrated only when its unit tests pass.
   \item We are allowed to use a stub instead of Keycloak, since it is outside our system.
   \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item A step can have several test cases, for example with a valid, a missing and an expired access token.
   \item In a table representing an integration plan:
     \begin{itemize}
       \item T is the "top module" that the test drives.
@@ -47,6 +48,31 @@ We use collaboration integration. Each column in Table~\ref{tab:integration-over
       \item S is a stub.
     \end{itemize}
 \end{itemize}
+
+\subsection{Database in the Tests}
+We use SQLite in the tests as much as possible, because:
+\begin{itemize}
+  \item The tests are fast.
+  \item They need no database server, so they run in CI without extra setup.
+  \item Each test can start from an empty database, so the tests do not affect each other.
+\end{itemize}
+
+We use a real SQL Server only when SQLite cannot show what we need, for example that the migrations run and that the maximum lengths are enforced (Section~\ref{sec:db-plan}). A real SQL Server can also run in CI as a Docker container, but it is slower and needs more setup.
+
+Table~\ref{tab:sql-server-tests} shows the steps that use a real SQL Server. The tests start the SQL Server container themselves, so Docker must be running on the machine.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l l p{6.5cm}@{}}
+\textbf{Integration plan} & \textbf{Step} & \textbf{What it checks} \\
+\hline
+Database connection & Step 2 & The migrations run, and the maximum lengths are enforced \\
+\end{tabular}
+\caption{Steps that use a real SQL Server.}
+\label{tab:sql-server-tests}
+\end{table}
 
 \subsection{Overview of the Integration Plans}
 Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own subsection in this document. A column shows the parts that are included when on the last step of the feature's integration plan.
@@ -237,17 +263,22 @@ Keycloak                         &   & S & S &   & S & X \\
 \subsection{Steps}
 
 \subsubsection*{Step 1 -- Can KeycloakRoleClaimsTransformation correctly translate the realm roles in ClaimsPrincipal?}
-Since Transformation is T (top module), JwtBearer must be S (stub), because there is no http-request to the API, which is what would have triggered an automatic call of JwtBearer and its conversion of an access token to a ClaimsPrincipal. Instead of JwtBearer, the test builds the ClaimsPrincipal itself.
+Since Transformation is T (top module), JwtBearer must be S (stub), because there is no http-request to the API, which is what would have triggered an automatic call of JwtBearer and its conversion of an access token to a ClaimsPrincipal. Instead of JwtBearer, the tests build the ClaimsPrincipal themselves.
 
 \subsubsection*{Step 2 -- Is the AdminOnly policy correctly enforced based on the access token's validity and roles?}
-This time, JwtBearer is X, because the test sends an http-request to AdminController. Keycloak is S (stub), because the tests run without a real Keycloak. The stub for Keycloak consists of two parts:
+This time, JwtBearer is X, because the tests send http-requests to AdminController. Keycloak is S (stub), because the tests run without a real Keycloak. The stub for Keycloak consists of two parts:
 \begin{itemize}
   \item The RSA key pair: A private key used to sign the access token and a public key that is later used to verify the signature on the access token.
   \item A method that provides signed access tokens.
 \end{itemize}
 
 \subsubsection*{Step 3 -- Is access to a non-admin controller correctly enforced based on the access token's validity?}
-KeycloakRoleClaimsTransformation does run automatically, since it is registered as IClaimsTransformation and runs (only) when JwtBearer has approved the access token. However, the result of the transformation does not make a difference in the test. What matters for the request to reach the controller is if JwtBearer sets IsAuthenticated to true in the ClaimsPrincipal that it builds from the access token.
+Non-admin controllers with [authorize] should only allow acces for requests with a valid access token.
+So the tests in this step should focus on the \textit{mechanism} behind the enforcement of this rule.
+Note 1: The [authorize] functionality should still be tested for each individual controller in the different feature integration plans.
+Note 2: KeycloakRoleClaimsTransformation \textit{does} run automatically, since it is registered as IClaimsTransformation and runs (only) when JwtBearer has approved the access token.
+However, the result of the transformation does not make a difference in the tests.
+What matters for the request to reach the controller is if JwtBearer sets IsAuthenticated to true in the ClaimsPrincipal that it builds from the access token.
 
 \subsubsection*{Step 4 -- When we call methods on api-client, does it attach the access token and handle a 401 response from the API correctly?}
 The API is S (stub), and the test driver writes the http response itself.
@@ -265,25 +296,30 @@ Keycloak is no longer stubbed, nor is any other component. This is the final ste
 \centering
 \small
 \rowcolors{2}{gray!15}{white}
-\begin{tabular}{@{}l c@{}}
-\textbf{Component} & \textbf{Step 1} \\
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
 \hline
-ItemsController & T \\
-ItemService     & X \\
-ItemRepository  & X \\
-JwtBearer       & X \\
-DbContext       & X \\
-Database        & X (SQLite) \\
-Keycloak        & S \\
+ItemsController & T & T \\
+ItemService     & X & X \\
+ItemRepository  & X & X \\
+JwtBearer       &   & X \\
+DbContext       & X & X \\
+Database        & X (SQLite) & X (SQLite) \\
+Keycloak        &   & S \\
 \end{tabular}
 \caption{Integration plan for get items.}
 \label{tab:items-integration-plan}
 \end{table}
 
-ItemService only passes the call on to ItemRepository, so it is integrated together with the controller in one step. ItemRepository against the database is covered by the database connection plan (Section~\ref{sec:db-plan}).
+ItemService only passes the call on to ItemRepository, so it is integrated together with the controller. ItemRepository against the database is covered by the database connection plan (Section~\ref{sec:db-plan}).
 
-\subsubsection*{Step 1 -- Does GET /items return the items as JSON to a logged-in user?}
-The test puts items in the database and sends an HTTP request with a valid test token. It checks that the answer is 200 with the id and name of each item, and that an empty table gives an empty list. A request without a token is already covered by step 3 of the authentication plan (Section~\ref{sec:auth-plan}).
+\subsubsection*{Step 1 -- Does ItemsController return the items in the database?}
+The tests create ItemsController with the real ItemService and call GetItems \textit{directly}, without an HTTP request.
+JwtBearer is therefore not part of the step, and the step only tests the path from the controller to the database.
+The tests check that the result has the id and name of each item, and that an empty table gives an empty list.
+
+\subsubsection*{Step 2 -- Is GET /items only available to a logged-in user?}
+Now the tests send HTTP requests, so JwtBearer is X and Keycloak is S. A request with a valid test token gets 200 with the items as JSON, and a request without a valid token gets 401. This checks that ItemsController has the [Authorize] attribute, and that the route and the JSON answer work.
 
 \section{What the Plan Does Not Cover}
 The tests with SQLite do not test the migrations, because the database is created from the model. They also do not test the apps calling the API. We leave both out of this plan.

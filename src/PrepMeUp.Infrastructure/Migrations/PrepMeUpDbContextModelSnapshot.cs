@@ -61,9 +61,32 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Items");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7034103d-0cce-40d5-a06a-345b47276ded"),
+                            Name = "Water",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("cd127a73-703c-4717-88bf-7726dd09944c"),
+                            Name = "Canned food",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("8e33e585-870c-4f60-bd6e-995bc86ef2c6"),
+                            Name = "Crispbread",
+                            Type = 0
+                        });
                 });
 
             modelBuilder.Entity("PrepMeUp.Domain.Order", b =>
@@ -86,6 +109,110 @@ namespace PrepMeUp.Infrastructure.Migrations
                     b.HasIndex("SubscriptionId");
 
                     b.ToTable("Orders", (string)null);
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.PackageContent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PackageTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PackageTypeId", "ItemId")
+                        .IsUnique();
+
+                    b.ToTable("PackageContents", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d2a0dd13-1f5e-448b-a748-44b769996004"),
+                            ItemId = new Guid("7034103d-0cce-40d5-a06a-345b47276ded"),
+                            PackageTypeId = new Guid("dbd55106-cbca-4197-bf2b-e1b21b36e7bd"),
+                            Quantity = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("257ad596-d194-4b4a-a713-465cc4da0155"),
+                            ItemId = new Guid("cd127a73-703c-4717-88bf-7726dd09944c"),
+                            PackageTypeId = new Guid("dbd55106-cbca-4197-bf2b-e1b21b36e7bd"),
+                            Quantity = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("940be6bb-ef0f-4cbf-92c4-b0faa27177af"),
+                            ItemId = new Guid("8e33e585-870c-4f60-bd6e-995bc86ef2c6"),
+                            PackageTypeId = new Guid("dbd55106-cbca-4197-bf2b-e1b21b36e7bd"),
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("701ffdee-edbc-4b6c-a8f9-88d11ef486e9"),
+                            ItemId = new Guid("7034103d-0cce-40d5-a06a-345b47276ded"),
+                            PackageTypeId = new Guid("52f89479-6e11-4698-8602-e7cbe63004ec"),
+                            Quantity = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("963b24e5-4ff6-4a05-a617-c057c01e86cf"),
+                            ItemId = new Guid("cd127a73-703c-4717-88bf-7726dd09944c"),
+                            PackageTypeId = new Guid("52f89479-6e11-4698-8602-e7cbe63004ec"),
+                            Quantity = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("a3c1f0b2-5d7e-4c19-8b6a-2e9f4d1c7a30"),
+                            ItemId = new Guid("8e33e585-870c-4f60-bd6e-995bc86ef2c6"),
+                            PackageTypeId = new Guid("52f89479-6e11-4698-8602-e7cbe63004ec"),
+                            Quantity = 2
+                        });
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.PackageType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PackageTypes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("dbd55106-cbca-4197-bf2b-e1b21b36e7bd"),
+                            Name = "Normal - Adult",
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("52f89479-6e11-4698-8602-e7cbe63004ec"),
+                            Name = "Normal - Child",
+                            Status = 0
+                        });
                 });
 
             modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>
@@ -120,6 +247,23 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PrepMeUp.Domain.PackageContent", b =>
+                {
+                    b.HasOne("PrepMeUp.Domain.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PrepMeUp.Domain.PackageType", null)
+                        .WithMany("Contents")
+                        .HasForeignKey("PackageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>
                 {
                     b.HasOne("PrepMeUp.Domain.Customer", null)
@@ -127,6 +271,11 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .HasForeignKey("PrepMeUp.Domain.Subscription", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.PackageType", b =>
+                {
+                    b.Navigation("Contents");
                 });
 
             modelBuilder.Entity("PrepMeUp.Domain.Subscription", b =>

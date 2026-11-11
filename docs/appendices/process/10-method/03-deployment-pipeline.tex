@@ -26,6 +26,7 @@
   1.7 & 04-11-2026 & Group 3 & Local and production setup moved here from appendix 3.1 \\
   1.8 & 04-11-2026 & Group 3 & Deployment strategy \\
   1.9 & 04-11-2026 & Group 3 & Deployment diagrams for the local and the production setup \\
+  1.10 & 05-11-2026 & Group 3 & The way from the internet to the containers, legend and artifacts in the deployment diagrams \\
 \end{versionhistory}
 
 In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
@@ -59,7 +60,7 @@ The database has no host port, so only the API can reach it. The API waits until
 \subsection{Production}
 Figure~\ref{fig:deployment-production} shows the production setup on our server, and the table lists the containers in the production compose file.
 
-\drawiofig[\linewidth]{deployment-production}{Deployment diagram of the production setup. Only the Coolify proxy can be reached from the internet.}{fig:deployment-production}
+\drawiofig[\linewidth]{deployment-production}{Deployment diagram of the production setup. Traffic from the internet goes through Cloudflare to the Coolify proxy.}{fig:deployment-production}
 
 \begin{center}
 \begin{tabular}{@{}l p{4.5cm} p{5.5cm}@{}}
@@ -73,9 +74,31 @@ admin & prebuilt image from GHCR & Web server for the admin panel \\
 \end{tabular}
 \end{center}
 
-No container publishes a port. Coolify's reverse proxy receives the traffic from the internet on HTTPS and forwards it to the API, Keycloak and the admin panel on port 8080 inside the network. Because HTTPS ends at the proxy, Keycloak reads the forwarded headers to know the original address and scheme. The two databases can only be reached from inside the network.
+No container publishes a port. Coolify's proxy receives the traffic from Cloudflare and forwards it to the API, Keycloak and the admin panel on port 8080 inside the network. The two databases can only be reached from inside the network. How a request gets from the internet to a container is described in section~\ref{sec:request-path}.
 
 The public URLs of the admin panel, the customer app and Keycloak are set as environment variables in Coolify. The same variables are used for the API's CORS policy and the redirect addresses in the Keycloak realm. The admin panel also needs the public URL of the API, which is set the same way. The panel reads its addresses when the container starts (section~\ref{sec:admin-panel}). All services are set to restart, so they start again after a crash or a server restart.
+
+\subsection{From the Internet to the Containers}\label{sec:request-path}
+When the customer app or the admin panel calls the API, the request goes through two proxies before it reaches a container: Cloudflare and Coolify's proxy.
+
+\begin{enumerate}
+    \item The domain names of the API, Keycloak and the admin panel are in Cloudflare's DNS. The records are proxied, so a DNS lookup returns Cloudflare's addresses and not the address of our server \cite{cloudflare-proxy-status}.
+    \item The client opens an HTTPS connection to Cloudflare.
+    \item Cloudflare opens a new HTTPS connection to our server and checks the server's certificate. This is Cloudflare's Full (strict) mode \cite{cloudflare-ssl-modes}.
+    \item Coolify's proxy is Traefik \cite{coolify-traefik-overview}. HTTPS ends here. Traefik looks at the domain name in the request and sends it with plain HTTP to the right container on port 8080 inside the Docker network.
+    \item The container answers, and the answer goes back the same way.
+\end{enumerate}
+
+Coolify uses the production compose file from the repository as it is. In Coolify's web interface we only add two things. The first is a domain for each service that should be reachable from outside, which is the API, Keycloak and the admin panel \cite{coolify-docker-compose}. The databases have no domain, so the proxy has no route to them. The second is the environment variables, which are the passwords for the two databases and the Keycloak admin, and the public addresses from the section above. The compose file stops with an error if a required variable is missing, so a forgotten variable is found when the stack starts.
+
+The domains are saved with https in Coolify, so Coolify gets a certificate from Let's Encrypt for each of them \cite{coolify-traefik-overview}. That is the certificate Cloudflare checks.
+
+The containers only see plain HTTP from the proxy. Keycloak still has to put the public HTTPS address in its login pages and in the tokens, because the API checks that address in every token. So we give Keycloak its public address in an environment variable, and Keycloak reads the forwarded headers from the proxy.
+
+\subsubsection*{Why Full (strict)}
+Cloudflare has three modes for the connection to our server. With Flexible it is plain HTTP. With Full it is HTTPS, but Cloudflare does not check the certificate. With Full (strict), Cloudflare also checks that the certificate is valid for the domain \cite{cloudflare-ssl-modes}.
+
+The connection from Cloudflare to our server carries the tokens and the passwords users type on Keycloak's login page. Cloudflare recommends Full or Full (strict) for sites with logins \cite{cloudflare-ssl-flexible}. We chose Full (strict), because it costs us nothing extra. Coolify already gets a valid certificate from Let's Encrypt, so there is no reason to let Cloudflare accept any certificate.
 
 \section{Deployment Strategy}\label{sec:strategy}
 Our supervisor asked how often we deploy, and whether we have both a test and a production environment. The short answer is that the server part is deployed every time a pull request is merged, that there is only one environment besides the developers' own computers, and that the customer app is released once per sprint.

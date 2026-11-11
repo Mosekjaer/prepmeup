@@ -63,3 +63,15 @@
 **Pattern:** Skrev Kaneo-numre (PMU-xx) ved hvert punkt i dagsordenerne til 3/11 og 4/11. Frederik: "Du behøver ikke skrive PMU'er på."
 **Rule:** Skriv ikke PMU-numre i dagsordener. Omtal kortet ved dets emne ("kortet om zombie-brugere", "databasen") og angiv point, hvor det er relevant.
 **Context:** `meeting-docs`, `12-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
+
+## 2026-11-05 — Behold ER-diagrammets notation, ret kun fejlene
+
+**Pattern:** I diagramreviewet blandede ER-diagrammet tabelbokse og Chen-diamanter. Agenten tegnede det om til crow's foot. Frederik: "skal beholde chen notation, men have farver, mere kompakt."
+**Rule:** Når et diagram blander to notationer, så ret det mod den notation, gruppen har valgt (her Chen), og skift ikke til en anden. Er valget uklart, så spørg før omtegning. Gælder også C4/UML-varianter.
+**Context:** `docs/assets/drawio/er-diagram.drawio`, diagramreview med `~/diagram-review/`.
+
+## 2026-11-05 — Edge-labels må ikke dække stregerne
+
+**Pattern:** I deployment-local lå labels oven på forbindelseslinjerne med hvid baggrund, så stregerne ikke kunne ses.
+**Rule:** Placér edge-labels ved siden af stregen (offset eller på et vandret stykke med plads), ikke centreret over korte segmenter. Tjek i renderet PNG, at hver streg er synlig fra ende til ende.
+**Context:** `docs/assets/drawio/deployment-local.drawio`.

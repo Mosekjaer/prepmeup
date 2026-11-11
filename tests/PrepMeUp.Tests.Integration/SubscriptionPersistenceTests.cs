@@ -9,6 +9,9 @@ namespace PrepMeUp.Tests.Integration;
 
 public class SubscriptionPersistenceTests
 {
+    private const string Email = "malthe@example.com";
+    private static readonly Address Home = new("Finlandsgade 22", "8200", "Aarhus N");
+
     private SqliteConnection _connection = null!;
 
     [SetUp]
@@ -32,7 +35,7 @@ public class SubscriptionPersistenceTests
         {
             var services = scope.ServiceProvider;
             await services.GetRequiredService<CustomerService>()
-                .SaveDetailsAsync("sub-1", "Malthe", "Finlandsgade 22", CancellationToken.None);
+                .SaveDetailsAsync("sub-1", Email, "Malthe", null, Home, CancellationToken.None);
             await services.GetRequiredService<SubscriptionService>().SubscribeAsync("sub-1", CancellationToken.None);
         }
 
@@ -50,7 +53,7 @@ public class SubscriptionPersistenceTests
     public async Task SaveChanges_SecondSubscriptionForSameCustomer_IsRejectedByDatabase()
     {
         using var factory = CreateFactory();
-        var customer = new Customer("sub-1", "Malthe", "Finlandsgade 22");
+        var customer = new Customer("sub-1", "Malthe", Email, null, Home);
         using (var scope = factory.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();

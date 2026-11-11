@@ -1,4 +1,5 @@
 import type { SubscriptionResponse } from '@prepmeup/api-client';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Button, Text, View } from 'react-native';
 
@@ -7,7 +8,7 @@ import { isNotFound, subscriptionClient } from '../lib/api';
 type State =
   | { kind: 'loading' }
   | { kind: 'none' }
-  | { kind: 'error'; message: string }
+  | { kind: 'error' }
   | { kind: 'loaded'; subscription: SubscriptionResponse };
 
 function formatDate(value: string): string {
@@ -20,6 +21,7 @@ function formatDate(value: string): string {
 }
 
 export function SubscriptionSummary() {
+  const router = useRouter();
   const [state, setState] = useState<State>({ kind: 'loading' });
 
   const load = useCallback(() => {
@@ -28,17 +30,11 @@ export function SubscriptionSummary() {
       .getSubscription()
       .then((subscription) => setState({ kind: 'loaded', subscription }))
       .catch((reason: unknown) =>
-        setState(isNotFound(reason) ? { kind: 'none' } : { kind: 'error', message: 'Could not load your subscription.' }),
+        setState(isNotFound(reason) ? { kind: 'none' } : { kind: 'error' }),
       );
   }, []);
 
   useEffect(load, [load]);
-
-  const subscribe = () =>
-    subscriptionClient
-      .subscribe()
-      .then((subscription) => setState({ kind: 'loaded', subscription }))
-      .catch(() => setState({ kind: 'error', message: 'Could not create your subscription.' }));
 
   if (state.kind === 'loading') {
     return <ActivityIndicator />;
@@ -47,7 +43,7 @@ export function SubscriptionSummary() {
   if (state.kind === 'error') {
     return (
       <View>
-        <Text>{state.message}</Text>
+        <Text>Could not load your subscription.</Text>
         <Button title="Try again" onPress={load} />
       </View>
     );
@@ -57,7 +53,7 @@ export function SubscriptionSummary() {
     return (
       <View>
         <Text>You do not have a subscription yet.</Text>
-        <Button title="Subscribe" onPress={subscribe} />
+        <Button title="Subscribe" onPress={() => router.push('/build-order')} />
       </View>
     );
   }

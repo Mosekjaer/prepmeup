@@ -4,8 +4,13 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import { SubscriptionSummary } from '../src/components/SubscriptionSummary';
 
 const mocks = vi.hoisted(() => ({
+  router: { push: vi.fn() },
   getSubscription: vi.fn(),
   subscribe: vi.fn(),
+}));
+
+vi.mock('expo-router', () => ({
+  useRouter: () => mocks.router,
 }));
 
 vi.mock('../src/lib/api', async (importOriginal) => ({
@@ -14,6 +19,7 @@ vi.mock('../src/lib/api', async (importOriginal) => ({
 }));
 
 beforeEach(() => {
+  mocks.router.push.mockReset();
   mocks.getSubscription.mockReset();
   mocks.subscribe.mockReset();
 });
@@ -74,19 +80,14 @@ it('offers to subscribe when the customer has no subscription', async () => {
   expect(screen.getByText('Subscribe')).toBeTruthy();
 });
 
-it('creates the subscription and shows it when the customer subscribes', async () => {
+it('opens the order builder instead of subscribing right away', async () => {
   mocks.getSubscription.mockRejectedValue({ status: 404 });
-  mocks.subscribe.mockResolvedValue({
-    status: 'Active',
-    startedAt: '2026-10-01T10:26:32+00:00',
-    orders: [plannedOrder],
-  });
   render(<SubscriptionSummary />);
 
   fireEvent.click(await screen.findByText('Subscribe'));
 
-  expect(await screen.findByText('Active since 1 Oct 2026')).toBeTruthy();
-  expect(mocks.subscribe).toHaveBeenCalledTimes(1);
+  expect(mocks.router.push).toHaveBeenCalledWith('/build-order');
+  expect(mocks.subscribe).not.toHaveBeenCalled();
 });
 
 it('shows an error that can be retried when loading fails', async () => {
@@ -103,23 +104,6 @@ it('shows an error that can be retried when loading fails', async () => {
 
   expect(await screen.findByText('Active since 1 Oct 2026')).toBeTruthy();
   expect(mocks.getSubscription).toHaveBeenCalledTimes(2);
-});
-
-it('shows an error that can be retried when subscribing fails', async () => {
-  mocks.getSubscription.mockRejectedValueOnce({ status: 404 });
-  mocks.subscribe.mockRejectedValue({ status: 500 });
-  mocks.getSubscription.mockResolvedValueOnce({
-    status: 'Active',
-    startedAt: '2026-10-01T10:26:32+00:00',
-    orders: [plannedOrder],
-  });
-  render(<SubscriptionSummary />);
-  fireEvent.click(await screen.findByText('Subscribe'));
-  expect(await screen.findByText('Could not create your subscription.')).toBeTruthy();
-
-  fireEvent.click(screen.getByText('Try again'));
-
-  expect(await screen.findByText('Active since 1 Oct 2026')).toBeTruthy();
 });
 
 it('shows a loading indicator while the subscription is loading', () => {

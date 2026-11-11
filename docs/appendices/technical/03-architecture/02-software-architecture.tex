@@ -20,7 +20,7 @@
 The customer app and the admin panel do not contain any hand-written code for calling the API. Instead they use the package api-client, which is generated from the API's own description of itself. This appendix describes how that works: the chain from the C\# code to the two apps, when the client is generated again, and what happens when the API changes in a way that breaks the clients. Why we chose a generated client is described in appendix 2.1.
 
 \section{From C\# to the Apps}
-Figure~\ref{fig:api-client-generation} shows the chain. The blue part is C\#, the green part is TypeScript, and NSwag is the step in between.
+Figure~\ref{fig:api-client-generation} shows the chain from top to bottom. The top zone is C\# in the Web API, the bottom zone is TypeScript in the API client and the two apps, and NSwag is the generation step in between.
 
 \drawiofig[\linewidth]{api-client-generation}{How the TypeScript API client is generated from the C\# API.}{fig:api-client-generation}
 

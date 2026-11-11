@@ -20,9 +20,11 @@
 Before we built the screens, we drew low-fidelity mockups of the customer app and the admin panel in sprint 2. The arrows show how the user moves between the screens, and each screen is marked with the requirements it covers. A dashed border marks a could-have. All text in the mockups is in English (NFR-01).
 
 \subsection{Customer App}
-Figure~\ref{fig:ui-mockup-customer} shows the customer app. A new customer signs in (K1), creates a profile (K2), builds the first order from adult and child packages (K3, K4), pays (K5) and lands on the home screen (K6). From there the customer can see the orders (K7), change the planned order (K8) and the profile (K9). A notification (K10) leads to the planned order.
+Figures~\ref{fig:ui-mockup-customer} and~\ref{fig:ui-mockup-customer-2} show the customer app. A new customer signs in (K1), creates a profile (K2), builds the first order from adult and child packages (K3, K4), pays (K5) and lands on the home screen (K6). From there the customer can see the orders (K7), change the planned order (K8) and the profile (K9). A notification (K10) leads to the planned order.
 
-\drawiofig[\linewidth]{ui-mockup-customer}{Low-fidelity mockup of the customer app.}{fig:ui-mockup-customer}
+\drawiofig[\linewidth]{ui-mockup-customer}{Low-fidelity mockup of the customer app, part 1: from sign-in to the first order (K1--K6). Note that an existing customer goes straight from K1 to the home screen K6.}{fig:ui-mockup-customer}
+
+\drawiofig[\linewidth]{ui-mockup-customer-2}{Low-fidelity mockup of the customer app, part 2: orders, profile and notification (K7--K10). The rounded label is the home screen K6 from Figure~\ref{fig:ui-mockup-customer}.}{fig:ui-mockup-customer-2}
 
 The mockups were drawn before requirements specification 1.5, so a few details have changed since:
 \begin{itemize}
@@ -32,9 +34,11 @@ The mockups were drawn before requirements specification 1.5, so a few details h
 \end{itemize}
 
 \subsection{Admin Panel}
-Figure~\ref{fig:ui-mockup-admin} shows the admin panel. The administrator signs in (A1) and sees the orders to send, sorted by planned date (A2, FR-05). An order can be opened and marked as sent (A3, FR-06). The administrator can also create package types (A4, FR-11) and a new version of a package type, so existing orders keep the old contents (A5, FR-15).
+Figures~\ref{fig:ui-mockup-admin} and~\ref{fig:ui-mockup-admin-2} show the admin panel. The administrator signs in (A1) and sees the orders to send, sorted by planned date (A2, FR-05). An order can be opened and marked as sent (A3, FR-06). The administrator can also create package types (A4, FR-11) and a new version of a package type, so existing orders keep the old contents (A5, FR-15).
 
-\drawiofig[\linewidth]{ui-mockup-admin}{Low-fidelity mockup of the admin panel.}{fig:ui-mockup-admin}
+\drawiofig[\linewidth]{ui-mockup-admin}{Low-fidelity mockup of the admin panel, part 1: dispatch (A1--A3). Note that an order can be marked as sent both from the queue and from the order detail.}{fig:ui-mockup-admin}
+
+\drawiofig[\linewidth]{ui-mockup-admin-2}{Low-fidelity mockup of the admin panel, part 2: package types (A4--A5). A new version (A5, could have) leaves existing orders on the old contents.}{fig:ui-mockup-admin-2}
 
 \section{Navigation}
 Both clients have the same navigation on every main screen, as the mockups show. The admin panel has a sidebar with two tabs, the dispatch queue and the package types, and a sign out button under them. The open tab is highlighted, and the start page sends the administrator to the dispatch queue (A2, A4).

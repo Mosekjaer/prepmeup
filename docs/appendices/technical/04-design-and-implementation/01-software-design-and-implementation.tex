@@ -120,7 +120,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
         \end{itemize}
     \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see step 8), and displays it's own login page.
     \item User types email and password and clicks 'log in'.
-    \item Keycloak validerer login-oplysningerne: Er de korrekte?
+    \item Keycloak checks the credentials: are they correct?
         \begin{itemize}
             \item No: Keycloak shows an error on the login page and user tries again.
             \item Yes: Keycloak looks up the users realm roles.It is 'household' for customers and 'admin' for administrators. In step 12, these roles into the jwt token.
@@ -178,7 +178,7 @@ This section shows what happens the first time a new customer uses the app. It s
 
 \drawiofig[\linewidth]{onboarding-customer}{Onboarding of a new customer, from registration in Keycloak to saved name and address.}{fig:onboarding-customer}
 
-Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak, the API and the database. The flow has six parts.
+Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak, the Web API and the database. The flow has six parts.
 
 \paragraph{1. Sign in.} The customer opens the app and taps Sign in. The app has no login form of its own. It opens Keycloak's login page in the browser, in the same way as in Figure~\ref{fig:keycloak-login-flowchart}.
 
@@ -239,7 +239,7 @@ This section shows how a new administrator gets access to the admin panel. An ad
 
 \drawiofig[\linewidth]{onboarding-admin}{Onboarding of a new administrator, from creation in the Keycloak Admin Console to access to the admin panel.}{fig:onboarding-admin}
 
-Figure~\ref{fig:onboarding-admin} has four lanes: the existing administrator, the new administrator, Keycloak and the admin panel with the API. The flow has five parts.
+Figure~\ref{fig:onboarding-admin} has four lanes: the existing administrator, the new administrator, Keycloak, and the admin panel with the Web API. The flow has five parts.
 
 \paragraph{1. Create the user in Keycloak.} The existing administrator logs in to the Keycloak Admin Console. Users are created there, because the admin panel has no page for it yet. Our admin role only gives access to the admin panel and the admin endpoints of the API. It does not give access to the Admin Console by itself, so the existing administrator also needs a Keycloak account that is allowed to manage users.
 

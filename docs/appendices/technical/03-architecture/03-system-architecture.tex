@@ -25,7 +25,7 @@ We do not draw levels 3 and 4 as C4 diagrams, because other diagrams already cov
 \section{System Context}
 Figure~\ref{fig:c4-context} shows what PrepMeUp is and what is outside it. Blue is the system we build, and grey is the system it depends on.
 
-\drawiofig[\linewidth]{c4-context}{System context of PrepMeUp (C4 level 1).}{fig:c4-context}
+\drawiofig[\linewidth]{c4-context}{System context of PrepMeUp (C4 level 1). Both users log in at Keycloak, so PrepMeUp never handles a password; the only arrow between PrepMeUp and Keycloak points towards Keycloak.}{fig:c4-context}
 
 PrepMeUp has two users, the same two as in the requirements specification in appendix 1.2. The customer manages the household, the subscription and the orders. The administrator maintains the package types and sends the orders.
 
@@ -38,7 +38,7 @@ There is no grocery supplier and no payment provider in the diagram, because Pre
 \section{Containers}
 Figure~\ref{fig:c4-containers} zooms in on PrepMeUp and shows its containers. In the C4 model a container is a part that runs on its own, and the other parts talk to it over the network. It is not the same as a Docker container. The customer app is a C4 container even though it runs on the phone and not in Docker.
 
-\drawiofig[\linewidth]{c4-containers}{Containers in PrepMeUp (C4 level 2). The dashed frame is the boundary of the system.}{fig:c4-containers}
+\drawiofig[\linewidth]{c4-containers}{Containers in PrepMeUp (C4 level 2). Both clients get their own access token from Keycloak and call the Web API through the generated API client; only the Web API talks to the database.}{fig:c4-containers}
 
 PrepMeUp has four containers. The customer app is an Expo app written in TypeScript, and it runs on Android. The admin panel is a React app built with Vite. It runs in the browser, and in production its files are served by nginx. The Web API is an ASP.NET Core application. It holds the business rules, and it is the only container that talks to the database. The database is SQL Server, and the Web API reads and writes it through EF Core.
 

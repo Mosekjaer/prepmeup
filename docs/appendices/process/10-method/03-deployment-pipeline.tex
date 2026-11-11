@@ -135,7 +135,7 @@ The customer app is the exception. The pipeline cannot deploy it, because it is 
 Our pipeline is a GitHub Actions workflow. A workflow is made of jobs, and it starts when something happens in the repository, for example a push \cite{github-understanding-actions}. The steps are:
 
 \begin{enumerate}
-    \item A developer pushes a branch. The CI workflow builds the backend and the clients and runs all tests. A second workflow checks the branch name and the pull request title.
+    \item A developer pushes a branch and opens a pull request. The CI workflow builds the backend and the clients and runs all tests. A second workflow checks the branch name and the pull request title.
     \item The pull request can only be merged when the checks are green and another group member has reviewed it.
     \item After the squash merge, the CI workflow runs again on the main branch.
     \item If build and tests are green, the publish job builds the API, Keycloak and admin panel images and pushes them to GitHub Container Registry (GHCR).

@@ -1,175 +1,72 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" version="26.0.0">
-  <diagram id="onboarding-customer" name="Onboarding: Customer">
-    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="1470" math="0" shadow="0">
+<mxfile host="drawio">
+  <diagram id="onboarding-customer" name="Onboarding: customer">
+    <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1100" math="0" shadow="0">
       <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Onboarding Flowchart — New Customer in the Customer App&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;From the first launch through registration in Keycloak ('New user? Register') to the profile lookup (404) and saving name and address (PUT /user)&lt;/span&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#020617;arcSize=6;align=left;spacingLeft=25;" vertex="1" parent="1">
-          <mxGeometry x="40" y="30" width="1380" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_client" value="Customer app (Expo)" style="swimlane;startSize=32;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="40" y="125" width="350" height="1290" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_kc" value="Keycloak (identity provider)" style="swimlane;startSize=32;fillColor=#FAF5FF;strokeColor=#E9D5FF;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="410" y="125" width="340" height="1290" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_api" value="Backend (Api, Application, Infrastructure)" style="swimlane;startSize=32;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="770" y="125" width="360" height="1290" as="geometry" />
-        </mxCell>
-        <mxCell id="lane_db" value="SQL Server (database)" style="swimlane;startSize=32;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontStyle=1;fontColor=#1E293B;" vertex="1" parent="1">
-          <mxGeometry x="1150" y="125" width="270" height="1290" as="geometry" />
-        </mxCell>
-        <mxCell id="c_start" value="Start: new customer opens the app&lt;br&gt;and taps 'Sign in'&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(the app has no login form of its own)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontFamily=Arial;fontSize=11;fontStyle=1;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="45" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="c_open_browser" value="Open Keycloak in the browser&lt;br&gt;with expo-auth-session&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(OIDC auth request with PKCE)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="125" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="c_receive_token" value="Receive redirect callback&lt;br&gt;with authorization code and state" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="445" width="240" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="c_exchange" value="Check state and exchange code for tokens&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(POST /token with code and code_verifier)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="530" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="c_store" value="Receive tokens:&lt;br&gt;• Access token (JWT) in memory&lt;br&gt;• Refresh token in SecureStore" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="610" width="240" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="c_call_get" value="HomeScreen calls&lt;br&gt;userClient.getCustomer()&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(GET /user • Authorization: Bearer)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="710" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="c_catch_404" value="Catch 404 (isNotFound):&lt;br&gt;open OnboardingScreen&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#D97706;&quot;&gt;(router.push('/onboarding'))&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="890.0" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="c_enter_details" value="Customer fills in:&lt;br&gt;• Name (e.g. 'Alexander')&lt;br&gt;• Address (e.g. 'Niels Bohrs Allé 1')" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="970.0" width="240" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="c_click_save" value="Customer taps 'Save'&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#64748B;&quot;&gt;(button is disabled during the request)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#64748B;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="1050.0" width="240" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="c_call_put" value="Send PUT /user&lt;br&gt;with SaveCustomerRequest(name, address)&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#15803D;&quot;&gt;(Authorization: Bearer [token])&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_client">
-          <mxGeometry x="55" y="1120.0" width="240" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="c_finish_new" value="Receive 204 No Content:&lt;br&gt;router.back() to HomeScreen&lt;br&gt;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#16A34A;&quot;&gt;(HomeScreen loads the profile again: now 200 OK and welcome)&lt;/span&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_client">
-          <mxGeometry x="45" y="1215" width="260" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_display" value="Show Keycloak login page:&lt;br&gt;login fields and a link at the bottom:&lt;br&gt;&lt;b style=&quot;color:#7E22CE;&quot;&gt;&quot;New user? Register&quot;&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="50" y="125" width="240" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_click_register" value="New user taps the link&lt;br&gt;&lt;b&gt;'Register'&lt;/b&gt; (create account)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="50" y="205" width="240" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_show_form" value="Show registration form:&lt;br&gt;email, name and a personal password" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="50" y="280" width="240" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_submit_reg" value="User submits the registration&lt;br&gt;(input is checked by Keycloak)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_kc">
-          <mxGeometry x="50" y="355" width="240" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_auto_login" value="Account created. Keycloak logs&lt;br&gt;the user in right away&lt;br&gt;and redirects to prepmeup://auth/callback" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=10;fontColor=#1E293B;" vertex="1" parent="lane_kc">
-          <mxGeometry x="45" y="445" width="250" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="kc_token" value="Check code and PKCE:&lt;br&gt;SHA-256(code_verifier) = code_challenge?&lt;br&gt;and issue tokens" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7E22CE;fontFamily=Arial;fontSize=11;fontSize=10;" vertex="1" parent="lane_kc">
-          <mxGeometry x="50" y="525" width="240" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="a_rec_get" value="&lt;span style=&quot;font-size:9px;font-weight:normal;color:#64748B;&quot;&gt;Token validated by JWT middleware (else 401)&lt;/span&gt;&lt;br&gt;UserController.GetCustomer: reads sub claim&lt;br&gt;→ CustomerService.GetAsync&lt;br&gt;→ CustomerRepository.GetByKeycloakIdAsync" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
-          <mxGeometry x="35" y="700" width="290" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="a_dec_exist" value="Customer&lt;br&gt;found?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontFamily=Arial;fontSize=10;fontStyle=1;" vertex="1" parent="lane_api">
-          <mxGeometry x="85" y="795.0" width="190" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="a_res_200" value="Yes: 200 OK&lt;br&gt;&lt;span style=&quot;font-size:8px;&quot;&gt;(already onboarded)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=9;arcSize=50;" vertex="1" parent="lane_api">
-          <mxGeometry x="285" y="807.5" width="70" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="a_res_404" value="Return 404 Not Found&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#DC2626;&quot;&gt;(no name and address yet)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
-          <mxGeometry x="55" y="890.0" width="250" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="a_rec_put" value="&lt;span style=&quot;font-size:9px;font-weight:normal;color:#64748B;&quot;&gt;Token and body validated before the controller (else 401 / 400)&lt;/span&gt;&lt;br&gt;UserController.SaveCustomer&lt;br&gt;→ CustomerService.SaveDetailsAsync:&lt;br&gt;   looks up; new customer → new Customer(...)&lt;br&gt;→ CustomerRepository.AddAsync + SaveChangesAsync" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#15803D;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_api">
-          <mxGeometry x="35" y="1102" width="290" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="a_res_204" value="Return 204 No Content&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#16A34A;&quot;&gt;(customer created)&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontFamily=Arial;fontSize=11;" vertex="1" parent="lane_api">
-          <mxGeometry x="55" y="1215" width="250" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="db_query" value="SELECT … FROM Customers&lt;br&gt;WHERE KeycloakId = @id&lt;br&gt;&lt;span style=&quot;font-size:9px;font-weight:normal;color:#64748B;&quot;&gt;(generated by EF Core)&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
-          <mxGeometry x="30" y="705" width="210" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="db_save" value="INSERT INTO Customers&lt;br&gt;(Id, KeycloakId, Name, Address)&lt;br&gt;&lt;span style=&quot;font-size:9px;font-weight:normal;color:#64748B;&quot;&gt;(generated by EF Core)&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#D97706;fontFamily=Arial;fontSize=10;" vertex="1" parent="lane_db">
-          <mxGeometry x="30" y="1115.0" width="210" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_start" target="c_open_browser">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2" value="Open login page" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_open_browser" target="kc_display">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_display" target="kc_click_register">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_click_register" target="kc_show_form">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_show_form" target="kc_submit_reg">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="kc_submit_reg" target="kc_auto_login">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7" value="302 → prepmeup://auth/callback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="kc_auto_login" target="c_receive_token">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_receive_token" target="c_exchange">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7c" value="POST /token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_exchange" target="kc_token">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e7d" value="access, refresh &amp; ID token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="kc_token" target="c_store">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_store" target="c_call_get">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e9" value="GET /user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_call_get" target="a_rec_get">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e10" value="SELECT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="a_rec_get" target="db_query">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e11" value="0 / 1 row" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.8;entryX=1;entryY=0.8;" edge="1" parent="1" source="db_query" target="a_rec_get">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e11b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_rec_get" target="a_dec_exist">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e12_yes" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_dec_exist" target="a_res_200">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e12_no" value="No (new customer)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#DC2626;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_dec_exist" target="a_res_404">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e13" value="404 Not Found" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a_res_404" target="c_catch_404">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_catch_404" target="c_enter_details">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_enter_details" target="c_click_save">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_click_save" target="c_call_put">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e17" value="PUT /user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_call_put" target="a_rec_put">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e18" value="INSERT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_rec_put" target="db_save">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e19" value="OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#334155;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#0F172A;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="db_save" target="a_res_204">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e20" value="204 No Content" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontFamily=Arial;fontSize=10;fontColor=#16A34A;fontStyle=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a_res_204" target="c_finish_new">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="lane_client" value="Customer app" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="0" y="0" width="175" height="910" as="geometry"/></mxCell>
+        <mxCell id="lane_kc" value="Keycloak" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="175" y="0" width="165" height="910" as="geometry"/></mxCell>
+        <mxCell id="lane_api" value="Web API" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="340" y="0" width="215" height="910" as="geometry"/></mxCell>
+        <mxCell id="lane_db" value="Database" style="swimlane;html=1;startSize=30;horizontal=1;whiteSpace=wrap;collapsible=0;fillColor=#E8F0EE;swimlaneFillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontStyle=1;fontSize=13;fontFamily=Arial;" vertex="1" parent="1"><mxGeometry x="555" y="0" width="145" height="910" as="geometry"/></mxCell>
+        <mxCell id="c_start" value="" style="ellipse;html=1;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_client"><mxGeometry x="83" y="40" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="c_tap" value="Tap Sign in" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="80" width="150" height="34" as="geometry"/></mxCell>
+        <mxCell id="c_open_browser" value="Open Keycloak login page" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="130" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="kc_display" value="Show login page" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="10" y="130" width="145" height="40" as="geometry"/></mxCell>
+        <mxCell id="kc_click_register" value="Customer taps New user? Register" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="10" y="186" width="145" height="40" as="geometry"/></mxCell>
+        <mxCell id="kc_submit_reg" value="Customer enters email, name and password" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="10" y="242" width="145" height="40" as="geometry"/></mxCell>
+        <mxCell id="kc_create" value="Create account with role household" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="10" y="298" width="145" height="40" as="geometry"/></mxCell>
+        <mxCell id="kc_auto_login" value="Sign customer in, redirect with authorization code" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_kc"><mxGeometry x="10" y="354" width="145" height="52" as="geometry"/></mxCell>
+        <mxCell id="c_exchange" value="Exchange code for tokens" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="360" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="c_call_get" value="Call GET /user" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="426" width="150" height="34" as="geometry"/></mxCell>
+        <mxCell id="a_rec_get" value="Find customer by user id in token" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_api"><mxGeometry x="10" y="421" width="160" height="44" as="geometry"/></mxCell>
+        <mxCell id="db_query" value="Select customer" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_db"><mxGeometry x="9" y="426" width="112" height="34" as="geometry"/></mxCell>
+        <mxCell id="a_dec_exist" value="Customer&lt;br&gt;found?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="lane_api"><mxGeometry x="25" y="495" width="130" height="56" as="geometry"/></mxCell>
+        <mxCell id="a_res_404" value="Answer 404 Not Found" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_api"><mxGeometry x="10" y="571" width="160" height="40" as="geometry"/></mxCell>
+        <mxCell id="c_catch_404" value="Open onboarding screen" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="571" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="c_enter_details" value="Customer enters name and address, taps Save" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="627" width="150" height="52" as="geometry"/></mxCell>
+        <mxCell id="c_call_put" value="Send PUT /user" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="695" width="150" height="34" as="geometry"/></mxCell>
+        <mxCell id="a_rec_put" value="Create customer from token and body" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_api"><mxGeometry x="10" y="690" width="160" height="44" as="geometry"/></mxCell>
+        <mxCell id="db_save" value="Insert customer" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_db"><mxGeometry x="9" y="695" width="112" height="34" as="geometry"/></mxCell>
+        <mxCell id="a_res_204" value="Answer 204 No Content" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_api"><mxGeometry x="10" y="750" width="160" height="40" as="geometry"/></mxCell>
+        <mxCell id="c_back" value="Go back to home screen" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="750" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="a_res_200" value="Answer 200 OK with name and address" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_api"><mxGeometry x="10" y="806" width="160" height="44" as="geometry"/></mxCell>
+        <mxCell id="c_welcome" value="Show welcome on home screen" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="lane_client"><mxGeometry x="20" y="806" width="150" height="44" as="geometry"/></mxCell>
+        <mxCell id="c_end" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="lane_client"><mxGeometry x="82" y="868" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_start" target="c_tap"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_tap" target="c_open_browser"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_open_browser" target="kc_display"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kc_display" target="kc_click_register"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kc_click_register" target="kc_submit_reg"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kc_submit_reg" target="kc_create"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kc_create" target="kc_auto_login"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e7b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="kc_auto_login" target="c_exchange"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_exchange" target="c_call_get"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_call_get" target="a_rec_get"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_rec_get" target="db_query"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="db_query" target="a_dec_exist"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="620" y="481"/><mxPoint x="430" y="481"/></Array></mxGeometry></mxCell>
+        <mxCell id="e12_no" value="[no]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_dec_exist" target="a_res_404"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e12_yes" value="[yes]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_dec_exist" target="a_res_200"><mxGeometry x="-0.9" relative="1" as="geometry"><Array as="points"><mxPoint x="686" y="523"/><mxPoint x="686" y="828"/></Array></mxGeometry></mxCell>
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_res_404" target="c_catch_404"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_catch_404" target="c_enter_details"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_enter_details" target="c_call_put"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_call_put" target="a_rec_put"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_rec_put" target="db_save"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="db_save" target="a_res_204"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="620" y="770"/></Array></mxGeometry></mxCell>
+        <mxCell id="e19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_res_204" target="c_back"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_back" target="c_call_get"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="9" y="770"/><mxPoint x="9" y="443"/></Array></mxGeometry></mxCell>
+        <mxCell id="e21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a_res_200" target="c_welcome"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="e22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c_welcome" target="c_end"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
+        <mxCell id="legend" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;align=left;verticalAlign=top;container=1;collapsible=0;fontSize=11;fontStyle=1;fontColor=#173330;fontFamily=Arial;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="0" y="922" width="700" height="62" as="geometry"/></mxCell>
+        <mxCell id="legend_sym0" value="" style="ellipse;html=1;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="legend"><mxGeometry x="10" y="32" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="legend_txt0" value="Start" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="30" y="24" width="34" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym1" value="" style="ellipse;html=1;shape=endState;aspect=fixed;fillColor=#173330;strokeColor=#173330;" vertex="1" parent="legend"><mxGeometry x="72" y="31" width="18" height="18" as="geometry"/></mxCell>
+        <mxCell id="legend_txt1" value="End" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="94" y="24" width="26" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym2" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacingLeft=4;spacingRight=4;" vertex="1" parent="legend"><mxGeometry x="128" y="30" width="34" height="20" as="geometry"/></mxCell>
+        <mxCell id="legend_txt2" value="Action" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="166" y="24" width="42" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym3" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;spacing=0;" vertex="1" parent="legend"><mxGeometry x="216" y="29" width="30" height="22" as="geometry"/></mxCell>
+        <mxCell id="legend_txt3" value="Decision with [guards]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="250" y="24" width="135" height="32" as="geometry"/></mxCell>
+        <mxCell id="legend_sym4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;endArrow=open;endSize=10;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;" edge="1" parent="legend"><mxGeometry relative="1" as="geometry"><mxPoint x="393" y="40" as="sourcePoint"/><mxPoint x="427" y="40" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="legend_txt4" value="Control flow" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="431" y="24" width="78" height="32" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

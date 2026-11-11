@@ -47,15 +47,16 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
             entity.ToTable("PackageTypes");
             entity.HasKey(packageType => packageType.Id);
             entity.Property(packageType => packageType.Name).IsRequired();
-            entity.HasMany(packageType => packageType.Contents).WithOne().HasForeignKey("PackageTypeId").IsRequired();
+            entity.HasMany(packageType => packageType.Contents).WithOne().HasForeignKey("PackageTypeId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<PackageContent>(entity =>
         {
-            entity.ToTable("PackageContents");
+            entity.ToTable("PackageContents", table => table.HasCheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1"));
             entity.Property<Guid>("Id");
             entity.HasKey("Id");
             entity.HasOne(content => content.Item).WithMany().HasForeignKey("ItemId").IsRequired().OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex("PackageTypeId", "ItemId").IsUnique();
         });
 
         StandardCatalogueSeed.Apply(modelBuilder);

@@ -130,9 +130,13 @@ namespace PrepMeUp.Infrastructure.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.HasIndex("PackageTypeId");
+                    b.HasIndex("PackageTypeId", "ItemId")
+                        .IsUnique();
 
-                    b.ToTable("PackageContents", (string)null);
+                    b.ToTable("PackageContents", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1");
+                        });
 
                     b.HasData(
                         new

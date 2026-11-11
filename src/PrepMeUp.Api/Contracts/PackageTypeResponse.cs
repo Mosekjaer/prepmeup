@@ -8,6 +8,7 @@ public record PackageTypeResponse(Guid Id, string Name, IReadOnlyList<PackageCon
         packageType.Id,
         packageType.Name,
         packageType.Contents
+            .OrderBy(content => content.Item.Name)
             .Select(content => new PackageContentResponse(content.Item.Id, content.Item.Name, content.Item.Type, content.Quantity))
             .ToList());
 }

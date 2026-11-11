@@ -12,6 +12,7 @@ public class PackageTypeRepository(PrepMeUpDbContext dbContext) : IPackageTypeRe
             .Include(packageType => packageType.Contents)
             .ThenInclude(content => content.Item)
             .AsNoTracking()
+            .OrderBy(packageType => packageType.Name)
             .ToListAsync(cancellationToken);
     }
 }

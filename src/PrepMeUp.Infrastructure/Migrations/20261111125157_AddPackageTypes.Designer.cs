@@ -12,7 +12,7 @@ using PrepMeUp.Infrastructure;
 namespace PrepMeUp.Infrastructure.Migrations
 {
     [DbContext(typeof(PrepMeUpDbContext))]
-    [Migration("20261111122625_AddPackageTypes")]
+    [Migration("20261111125157_AddPackageTypes")]
     partial class AddPackageTypes
     {
         /// <inheritdoc />
@@ -133,9 +133,13 @@ namespace PrepMeUp.Infrastructure.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.HasIndex("PackageTypeId");
+                    b.HasIndex("PackageTypeId", "ItemId")
+                        .IsUnique();
 
-                    b.ToTable("PackageContents", (string)null);
+                    b.ToTable("PackageContents", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1");
+                        });
 
                     b.HasData(
                         new

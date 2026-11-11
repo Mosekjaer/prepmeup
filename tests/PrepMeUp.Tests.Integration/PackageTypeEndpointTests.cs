@@ -50,6 +50,17 @@ public class PackageTypeEndpointTests
     }
 
     [Test]
+    public async Task GetPackageTypes_ValidTokenWithoutRoles_ReturnsOk()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "/package-types");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TestJwt.Create(TestJwt.TrustedKey, null));
+
+        var response = await _client.SendAsync(request);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    [Test]
     public async Task GetPackageTypes_ReplacedPackageTypeExists_ReturnsOnlyActiveOnes()
     {
         await AddReplacedPackageTypeAsync("Replaced type");

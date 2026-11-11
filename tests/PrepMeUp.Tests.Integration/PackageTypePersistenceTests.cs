@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
@@ -69,6 +70,18 @@ public class PackageTypePersistenceTests
     }
 
     [Test]
+    public async Task GetAllAsync_PackageTypes_AreOrderedByName()
+    {
+        using var factory = CreateFactory();
+        using var scope = factory.Services.CreateScope();
+
+        var packageTypes = await scope.ServiceProvider.GetRequiredService<IPackageTypeRepository>()
+            .GetAllAsync(CancellationToken.None);
+
+        Assert.That(packageTypes.Select(packageType => packageType.Name), Is.Ordered);
+    }
+
+    [Test]
     public async Task NewDatabase_HasOneActiveAdultAndOneActiveChildPackageType()
     {
         using var factory = CreateFactory();
@@ -98,6 +111,40 @@ public class PackageTypePersistenceTests
         Assert.That(
             packageTypes.Count > 0 && packageTypes.All(packageType => packageType.Contents.Count > 0 && packageType.Contents.All(content => content.Quantity > 0)),
             Is.True);
+    }
+
+    [Test]
+    public async Task Database_SameItemTwiceInOnePackageType_IsRejected()
+    {
+        using var factory = CreateFactory();
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+        var existing = (await scope.ServiceProvider.GetRequiredService<IPackageTypeRepository>()
+            .GetAllAsync(CancellationToken.None)).First();
+        var content = existing.Contents.First();
+
+        Assert.That(
+            () => dbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"INSERT INTO PackageContents (Id, ItemId, PackageTypeId, Quantity) VALUES ({Guid.NewGuid()}, {content.Item.Id}, {existing.Id}, 1)"),
+            Throws.InstanceOf<SqliteException>());
+    }
+
+    [Test]
+    public async Task Database_QuantityBelowOne_IsRejected()
+    {
+        using var factory = CreateFactory();
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+        var existing = (await scope.ServiceProvider.GetRequiredService<IPackageTypeRepository>()
+            .GetAllAsync(CancellationToken.None)).First();
+        var newItem = new Item { Id = Guid.NewGuid(), Name = "Extra item", Type = ItemType.Food };
+        dbContext.Items.Add(newItem);
+        await dbContext.SaveChangesAsync();
+
+        Assert.That(
+            () => dbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"INSERT INTO PackageContents (Id, ItemId, PackageTypeId, Quantity) VALUES ({Guid.NewGuid()}, {newItem.Id}, {existing.Id}, 0)"),
+            Throws.InstanceOf<SqliteException>());
     }
 
     private SqliteApiFactory CreateFactory()

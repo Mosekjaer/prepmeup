@@ -47,6 +47,7 @@ namespace PrepMeUp.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PackageContents", x => x.Id);
+                    table.CheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1");
                     table.ForeignKey(
                         name: "FK_PackageContents_Items_ItemId",
                         column: x => x.ItemId,
@@ -99,9 +100,10 @@ namespace PrepMeUp.Infrastructure.Migrations
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PackageContents_PackageTypeId",
+                name: "IX_PackageContents_PackageTypeId_ItemId",
                 table: "PackageContents",
-                column: "PackageTypeId");
+                columns: new[] { "PackageTypeId", "ItemId" },
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -388,13 +388,14 @@ export class UserClient implements IUserClient {
     }
 }
 
-export class CustomerResponse implements ICustomerResponse {
-    name!: string;
-    address!: string;
+export class AddressContract implements IAddressContract {
+    street!: string;
+    postalCode!: string;
+    city!: string;
 
     [key: string]: any;
 
-    constructor(data?: ICustomerResponse) {
+    constructor(data?: IAddressContract) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -409,8 +410,70 @@ export class CustomerResponse implements ICustomerResponse {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
+            this.street = _data["street"];
+            this.postalCode = _data["postalCode"];
+            this.city = _data["city"];
+        }
+    }
+
+    static fromJS(data: any): AddressContract {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressContract();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["street"] = this.street;
+        data["postalCode"] = this.postalCode;
+        data["city"] = this.city;
+        return data;
+    }
+}
+
+export interface IAddressContract {
+    street: string;
+    postalCode: string;
+    city: string;
+
+    [key: string]: any;
+}
+
+export class CustomerResponse implements ICustomerResponse {
+    name!: string;
+    email!: string;
+    phone!: string | undefined;
+    address!: AddressContract;
+
+    [key: string]: any;
+
+    constructor(data?: ICustomerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.address = new AddressContract();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
             this.name = _data["name"];
-            this.address = _data["address"];
+            this.email = _data["email"];
+            this.phone = _data["phone"];
+            this.address = _data["address"] ? AddressContract.fromJS(_data["address"]) : new AddressContract();
         }
     }
 
@@ -428,14 +491,18 @@ export class CustomerResponse implements ICustomerResponse {
                 data[property] = this[property];
         }
         data["name"] = this.name;
-        data["address"] = this.address;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : undefined as any;
         return data;
     }
 }
 
 export interface ICustomerResponse {
     name: string;
-    address: string;
+    email: string;
+    phone: string | undefined;
+    address: AddressContract;
 
     [key: string]: any;
 }
@@ -610,7 +677,8 @@ export interface IProblemDetails {
 
 export class SaveCustomerRequest implements ISaveCustomerRequest {
     name!: string;
-    address!: string;
+    phone!: string | undefined;
+    address!: AddressContract;
 
     [key: string]: any;
 
@@ -621,6 +689,9 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.address = new AddressContract();
+        }
     }
 
     init(_data?: any) {
@@ -630,7 +701,8 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                     this[property] = _data[property];
             }
             this.name = _data["name"];
-            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.address = _data["address"] ? AddressContract.fromJS(_data["address"]) : new AddressContract();
         }
     }
 
@@ -648,14 +720,16 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                 data[property] = this[property];
         }
         data["name"] = this.name;
-        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : undefined as any;
         return data;
     }
 }
 
 export interface ISaveCustomerRequest {
     name: string;
-    address: string;
+    phone: string | undefined;
+    address: AddressContract;
 
     [key: string]: any;
 }

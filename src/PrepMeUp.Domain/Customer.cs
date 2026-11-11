@@ -27,6 +27,13 @@ public class Customer
         Address = address ?? throw new ArgumentNullException(nameof(address));
     }
 
+    private Customer()
+    {
+        KeycloakId = null!;
+        Name = null!;
+        Email = null!;
+        Address = null!;
+    }
     public void UpdateDetails(string name, string? phone, Address address)
     {
         var validName = Require(name, NameMaxLength, nameof(name));

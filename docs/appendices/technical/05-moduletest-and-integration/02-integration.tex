@@ -15,6 +15,7 @@
   1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
   1.1 & 04-11-2026 & Group 3 & Integration strategy and plan added \\
   1.2 & 09-11-2026 & Group 3 & Authentication and authorization plan added \\
+  1.3 & 11-11-2026 & Group 3 & Integration overview added \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -29,12 +30,16 @@ At the bottom are the database and the DbContext. The repositories in Infrastruc
 
 Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
 
-\section{Rules for all integration plans}
+\section{Integration Overview}
+
+\subsection{Strategy}
+We use collaboration integration. Each column in Table~\ref{tab:integration-overview} is a feature. Each feature gets an integration plan of its own.
+
+\subsection{Rules for All Integration Plans}
 \begin{itemize}
   \item A part is integrated only when its unit tests pass.
-  \item The parts below the top are real, unless stated otherwise.
   \item We are allowed to use a stub instead of Keycloak, since it is outside our system.
-  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
   \item In a table representing an integration plan:
     \begin{itemize}
       \item T is the "top module" that the test drives.
@@ -43,7 +48,69 @@ Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the 
     \end{itemize}
 \end{itemize}
 
-\section{Integration plan: Features}
+\subsection{Overview of the Integration Plans}
+Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own subsection in this document. A column shows the parts that are included when on the last step of the feature's integration plan.
+
+The question mark for the system clock means that the choice between a real clock and a stub is made in the subscription plan.
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\rowcolors{2}{gray!15}{white}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l C{1.7cm} C{2.4cm} C{1.5cm} C{1.8cm} C{1.9cm}@{}}
+\textbf{Component} & \textbf{\mbox{Database}\newline \mbox{connection}} & \textbf{\mbox{Authentication}\newline \mbox{and authorization}} & \textbf{\mbox{Get items}} & \textbf{\mbox{Onboarding}} & \textbf{\mbox{Subscription}} \\
+\hline
+mobile-app                       &   & T &   &   &   \\
+admin-panel                      &   & T &   &   &   \\
+api-client                       &   & X &   &   &   \\
+Controllers                      &   & X & T & T & T \\
+AdminOnly policy                 &   & X &   &   &   \\
+KeycloakRoleClaimsTransformation &   & X &   &   &   \\
+JwtBearer                        &   & X & X & X & X \\
+Services                         &   &   & X & X & X \\
+Repositories                     & T &   & X & X & X \\
+System clock                     &   &   &   &   & ? \\
+DbContext                        & X &   & X & X & X \\
+Database                         & X &   & X & X & X \\
+Keycloak                         &   & X & S & S & S \\
+\end{tabular}
+\caption{Overview of the integration plans, in the order they are integrated.}
+\label{tab:integration-overview}
+\end{table}
+
+\section{Integration plan: Database connection}
+\label{sec:db-plan}
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+Repositories & T & T \\
+DbContext    & X & X \\
+Database     & X (SQLite) & X (SQL Server) \\
+\end{tabular}
+\caption{Integration plan for the database connection.}
+\label{tab:db-integration-plan}
+\end{table}
+
+\subsubsection*{Step 1 -- Do the repositories save and read data correctly through the DbContext?}
+Since this step focuses on testing that cooperation between repositories and DbContext works properly.
+We use SQLite, so the tests run faster.
+We are mainly interested in testing to things:
+\begin{enumerate}
+  \item Mapping between C\# objects and a row in a table.
+  \item That the unique KeycloakId works.
+\end{enumerate}
+
+\subsubsection*{Step 2 -- Do the migrations and constraints work on SQL Server?}
+SQLite does not enforce maximum lengths (which we have some constraints about in e.g. Customer class), and it does not run our migrations.
+So for this step, we use a real SQL Sever in Docker, so we can check the constraints that SQLite ignores and run migrations.
+
+\section{Integration plan: API-to-database (DELETE?)}
 
 \subsection{Strategy}
 We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
@@ -52,6 +119,13 @@ Inside a feature we integrate from the bottom. When a class has another real cla
 
 The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
 
+\subsection{Rules}
+\begin{itemize}
+  \item A step drives one top part. The test calls the system the way a user would, through an endpoint or a service.
+  \item The parts below the top are real, unless a rule below says otherwise.
+  \item Keycloak is always faked with test tokens. It is outside our system, and we do not want the tests to need a running server.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
+\end{itemize}
 
 \subsection{Plan}
 Table~\ref{tab:integration-plan} shows one step for each feature we have today. T is the part the test drives, X is a real part and S is a fake. An empty cell means the part is not used by the feature.
@@ -145,9 +219,9 @@ Table~\ref{tab:auth-integration-plan} shows the steps. T is the top module, X is
 \small
 \rowcolors{2}{gray!15}{white}
 \begin{tabular}{@{}l c c c c c c@{}}
-\textbf{Part} & \textbf{Step 1} & \textbf{Step 2} & \textbf{Step 3} & \textbf{Step 4} & \textbf{Step 5} & \textbf{Step 6} \\
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} & \textbf{Step 3} & \textbf{Step 4} & \textbf{Step 5} & \textbf{Step 6} \\
 \hline
-Apps                             &   &   &   &   & T & T \\
+Apps: mobile-app and admin-panel &   &   &   &   & T & T \\
 api-client                       &   &   &   & T & X & X \\
 Controllers                      &   &   & T & S & S & X \\
 AdminController                  &   & T &   & S & S & X \\
@@ -183,6 +257,33 @@ Keycloak and the API are S. The apps cannot run against Keycloak in automated te
 
 \subsubsection*{Step 6 -- Manual test with all components}
 Keycloak is no longer stubbed, nor is any other component. This is the final step where the sandwich meets in the middle. Note that this is the only step that checks real access tokens from Keycloak.
+
+\section{Integration plan: Get Items}
+\label{sec:items-plan}
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c@{}}
+\textbf{Component} & \textbf{Step 1} \\
+\hline
+ItemsController & T \\
+ItemService     & X \\
+ItemRepository  & X \\
+JwtBearer       & X \\
+DbContext       & X \\
+Database        & X (SQLite) \\
+Keycloak        & S \\
+\end{tabular}
+\caption{Integration plan for get items.}
+\label{tab:items-integration-plan}
+\end{table}
+
+ItemService only passes the call on to ItemRepository, so it is integrated together with the controller in one step. ItemRepository against the database is covered by the database connection plan (Section~\ref{sec:db-plan}).
+
+\subsubsection*{Step 1 -- Does GET /items return the items as JSON to a logged-in user?}
+The test puts items in the database and sends an HTTP request with a valid test token. It checks that the answer is 200 with the id and name of each item, and that an empty table gives an empty list. A request without a token is already covered by step 3 of the authentication plan (Section~\ref{sec:auth-plan}).
 
 \section{What the Plan Does Not Cover}
 The tests with SQLite do not test the migrations, because the database is created from the model. They also do not test the apps calling the API. We leave both out of this plan.

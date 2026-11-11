@@ -8,6 +8,7 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
     public DbSet<Item> Items => Set<Item>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<PackageType> PackageTypes => Set<PackageType>();
 
     // Called exactly once by EF core to check how the database should be built
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,5 +41,24 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
             entity.ToTable("Orders");
             entity.HasKey(order => order.Id);
         });
+
+        modelBuilder.Entity<PackageType>(entity =>
+        {
+            entity.ToTable("PackageTypes");
+            entity.HasKey(packageType => packageType.Id);
+            entity.Property(packageType => packageType.Name).IsRequired();
+            entity.HasMany(packageType => packageType.Contents).WithOne().HasForeignKey("PackageTypeId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PackageContent>(entity =>
+        {
+            entity.ToTable("PackageContents", table => table.HasCheckConstraint("CK_PackageContents_Quantity", "[Quantity] >= 1"));
+            entity.Property<Guid>("Id");
+            entity.HasKey("Id");
+            entity.HasOne(content => content.Item).WithMany().HasForeignKey("ItemId").IsRequired().OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex("PackageTypeId", "ItemId").IsUnique();
+        });
+
+        StandardCatalogueSeed.Apply(modelBuilder);
     }
 }

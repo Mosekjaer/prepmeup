@@ -122,14 +122,16 @@ public class SubscriptionEndpointTests
     private async Task<string> OnboardAsync()
     {
         var sub = NewSub();
-        await SendAsync(HttpMethod.Put, "/user", sub, new { Name = "Malthe", Address = "Finlandsgade 22" });
+        var body = new SaveCustomerRequest("Malthe", null, new AddressContract("Finlandsgade 22", "8200", "Aarhus N"));
+        var response = await SendAsync(HttpMethod.Put, "/user", sub, body);
+        response.EnsureSuccessStatusCode();
         return sub;
     }
 
     private Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string sub, object? body = null)
     {
         var request = new HttpRequestMessage(method, path);
-        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub });
+        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub, ["email"] = "malthe@example.com" });
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null)
         {

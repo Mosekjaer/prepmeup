@@ -42,7 +42,10 @@ export default function HomeScreen() {
           ) : customer ? (
             <>
               <Text>Welcome, {customer.name}</Text>
-              <Text>{customer.address}</Text>
+              <Text>{customer.address.street}</Text>
+              <Text>
+                {customer.address.postalCode} {customer.address.city}
+              </Text>
             </>
           ) : (
             <ActivityIndicator />

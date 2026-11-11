@@ -21,7 +21,11 @@ public class SubscriptionServiceTests
         var clock = Substitute.For<IClock>();
         clock.UtcNow.Returns(Now);
         _sut = new SubscriptionService(_customerRepository, _subscriptionRepository, clock);
-        _customer = new Customer("sub-1", "Malthe", "Finlandsgade 22") { Id = Guid.NewGuid() };
+        _customer = new Customer(
+            "sub-1", "Malthe", "malthe@example.com", null, new Address("Finlandsgade 22", "8200", "Aarhus N"))
+        {
+            Id = Guid.NewGuid()
+        };
     }
 
     [Test]

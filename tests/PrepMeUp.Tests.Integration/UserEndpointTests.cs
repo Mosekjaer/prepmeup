@@ -109,6 +109,24 @@ public class UserEndpointTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task GetUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Get, sub);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task PutUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Put, sub, new { Name = "Malthe", Address = "Finlandsgade 22" });
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
     private static string NewSub() => Guid.NewGuid().ToString();
 
     private async Task<CustomerResponse?> GetCustomerAsync(string sub)
@@ -117,10 +135,11 @@ public class UserEndpointTests
         return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<CustomerResponse>() : null;
     }
 
-    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string sub, object? body = null)
+    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string? sub, object? body = null)
     {
         var request = new HttpRequestMessage(method, "/user");
-        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub });
+        var claims = sub is null ? null : new Dictionary<string, object> { ["sub"] = sub };
+        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: claims);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null)
         {

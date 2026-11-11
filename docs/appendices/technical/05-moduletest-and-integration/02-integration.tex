@@ -13,6 +13,7 @@
 
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
+  1.1 & 11-11-2026 & Group 3 & Tokens without a user ID added \\
 \end{versionhistory}
 
 \section{Dependency Tree}
@@ -23,5 +24,12 @@ Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which
 At the bottom are the database and the DbContext. The repositories in Infrastructure use the DbContext, the services in Application use the repositories, and the controllers in the API use the services. SubscriptionService also uses CustomerRepository and SystemClock, which gives it the current date. The two apps call the controllers through the generated api-client.
 
 Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
+
+\section{Tokens Without a User ID}
+The user and subscription endpoints find the household from the user ID in the access token, which Keycloak puts in the subject claim. A token can be valid and still lack that claim, or have it empty. Before, the API then answered 404, which looks like a user who is not onboarded yet, or 500, because a customer cannot be created without an ID.
+
+We decided that the API answers 401 Unauthorized in that case. The token is not enough to tell who the user is, so the request is treated as not authenticated. The check sits in the API layer, before the controllers call the services, so Application and Domain never get an empty ID.
+
+The check is tested on two levels. A small helper that reads the user ID from the token is tested on its own with a present, missing, empty and blank ID. Then each of the four affected endpoints (reading and saving the user, reading and creating a subscription) is called through the real pipeline with a signed test token without a user ID and with a blank one. All eight calls must answer 401. We ran these tests before the fix, and they failed with 404 and 500, so they hit the actual problem.
 
 \end{document}

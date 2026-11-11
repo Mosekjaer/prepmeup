@@ -117,6 +117,24 @@ public class SubscriptionEndpointTests
             Is.EqualTo((HttpStatusCode.OK, await created.Content.ReadAsStringAsync())));
     }
 
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task GetSubscription_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Get, "/subscription", sub);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task PostSubscription_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Post, "/subscription", sub);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
     private static string NewSub() => Guid.NewGuid().ToString();
 
     private async Task<string> OnboardAsync()
@@ -126,10 +144,11 @@ public class SubscriptionEndpointTests
         return sub;
     }
 
-    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string sub, object? body = null)
+    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? sub, object? body = null)
     {
         var request = new HttpRequestMessage(method, path);
-        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub });
+        var claims = sub is null ? null : new Dictionary<string, object> { ["sub"] = sub };
+        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: claims);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null)
         {

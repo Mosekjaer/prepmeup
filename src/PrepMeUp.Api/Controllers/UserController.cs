@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.Contracts;
 using PrepMeUp.Application;
 
@@ -17,7 +17,13 @@ public class UserController(CustomerService customerService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CustomerResponse>> GetCustomer(CancellationToken cancellationToken)
     {
-        var customer = await customerService.GetAsync(KeycloakId, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        var customer = await customerService.GetAsync(keycloakId, cancellationToken);
         if (customer is null)
         {
             return NotFound();
@@ -32,9 +38,13 @@ public class UserController(CustomerService customerService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SaveCustomer(SaveCustomerRequest request, CancellationToken cancellationToken)
     {
-        await customerService.SaveDetailsAsync(KeycloakId, request.Name, request.Address, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        await customerService.SaveDetailsAsync(keycloakId, request.Name, request.Address, cancellationToken);
         return NoContent();
     }
-
-    private string KeycloakId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 }

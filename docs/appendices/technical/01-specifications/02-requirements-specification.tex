@@ -19,6 +19,7 @@
   1.4 & 30-09-2026 & Group 3 & Orders composed from package types instead of a household profile \\
   1.5 & 28-10-2026 & Group 3 & Aligned with the system as built \\
   1.6 & 28-10-2026 & Group 3 & Simpler text, clearer payment requirements \\
+  1.7 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01) \\
   1.7 & 04-11-2026 & Group 3 & Expiry date set to one year after the sent date \\
 \end{versionhistory}
 
@@ -147,7 +148,7 @@ Functional requirements are numbered FR-\emph{nn} and non-functional requirement
 
 \paragraph{MUST HAVE}
 \begin{enumerate}[label=\reqlabel{FR}, start=1]
-    \item Customer app: The customer can create an account and sign up for a PrepMeUp subscription.
+    \item Customer app: The customer can create an account and sign up for a PrepMeUp subscription. When signing up, the customer chooses how many adult and child packages of the default package types (FR-03) the first order contains.
     \item Back-end: Persistent storage of customers, their subscriptions and their orders.
     \item Back-end: Default package types for a ``normal'' diet, one for adults and one for children.
     \item Back-end: When an order is sent, the system sets its expiry date to one year after the sent date and keeps it for each of the customer's past orders.

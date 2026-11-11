@@ -3,6 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 
+import { SubscriptionSummary } from '../../components/SubscriptionSummary';
 import { isNotFound, userClient } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
 
@@ -43,6 +44,7 @@ export default function HomeScreen() {
             <>
               <Text>Welcome, {customer.name}</Text>
               <Text>{customer.address}</Text>
+              <SubscriptionSummary />
             </>
           ) : (
             <ActivityIndicator />

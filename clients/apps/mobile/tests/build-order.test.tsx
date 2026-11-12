@@ -112,3 +112,18 @@ it('keeps a separate counter for each of ten package types', async () => {
 
   expect(names.map(quantityOf)).toEqual(['0', '0', '2', '0', '0', '0', '1', '0', '0', '0']);
 });
+
+it('opens the confirmation with only the chosen package types when Continue is pressed', async () => {
+  mocks.getActivePackageTypes.mockResolvedValue([adultType, childType]);
+  render(<BuildOrderScreen />);
+  await screen.findByText('Normal - Adult');
+  add('Normal - Adult');
+  add('Normal - Adult');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+  expect(mocks.router.push).toHaveBeenCalledWith({
+    pathname: '/confirm-order',
+    params: { lines: JSON.stringify([{ packageTypeId: 'adult', name: 'Normal - Adult', quantity: 2 }]) },
+  });
+});

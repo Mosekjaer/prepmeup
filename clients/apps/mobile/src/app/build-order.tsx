@@ -48,6 +48,13 @@ export default function BuildOrderScreen() {
 
   const totalQuantity = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0);
 
+  const continueToConfirmation = () => {
+    const lines = packageTypes
+      .filter((packageType) => (quantities[packageType.id] ?? 0) > 0)
+      .map((packageType) => ({ packageTypeId: packageType.id, name: packageType.name, quantity: quantities[packageType.id] }));
+    router.push({ pathname: '/confirm-order', params: { lines: JSON.stringify(lines) } });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -80,7 +87,7 @@ export default function BuildOrderScreen() {
         ))}
       </ScrollView>
       <View style={styles.footer}>
-        <Button title="Continue" disabled={totalQuantity === 0} onPress={() => {}} />
+        <Button title="Continue" disabled={totalQuantity === 0} onPress={continueToConfirmation} />
       </View>
     </View>
   );

@@ -22,6 +22,7 @@
   1.3 & 23-09-2026 & Group 3 & Added sprints and the Kaneo board \\
   1.4 & 28-10-2026 & Group 3 & Simpler text, updated AI rules and epic labels \\
   1.5 & 05-11-2026 & Group 3 & Added the Makefile to the local setup \\
+  1.6 & 11-11-2026 & Group 3 & Building an appendix with its diagrams \\
 \end{versionhistory}
 
 This appendix collects the practical rules the group works by. The reasons behind the technology choices are in appendix 2.1.
@@ -34,6 +35,14 @@ We have made templates for the documents, so they look the same and a new docume
 \end{lstlisting}
 
 The report and appendices are written in English. Agendas and meeting minutes are written in Danish.
+
+Diagrams are drawn in draw.io, and only the drawio file is committed. The PDF of a diagram is made during the build. An appendix is built from its own folder like this:
+
+\begin{lstlisting}
+latexmk -r ../../../latexmkrc -pdf -outdir=build <file>.tex
+\end{lstlisting}
+
+The first part points latexmk at the shared settings in the docs folder. Without it, the appendix uses an old PDF of a diagram that has changed. All appendices sit three folders below the docs folder, so the command is the same for each of them. Saving in VS Code runs the same command.
 
 \section{Local Setup}
 You need the .NET 10 SDK, Node.js, Docker and make. For the customer app you also need the Android SDK with an emulator.

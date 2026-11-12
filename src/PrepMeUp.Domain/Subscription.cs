@@ -14,7 +14,23 @@ public class Subscription
     {
     }
 
-    public static Subscription Start(Guid customerId, DateTimeOffset startedAt)
+    public static Subscription Start(Guid customerId, DateTimeOffset startedAt, IEnumerable<OrderLine> lines)
+    {
+        var lineList = lines.ToList();
+        if (lineList.Count == 0)
+        {
+            throw new ArgumentException("An order needs at least one line.", nameof(lines));
+        }
+
+        if (lineList.Select(line => line.PackageType.Id).Distinct().Count() != lineList.Count)
+        {
+            throw new ArgumentException("A package type can only appear once in an order.", nameof(lines));
+        }
+
+        return Start(customerId, startedAt, new Order(startedAt, lineList));
+    }
+
+    private static Subscription Start(Guid customerId, DateTimeOffset startedAt, Order firstOrder)
     {
         if (customerId == Guid.Empty)
         {
@@ -27,7 +43,7 @@ public class Subscription
             Status = SubscriptionStatus.Active,
             StartedAt = startedAt
         };
-        subscription._orders.Add(new Order(startedAt));
+        subscription._orders.Add(firstOrder);
 
         return subscription;
     }

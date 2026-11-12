@@ -209,7 +209,7 @@ export interface ISubscriptionClient {
     /**
      * @return Created
      */
-    subscribe(): Promise<SubscriptionResponse>;
+    subscribe(body: SubscribeRequest): Promise<SubscriptionResponse>;
 }
 
 export class SubscriptionClient implements ISubscriptionClient {
@@ -276,13 +276,17 @@ export class SubscriptionClient implements ISubscriptionClient {
     /**
      * @return Created
      */
-    subscribe(): Promise<SubscriptionResponse> {
+    subscribe(body: SubscribeRequest): Promise<SubscriptionResponse> {
         let url_ = this.baseUrl + "/subscription";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
+            body: content_,
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -301,6 +305,13 @@ export class SubscriptionClient implements ISubscriptionClient {
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result201 = SubscriptionResponse.fromJS(resultData201);
             return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ValidationProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
@@ -458,13 +469,14 @@ export class UserClient implements IUserClient {
     }
 }
 
-export class CustomerResponse implements ICustomerResponse {
-    name!: string;
-    address!: string;
+export class AddressContract implements IAddressContract {
+    street!: string;
+    postalCode!: string;
+    city!: string;
 
     [key: string]: any;
 
-    constructor(data?: ICustomerResponse) {
+    constructor(data?: IAddressContract) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -479,8 +491,70 @@ export class CustomerResponse implements ICustomerResponse {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
+            this.street = _data["street"];
+            this.postalCode = _data["postalCode"];
+            this.city = _data["city"];
+        }
+    }
+
+    static fromJS(data: any): AddressContract {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressContract();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["street"] = this.street;
+        data["postalCode"] = this.postalCode;
+        data["city"] = this.city;
+        return data;
+    }
+}
+
+export interface IAddressContract {
+    street: string;
+    postalCode: string;
+    city: string;
+
+    [key: string]: any;
+}
+
+export class CustomerResponse implements ICustomerResponse {
+    name!: string;
+    email!: string;
+    phone!: string | undefined;
+    address!: AddressContract;
+
+    [key: string]: any;
+
+    constructor(data?: ICustomerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.address = new AddressContract();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
             this.name = _data["name"];
-            this.address = _data["address"];
+            this.email = _data["email"];
+            this.phone = _data["phone"];
+            this.address = _data["address"] ? AddressContract.fromJS(_data["address"]) : new AddressContract();
         }
     }
 
@@ -498,14 +572,18 @@ export class CustomerResponse implements ICustomerResponse {
                 data[property] = this[property];
         }
         data["name"] = this.name;
-        data["address"] = this.address;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : undefined as any;
         return data;
     }
 }
 
 export interface ICustomerResponse {
     name: string;
-    address: string;
+    email: string;
+    phone: string | undefined;
+    address: AddressContract;
 
     [key: string]: any;
 }
@@ -564,13 +642,14 @@ export interface IItemResponse {
 
 export type ItemType = "Food" | "Equipment";
 
-export class OrderResponse implements IOrderResponse {
-    plannedAt!: string;
-    sentAt!: string | undefined;
+export class OrderLineResponse implements IOrderLineResponse {
+    packageTypeId!: string;
+    packageTypeName!: string;
+    quantity!: number;
 
     [key: string]: any;
 
-    constructor(data?: IOrderResponse) {
+    constructor(data?: IOrderLineResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -585,8 +664,72 @@ export class OrderResponse implements IOrderResponse {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
+            this.packageTypeId = _data["packageTypeId"];
+            this.packageTypeName = _data["packageTypeName"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): OrderLineResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderLineResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["packageTypeId"] = this.packageTypeId;
+        data["packageTypeName"] = this.packageTypeName;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IOrderLineResponse {
+    packageTypeId: string;
+    packageTypeName: string;
+    quantity: number;
+
+    [key: string]: any;
+}
+
+export class OrderResponse implements IOrderResponse {
+    plannedAt!: string;
+    sentAt!: string | undefined;
+    lines!: OrderLineResponse[];
+
+    [key: string]: any;
+
+    constructor(data?: IOrderResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.lines = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
             this.plannedAt = _data["plannedAt"];
             this.sentAt = _data["sentAt"];
+            if (Array.isArray(_data["lines"])) {
+                this.lines = [] as any;
+                for (let item of _data["lines"])
+                    this.lines!.push(OrderLineResponse.fromJS(item));
+            }
         }
     }
 
@@ -605,6 +748,11 @@ export class OrderResponse implements IOrderResponse {
         }
         data["plannedAt"] = this.plannedAt;
         data["sentAt"] = this.sentAt;
+        if (Array.isArray(this.lines)) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
@@ -612,6 +760,7 @@ export class OrderResponse implements IOrderResponse {
 export interface IOrderResponse {
     plannedAt: string;
     sentAt: string | undefined;
+    lines: OrderLineResponse[];
 
     [key: string]: any;
 }
@@ -809,7 +958,8 @@ export interface IProblemDetails {
 
 export class SaveCustomerRequest implements ISaveCustomerRequest {
     name!: string;
-    address!: string;
+    phone!: string | undefined;
+    address!: AddressContract;
 
     [key: string]: any;
 
@@ -820,6 +970,9 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.address = new AddressContract();
+        }
     }
 
     init(_data?: any) {
@@ -829,7 +982,8 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                     this[property] = _data[property];
             }
             this.name = _data["name"];
-            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.address = _data["address"] ? AddressContract.fromJS(_data["address"]) : new AddressContract();
         }
     }
 
@@ -847,14 +1001,127 @@ export class SaveCustomerRequest implements ISaveCustomerRequest {
                 data[property] = this[property];
         }
         data["name"] = this.name;
-        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : undefined as any;
         return data;
     }
 }
 
 export interface ISaveCustomerRequest {
     name: string;
-    address: string;
+    phone: string | undefined;
+    address: AddressContract;
+
+    [key: string]: any;
+}
+
+export class SubscribeLineRequest implements ISubscribeLineRequest {
+    packageTypeId!: string;
+    quantity!: number;
+
+    [key: string]: any;
+
+    constructor(data?: ISubscribeLineRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.packageTypeId = _data["packageTypeId"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): SubscribeLineRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscribeLineRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["packageTypeId"] = this.packageTypeId;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface ISubscribeLineRequest {
+    packageTypeId: string;
+    quantity: number;
+
+    [key: string]: any;
+}
+
+export class SubscribeRequest implements ISubscribeRequest {
+    lines!: SubscribeLineRequest[];
+
+    [key: string]: any;
+
+    constructor(data?: ISubscribeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.lines = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            if (Array.isArray(_data["lines"])) {
+                this.lines = [] as any;
+                for (let item of _data["lines"])
+                    this.lines!.push(SubscribeLineRequest.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SubscribeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscribeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        if (Array.isArray(this.lines)) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISubscribeRequest {
+    lines: SubscribeLineRequest[];
 
     [key: string]: any;
 }

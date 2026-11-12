@@ -21,9 +21,16 @@ beforeEach(() => {
   mocks.saveCustomer.mockReset();
 });
 
-function fillInAndSave() {
-  fireEvent.change(screen.getByPlaceholderText('Name'), { target: { value: 'Malthe' } });
-  fireEvent.change(screen.getByPlaceholderText('Address'), { target: { value: 'Finlandsgade 22' } });
+function fillIn(field: string, value: string) {
+  fireEvent.change(screen.getByPlaceholderText(field), { target: { value } });
+}
+
+function fillInAndSave(phone = '') {
+  fillIn('Name', 'Malthe');
+  fillIn('Phone (optional)', phone);
+  fillIn('Street', 'Finlandsgade 22');
+  fillIn('Postal code', '8200');
+  fillIn('City', 'Aarhus N');
   fireEvent.click(screen.getByText('Save'));
 }
 
@@ -31,12 +38,27 @@ it('saves the details and goes back', async () => {
   mocks.saveCustomer.mockResolvedValue(undefined);
   render(<OnboardingScreen />);
 
-  fillInAndSave();
+  fillInAndSave('12345678');
 
   await waitFor(() => expect(mocks.router.back).toHaveBeenCalled());
   expect(mocks.saveCustomer).toHaveBeenCalledWith(
-    expect.objectContaining({ name: 'Malthe', address: 'Finlandsgade 22' }),
+    expect.objectContaining({
+      name: 'Malthe',
+      phone: '12345678',
+      address: expect.objectContaining({ street: 'Finlandsgade 22', postalCode: '8200', city: 'Aarhus N' }),
+    }),
   );
+});
+
+it('sends no phone when the field is left empty', async () => {
+  mocks.saveCustomer.mockResolvedValue(undefined);
+  render(<OnboardingScreen />);
+
+  fillInAndSave();
+
+  await waitFor(() => expect(mocks.saveCustomer).toHaveBeenCalled());
+  const [request] = mocks.saveCustomer.mock.calls[0] ?? [];
+  expect(request?.phone).toBeUndefined();
 });
 
 it('shows an error and stays when saving fails', async () => {
@@ -45,6 +67,6 @@ it('shows an error and stays when saving fails', async () => {
 
   fillInAndSave();
 
-  expect(await screen.findByText('Could not save your details. Check your name and address.')).toBeTruthy();
+  expect(await screen.findByText(/Could not save your details/)).toBeTruthy();
   expect(mocks.router.back).not.toHaveBeenCalled();
 });

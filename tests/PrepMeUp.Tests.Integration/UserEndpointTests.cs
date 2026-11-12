@@ -11,6 +11,10 @@ namespace PrepMeUp.Tests.Integration;
 
 public class UserEndpointTests
 {
+    private const string Email = "malthe@example.com";
+    private static readonly AddressContract Home = new("Finlandsgade 22", "8200", "Aarhus N");
+    private static readonly AddressContract NewHome = new("Nørrebrogade 1", "8000", "Aarhus C");
+
     private WebApplicationFactory<Program> _factory = null!;
     private HttpClient _client = null!;
 
@@ -49,7 +53,15 @@ public class UserEndpointTests
     [Test]
     public async Task PutUser_NoToken_ReturnsUnauthorized()
     {
-        var response = await _client.PutAsJsonAsync("/user", new { Name = "Malthe", Address = "Finlandsgade 22" });
+        var response = await _client.PutAsJsonAsync("/user", Body());
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
+    [Test]
+    public async Task PutUser_TokenWithoutEmail_ReturnsUnauthorized()
+    {
+        var response = await SendAsync(HttpMethod.Put, NewSub(), Body(), email: null);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
@@ -59,40 +71,54 @@ public class UserEndpointTests
     {
         var sub = NewSub();
 
-        var put = await SendAsync(HttpMethod.Put, sub, new { Name = "Malthe", Address = "Finlandsgade 22" });
+        var put = await SendAsync(HttpMethod.Put, sub, Body(phone: "12345678"));
         var customer = await GetCustomerAsync(sub);
 
         Assert.That(put.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        Assert.That(customer, Is.EqualTo(new CustomerResponse("Malthe", "Finlandsgade 22")));
+        Assert.That(customer, Is.EqualTo(new CustomerResponse("Malthe", Email, "12345678", Home)));
     }
 
     [Test]
-    public async Task PutUser_Twice_KeepsTheLatestDetails()
+    public async Task PutUser_Twice_KeepsTheLatestDetailsAndTheFirstEmail()
     {
         var sub = NewSub();
 
-        await SendAsync(HttpMethod.Put, sub, new { Name = "Malthe", Address = "Finlandsgade 22" });
-        var second = await SendAsync(HttpMethod.Put, sub, new { Name = "Malthe Winther", Address = "Nørrebrogade 1" });
+        await SendAsync(HttpMethod.Put, sub, Body());
+        var second = await SendAsync(
+            HttpMethod.Put, sub, Body(name: "Malthe Winther", address: NewHome), email: "other@example.com");
         var customer = await GetCustomerAsync(sub);
 
         Assert.That(second.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        Assert.That(customer, Is.EqualTo(new CustomerResponse("Malthe Winther", "Nørrebrogade 1")));
+        Assert.That(customer, Is.EqualTo(new CustomerResponse("Malthe Winther", Email, null, NewHome)));
     }
 
-    [TestCase("", "Finlandsgade 22")]
-    [TestCase("Malthe", "")]
-    public async Task PutUser_BlankField_ReturnsBadRequest(string name, string address)
+    [TestCase(null)]
+    [TestCase("")]
+    public async Task PutUser_NoPhone_StoresPhoneAsNull(string? phone)
     {
-        var response = await SendAsync(HttpMethod.Put, NewSub(), new { Name = name, Address = address });
+        var sub = NewSub();
+
+        var put = await SendAsync(HttpMethod.Put, sub, Body(phone: phone));
+        var customer = await GetCustomerAsync(sub);
+
+        Assert.That(put.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        Assert.That(customer?.Phone, Is.Null);
+    }
+
+    [Test]
+    public async Task PutUser_BlankName_ReturnsBadRequest()
+    {
+        var response = await SendAsync(HttpMethod.Put, NewSub(), Body(name: ""));
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(101, 1)]
-    [TestCase(1, 201)]
-    public async Task PutUser_FieldOverMaxLength_ReturnsBadRequest(int nameLength, int addressLength)
+    [TestCase("", "8200", "Aarhus N")]
+    [TestCase("Finlandsgade 22", "", "Aarhus N")]
+    [TestCase("Finlandsgade 22", "8200", "")]
+    public async Task PutUser_BlankAddressField_ReturnsBadRequest(string street, string postalCode, string city)
     {
-        var body = new { Name = new string('a', nameLength), Address = new string('a', addressLength) };
+        var body = Body(address: new AddressContract(street, postalCode, city));
 
         var response = await SendAsync(HttpMethod.Put, NewSub(), body);
 
@@ -100,9 +126,54 @@ public class UserEndpointTests
     }
 
     [Test]
+    public async Task PutUser_MissingAddress_ReturnsBadRequest()
+    {
+        var response = await SendAsync(HttpMethod.Put, NewSub(), new { Name = "Malthe" });
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase(101, 1, 1)]
+    [TestCase(1, 101, 1)]
+    [TestCase(1, 1, 51)]
+    public async Task PutUser_FieldOverMaxLength_ReturnsBadRequest(int nameLength, int streetLength, int cityLength)
+    {
+        var body = Body(
+            name: new string('a', nameLength),
+            address: new AddressContract(new string('a', streetLength), "8200", new string('a', cityLength)));
+
+        var response = await SendAsync(HttpMethod.Put, NewSub(), body);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase("0999")]
+    [TestCase("999")]
+    [TestCase("10000")]
+    [TestCase("82a0")]
+    public async Task PutUser_InvalidPostalCode_ReturnsBadRequest(string postalCode)
+    {
+        var body = Body(address: new AddressContract("Finlandsgade 22", postalCode, "Aarhus N"));
+
+        var response = await SendAsync(HttpMethod.Put, NewSub(), body);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase("1234567")]
+    [TestCase("123456789")]
+    [TestCase("+4512345678")]
+    public async Task PutUser_InvalidPhone_ReturnsBadRequest(string phone)
+    {
+        var response = await SendAsync(HttpMethod.Put, NewSub(), Body(phone: phone));
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [Test]
     public async Task GetUser_AnotherUserIsOnboarded_ReturnsNotFound()
     {
-        await SendAsync(HttpMethod.Put, NewSub(), new { Name = "Malthe", Address = "Finlandsgade 22" });
+        await SendAsync(HttpMethod.Put, NewSub(), Body());
 
         var response = await SendAsync(HttpMethod.Get, NewSub());
 
@@ -111,16 +182,25 @@ public class UserEndpointTests
 
     private static string NewSub() => Guid.NewGuid().ToString();
 
+    private static SaveCustomerRequest Body(string name = "Malthe", string? phone = null, AddressContract? address = null)
+        => new(name, phone, address ?? Home);
+
     private async Task<CustomerResponse?> GetCustomerAsync(string sub)
     {
         var response = await SendAsync(HttpMethod.Get, sub);
         return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<CustomerResponse>() : null;
     }
 
-    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string sub, object? body = null)
+    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string sub, object? body = null, string? email = Email)
     {
         var request = new HttpRequestMessage(method, "/user");
-        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub });
+        var claims = new Dictionary<string, object> { ["sub"] = sub };
+        if (email is not null)
+        {
+            claims["email"] = email;
+        }
+
+        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: claims);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null)
         {

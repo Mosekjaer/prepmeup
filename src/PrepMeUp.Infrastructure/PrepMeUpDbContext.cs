@@ -26,8 +26,16 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
             entity.Property(customer => customer.KeycloakId).IsRequired().HasMaxLength(255);
             entity.HasIndex(customer => customer.KeycloakId).IsUnique();
             entity.Property(customer => customer.Name).IsRequired().HasMaxLength(Customer.NameMaxLength);
-            entity.Property(customer => customer.Address).IsRequired().HasMaxLength(Customer.AddressMaxLength);
+            entity.Property(customer => customer.Email).IsRequired().HasMaxLength(Customer.EmailMaxLength);
+            entity.Property(customer => customer.Phone).HasMaxLength(Customer.PhoneLength);
+            entity.ComplexProperty(customer => customer.Address, address =>
+            {
+                address.Property(a => a.Street).HasColumnName("Street").IsRequired().HasMaxLength(Address.StreetMaxLength);
+                address.Property(a => a.PostalCode).HasColumnName("PostalCode").IsRequired().HasMaxLength(Address.PostalCodeLength);
+                address.Property(a => a.City).HasColumnName("City").IsRequired().HasMaxLength(Address.CityMaxLength);
+            });
         });
+
 
         modelBuilder.Entity<Subscription>(entity =>
         {
@@ -40,6 +48,16 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
         {
             entity.ToTable("Orders");
             entity.HasKey(order => order.Id);
+            entity.HasMany(order => order.Lines).WithOne().HasForeignKey("OrderId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OrderLine>(entity =>
+        {
+            entity.ToTable("OrderLines", table => table.HasCheckConstraint("CK_OrderLines_Quantity", "[Quantity] >= 1"));
+            entity.Property<Guid>("Id");
+            entity.HasKey("Id");
+            entity.HasOne(line => line.PackageType).WithMany().HasForeignKey("PackageTypeId").IsRequired().OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex("OrderId", "PackageTypeId").IsUnique();
         });
 
         modelBuilder.Entity<PackageType>(entity =>

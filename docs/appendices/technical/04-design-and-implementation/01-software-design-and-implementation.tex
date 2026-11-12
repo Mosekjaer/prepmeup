@@ -18,6 +18,8 @@
   1.2 & 28-10-2026 & Group 3 & Added where the mobile app keeps the token \\
   1.3 & 28-10-2026 & Group 3 & Simpler text, corrected roles and token renewal \\
   1.4 & 04-11-2026 & Group 3 & Added onboarding flows for customers and administrators \\
+  1.5 & 11-11-2026 & Group 3 & Added zombie users \\
+  1.6 & 12-11-2026 & Group 3 & Added order lines \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -119,7 +121,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
         \end{itemize}
     \item Keycloak shows the login page, \textit{if} client\_id and redirect\_uri are valid. Also, keycloak saves code\_challenge and state for later (see step 8), and displays it's own login page.
     \item User types email and password and clicks 'log in'.
-    \item Keycloak validerer login-oplysningerne: Er de korrekte?
+    \item Keycloak checks the credentials: are they correct?
         \begin{itemize}
             \item No: Keycloak shows an error on the login page and user tries again.
             \item Yes: Keycloak looks up the users realm roles.It is 'household' for customers and 'admin' for administrators. In step 12, these roles into the jwt token.
@@ -177,7 +179,7 @@ This section shows what happens the first time a new customer uses the app. It s
 
 \drawiofig[\linewidth]{onboarding-customer}{Onboarding of a new customer, from registration in Keycloak to saved name and address.}{fig:onboarding-customer}
 
-Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak, the API and the database. The flow has six parts.
+Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak, the Web API and the database. The flow has six parts.
 
 \paragraph{1. Sign in.} The customer opens the app and taps Sign in. The app has no login form of its own. It opens Keycloak's login page in the browser, in the same way as in Figure~\ref{fig:keycloak-login-flowchart}.
 
@@ -197,12 +199,48 @@ For the app, this 404 is not an error. It means that the customer has not finish
 
 The next time the customer opens the app, GET /user answers 200 right away, and the onboarding screen is not shown. If the customer leaves the onboarding screen or closes the app before they save, the API still answers 404 the next time the home screen is shown, and the app opens the onboarding screen again. So a customer cannot use the app without a name and address.
 
+\section{Zombie Users}\label{sec:zombie-users}
+A zombie user is a user who exists in Keycloak but not in PrepMeUp. The user has an account and can log in, but our database has no customer for that user. This section describes how that happens, what it means for the system, what we could do about it, and why we do not handle it in this version.
+
+\subsection{How a Zombie User Comes About}
+The account and the customer are created in two different places, as the customer onboarding flow shows (Figure~\ref{fig:onboarding-customer}). Keycloak creates the account in part 2, but our database only gets a customer in part 5, when the customer saves name and address. If the flow stops anywhere between those two parts, we have a zombie user. That happens in three ways:
+\begin{itemize}
+  \item A customer registers but closes the app before saving name and address.
+  \item Somebody registers on Keycloak's login page without ever using the app. The page is public, because Keycloak runs on a public server.
+  \item The database is recreated, for example during development. The accounts in Keycloak are still there, but none of them have a customer any more.
+\end{itemize}
+
+An administrator can never be a zombie user in this sense. As the next section describes, an administrator has no customer in our database at all, because everything the API needs to know about them is in the token.
+
+\subsection{What It Means for the System}
+A zombie user cannot see or change anything that belongs to somebody else. The API finds the customer from the user id in the token, and a zombie user has no customer, so the API answers 404 when the app asks for the profile. The app reads that as ``onboarding is not done'' and opens the onboarding screen, as in part 3 of the onboarding flow. So a customer who stopped halfway just continues the next time they open the app.
+
+The real problem is the accounts that are never finished. Keycloak keeps an email address and a name for each of them, which is personal data we store without using it. The email address is also the username, so it can only be used once. We do not verify email addresses (appendix 2.1), so anyone can register with an address they do not own, and the real owner can then not create an account with it. Finally, nothing stops a script from creating many accounts. That is part of risk T4 in the risk analysis (appendix 2.3).
+
+\subsection{What We Could Do}
+We have considered four ways to handle zombie users. We have not implemented any of them.
+\begin{enumerate}
+  \item Keycloak could require that a new user confirms the email address before they can log in \cite{keycloak-server-admin-guide}. This stops registrations with addresses the user does not own. It does not help with the customer who just closes the app, and it needs an email server, which we do not have (appendix 2.1).
+  \item A job in the API could regularly ask Keycloak for its users and delete the accounts that are older than, for example, a week and still have no customer. This removes zombie users after they have appeared. The downside is that the API would need its own client in Keycloak with the right to delete users, and a bug in the job could delete real customers.
+  \item Keycloak could call code of our own when somebody registers \cite{keycloak-server-admin-guide}, so the API knows about every account from the start. That needs an extension to Keycloak written in Java, and the API would still have a customer without a name and address until onboarding is done.
+  \item The API could create an empty customer the first time it sees a new user, and onboarding would then fill in the name and address. This closes the gap between Keycloak and the database, but it only moves the problem, because the database would then hold empty customers.
+\end{enumerate}
+
+\subsection{Why We Do Not Handle It}
+We have chosen not to handle zombie users in this version. The supervisor agreed to postpone it at the meeting on 3 November, and it is not part of our requirements.
+
+The main reason is that zombie users do not break anything. They cannot reach other users' data, and the app already sends a user without a customer to the onboarding screen. The most common case, a customer who stops halfway, is therefore already handled.
+
+Every solution also needs something new. It is either an email server, a client in Keycloak that may delete users, a Keycloak extension in Java or a job that deletes accounts on its own. For a prototype with few users, that is more code and more risk than the zombie users themselves. If it is ever needed, an administrator can find and delete them by hand in Keycloak's Admin Console. We would rather spend the time on our must-have requirements, which are about subscriptions, orders and expiry dates.
+
+If PrepMeUp were used for real, we would first turn on email verification, brute force detection and a password policy. All three are settings in the realm file, and only email verification also needs an email server (appendix 2.1). After that we would add the cleanup job, because it is the only option that also removes the accounts of customers who stop halfway.
+
 \section{Onboarding Flow: Administrator}\label{sec:onboarding-admin}
 This section shows how a new administrator gets access to the admin panel. An administrator cannot register themselves like a customer. Only an existing administrator can make someone an administrator, so the flow assumes that at least one administrator already exists. The first one is created by hand (see How a User Gets a Role).
 
 \drawiofig[\linewidth]{onboarding-admin}{Onboarding of a new administrator, from creation in the Keycloak Admin Console to access to the admin panel.}{fig:onboarding-admin}
 
-Figure~\ref{fig:onboarding-admin} has four lanes: the existing administrator, the new administrator, Keycloak and the admin panel with the API. The flow has five parts.
+Figure~\ref{fig:onboarding-admin} has four lanes: the existing administrator, the new administrator, Keycloak, and the admin panel with the Web API. The flow has five parts.
 
 \paragraph{1. Create the user in Keycloak.} The existing administrator logs in to the Keycloak Admin Console. Users are created there, because the admin panel has no page for it yet. Our admin role only gives access to the admin panel and the admin endpoints of the API. It does not give access to the Admin Console by itself, so the existing administrator also needs a Keycloak account that is allowed to manage users.
 
@@ -219,6 +257,15 @@ In the Admin Console the existing administrator creates a user in the prepmeup r
 If the existing administrator forgot to give the admin role, the API answers 403 Forbidden. The admin panel then shows that the account has no access and offers a sign-out button. The user is not signed out automatically, so they can see why they were turned away.
 
 The admin panel has no onboarding screen like the customer app. An administrator has no name or address in our database, because everything the API needs to know about them is in the token.
+
+\section{Order Lines}\label{sec:order-lines}
+This section explains what an order contains and why we store it the way we do. When a customer signs up (FR-01), they choose how many packages of each package type the first order has, for example two adult packages and one child package.
+
+\paragraph{One line per package type.} The order keeps a list of order lines. A line has a package type and a quantity, and we do not store one row for every package. A package is not tied to a person (appendix 1.2), so two adult packages are just the same package twice. It also suits FR-19, which makes the next order from the package types and quantities of the previous one. A package type that has been ordered is never edited. The order only needs to point to it, so an old order keeps its contents even when the administrator replaces the package type.
+
+\paragraph{The rules.} The rules are in the Domain project, so we can test them without a database. A quantity must be at least one, and a package type that has been replaced cannot be ordered. An order needs at least one line, and a package type can only appear once in an order. The database checks the quantity and the one line per package type as well, because it is the last place where wrong data can be stopped.
+
+\paragraph{From request to answer.} The app sends the lines in POST /subscription. The API checks that the list is not empty and that every quantity is at least one. The service then looks up the package types. If one of them is unknown, replaced or used twice, the service gives an error, and the API turns it into 400 Bad Request. A customer who is not onboarded gets 404, and a customer who already has a subscription gets 409. In the answer, every line has the name of its package type, so the app can show it without a second request, also for a type that has been replaced.
 
 \printbibliography
 

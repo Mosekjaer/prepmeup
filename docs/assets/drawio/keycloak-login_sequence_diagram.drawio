@@ -1,175 +1,91 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) draw.io/26.0.0" pages="2">
-  <diagram id="keycloak-login-sequence" name="Login sequence diagram">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1500" pageHeight="1200" math="0" shadow="0">
+<mxfile host="drawio"><diagram id="keycloak-login-sequence" name="Keycloak login sequence">
+    <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title_banner" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0F172A;arcSize=6;align=left;spacingLeft=25;" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Keycloak Login Flow &amp;#x2014; OpenID Connect (OIDC) with PKCE&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 13px; color: #94A3B8;&quot;&gt;PrepMeUp: authorization code flow between the client (customer app or admin panel) and Keycloak (realm: prepmeup)&lt;/span&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="70" width="1380" x="40" y="30" as="geometry" />
+        <mxCell id="user" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;participant=umlActor;verticalAlign=bottom;spacingBottom=-16;labelBackgroundColor=#FFFFFF;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="80.0" y="40" width="40" height="898" as="geometry" />
         </mxCell>
-        <mxCell id="phase_0" parent="1" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#F0F7FF;strokeColor=#B3D7FF;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#B3D7FF;" value="" vertex="1">
-          <mxGeometry height="225" width="980" x="50" y="215" as="geometry" />
+        <mxCell id="client" value=":Customer app&lt;br&gt;or Admin panel" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="120" height="898" as="geometry" />
         </mxCell>
-        <mxCell id="phase_0_lbl" parent="phase_0" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#475569;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;PHASE 1: Authorization request with PKCE&lt;/b&gt;" vertex="1">
-          <mxGeometry height="26" width="600" x="5" as="geometry" />
+        <mxCell id="kc" value=":Keycloak" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;fillColor=#FFFFFF;strokeColor=#173330;fontColor=#173330;fontSize=12;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="120" height="898" as="geometry" />
         </mxCell>
-        <mxCell id="phase_1" parent="1" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#FAF5FF;strokeColor=#D8B4FE;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#D8B4FE;" value="" vertex="1">
-          <mxGeometry height="260" width="980" x="50" y="455" as="geometry" />
+        <mxCell id="act0" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#ffffff;strokeColor=#173330;" vertex="1" parent="kc">
+          <mxGeometry x="55" y="202" width="10" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="phase_1_lbl" parent="phase_1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#475569;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;PHASE 2: The user signs in at Keycloak (in the browser)&lt;/b&gt;" vertex="1">
-          <mxGeometry height="26" width="600" x="5" as="geometry" />
+        <mxCell id="act1" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#ffffff;strokeColor=#173330;" vertex="1" parent="kc">
+          <mxGeometry x="55" y="298" width="10" height="176" as="geometry" />
         </mxCell>
-        <mxCell id="phase_2" parent="1" style="swimlane;startSize=26;container=1;pointerEvents=0;collapsible=0;rounded=1;arcSize=6;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;dashed=1;opacity=60;fontFamily=Arial;fontSize=11;fontColor=#FDE68A;" value="" vertex="1">
-          <mxGeometry height="340" width="980" x="50" y="730" as="geometry" />
+        <mxCell id="act2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#ffffff;strokeColor=#173330;" vertex="1" parent="kc">
+          <mxGeometry x="55" y="586" width="10" height="112" as="geometry" />
         </mxCell>
-        <mxCell id="phase_2_lbl" parent="phase_2" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontColor=#475569;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;PHASE 3: Code exchange, PKCE check and tokens&lt;/b&gt;" vertex="1">
-          <mxGeometry height="26" width="600" x="5" as="geometry" />
+        <mxCell id="act3" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#ffffff;strokeColor=#173330;" vertex="1" parent="client">
+          <mxGeometry x="55" y="90" width="10" height="720" as="geometry" />
         </mxCell>
-        <mxCell id="ll_user" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;participant=umlActor;verticalAlign=bottom;spacingBottom=-12;labelBackgroundColor=#ffffff;fillColor=#ECEFF1;strokeColor=#455A64;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" value="User&#10;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#555;&quot;&gt;(customer or administrator)&lt;/span&gt;" vertex="1">
-          <mxGeometry height="950" width="140" x="80" y="125" as="geometry" />
+        <mxCell id="m0" value="1. Click Sign in" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=0.5;exitY=0.1002;entryX=0;entryY=0.0;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="user" target="act3">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="act_user_1" parent="ll_user" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="35" width="12" x="64" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="act_user_2" parent="ll_user" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="35" width="12" x="64" y="425" as="geometry" />
-        </mxCell>
-        <mxCell id="ll_app" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" value="PrepMeUp client&#10;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#1565C0;&quot;&gt;(customer app or admin panel)&lt;/span&gt;" vertex="1">
-          <mxGeometry height="950" width="190" x="420" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="act_app_1" parent="ll_app" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="140" width="12" x="89" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="act_app_2" parent="ll_app" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="290" width="12" x="89" y="635" as="geometry" />
-        </mxCell>
-        <mxCell id="ll_kc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;fillColor=#F3E5F5;strokeColor=#6A1B9A;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontStyle=1;" value="Keycloak&#10;&lt;span style=&quot;font-size:10px;font-weight:normal;color:#6A1B9A;&quot;&gt;(identity provider, realm: prepmeup)&lt;/span&gt;" vertex="1">
-          <mxGeometry height="950" width="200" x="780" y="125" as="geometry" />
-        </mxCell>
-        <mxCell id="act_kc_1" parent="ll_kc" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="220" width="12" x="94" y="235" as="geometry" />
-        </mxCell>
-        <mxCell id="act_kc_2" parent="ll_kc" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1;" value="" vertex="1">
-          <mxGeometry height="120" width="12" x="94" y="730" as="geometry" />
-        </mxCell>
-        <mxCell id="m1" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="1. User clicks 'Sign in'">
+        <mxCell id="m1" value="2. Generate PKCE&lt;br&gt;values and state" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.0667;entryX=1;entryY=0.1083;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="act3">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="150" y="260" as="sourcePoint" />
-            <mxPoint x="515" y="260" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="360" y="178" /><mxPoint x="360" y="208" /></Array>
+          <mxPoint x="58" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m2_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="2. Generate code_verifier, code_challenge (S256) and state">
+        <mxCell id="m2" value="3. GET /auth with client_id,&lt;br&gt;redirect_uri, code_challenge, state" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.1556;entryX=0;entryY=0.0;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="act0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="4. Show login page" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;exitX=0;exitY=1.0;entryX=0.5;entryY=0.2784;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act0" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="5. Email and password" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=0.5;exitY=0.3318;entryX=0;entryY=0.0;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="user" target="act1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m5" value="6. Check credentials,&lt;br&gt;load realm roles" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.2727;entryX=1;entryY=0.4432;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act1" target="act1">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="555" y="280" />
-              <mxPoint x="555" y="320" />
-            </Array>
-            <mxPoint x="515" y="280" as="sourcePoint" />
-            <mxPoint x="515" y="320" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="560" y="386" /><mxPoint x="560" y="416" /></Array>
+          <mxPoint x="73" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" target="act_kc_1" value="3. GET /protocol/openid-connect/auth (client_id, redirect_uri, code_challenge, state)">
+        <mxCell id="m6" value="7. Start SSO session,&lt;br&gt;issue authorization code" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.6364;entryX=1;entryY=0.8068;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act1" target="act1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="515" y="360" as="sourcePoint" />
-            <mxPoint x="880" y="360" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="560" y="450" /><mxPoint x="560" y="480" /></Array>
+          <mxPoint x="82" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m4" edge="1" parent="1" source="act_kc_1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" value="4. Show the Keycloak login page in the browser">
+        <mxCell id="m7" value="8. Redirect with code and state" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;exitX=0;exitY=1.0;entryX=1;entryY=0.5333;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act1" target="act3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" value="9. Check state" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.6;entryX=1;entryY=0.6417;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="act3">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="880" y="510" as="sourcePoint" />
-            <mxPoint x="150" y="510" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="360" y="562" /><mxPoint x="360" y="592" /></Array>
+          <mxPoint x="51" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" target="act_kc_1" value="5. Enter e-mail and password">
+        <mxCell id="m9" value="10. POST /token with&lt;br&gt;code, code_verifier" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.6889;entryX=0;entryY=0.0;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="act2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" value="11. Check code&lt;br&gt;and PKCE" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.4286;entryX=1;entryY=0.6964;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act2" target="act2">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="150" y="550" as="sourcePoint" />
-            <mxPoint x="880" y="550" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="560" y="674" /><mxPoint x="560" y="704" /></Array>
+          <mxPoint x="51" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m6_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="6. Check the credentials and load realm roles">
+        <mxCell id="m11" value="12. Access, refresh and ID token" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;exitX=0;exitY=1.0;entryX=1;entryY=0.8444;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act2" target="act3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m12" value="13. Store tokens" style="html=1;verticalAlign=middle;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.9111;entryX=1;entryY=0.9528;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="act3">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="920" y="590" />
-              <mxPoint x="920" y="630" />
-            </Array>
-            <mxPoint x="880" y="590" as="sourcePoint" />
-            <mxPoint x="880" y="630" as="targetPoint" />
-          </mxGeometry>
+            <Array as="points"><mxPoint x="360" y="786" /><mxPoint x="360" y="816" /></Array>
+          <mxPoint x="58" y="0" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="m7_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="7. Create SSO session and issue a one-time authorization code">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="920" y="650" />
-              <mxPoint x="920" y="686" />
-            </Array>
-            <mxPoint x="880" y="650" as="sourcePoint" />
-            <mxPoint x="880" y="686" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="m13" value="14. Signed in" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;exitX=0;exitY=1.0;entryX=0.5;entryY=0.902;strokeColor=#173330;fontColor=#173330;fontSize=11;fontFamily=Arial;labelBackgroundColor=#FFFFFF;endSize=8;" edge="1" parent="1" source="act3" target="user">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="m8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" value="8. Redirect to redirect_uri?code=...&amp;state=...">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="880" y="780" as="sourcePoint" />
-            <mxPoint x="515" y="780" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m9_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="9. Check that state matches the stored value">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="555" y="795" />
-              <mxPoint x="555" y="831" />
-            </Array>
-            <mxPoint x="515" y="795" as="sourcePoint" />
-            <mxPoint x="515" y="831" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m10" edge="1" parent="1" source="act_app_2" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="10. POST /protocol/openid-connect/token (code, code_verifier, client_id, redirect_uri)">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="515" y="855" as="sourcePoint" />
-            <mxPoint x="880" y="855" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m11_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="11. Check SHA256(code_verifier) = code_challenge">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="920" y="895" />
-              <mxPoint x="920" y="931" />
-            </Array>
-            <mxPoint x="880" y="895" as="sourcePoint" />
-            <mxPoint x="880" y="931" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m12" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" target="act_app_2" value="12. Return access token (JWT), ID token and refresh token">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="880" y="955" as="sourcePoint" />
-            <mxPoint x="515" y="955" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m13_self" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;strokeColor=#1E293B;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" value="13. Store the tokens and update the auth state">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="555" y="995" />
-              <mxPoint x="555" y="1035" />
-            </Array>
-            <mxPoint x="515" y="995" as="sourcePoint" />
-            <mxPoint x="515" y="1035" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m14" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;strokeColor=#475569;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#1E293B;" value="14. Signed in: show the start screen">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="515" y="1045" as="sourcePoint" />
-            <mxPoint x="150" y="1045" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="note_pkce" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" value="&lt;b style=&quot;color:#B45309;&quot;&gt;PKCE and state:&lt;/b&gt;&lt;br&gt;Both clients are public clients without a &lt;i&gt;client_secret&lt;/i&gt;. PKCE (RFC 7636) binds the code to the &lt;i&gt;code_verifier&lt;/i&gt;, which only the client knows, so a stolen code cannot be exchanged. The &lt;i&gt;state&lt;/i&gt; value lets the client reject a callback it did not ask for (CSRF)." vertex="1">
-          <mxGeometry height="125" width="300" x="1120" y="240" as="geometry" />
-        </mxCell>
-        <mxCell id="note_state" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" value="&lt;b style=&quot;color:#B45309;&quot;&gt;The two clients:&lt;/b&gt;&lt;br&gt;Customer app: client_id &lt;i&gt;prepmeup-mobile&lt;/i&gt;, redirect_uri &lt;i&gt;prepmeup://auth/callback&lt;/i&gt; (expo-auth-session).&lt;br&gt;Admin panel: client_id &lt;i&gt;prepmeup-admin&lt;/i&gt;, redirect_uri is the panel's own address (react-oidc-context). New customers can register on the login page." vertex="1">
-          <mxGeometry height="125" width="300" x="1120" y="480" as="geometry" />
-        </mxCell>
-        <mxCell id="note_jwt" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacing=8;fillColor=#FFF9C4;strokeColor=#D97706;strokeWidth=1;fontFamily=Arial;fontSize=10;fontColor=#78350F;" value="&lt;b style=&quot;color:#B45309;&quot;&gt;Tokens:&lt;/b&gt;&lt;br&gt;Keycloak signs the tokens (RS256). The access token has the audience &lt;i&gt;prepmeup-api&lt;/i&gt; and the realm roles.&lt;br&gt;Customer app: access token in memory, refresh token in &lt;i&gt;expo-secure-store&lt;/i&gt;.&lt;br&gt;Admin panel: tokens in memory only, renewed silently." vertex="1">
-          <mxGeometry height="125" width="300" x="1120" y="780" as="geometry" />
-        </mxCell>
-      </root>
+      <mxCell id="legend" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#173330;align=left;verticalAlign=top;container=1;collapsible=0;fontSize=11;fontStyle=1;fontColor=#173330;fontFamily=Arial;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="20" y="954.0" width="600" height="62" as="geometry" /></mxCell>
+<mxCell id="legend_call" value="" style="html=1;endArrow=block;endSize=8;strokeColor=#173330;" edge="1" parent="legend"><mxGeometry relative="1" as="geometry"><mxPoint x="10" y="40" as="sourcePoint" /><mxPoint x="50" y="40" as="targetPoint" /></mxGeometry></mxCell>
+<mxCell id="legend_call_t" value="Call (synchronous)" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="56" y="28" width="110" height="24" as="geometry" /></mxCell>
+<mxCell id="legend_ret" value="" style="html=1;endArrow=open;dashed=1;endSize=8;strokeColor=#173330;" edge="1" parent="legend"><mxGeometry relative="1" as="geometry"><mxPoint x="176" y="40" as="sourcePoint" /><mxPoint x="216" y="40" as="targetPoint" /></mxGeometry></mxCell>
+<mxCell id="legend_ret_t" value="Reply or redirect" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="222" y="28" width="100" height="24" as="geometry" /></mxCell>
+<mxCell id="legend_bar" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;fillColor=#FFFFFF;strokeColor=#173330;" vertex="1" parent="legend"><mxGeometry x="336" y="26" width="10" height="28" as="geometry" /></mxCell>
+<mxCell id="legend_bar_t" value="Activation (lifeline is busy)" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#173330;fontFamily=Arial;" vertex="1" parent="legend"><mxGeometry x="352" y="28" width="160" height="24" as="geometry" /></mxCell>
+</root>
     </mxGraphModel>
   </diagram>
-  </mxfile>
+</mxfile>

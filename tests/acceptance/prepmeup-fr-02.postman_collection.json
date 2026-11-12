@@ -1,29 +1,89 @@
 {
   "info": {
     "name": "PrepMeUp FR-02 persistent storage",
-    "description": "Acceptance test for FR-02 (appendix 6.1). Run the folder 'Before restart', restart the database and then the API, and run the folder 'After restart'. See README.md.",
+    "description": "Acceptance test for FR-02 (appendix 6.1). Run the folder 'Before restart', restart the database and then the API, and run the folder 'After restart'. The order is created with lines (two package types), so the test also shows that the lines survive the restart. See README.md.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
     "type": "oauth2",
     "oauth2": [
-      { "key": "grant_type", "value": "authorization_code_with_pkce", "type": "string" },
-      { "key": "authUrl", "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth", "type": "string" },
-      { "key": "accessTokenUrl", "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token", "type": "string" },
-      { "key": "clientId", "value": "prepmeup-admin", "type": "string" },
-      { "key": "scope", "value": "openid", "type": "string" },
-      { "key": "redirect_uri", "value": "http://localhost:5173/", "type": "string" },
-      { "key": "challengeAlgorithm", "value": "S256", "type": "string" },
-      { "key": "client_authentication", "value": "body", "type": "string" },
-      { "key": "addTokenTo", "value": "header", "type": "string" },
-      { "key": "tokenName", "value": "PrepMeUp local", "type": "string" }
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
     ]
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:5001" },
-    { "key": "keycloakUrl", "value": "http://localhost:8082" },
-    { "key": "customerName", "value": "FR-02 Test" },
-    { "key": "customerAddress", "value": "Testvej 1, 8000 Aarhus C" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "customerName",
+      "value": "FR-02 Test"
+    },
+    {
+      "key": "customerStreet",
+      "value": "Finlandsgade 22"
+    },
+    {
+      "key": "customerPostalCode",
+      "value": "8200"
+    },
+    {
+      "key": "customerCity",
+      "value": "Aarhus N"
+    }
   ],
   "item": [
     {
@@ -49,20 +109,65 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"{{customerName}}\",\n  \"address\": \"{{customerAddress}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"{{customerName}}\",\n  \"phone\": null,\n  \"address\": {\n    \"street\": \"{{customerStreet}}\",\n    \"postalCode\": \"{{customerPostalCode}}\",\n    \"city\": \"{{customerCity}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/user",
-              "host": ["{{baseUrl}}"],
-              "path": ["user"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user"
+              ]
             },
             "description": "Saves name and address for the signed-in customer. Run once, before the restart."
           },
           "response": []
         },
         {
-          "name": "2 Subscribe",
+          "name": "2 Get package types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var types = pm.response.json();",
+                  "pm.test('There are at least two package types', function () {",
+                  "    pm.expect(types.length).to.be.at.least(2);",
+                  "});",
+                  "pm.collectionVariables.set('packageTypeId1', types[0].id);",
+                  "pm.collectionVariables.set('packageTypeId2', types[1].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/package-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "package-types"
+              ]
+            },
+            "description": "Reads the active package types and keeps the first two ids in collection variables, so 'Subscribe' can order them. Run once, before the restart."
+          },
+          "response": []
+        },
+        {
+          "name": "3 Subscribe",
           "event": [
             {
               "listen": "test",
@@ -77,6 +182,12 @@
                   "    pm.expect(body.status).to.eql('Active');",
                   "    pm.expect(body.orders.length).to.eql(1);",
                   "    pm.expect(body.orders[0].sentAt).to.eql(null);",
+                  "});",
+                  "pm.test('The order has the two lines with names and 3 packages in all', function () {",
+                  "    var lines = body.orders[0].lines;",
+                  "    pm.expect(lines.length).to.eql(2);",
+                  "    pm.expect(lines[0].packageTypeName).to.be.a('string');",
+                  "    pm.expect(lines[0].quantity + lines[1].quantity).to.eql(3);",
                   "});"
                 ]
               }
@@ -87,28 +198,50 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/subscription",
-              "host": ["{{baseUrl}}"],
-              "path": ["subscription"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
             },
-            "description": "Creates the subscription and its first order. Run once, before the restart. A second run answers with AlreadySubscribed."
+            "description": "Creates the subscription and its first order with two package types (2 and 1 packages). Run once, before the restart. A second run answers with 409 (AlreadySubscribed).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    { \"packageTypeId\": \"{{packageTypeId1}}\", \"quantity\": 2 },\n    { \"packageTypeId\": \"{{packageTypeId2}}\", \"quantity\": 1 }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         },
         {
-          "name": "3 Get subscription",
+          "name": "4 Get subscription",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "function normalize(orders) {",
+                  "    return JSON.stringify(orders.map(function (order) {",
+                  "        return {",
+                  "            plannedAt: order.plannedAt,",
+                  "            sentAt: order.sentAt,",
+                  "            lines: order.lines.slice().sort(function (a, b) { return a.packageTypeId.localeCompare(b.packageTypeId); })",
+                  "        };",
+                  "    }));",
+                  "}",
                   "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "var body = pm.response.json();",
                   "pm.collectionVariables.set('beforeStatus', body.status);",
                   "pm.collectionVariables.set('beforeStartedAt', body.startedAt);",
-                  "pm.collectionVariables.set('beforeOrders', JSON.stringify(body.orders));"
+                  "pm.collectionVariables.set('beforeOrders', normalize(body.orders));"
                 ]
               }
             }
@@ -118,8 +251,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/subscription",
-              "host": ["{{baseUrl}}"],
-              "path": ["subscription"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
             },
             "description": "Reads the subscription and keeps status, start date and orders in collection variables, so the folder 'After restart' can compare against them."
           },
@@ -131,13 +268,22 @@
       "name": "After restart",
       "item": [
         {
-          "name": "4 Get subscription",
+          "name": "5 Get subscription",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "function normalize(orders) {",
+                  "    return JSON.stringify(orders.map(function (order) {",
+                  "        return {",
+                  "            plannedAt: order.plannedAt,",
+                  "            sentAt: order.sentAt,",
+                  "            lines: order.lines.slice().sort(function (a, b) { return a.packageTypeId.localeCompare(b.packageTypeId); })",
+                  "        };",
+                  "    }));",
+                  "}",
                   "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
@@ -145,7 +291,7 @@
                   "pm.test('Subscription is the same as before the restart', function () {",
                   "    pm.expect(body.status).to.eql(pm.collectionVariables.get('beforeStatus'));",
                   "    pm.expect(body.startedAt).to.eql(pm.collectionVariables.get('beforeStartedAt'));",
-                  "    pm.expect(JSON.stringify(body.orders)).to.eql(pm.collectionVariables.get('beforeOrders'));",
+                  "    pm.expect(normalize(body.orders)).to.eql(pm.collectionVariables.get('beforeOrders'));",
                   "});"
                 ]
               }
@@ -156,15 +302,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/subscription",
-              "host": ["{{baseUrl}}"],
-              "path": ["subscription"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
             },
             "description": "Run after the database and the API have been restarted. A new token is needed if the old one has expired (15 minutes)."
           },
           "response": []
         },
         {
-          "name": "5 Get customer",
+          "name": "6 Get customer",
           "event": [
             {
               "listen": "test",
@@ -177,7 +327,9 @@
                   "var body = pm.response.json();",
                   "pm.test('Name and address are the same as before the restart', function () {",
                   "    pm.expect(body.name).to.eql(pm.collectionVariables.get('customerName'));",
-                  "    pm.expect(body.address).to.eql(pm.collectionVariables.get('customerAddress'));",
+                  "    pm.expect(body.address.street).to.eql(pm.collectionVariables.get('customerStreet'));",
+                  "    pm.expect(body.address.postalCode).to.eql(pm.collectionVariables.get('customerPostalCode'));",
+                  "    pm.expect(body.address.city).to.eql(pm.collectionVariables.get('customerCity'));",
                   "});"
                 ]
               }
@@ -188,8 +340,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/user",
-              "host": ["{{baseUrl}}"],
-              "path": ["user"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user"
+              ]
             },
             "description": "Run after the restart."
           },

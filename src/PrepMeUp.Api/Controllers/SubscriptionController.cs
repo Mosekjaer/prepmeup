@@ -28,12 +28,14 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
 
     [HttpPost(Name = "Subscription_Subscribe")]
     [ProducesResponseType<SubscriptionResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<SubscriptionResponse>> Subscribe(CancellationToken cancellationToken)
+    public async Task<ActionResult<SubscriptionResponse>> Subscribe(SubscribeRequest request, CancellationToken cancellationToken)
     {
-        var result = await subscriptionService.SubscribeAsync(KeycloakId, cancellationToken);
+        var lines = request.Lines.Select(line => new SubscribeLine(line.PackageTypeId, line.Quantity)).ToList();
+        var result = await subscriptionService.SubscribeAsync(KeycloakId, lines, cancellationToken);
 
         switch (result)
         {
@@ -41,6 +43,12 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
                 return NotFound();
             case SubscribeResult.AlreadySubscribed:
                 return Conflict();
+            case SubscribeResult.PackageTypeNotAvailable:
+                ModelState.AddModelError("lines", "One or more of the package types are not available.");
+                return ValidationProblem(ModelState);
+            case SubscribeResult.DuplicatePackageType:
+                ModelState.AddModelError("lines", "A package type can only appear once in an order.");
+                return ValidationProblem(ModelState);
         }
 
         var subscription = await subscriptionService.GetAsync(KeycloakId, cancellationToken);

@@ -20,7 +20,8 @@
   1.5 & 28-10-2026 & Group 3 & Aligned with the system as built \\
   1.6 & 28-10-2026 & Group 3 & Simpler text, clearer payment requirements \\
   1.7 & 04-11-2026 & Group 3 & Expiry date set to one year after the sent date \\
-  1.8 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01), and added order line to the glossary \\
+  1.8 & 04-11-2026 & Group 3 & Package types are never changed after creation and have a status \\
+  1.9 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01), and added order line to the glossary \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -41,7 +42,7 @@
 
 \textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
 
-\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. A package type that has been ordered is never edited. To change the contents, the administrator creates a new package type, so past orders keep their contents.
+\textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. The contents of a package type can never be changed after it has been created, whether it has been ordered or not. To change the contents, the administrator creates a new package type that replaces the old one, so past orders keep their contents. A package type is either \emph{active} or \emph{replaced}, and customers can only choose active package types.
 
 \textbf{Equipment package} = A package of a package type that only contains equipment items, e.g. a flashlight.
 

@@ -70,6 +70,11 @@ export function SubscriptionSummary() {
         <>
           <Text>Planned for {formatDate(nextOrder.plannedAt)}</Text>
           <Text>Status: Planned</Text>
+          {nextOrder.lines.map((line) => (
+            <Text key={line.packageTypeId}>
+              {line.packageTypeName} × {line.quantity}
+            </Text>
+          ))}
         </>
       ) : (
         <Text>No order planned.</Text>

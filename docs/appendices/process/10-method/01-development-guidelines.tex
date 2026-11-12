@@ -21,6 +21,7 @@
   1.2 & 18-09-2026 & Group 3 & Added reference to appendix 10.3 \\
   1.3 & 23-09-2026 & Group 3 & Added sprints and the Kaneo board \\
   1.4 & 28-10-2026 & Group 3 & Simpler text, updated AI rules and epic labels \\
+  1.5 & 05-11-2026 & Group 3 & Added the Makefile to the local setup \\
 \end{versionhistory}
 
 This appendix collects the practical rules the group works by. The reasons behind the technology choices are in appendix 2.1.
@@ -35,21 +36,34 @@ We have made templates for the documents, so they look the same and a new docume
 The report and appendices are written in English. Agendas and meeting minutes are written in Danish.
 
 \section{Local Setup}
-You need the .NET 10 SDK, Node.js and Docker.
+You need the .NET 10 SDK, Node.js, Docker and make. For the customer app you also need the Android SDK with an emulator.
+
+We used a lot of time remembering commands across dotnet, npm, docker compose, latexmk and the Android emulator. A Makefile in the root of the repository now collects them, so the same short command works on every machine. Running make on its own lists all the targets:
 
 \begin{lstlisting}
-dotnet build                 # build the backend
-dotnet test                  # run unit and integration tests
-docker compose up            # start api, db and keycloak
-
-cd clients
-npm install                  # install all client packages (also activates git hooks)
-npm test                     # Vitest in all client packages
-npm run typecheck            # tsc in all client packages
-npm run generate:api-client  # regenerate api-client from the OpenAPI document
+make up            # start api, db and keycloak in the background
+make down          # stop them again, the data is kept
+make admin         # start the admin panel
+make android       # start the emulator and forward the ports
+make mobile        # start Metro and open the customer app
+make check         # build, test and typecheck, the same steps as CI
+make api-client    # regenerate api-client from the OpenAPI document
+make report        # build the report
+make clean         # delete build output
+make db-reset      # delete the local database (asks first)
 \end{lstlisting}
 
-When compose is running, the API is at localhost:5001 and Keycloak at localhost:8082.
+The client packages are installed the first time a target needs them, which also activates the git hooks. When compose is running, the API is at localhost:5001 and Keycloak at localhost:8082.
+
+The customer app uses localhost for the API and Keycloak by default. On the emulator localhost is the phone itself, so make android forwards the API, Keycloak and Metro ports from the phone to the computer with adb. That way nobody has to put their own network address in the app's settings.
+
+The clean target only deletes folders that git ignores, such as bin, obj and build. It never touches the .env file. Deleting the database is a separate target, because it removes all local data and cannot be undone.
+
+The commands behind the targets are the normal ones, and they still work on their own. Two examples:
+\begin{lstlisting}
+dotnet test                  # run unit and integration tests
+cd clients && npm test       # Vitest in all client packages
+\end{lstlisting}
 
 \section{Configuration and Secrets}
 Passwords and other secrets are never committed. They are set as environment variables or in a local .env file, which git ignores. The file .env.example shows which variables exist. Locally you need at least the database password and the Keycloak admin password.

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
-import HomeScreen from '../src/app/index';
+import HomeScreen from '../src/app/(tabs)/index';
 
 const mocks = vi.hoisted(() => ({
   token: undefined as string | undefined,
@@ -42,11 +42,17 @@ it('does not load the customer when signed out', () => {
 });
 
 it('welcomes an onboarded customer by name', async () => {
-  mocks.getCustomer.mockResolvedValue({ name: 'Malthe', address: 'Finlandsgade 22' });
+  mocks.getCustomer.mockResolvedValue({
+    name: 'Malthe',
+    email: 'malthe@example.com',
+    address: { street: 'Finlandsgade 22', postalCode: '8200', city: 'Aarhus N' },
+  });
 
   render(<HomeScreen />);
 
   expect(await screen.findByText('Welcome, Malthe')).toBeTruthy();
+  expect(screen.getByText('Finlandsgade 22')).toBeTruthy();
+  expect(screen.getByText('8200 Aarhus N')).toBeTruthy();
 });
 
 it('sends a customer who has not onboarded to onboarding', async () => {

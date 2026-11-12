@@ -139,6 +139,34 @@ namespace PrepMeUp.Infrastructure.Migrations
                     b.ToTable("Orders", (string)null);
                 });
 
+            modelBuilder.Entity("PrepMeUp.Domain.OrderLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PackageTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageTypeId");
+
+                    b.HasIndex("OrderId", "PackageTypeId")
+                        .IsUnique();
+
+                    b.ToTable("OrderLines", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderLines_Quantity", "[Quantity] >= 1");
+                        });
+                });
+
             modelBuilder.Entity("PrepMeUp.Domain.PackageContent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -275,6 +303,23 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PrepMeUp.Domain.OrderLine", b =>
+                {
+                    b.HasOne("PrepMeUp.Domain.Order", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PrepMeUp.Domain.PackageType", "PackageType")
+                        .WithMany()
+                        .HasForeignKey("PackageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PackageType");
+                });
+
             modelBuilder.Entity("PrepMeUp.Domain.PackageContent", b =>
                 {
                     b.HasOne("PrepMeUp.Domain.Item", "Item")
@@ -299,6 +344,11 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .HasForeignKey("PrepMeUp.Domain.Subscription", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PrepMeUp.Domain.Order", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("PrepMeUp.Domain.PackageType", b =>

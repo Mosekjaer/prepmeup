@@ -48,6 +48,16 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
         {
             entity.ToTable("Orders");
             entity.HasKey(order => order.Id);
+            entity.HasMany(order => order.Lines).WithOne().HasForeignKey("OrderId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OrderLine>(entity =>
+        {
+            entity.ToTable("OrderLines", table => table.HasCheckConstraint("CK_OrderLines_Quantity", "[Quantity] >= 1"));
+            entity.Property<Guid>("Id");
+            entity.HasKey("Id");
+            entity.HasOne(line => line.PackageType).WithMany().HasForeignKey("PackageTypeId").IsRequired().OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex("OrderId", "PackageTypeId").IsUnique();
         });
 
         modelBuilder.Entity<PackageType>(entity =>

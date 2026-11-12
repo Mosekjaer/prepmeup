@@ -321,6 +321,72 @@ The tests check that the result has the id and name of each item, and that an em
 \subsubsection*{Step 2 -- Is GET /items only available to a logged-in user?}
 Now the tests send HTTP requests, so JwtBearer is X and Keycloak is S. A request with a valid test token gets 200 with the items as JSON, and a request without a valid token gets 401. This checks that ItemsController has the [Authorize] attribute, and that the route and the JSON answer work.
 
+\section{Integration plan: Onboarding}
+\subsection{Scope}
+This plan tests how a logged-in user creates and reads their customer profile through \texttt{PUT /user} and \texttt{GET /user}. 
+How the access token is validated is tested by the authenticatioan and integration plan (Section~\ref{sec:auth-plan}). In this plan
+ it is only checked that the user in the token is the user whose profile is saced and read.
+
+\subsection{Strategy}
+The plan follows the bottom-up strategy. 
+\begin{itemize}
+  \item Step 1: The service is tested with the real repository and database.
+  \item Step 2: Controller is added to the tests.
+\end{itemize}
+
+\subsection{Rules}
+\begin{itemize}
+  \item The database is SQLite. The maximum lengths of name and address are enforced by the domain, so the tests do not need SQL Server. The limits in the database itself are checked in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item Keycloak is faked with test tokens, as in the other plans.
+  \item Every test uses its own user id, so the tests do not depend on each other.
+\end{itemize}
+
+
+\subsection{Plan}
+Table~\ref{tab:onboarding-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+UserController     &   & T \\
+CustomerService    & T & X \\
+CustomerRepository & X & X \\
+JwtBearer          &   & X \\
+DbContext          & X & X \\
+Database           & X (SQLite) & X (SQLite) \\
+Keycloak           &   & S \\
+\end{tabular}
+\caption{Integration plan for onboarding.}
+\label{tab:onboarding-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 - Does CustomerService save and read a custommer through the real repository and database}
+The tests call CustomerService directly, without an HTTP request, so JwtBearer is not part of the step. CustomerService decides whether a customer is new or already exists. The repository only adds a new customer. An existing customer is changed on the object that the repository loaded, and the change is saved when the service asks the repository to save. That connection only exists with a real DbContext, so a unit test with a fake repository cannot find an error in it. The tests check the following:
+\begin{itemize}
+  \item A new user id is saved, and the same details are read back.
+  \item The same user id saved twice gives one customer with the latest details, not two.
+  \item Invalid details are rejected, and nothing is saved.
+\end{itemize}
+
+\subsubsection*{Step 2 - Can a logged-in user create and read their own profile through /user?}
+Now the tests send HTTP requests, so UserController is T, JwtBearer is X and Keycloak is S. The tests make their own tokens, and the id of the user is the \texttt{sub} claim in the token. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401, both for \texttt{GET} and \texttt{PUT}.
+  \item \texttt{GET} before onboarding gets 404.
+  \item The first \texttt{PUT} gets 204, and a \texttt{GET} with the same token returns the details.
+  \item A second \texttt{PUT} gets 204, and a \texttt{GET} returns the latest details.
+  \item A blank name or address gets 400.
+  \item A name over 100 characters or an address over 200 characters gets 400.
+  \item A user who has not onboarded gets 404, also when another user has. This shows that the \texttt{sub} claim reaches the service as the user id, so users cannot see each other's profiles.
+\end{itemize}
+
+The test for the missing token is only a quick check that UserController has the \texttt{[Authorize]} attribute. The mechanism behind it is tested in step 3 of the authentication and authorization plan.
+
 \section{What the Plan Does Not Cover}
 The tests with SQLite do not test the migrations, because the database is created from the model. They also do not test the apps calling the API. We leave both out of this plan.
 

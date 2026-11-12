@@ -17,7 +17,9 @@
       "mcp__kaneo__create_time_entry",
       "mcp__kaneo__update_time_entry",
       "mcp__github__merge_pull_request",
-      "mcp__github__delete_repository"
+      "mcp__github__delete_repository",
+      "Edit(**/docs/assets/drawio/dependency-tree.drawio)",
+      "Write(**/docs/assets/drawio/dependency-tree.drawio)"
     ],
     "ask": [
       "Bash(git push:*)",
@@ -110,6 +112,16 @@
             "type": "command",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/git-behind.sh PreToolUse",
             "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-dependency-tree.sh",
+            "timeout": 10
           }
         ]
       }

@@ -12,6 +12,10 @@ vi.mock('../src/routes/auth-gate', () => ({
   AuthGate: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+vi.mock('../src/lib/use-planned-orders', () => ({
+  usePlannedOrders: () => ({ state: { status: 'loading' }, retry: vi.fn() }),
+}));
+
 function renderAt(path: string) {
   render(<RouterProvider router={createMemoryRouter(routes, { initialEntries: [path] })} />);
 }

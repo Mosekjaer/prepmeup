@@ -13,15 +13,448 @@
 
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Dependency tree inserted \\
+  1.1 & 04-11-2026 & Group 3 & Integration strategy and plan added \\
+  1.2 & 09-11-2026 & Group 3 & Authentication and authorization plan added \\
+  1.3 & 11-11-2026 & Group 3 & Integration overview added \\
+  1.4 & 12-11-2026 & Group 3 & Subscription plan added \\
 \end{versionhistory}
 
+\section{Purpose}
+An integration test checks that parts of the system work together through their interfaces. This appendix gives us one strategy for all our integration tests, so we can plan them and build them in a fixed order. We start integrating a class when its unit tests pass.
+
 \section{Dependency Tree}
-Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which. We use it to decide the order in which the parts are integrated and tested together. A part can be integrated when the parts below it are in place.
+Figure~\ref{fig:dependency-tree} shows which parts of the system depend on which. It is used to decide the order in which the parts are integrated and tested together. A part can be integrated when the parts below it are in place.
 
 \drawiofig[\linewidth]{dependency-tree}{Dependency tree of the system as it is built today. Keycloak is marked (F) because the integration tests sign their own tokens and never use the real Keycloak.}{fig:dependency-tree}
 
 At the bottom are the database and the DbContext. The repositories in Infrastructure use the DbContext, the services in Application use the repositories, and the controllers in the API use the services. SubscriptionService also uses CustomerRepository and SystemClock, which gives it the current date. The two apps call the controllers through the generated api-client.
 
 Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the API's authentication validates the tokens. The controllers do not call Keycloak, but they need the request to be authenticated, so integration tests of the controllers need either Keycloak or test tokens.
+
+\section{Integration Overview}
+
+\subsection{Strategy}
+We use collaboration integration. Each column in Table~\ref{tab:integration-overview} is a feature. Each feature gets an integration plan of its own.
+
+\subsection{Rules for All Integration Plans}
+\begin{itemize}
+  \item A part is integrated only when its unit tests pass.
+  \item We are allowed to use a stub instead of Keycloak, since it is outside our system.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item A step can have several test cases, for example with a valid, a missing and an expired access token.
+  \item In a table representing an integration plan:
+    \begin{itemize}
+      \item T is the "top module" that the test drives.
+      \item X is a module that is included.
+      \item S is a stub.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Database in the Tests}
+We use SQLite in the tests as much as possible, because:
+\begin{itemize}
+  \item The tests are fast.
+  \item They need no database server, so they run in CI without extra setup.
+  \item Each test can start from an empty database, so the tests do not affect each other.
+\end{itemize}
+
+We use a real SQL Server only when SQLite cannot show what we need, for example that the migrations run and that the maximum lengths are enforced (Section~\ref{sec:db-plan}). A real SQL Server can also run in CI as a Docker container, but it is slower and needs more setup.
+
+Table~\ref{tab:sql-server-tests} shows the steps that use a real SQL Server. The tests start the SQL Server container themselves, so Docker must be running on the machine.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l l p{6.5cm}@{}}
+\textbf{Integration plan} & \textbf{Step} & \textbf{What it checks} \\
+\hline
+Database connection & Step 2 & The migrations run, and the maximum lengths are enforced \\
+\end{tabular}
+\caption{Steps that use a real SQL Server.}
+\label{tab:sql-server-tests}
+\end{table}
+
+\subsection{Overview of the Integration Plans}
+Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own subsection in this document. A column shows the parts that are included when on the last step of the feature's integration plan.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\rowcolors{2}{gray!15}{white}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l C{1.7cm} C{2.4cm} C{1.5cm} C{1.8cm} C{1.9cm}@{}}
+\textbf{Component} & \textbf{\mbox{Database}\newline \mbox{connection}} & \textbf{\mbox{Authentication}\newline \mbox{and authorization}} & \textbf{\mbox{Get items}} & \textbf{\mbox{Onboarding}} & \textbf{\mbox{Subscription}} \\
+\hline
+mobile-app                       &   & T &   &   &   \\
+admin-panel                      &   & T &   &   &   \\
+api-client                       &   & X &   &   &   \\
+Controllers                      &   & X & T & T & T \\
+AdminOnly policy                 &   & X &   &   &   \\
+KeycloakRoleClaimsTransformation &   & X &   &   &   \\
+JwtBearer                        &   & X & X & X & X \\
+Services                         &   &   & X & X & X \\
+Repositories                     & T &   & X & X & X \\
+System clock                     &   &   &   &   & X \\
+DbContext                        & X &   & X & X & X \\
+Database                         & X &   & X & X & X \\
+Keycloak                         &   & X & S & S & S \\
+\end{tabular}
+\caption{Overview of the integration plans, in the order they are integrated.}
+\label{tab:integration-overview}
+\end{table}
+
+\section{Integration plan: Database connection}
+\label{sec:db-plan}
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+Repositories & T & T \\
+DbContext    & X & X \\
+Database     & X (SQLite) & X (SQL Server) \\
+\end{tabular}
+\caption{Integration plan for the database connection.}
+\label{tab:db-integration-plan}
+\end{table}
+
+\subsubsection*{Step 1 -- Do the repositories save and read data correctly through the DbContext?}
+Since this step focuses on testing that cooperation between repositories and DbContext works properly.
+We use SQLite, so the tests run faster.
+We are mainly interested in testing to things:
+\begin{enumerate}
+  \item Mapping between C\# objects and a row in a table.
+  \item That the unique KeycloakId works.
+\end{enumerate}
+
+\subsubsection*{Step 2 -- Do the migrations and constraints work on SQL Server?}
+SQLite does not enforce maximum lengths (which we have some constraints about in e.g. Customer class), and it does not run our migrations.
+So for this step, we use a real SQL Sever in Docker, so we can check the constraints that SQLite ignores and run migrations.
+
+\section{Integration plan: API-to-database (DELETE?)}
+
+\subsection{Strategy}
+We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
+
+Inside a feature we integrate from the bottom. When a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. For example, the subscription repository is tested against the database before the subscription endpoint is tested. If a test fails, we then know which connection is wrong.
+
+The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
+
+\subsection{Rules}
+\begin{itemize}
+  \item A step drives one top part. The test calls the system the way a user would, through an endpoint or a service.
+  \item The parts below the top are real, unless a rule below says otherwise.
+  \item Keycloak is always faked with test tokens. It is outside our system, and we do not want the tests to need a running server.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:integration-plan} shows one step for each feature we have today. T is the part the test drives, X is a real part and S is a fake. An empty cell means the part is not used by the feature.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c c c@{}}
+\textbf{Part} & \textbf{1 Admin access} & \textbf{2 Get items} & \textbf{3 Onboard} & \textbf{4 Subscribe} \\
+\hline
+Keycloak & S & S & S & S \\
+Authentication and roles & X & X & X & X \\
+Admin controller & T & & & \\
+Items controller & & T & & \\
+User controller & & & T & \\
+Subscription controller & & & & T \\
+Item service & & X & & \\
+Customer service & & & X & \\
+Subscription service & & & & X \\
+Item repository & & X & & \\
+Customer repository & & & X & X \\
+Subscription repository & & & & X \\
+System clock & & & & X \\
+DbContext & & X & X & X \\
+\end{tabular}
+\caption{Integration plan for the features we have today.}
+\label{tab:integration-plan}
+\end{table}
+
+A last step goes through every connection in the dependency tree and checks that at least one of the steps above uses it. A connection that no step uses becomes a new test.
+
+\subsection{Test Cases}
+There is no tool that measures how many connections an integration test covers, so we choose the test cases ourselves. For each step we start from the feature and test what a user can do with it, including the cases where it must fail. We also look at how the unit tests of the lower classes use their interfaces, and we check that the same cases can be sent through the top part.
+
+\subsection{Example: Admin Access}
+Step 1 in the plan is the admin endpoint. Only a user with the admin role may call it. A request without a valid token must get the answer unauthorized, and a request with a valid token but without the admin role must get the answer forbidden.
+
+The admin controller is the top part (T). The authentication and the role check are real (X). Keycloak is faked (S). The tests make their own tokens with a test key, and the API is set to trust that key.
+
+The class that reads the roles from the token is already tested alone. The integration test checks the connections around it. They only exist when the API runs, so a test of a single class cannot find an error in them:
+
+\begin{itemize}
+  \item The token settings in the API: the key, the issuer, the audience and the expiry.
+  \item The order of the middleware, with authentication before authorization.
+  \item The registration of the role reader, so the roles from the token reach the policy.
+  \item The admin policy, which must give unauthorized without a token and forbidden without the admin role.
+\end{itemize}
+
+The test cases and the result are in appendix 5.2.1.
+
+If one of these is wrong, the tests of the single classes still pass, but the endpoint gives the wrong answer. If we forget to register the role reader, an admin gets the answer forbidden.
+
+We build the tests in two stages. Each stage adds one more real part, so an error always points to the part that was added last.
+
+\begin{enumerate}
+  \item \emph{The token check.} We send requests where the token is missing, is not a JWT, is signed with another key, has expired, or is made for another audience or issuer. All of them must give unauthorized. The role check is never reached here, so a failure is an error in the token settings or in the order of the middleware.
+  \item \emph{The role check.} The token is valid, and only the roles change. A token without the admin role must give forbidden, and a token with the admin role must give ok, also when the user has more roles. The token check is already tested, so a failure is an error in the registration of the role reader or in the policy.
+\end{enumerate}
+
+If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
+
+\section{Integration plan: Authentication and Authorization}
+\label{sec:auth-plan}
+
+\subsection{Scope}
+This plan covers authentication and authorization in the API and the clients. The login flow against a real Keycloak is only tested manually in the final step. Onboarding is not part of this plan.
+
+\subsection{Strategy}
+The isolated integration plan for testing authentication and authorization follows the strategy ``sandwich''.
+\begin{itemize}
+  \item Steps 1--3: Bottom-up, from JwtBearer to the API.
+  \item Steps 4--5: Top-down, from the apps to the API.
+  \item Step 6: Top and bottom meet in the middle.
+\end{itemize}
+
+However, the decision to separately test the flow of these components is part of the ``collaboration'' strategy, which applies to the whole project overall.
+\subsection{Rules}
+These rules apply to the plan in Section~\ref{sec:auth-plan}.
+\begin{itemize}
+  \item Steps 1--5 are automated and run without a real Keycloak. Keycloak is faked with test tokens, because we do not want the automated tests to need a running server.
+  \item A part below the top may be a stub when the real part cannot run in the test, for example JwtBearer in step 1 and the API in steps 4--5.
+  \item Step 6 uses a real Keycloak, because that is the only way to check real access tokens.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:auth-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c c c c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} & \textbf{Step 3} & \textbf{Step 4} & \textbf{Step 5} & \textbf{Step 6} \\
+\hline
+Apps: mobile-app and admin-panel &   &   &   &   & T & T \\
+api-client                       &   &   &   & T & X & X \\
+Controllers                      &   &   & T & S & S & X \\
+AdminController                  &   & T &   & S & S & X \\
+AdminOnly                        &   & X &   &   &   & X \\
+KeycloakRoleClaimsTransformation & T & X &   &   &   & X \\
+JwtBearer                        & S & X & X &   &   & X \\
+Keycloak                         &   & S & S &   & S & X \\
+\end{tabular}
+\caption{Integration plan for authentication and authorization.}
+\label{tab:auth-integration-plan}
+\end{table}
+
+\subsection{Steps}
+
+\subsubsection*{Step 1 -- Can KeycloakRoleClaimsTransformation correctly translate the realm roles in ClaimsPrincipal?}
+Since Transformation is T (top module), JwtBearer must be S (stub), because there is no http-request to the API, which is what would have triggered an automatic call of JwtBearer and its conversion of an access token to a ClaimsPrincipal. Instead of JwtBearer, the tests build the ClaimsPrincipal themselves.
+
+\subsubsection*{Step 2 -- Is the AdminOnly policy correctly enforced based on the access token's validity and roles?}
+This time, JwtBearer is X, because the tests send http-requests to AdminController. Keycloak is S (stub), because the tests run without a real Keycloak. The stub for Keycloak consists of two parts:
+\begin{itemize}
+  \item The RSA key pair: A private key used to sign the access token and a public key that is later used to verify the signature on the access token.
+  \item A method that provides signed access tokens.
+\end{itemize}
+
+\subsubsection*{Step 3 -- Is access to a non-admin controller correctly enforced based on the access token's validity?}
+Non-admin controllers with [authorize] should only allow acces for requests with a valid access token.
+So the tests in this step should focus on the \textit{mechanism} behind the enforcement of this rule.
+Note 1: The [authorize] functionality should still be tested for each individual controller in the different feature integration plans.
+Note 2: KeycloakRoleClaimsTransformation \textit{does} run automatically, since it is registered as IClaimsTransformation and runs (only) when JwtBearer has approved the access token.
+However, the result of the transformation does not make a difference in the tests.
+What matters for the request to reach the controller is if JwtBearer sets IsAuthenticated to true in the ClaimsPrincipal that it builds from the access token.
+
+\subsubsection*{Step 4 -- When we call methods on api-client, does it attach the access token and handle a 401 response from the API correctly?}
+The API is S (stub), and the test driver writes the http response itself.
+
+\subsubsection*{Step 5 -- Do the apps sign in, store the tokens and react correctly to the API's responses?}
+Keycloak and the API are S. The apps cannot run against Keycloak in automated tests.
+
+\subsubsection*{Step 6 -- Manual test with all components}
+Keycloak is no longer stubbed, nor is any other component. This is the final step where the sandwich meets in the middle. Note that this is the only step that checks real access tokens from Keycloak.
+
+\section{Integration plan: Get Items}
+\label{sec:items-plan}
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+ItemsController & T & T \\
+ItemService     & X & X \\
+ItemRepository  & X & X \\
+JwtBearer       &   & X \\
+DbContext       & X & X \\
+Database        & X (SQLite) & X (SQLite) \\
+Keycloak        &   & S \\
+\end{tabular}
+\caption{Integration plan for get items.}
+\label{tab:items-integration-plan}
+\end{table}
+
+ItemService only passes the call on to ItemRepository, so it is integrated together with the controller. ItemRepository against the database is covered by the database connection plan (Section~\ref{sec:db-plan}).
+
+\subsubsection*{Step 1 -- Does ItemsController return the items in the database?}
+The tests create ItemsController with the real ItemService and call GetItems \textit{directly}, without an HTTP request.
+JwtBearer is therefore not part of the step, and the step only tests the path from the controller to the database.
+The tests check that the result has the id and name of each item, and that an empty table gives an empty list.
+
+\subsubsection*{Step 2 -- Is GET /items only available to a logged-in user?}
+Now the tests send HTTP requests, so JwtBearer is X and Keycloak is S. A request with a valid test token gets 200 with the items as JSON, and a request without a valid token gets 401. This checks that ItemsController has the [Authorize] attribute, and that the route and the JSON answer work.
+
+\section{Integration plan: Onboarding}
+\subsection{Scope}
+This plan tests how a logged-in user creates and reads their customer profile through \texttt{PUT /user} and \texttt{GET /user}. 
+How the access token is validated is tested by the authenticatioan and integration plan (Section~\ref{sec:auth-plan}). In this plan
+ it is only checked that the user in the token is the user whose profile is saced and read.
+
+\subsection{Strategy}
+The plan follows the bottom-up strategy. 
+\begin{itemize}
+  \item Step 1: The service is tested with the real repository and database.
+  \item Step 2: Controller is added to the tests.
+\end{itemize}
+
+\subsection{Rules}
+\begin{itemize}
+  \item The database is SQLite. The maximum lengths of name and address are enforced by the domain, so the tests do not need SQL Server. The limits in the database itself are checked in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item Keycloak is faked with test tokens, as in the other plans.
+  \item Every test uses its own user id, so the tests do not depend on each other.
+\end{itemize}
+
+
+\subsection{Plan}
+Table~\ref{tab:onboarding-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+UserController     &   & T \\
+CustomerService    & T & X \\
+CustomerRepository & X & X \\
+JwtBearer          &   & X \\
+DbContext          & X & X \\
+Database           & X (SQLite) & X (SQLite) \\
+Keycloak           &   & S \\
+\end{tabular}
+\caption{Integration plan for onboarding.}
+\label{tab:onboarding-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 - Does CustomerService save and read a custommer through the real repository and database}
+The tests call CustomerService directly, without an HTTP request, so JwtBearer is not part of the step. CustomerService decides whether a customer is new or already exists. The repository only adds a new customer. An existing customer is changed on the object that the repository loaded, and the change is saved when the service asks the repository to save. That connection only exists with a real DbContext, so a unit test with a fake repository cannot find an error in it. The tests check the following:
+\begin{itemize}
+  \item A new user id is saved, and the same details are read back.
+  \item The same user id saved twice gives one customer with the latest details, not two.
+  \item Invalid details are rejected, and nothing is saved.
+\end{itemize}
+
+\subsubsection*{Step 2 - Can a logged-in user create and read their own profile through /user?}
+Now the tests send HTTP requests, so UserController is T, JwtBearer is X and Keycloak is S. The tests make their own tokens, and the id of the user is the \texttt{sub} claim in the token. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401, both for \texttt{GET} and \texttt{PUT}.
+  \item \texttt{GET} before onboarding gets 404.
+  \item The first \texttt{PUT} gets 204, and a \texttt{GET} with the same token returns the details.
+  \item A second \texttt{PUT} gets 204, and a \texttt{GET} returns the latest details.
+  \item A blank name or address gets 400.
+  \item A name over 100 characters or an address over 200 characters gets 400.
+  \item A user who has not onboarded gets 404, also when another user has. This shows that the \texttt{sub} claim reaches the service as the user id, so users cannot see each other's profiles.
+\end{itemize}
+
+The test for the missing token is only a quick check that UserController has the \texttt{[Authorize]} attribute. The mechanism behind it is tested in step 3 of the authentication and authorization plan.
+
+\section{Integration plan: Subscription}
+\label{sec:subscription-plan}
+
+\subsection{Scope}
+This plan tests how a logged-in customer signs up through \texttt{POST /subscription} and reads the subscription through \texttt{GET /subscription}. Token validation is covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}).
+
+\subsection{Strategy}
+Bottom-up: first the database, then SubscriptionService, then SubscriptionController.
+
+\subsection{Rules}
+\begin{itemize}
+  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
+  \item The system clock is real, because the tests only compare times from the same clock. A stub is first needed for the expiry of orders.
+  \item Every test uses its own user id or its own database.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:subscription-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} & \textbf{Step 3} \\
+\hline
+SubscriptionController &   &   & T \\
+SubscriptionService    &   & T & X \\
+SubscriptionRepository &   & X & X \\
+CustomerRepository     &   & X & X \\
+PackageTypeRepository  &   & X & X \\
+System clock           &   & X & X \\
+JwtBearer              &   &   & X \\
+DbContext              & T & X & X \\
+Database               & X (SQLite) & X (SQLite) & X (SQLite) \\
+Keycloak               &   &   & S \\
+\end{tabular}
+\caption{Integration plan for subscription.}
+\label{tab:subscription-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does the database reject subscriptions and orders that break the rules?}
+The tests save directly through the DbContext, without the repositories. The domain already stops these cases, so the step checks the last line of defence in the database. The tests check the following:
+\begin{itemize}
+  \item A second subscription for the same customer is rejected.
+  \item The same package type twice in one order is rejected.
+  \item A quantity below 1 on an order line is rejected.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Does SubscriptionService save a subscription that is still there after a restart?}
+The tests call SubscriptionService directly, without an HTTP request. SubscriptionService uses three repositories and the clock. It finds the customer, checks the package types and saves the subscription with its first order. The tests then start a new instance of the API on the same database and read the subscription again. That shows that the data is in the database, and not only in memory in the DbContext. The tests check the following:
+\begin{itemize}
+  \item The subscription is active, and the first order is planned at the start time.
+  \item The order lines keep their package type and quantity.
+\end{itemize}
+
+\subsubsection*{Step 3 -- Can a logged-in customer sign up and read their subscription through /subscription?}
+Now the tests send HTTP requests, so SubscriptionController is T, JwtBearer is X and Keycloak is S. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401, both for \texttt{GET} and \texttt{POST}.
+  \item \texttt{POST} from a user who has not onboarded gets 404.
+  \item \texttt{POST} with valid lines gets 201, and the first order has the chosen package types and quantities.
+  \item \texttt{POST} with no lines, a quantity below 1, an unknown or replaced package type, or the same package type twice gets 400, and no subscription is created.
+  \item \texttt{POST} without a body gets 415.
+  \item A second \texttt{POST} from the same customer gets 409.
+  \item \texttt{GET} before signing up gets 404, and \texttt{GET} after signing up returns the same subscription.
+  \item The status is sent as text, for example \texttt{"Active"}, and not as a number.
+\end{itemize}
 
 \end{document}

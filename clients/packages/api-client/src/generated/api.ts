@@ -13,6 +13,11 @@ export interface IAdminClient {
      * @return OK
      */
     ping(): Promise<void>;
+
+    /**
+     * @return OK
+     */
+    getPlannedOrders(): Promise<PlannedOrderResponse[]>;
 }
 
 export class AdminClient implements IAdminClient {
@@ -56,6 +61,64 @@ export class AdminClient implements IAdminClient {
             });
         }
         return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getPlannedOrders(): Promise<PlannedOrderResponse[]> {
+        let url_ = this.baseUrl + "/admin/orders/planned";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPlannedOrders(_response);
+        });
+    }
+
+    protected processGetPlannedOrders(response: Response): Promise<PlannedOrderResponse[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PlannedOrderResponse.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlannedOrderResponse[]>(null as any);
     }
 }
 
@@ -888,6 +951,134 @@ export interface IPackageTypeResponse {
     id: string;
     name: string;
     contents: PackageContentResponse[];
+
+    [key: string]: any;
+}
+
+export class PlannedOrderLineResponse implements IPlannedOrderLineResponse {
+    packageTypeName!: string;
+    quantity!: number;
+
+    [key: string]: any;
+
+    constructor(data?: IPlannedOrderLineResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.packageTypeName = _data["packageTypeName"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): PlannedOrderLineResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlannedOrderLineResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["packageTypeName"] = this.packageTypeName;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IPlannedOrderLineResponse {
+    packageTypeName: string;
+    quantity: number;
+
+    [key: string]: any;
+}
+
+export class PlannedOrderResponse implements IPlannedOrderResponse {
+    orderId!: string;
+    plannedAt!: string;
+    customerName!: string;
+    address!: AddressContract;
+    lines!: PlannedOrderLineResponse[];
+
+    [key: string]: any;
+
+    constructor(data?: IPlannedOrderResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.address = new AddressContract();
+            this.lines = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.orderId = _data["orderId"];
+            this.plannedAt = _data["plannedAt"];
+            this.customerName = _data["customerName"];
+            this.address = _data["address"] ? AddressContract.fromJS(_data["address"]) : new AddressContract();
+            if (Array.isArray(_data["lines"])) {
+                this.lines = [] as any;
+                for (let item of _data["lines"])
+                    this.lines!.push(PlannedOrderLineResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PlannedOrderResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlannedOrderResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["orderId"] = this.orderId;
+        data["plannedAt"] = this.plannedAt;
+        data["customerName"] = this.customerName;
+        data["address"] = this.address ? this.address.toJSON() : undefined as any;
+        if (Array.isArray(this.lines)) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IPlannedOrderResponse {
+    orderId: string;
+    plannedAt: string;
+    customerName: string;
+    address: AddressContract;
+    lines: PlannedOrderLineResponse[];
 
     [key: string]: any;
 }

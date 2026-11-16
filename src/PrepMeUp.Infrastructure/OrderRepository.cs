@@ -9,10 +9,10 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
     public async Task<IReadOnlyList<PlannedOrder>> GetPlannedAsync(CancellationToken cancellationToken)
     {
         var rows = await (
-                from order in dbContext.Set<Order>()
+                from order in dbContext.Orders.Where(Order.IsPlannedExpression)
                 join subscription in dbContext.Subscriptions on order.SubscriptionId equals subscription.Id
                 join customer in dbContext.Customers on subscription.CustomerId equals customer.Id
-                where order.SentAt == null
+                orderby order.PlannedAt, order.Id
                 select new //creating anonymous object for each row. Reason: we need to fetch street, postal code and city seperately
                 {
                     order.Id,
@@ -29,7 +29,6 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
             .ToListAsync(cancellationToken);
 
         return rows
-            .OrderBy(row => row.PlannedAt)
             .Select(row => new PlannedOrder(
                 row.Id,
                 row.PlannedAt,

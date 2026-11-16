@@ -4,7 +4,7 @@ namespace PrepMeUp.Domain;
 
 public class Order
 {
-    public static Expression<Func<Order, bool>> IsPlannedExpression{ get; } = order => order.SentAt == null;
+    public static Expression<Func<Order, bool>> IsPlannedExpression { get; } = order => order.SentAt == null;
     private static readonly Func<Order, bool> IsPlannedCheck = IsPlannedExpression.Compile();
     private readonly List<OrderLine> _lines = [];
 
@@ -23,5 +23,15 @@ public class Order
     {
         PlannedAt = plannedAt;
         _lines = lines.ToList();
+    }
+    
+    public void MarkAsSent(DateTimeOffset sentAt)
+    {
+        if (!IsPlanned)
+        {
+            throw new InvalidOperationException("Only a planned order can be marked as sent.");
+        }
+
+        SentAt = sentAt;
     }
 }

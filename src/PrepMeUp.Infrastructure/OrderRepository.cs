@@ -12,7 +12,6 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
                 from order in dbContext.Orders.Where(Order.IsPlannedExpression)
                 join subscription in dbContext.Subscriptions on order.SubscriptionId equals subscription.Id
                 join customer in dbContext.Customers on subscription.CustomerId equals customer.Id
-                orderby order.PlannedAt, order.Id
                 select new //creating anonymous object for each row. Reason: we need to fetch street, postal code and city seperately
                 {
                     order.Id,
@@ -29,12 +28,14 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
             .ToListAsync(cancellationToken);
 
         return rows
+            .OrderBy(row => row.PlannedAt)
+            .ThenBy(row => row.Id)
             .Select(row => new PlannedOrder(
                 row.Id,
                 row.PlannedAt,
                 row.Name,
                 new Address(row.Street, row.PostalCode, row.City), //combining street, postalcode and city into address
-                row.Lines))
+                row.Lines.OrderBy(line => line.PackageTypeName, StringComparer.Ordinal).ToList()))
             .ToList();
     }
 }

@@ -146,7 +146,7 @@ public class OrderRepositoryTests
         });
     }
 
-        [Test]
+    [Test]
     public async Task GetById_UnknownId_ReturnsNull()
     {
         var order = await _repository.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
@@ -154,4 +154,14 @@ public class OrderRepositoryTests
         Assert.That(order, Is.Null);
     }
 
+    [Test]
+    public async Task GetById_ExistingOrder_ReturnsTheOrder()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+
+        var order = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+
+        Assert.That(order?.Id, Is.EqualTo(seeded.Id));
+    }
 }

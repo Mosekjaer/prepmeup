@@ -1,0 +1,167 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-05 next orders to send",
+    "description": "Acceptance test for FR-05 (appendix 6.1). Load the test data with seed-fr-05.sql, get a token as the administrator and run the folder 'As administrator'. Then get a token as a customer and run the folder 'As customer'. Marking an order as sent (step 2 of the scenario) is added with FR-06. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "As administrator",
+      "item": [
+        {
+          "name": "1 Get planned orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var orders = pm.response.json();",
+                  "pm.test('The list shows exactly three orders, in the order B, C, A', function () {",
+                  "    pm.expect(orders.map(function (order) { return order.customerName; })).to.eql(['FR-05 B', 'FR-05 C', 'FR-05 A']);",
+                  "});",
+                  "pm.test('The sent order for D is not shown', function () {",
+                  "    pm.expect(orders.some(function (order) { return order.customerName === 'FR-05 D'; })).to.equal(false);",
+                  "});",
+                  "pm.test('The planned dates are in ascending order', function () {",
+                  "    var times = orders.map(function (order) { return new Date(order.plannedAt).getTime(); });",
+                  "    pm.expect(times).to.eql(times.slice().sort(function (a, b) { return a - b; }));",
+                  "});",
+                  "pm.test('Order A shows its address and its two lines', function () {",
+                  "    var a = orders.find(function (order) { return order.customerName === 'FR-05 A'; });",
+                  "    pm.expect(a.address).to.eql({ street: 'Testvej 1', postalCode: '8000', city: 'Aarhus C' });",
+                  "    var lines = a.lines.map(function (line) { return line.quantity + ' x ' + line.packageTypeName; }).sort();",
+                  "    pm.expect(lines).to.eql(['1 x Normal - Child', '2 x Normal - Adult']);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/planned",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "planned"
+              ]
+            },
+            "description": "Reads the list of planned orders with an administrator token. The seed data has planned orders for A (today+9), B (today+2) and C (today+5) and one sent order for D."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "As customer",
+      "item": [
+        {
+          "name": "2 Get planned orders as a customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/planned",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "planned"
+              ]
+            },
+            "description": "Calls the same endpoint with a customer token. The endpoint is for administrators only (NFR-10)."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    }
+  ]
+}

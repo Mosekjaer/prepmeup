@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IPackageTypeRepository, PackageTypeRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddSingleton<IClock, SystemClock>();
 
         return services;

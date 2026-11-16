@@ -9,6 +9,7 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<PackageType> PackageTypes => Set<PackageType>();
+    public DbSet<Order> Orders => Set<Order>();
 
     // Called exactly once by EF core to check how the database should be built
     protected override void OnModelCreating(ModelBuilder modelBuilder)

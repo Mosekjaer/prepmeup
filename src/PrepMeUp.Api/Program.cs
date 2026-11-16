@@ -23,6 +23,7 @@ builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<PackageTypeService>();
 builder.Services.AddScoped<SubscriptionService>();
+builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));

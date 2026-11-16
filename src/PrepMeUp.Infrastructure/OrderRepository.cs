@@ -40,9 +40,19 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
     }
 
     public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        dbContext.Orders.SingleOrDefaultAsync(order => order.Id ==id, cancellationToken);
-    
+        dbContext.Orders.SingleOrDefaultAsync(order => order.Id == id, cancellationToken);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken) =>
-        dbContext.SaveChangesAsync(cancellationToken);
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new OrderConflictException();
+        }
+    }
+
 }

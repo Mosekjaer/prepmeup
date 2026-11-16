@@ -181,4 +181,22 @@ public class OrderRepositoryTests
         var stored = await verifyContext.Orders.AsNoTracking().SingleAsync(row => row.Id == seeded.Id);
         Assert.That(stored.SentAt, Is.EqualTo(Now));
     }
+
+    [Test]
+    public async Task SaveChanges_OrderAlreadySentByAnotherContext_ThrowsOrderConflictException()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+        using var otherScope = _factory.Services.CreateScope();
+        var otherRepository = otherScope.ServiceProvider.GetRequiredService<IOrderRepository>();
+        var firstAdminsOrder = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        var secondAdminsOrder = await otherRepository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        firstAdminsOrder!.MarkAsSent(Now);
+        secondAdminsOrder!.MarkAsSent(Now.AddSeconds(1));
+        await _repository.SaveChangesAsync(CancellationToken.None);
+
+        await Assert.ThatAsync(
+            () => otherRepository.SaveChangesAsync(CancellationToken.None),
+            Throws.TypeOf<OrderConflictException>());
+    }
 }

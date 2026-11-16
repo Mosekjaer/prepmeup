@@ -49,6 +49,7 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
         {
             entity.ToTable("Orders");
             entity.HasKey(order => order.Id);
+            entity.Property(order => order.SentAt).IsConcurrencyToken();
             entity.HasMany(order => order.Lines).WithOne().HasForeignKey("OrderId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         });
 

@@ -127,6 +127,7 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("SentAt")
+                        .IsConcurrencyToken()
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("SubscriptionId")

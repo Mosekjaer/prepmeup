@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using PrepMeUp.Application;
@@ -163,5 +164,21 @@ public class OrderRepositoryTests
         var order = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
 
         Assert.That(order?.Id, Is.EqualTo(seeded.Id));
+    }
+
+    [Test]
+    public async Task SaveChanges_OrderMarkedAsSent_PersistsSentAt()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+        var order = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        order!.MarkAsSent(Now);
+
+        await _repository.SaveChangesAsync(CancellationToken.None);
+
+        using var verifyScope = _factory.Services.CreateScope();
+        var verifyContext = verifyScope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+        var stored = await verifyContext.Orders.AsNoTracking().SingleAsync(row => row.Id == seeded.Id);
+        Assert.That(stored.SentAt, Is.EqualTo(Now));
     }
 }

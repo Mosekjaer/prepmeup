@@ -44,5 +44,5 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
     
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
-        throw new NotImplementedException();
+        dbContext.SaveChangesAsync(cancellationToken);
 }

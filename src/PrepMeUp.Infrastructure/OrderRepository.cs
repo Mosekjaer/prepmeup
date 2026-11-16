@@ -38,4 +38,11 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
                 row.Lines.OrderBy(line => line.PackageTypeName, StringComparer.Ordinal).ToList()))
             .ToList();
     }
+
+    public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+    throw new NotImplementedException();
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken) =>
+        throw new NotImplementedException();
+
 }

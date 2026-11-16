@@ -40,7 +40,7 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
     }
 
     public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
-    throw new NotImplementedException();
+        Task.FromResult<Order?>(null);
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) =>
         throw new NotImplementedException();

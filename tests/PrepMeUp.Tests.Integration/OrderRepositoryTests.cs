@@ -145,4 +145,13 @@ public class OrderRepositoryTests
             Assert.That(second.Select(order => order.OrderId), Is.EqualTo(first.Select(order => order.OrderId)));
         });
     }
+
+        [Test]
+    public async Task GetById_UnknownId_ReturnsNull()
+    {
+        var order = await _repository.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
+
+        Assert.That(order, Is.Null);
+    }
+
 }

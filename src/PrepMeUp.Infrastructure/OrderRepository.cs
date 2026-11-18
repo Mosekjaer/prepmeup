@@ -38,4 +38,21 @@ public class OrderRepository(PrepMeUpDbContext dbContext) : IOrderRepository
                 row.Lines.OrderBy(line => line.PackageTypeName, StringComparer.Ordinal).ToList()))
             .ToList();
     }
+
+    public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+        dbContext.Orders.SingleOrDefaultAsync(order => order.Id == id, cancellationToken);
+
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new OrderConflictException();
+        }
+    }
+
 }

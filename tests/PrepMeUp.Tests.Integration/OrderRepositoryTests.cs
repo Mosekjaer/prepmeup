@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using PrepMeUp.Application;
@@ -144,5 +145,58 @@ public class OrderRepositoryTests
             Assert.That(first, Has.Count.EqualTo(2));
             Assert.That(second.Select(order => order.OrderId), Is.EqualTo(first.Select(order => order.OrderId)));
         });
+    }
+
+    [Test]
+    public async Task GetById_UnknownId_ReturnsNull()
+    {
+        var order = await _repository.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
+
+        Assert.That(order, Is.Null);
+    }
+
+    [Test]
+    public async Task GetById_ExistingOrder_ReturnsTheOrder()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+
+        var order = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+
+        Assert.That(order?.Id, Is.EqualTo(seeded.Id));
+    }
+
+    [Test]
+    public async Task SaveChanges_OrderMarkedAsSent_PersistsSentAt()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+        var order = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        order!.MarkAsSent(Now);
+
+        await _repository.SaveChangesAsync(CancellationToken.None);
+
+        using var verifyScope = _factory.Services.CreateScope();
+        var verifyContext = verifyScope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+        var stored = await verifyContext.Orders.AsNoTracking().SingleAsync(row => row.Id == seeded.Id);
+        Assert.That(stored.SentAt, Is.EqualTo(Now));
+    }
+
+    [Test]
+    public async Task SaveChanges_OrderAlreadySentByAnotherContext_ThrowsOrderConflictException()
+    {
+        var packageType = (await PlannedOrderSeed.ActivePackageTypesAsync(_dbContext))[0];
+        var seeded = await PlannedOrderSeed.AddOrderAsync(_dbContext, "sub-1", "Malthe", Home, Now, (packageType, 1));
+        using var otherScope = _factory.Services.CreateScope();
+        var otherRepository = otherScope.ServiceProvider.GetRequiredService<IOrderRepository>();
+        var firstAdminsOrder = await _repository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        var secondAdminsOrder = await otherRepository.GetByIdAsync(seeded.Id, CancellationToken.None);
+        firstAdminsOrder!.MarkAsSent(Now);
+        secondAdminsOrder!.MarkAsSent(Now.AddSeconds(1));
+        await _repository.SaveChangesAsync(CancellationToken.None);
+
+        await Assert.ThatAsync(
+            () => otherRepository.SaveChangesAsync(CancellationToken.None),
+            Throws.TypeOf<OrderConflictException>());
     }
 }

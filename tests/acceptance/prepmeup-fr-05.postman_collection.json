@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "PrepMeUp FR-05 next orders to send",
-    "description": "Acceptance test for FR-05 (appendix 6.1). Load the test data with seed-fr-05.sql, get a token as the administrator and run the folder 'As administrator'. Then get a token as a customer and run the folder 'As customer'. Marking an order as sent (step 2 of the scenario) is added with FR-06. See README.md.",
+    "description": "Acceptance test for FR-05 (appendix 6.1). Load the test data with seed-fr-05.sql, get a token as the administrator and run the folder 'As administrator'. Then get a token as a customer and run the folder 'As customer'. Marking an order as sent (step 2 of the scenario) is tested in the FR-06 collection. See README.md.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

@@ -24,4 +24,24 @@ public class AdminController(OrderService orderService) : ControllerBase
         var orders = await orderService.GetPlannedAsync(cancellationToken);
         return Ok(orders.Select(PlannedOrderResponse.From));
     }
+
+    [HttpPost("orders/{orderId:guid}/shipment", Name = "Admin_MarkOrderShipped")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> MarkOrderShipped(Guid orderId, CancellationToken cancellationToken)
+    {
+        var result = await orderService.MarkAsSentAsync(orderId, cancellationToken);
+
+        return result switch
+        {
+            MarkAsSentResult.Sent => NoContent(),
+            MarkAsSentResult.NotFound => NotFound(),
+            MarkAsSentResult.NotPlanned => Conflict(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        };
+    }
+
 }

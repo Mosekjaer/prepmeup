@@ -74,7 +74,7 @@ it('shows an error that can be retried when loading fails', async () => {
   fireEvent.click(await screen.findByText('Try again'));
 
   await waitFor(() => expect(mocks.getCustomer).toHaveBeenCalledTimes(2));
-  expect(await screen.findByText('Could not load your profile.')).toBeTruthy();
+  expect(await screen.findByText('We could not load your profile. Check your internet connection and try again.')).toBeTruthy();
 });
 
 it('shows the subscription of an onboarded customer', async () => {

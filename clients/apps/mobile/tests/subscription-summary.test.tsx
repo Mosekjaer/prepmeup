@@ -98,7 +98,7 @@ it('shows an error that can be retried when loading fails', async () => {
     orders: [plannedOrder],
   });
   render(<SubscriptionSummary />);
-  expect(await screen.findByText('Could not load your subscription.')).toBeTruthy();
+  expect(await screen.findByText('We could not load your subscription. Check your internet connection and try again.')).toBeTruthy();
 
   fireEvent.click(screen.getByText('Try again'));
 

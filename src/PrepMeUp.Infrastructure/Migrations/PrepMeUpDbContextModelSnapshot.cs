@@ -138,7 +138,7 @@ namespace PrepMeUp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubscriptionId");
+                    b.HasIndex("SubscriptionId", "ExpiresAt");
 
                     b.ToTable("Orders", (string)null);
                 });

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using PrepMeUp.Api.Authentication;
+using PrepMeUp.Api.BackgroundServices;
 using PrepMeUp.Api.Configuration;
 using PrepMeUp.Api.ErrorHandling;
 using PrepMeUp.Application;
@@ -28,6 +29,7 @@ builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<PackageTypeService>();
 builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddHostedService<NextOrderPlanner>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));

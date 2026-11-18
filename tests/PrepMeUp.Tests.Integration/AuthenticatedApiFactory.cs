@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using PrepMeUp.Api.BackgroundServices;
 
 namespace PrepMeUp.Tests.Integration;
 
@@ -23,5 +24,11 @@ public class AuthenticatedApiFactory : WebApplicationFactory<Program>
                 options.Configuration = new OpenIdConnectConfiguration();
                 options.TokenValidationParameters.IssuerSigningKey = TestJwt.TrustedKey;
             }));
+
+        builder.ConfigureServices(services =>
+        {
+            var planner = services.Single(service => service.ImplementationType == typeof(NextOrderPlanner));
+            services.Remove(planner);
+        });
     }
 }

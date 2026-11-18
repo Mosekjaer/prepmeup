@@ -5,6 +5,7 @@ namespace PrepMeUp.Domain;
 public class Order
 {
     public static Expression<Func<Order, bool>> IsPlannedExpression { get; } = order => order.SentAt == null;
+    public const int ReorderDaysBeforeExpiry = 14;
     private static readonly Func<Order, bool> IsPlannedCheck = IsPlannedExpression.Compile();
     private readonly List<OrderLine> _lines = [];
 
@@ -35,5 +36,18 @@ public class Order
 
         SentAt = sentAt;
         ExpiresAt = sentAt.AddYears(1); // AddYears() is a .NET built-in function that takes leap year into account.
+    }
+
+    // Method that tells whether this order has reached the point, where the next order must be made.
+    public bool HasReachedReorderDate(DateTimeOffset now)
+    {
+        if (ExpiresAt is null)
+        {
+            return false;
+        }
+
+        // 14 days or less until order expires -> return true
+        // More than 14 days until order expires -> return false
+        return now >= ExpiresAt.Value.AddDays(-ReorderDaysBeforeExpiry);
     }
 }

@@ -15,6 +15,7 @@
   1.0 & 28-10-2026 & Group 3 & Low-fidelity mockups of the customer app and the admin panel inserted \\
   1.1 & 04-11-2026 & Group 3 & Added navigation \\
   1.2 & 12-11-2026 & Group 3 & Added what is different in K3 to K6 \\
+  1.3 & 18-11-2026 & Group 3 & Moved the order to Orders and the address to Profile, and showed the tabs only when signed in \\
 \end{versionhistory}
 
 \section{Low-fidelity Mockups}
@@ -34,7 +35,9 @@ The mockups were drawn before requirements specification 1.5, so a few details h
     \item Deleting the account (K9) is now a won't-have (FR-21).
     \item Build order (K3) has a counter for each active package type, so the app does not need to know which type is for adults and which for children. Equipment (FR-13) is not built. Each row has a Contents button that opens the package type (K4).
     \item Payment (K5) is only the confirm button, with the order shown above it. Card details and a price (FR-10) are not built.
-    \item The home screen (K6) shows when the subscription started, the planned date, the status and the lines of the next order. It does not show an expiry date or a button to edit the next order (FR-07).
+    \item The home screen (K6) shows the name of the customer and when the subscription started. The next order moved to Orders (K7) and the address moved to Profile (K9).
+    \item Orders (K7) shows the next order with its planned date, status and lines. A customer without a subscription sees that no order is planned. The app does not show an expiry date or a button to edit the next order (FR-07).
+    \item Profile (K9) shows name, e-mail, phone and address. Changing them (FR-08) is not built.
 \end{itemize}
 
 \subsection{Admin Panel}
@@ -47,6 +50,6 @@ Figures~\ref{fig:ui-mockup-admin} and~\ref{fig:ui-mockup-admin-2} show the admin
 \section{Navigation}
 Both clients have the same navigation on every main screen, as the mockups show. The admin panel has a sidebar with two tabs, the dispatch queue and the package types, and a sign out button under them. The open tab is highlighted, and the start page sends the administrator to the dispatch queue (A2, A4).
 
-The customer app has a bar at the bottom with three tabs: Home, Orders and Profile (K6, K7, K9). The other screens, like building an order and paying, open on top of the tabs and have a back arrow instead.
+The customer app has a bar at the bottom with three tabs: Home, Orders and Profile (K6, K7, K9). The other screens, like building an order and paying, open on top of the tabs and have a back arrow instead. The bar, and with it Orders and Profile, only shows when the customer is signed in. Before that, the home screen stands alone with the sign in button.
 
 \end{document}

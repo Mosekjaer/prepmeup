@@ -23,6 +23,7 @@
   1.8 & 04-11-2026 & Group 3 & Package types are never changed after creation and have a status \\
   1.9 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01), and added order line to the glossary \\
   1.10 & 18-11-2026 & Group 3 & NFR-09 matches the endpoints we have \\
+  1.11 & 18-11-2026 & Group 3 & Aligned with the system as built, and rules for the next order \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -33,15 +34,15 @@
 
 \textbf{Identity provider} = The service where users create an account, log in and change their password (Keycloak). The customer app and the administrator interface open its login page. Passwords are never sent to the back-end.
 
-\textbf{Onboarding} = The step after the first login where the customer enters name and address before using the customer app.
+\textbf{Onboarding} = The step after the first login where the customer enters name, address and, if they want, a phone number before using the customer app.
 
-\textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. Has a status (active, paused, cancelled).
+\textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. A subscription is either active or paused, and the system only creates the next order for an active subscription. Cancelling a subscription is not part of version 1.0. The latest sent order decides when the next order is created, and older orders are only history. A subscription has at most one planned order at a time.
 
 \textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned.
 
 \textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (sent by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
 
-\textbf{Package} = One package of a given package type in an order, with the price at the time the order was sent. A package is not tied to a specific person.
+\textbf{Package} = One package of a given package type in an order. A package is not tied to a specific person.
 
 \textbf{Package type} = A package created by the administrator, e.g. \emph{Vegetarian -- Adult} or \emph{Vegetarian -- Child}. Adult and child versions are separate package types, and the name expresses the diet. The contents of a package type can never be changed after it has been created, whether it has been ordered or not. To change the contents, the administrator creates a new package type that replaces the old one, so past orders keep their contents. A package type is either \emph{active} or \emph{replaced}, and customers can only choose active package types.
 
@@ -72,23 +73,23 @@ Customers sign up for a prepping subscription called ``PrepMeUp'' through the cu
 The customer app is an Expo (React Native) app. Version 1.0 runs on Android. A web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
-Payment is simulated. The customer pays a subscription fee, and the fee depends on how many adults and children the customer prepares for. The fee is charged to the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged.
+Payment is simulated. The customer pays a subscription fee, and the fee depends on how many adults and children the customer prepares for. The fee is charged to the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged. Payment is not part of version 1.0, because FR-10 is a should-have and FR-14 a could-have.
 
 \subsection{Responsibilities}
 The back-end is responsible for persistently storing information on:
 \begin{itemize}
     \item All customers and their subscriptions
-    \item The name and address of each customer, linked to their account in the identity provider
+    \item The name, address, e-mail address and phone number of each customer, linked to their account in the identity provider
     \item The packages in each order and their package types
     \item The expiry date of each order
 \end{itemize}
 
-Accounts, e-mail addresses and passwords are stored by the identity provider, not by the back-end.
+Accounts and passwords are stored by the identity provider. The back-end keeps a copy of the customer's e-mail address, which it takes from the access token when the customer saves their details.
 
 The back-end is also responsible for:
 \begin{itemize}
     \item Creating the next order 14 days before the previous one expires (FR-19)
-    \item Notifying the customer when the next order is created (FR-20)
+    \item Notifying the customer when the next order is created (FR-20, should-have)
     \item Showing the administrator which orders are ready to be sent (FR-05)
 \end{itemize}
 
@@ -96,9 +97,10 @@ The customer app lets the customer sign up and compose their order from adult an
 
 The administrator interface makes it possible to:
 \begin{itemize}
-    \item Add package types for the customers to choose between
-    \item Replace a package type with a new version with different contents
-    \item See which orders should be sent
+    \item See which orders should be sent (FR-05)
+    \item Mark an order as sent (FR-06)
+    \item Add package types for the customers to choose between (FR-11, should-have)
+    \item Replace a package type with a new version with different contents (FR-15, could-have)
 \end{itemize}
 
 \section{Epics and User Stories}
@@ -205,7 +207,6 @@ Version 1.0 is the smallest system that lets a customer subscribe and receive a 
     \item Default package types for a ``normal'' diet, one for adults and one for children (FR-03).
     \item Expiry tracking per order, and the next order created 14 days before expiry (FR-04, FR-19).
     \item An administrator interface that lists upcoming orders and lets the administrator mark them as sent (FR-05, FR-06).
-    \item Simulated payment and simulated supplier.
 \end{itemize}
 
 \subsection{Out of scope}

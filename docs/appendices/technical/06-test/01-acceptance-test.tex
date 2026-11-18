@@ -203,9 +203,9 @@ NFR-02 & Every error message is a complete sentence in English stating what went
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & & \\
+NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & Run locally. The home screen said ``We could not load your profile. Check your internet connection and try again.'' and showed Try again. The app kept running. After the API was started and Try again was tapped, the home screen loaded. & Pass \\
 \hline
-NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & & \\
+NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
 \hline
 \end{tabular}
 \end{center}

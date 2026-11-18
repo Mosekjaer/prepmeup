@@ -12,6 +12,7 @@ public class Order
     public Guid SubscriptionId { get; private set; }
     public DateTimeOffset PlannedAt { get; private set; }
     public DateTimeOffset? SentAt { get; private set; }
+    public DateTimeOffset? ExpiresAt { get; private set; } // Type DateTimeOffset -> avoid having to deal with time zones
     public IReadOnlyList<OrderLine> Lines => _lines;
     public bool IsPlanned => IsPlannedCheck(this);
 
@@ -33,5 +34,6 @@ public class Order
         }
 
         SentAt = sentAt;
+        ExpiresAt = sentAt.AddYears(1); // AddYears() is a .NET built-in function that takes leap year into account.
     }
 }

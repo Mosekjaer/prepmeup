@@ -5,12 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using PrepMeUp.Api.Authentication;
+using PrepMeUp.Api.Configuration;
 using PrepMeUp.Api.ErrorHandling;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
 var builder = WebApplication.CreateBuilder(args);
+
+RequiredConfiguration.EnsurePresent(builder.Configuration, builder.Environment);
 
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)

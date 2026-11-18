@@ -38,7 +38,7 @@ public class Order
     }
 
     // Method that tells whether this order has reached the point, where the next order must be made.
-    public bool IsDueForReplacement(DateTimeOffset now)
+    public bool HasReachedReorderDate(DateTimeOffset now)
     {
         if (ExpiresAt is null)
         {

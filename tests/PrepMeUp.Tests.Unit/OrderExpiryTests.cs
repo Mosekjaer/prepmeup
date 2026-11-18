@@ -63,33 +63,33 @@ public class OrderExpiryTests
 
     [Test]
     [Description("Planned order, not sent")]
-    public void IsDueForReplacement_PlannedOrder_ReturnsFalse()
+    public void HasReachedReorderDate_PlannedOrder_ReturnsFalse()
     {
         var now = new DateTimeOffset(2027, 11, 10, 12, 0, 0, TimeSpan.Zero);
 
-        Assert.That(_order.IsDueForReplacement(now), Is.False);
+        Assert.That(_order.HasReachedReorderDate(now), Is.False);
     }
 
     [Description("Boundary: just before, right on and just after 14 days before expiry")]
     [TestCase(-1, false)] // (num-seconds-after-boundary-date, to-be-planned-now)
     [TestCase(0, true)]
     [TestCase(1, true)]
-    public void IsDueForReplacement_AroundFourteenDaysBeforeExpiry_ReturnsExpected(int secondsFromBoundary, bool expected)
+    public void HasReachedReorderDate_AroundFourteenDaysBeforeExpiry_ReturnsExpected(int secondsFromBoundary, bool expected)
     {
         _order.MarkAsSent(new DateTimeOffset(2026, 11, 18, 12, 0, 0, TimeSpan.Zero));
         var now = new DateTimeOffset(2027, 11, 4, 12, 0, 0, TimeSpan.Zero).AddSeconds(secondsFromBoundary);
 
-        Assert.That(_order.IsDueForReplacement(now), Is.EqualTo(expected));
+        Assert.That(_order.HasReachedReorderDate(now), Is.EqualTo(expected));
     }
 
     [Test]
     [Description("Already expired")]
-    public void IsDueForReplacement_AlreadyExpired_ReturnsTrue()
+    public void HasReachedReorderDate_AlreadyExpired_ReturnsTrue()
     {
         _order.MarkAsSent(new DateTimeOffset(2026, 11, 18, 12, 0, 0, TimeSpan.Zero));
         var now = new DateTimeOffset(2027, 11, 19, 12, 0, 0, TimeSpan.Zero);
 
-        Assert.That(_order.IsDueForReplacement(now), Is.True);
+        Assert.That(_order.HasReachedReorderDate(now), Is.True);
     }
 
     private static OrderLine NewLine(string packageTypeName, int quantity) =>

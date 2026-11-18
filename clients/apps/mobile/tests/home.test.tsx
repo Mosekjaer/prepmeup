@@ -55,8 +55,6 @@ it('welcomes an onboarded customer by name', async () => {
   render(<HomeScreen />);
 
   expect(await screen.findByText('Welcome, Malthe')).toBeTruthy();
-  expect(screen.getByText('Finlandsgade 22')).toBeTruthy();
-  expect(screen.getByText('8200 Aarhus N')).toBeTruthy();
 });
 
 it('sends a customer who has not onboarded to onboarding', async () => {
@@ -105,4 +103,40 @@ it('does not load the subscription for a customer who has not onboarded', async 
 
   await waitFor(() => expect(mocks.router.push).toHaveBeenCalledWith('/onboarding'));
   expect(mocks.getSubscription).not.toHaveBeenCalled();
+});
+
+it('has no button to a second screen when signed out', () => {
+  mocks.token = undefined;
+
+  render(<HomeScreen />);
+
+  expect(screen.queryByText('Go to second screen')).toBeNull();
+});
+
+it('has no button to a second screen when signed in', async () => {
+  mocks.getCustomer.mockResolvedValue({
+    name: 'Malthe',
+    email: 'malthe@example.com',
+    address: { street: 'Finlandsgade 22', postalCode: '8200', city: 'Aarhus N' },
+  });
+
+  render(<HomeScreen />);
+  await screen.findByText('Welcome, Malthe');
+
+  expect(screen.queryByText('Go to second screen')).toBeNull();
+});
+
+it('shows the name of the customer but not the address, which belongs to Profile', async () => {
+  mocks.getCustomer.mockResolvedValue({
+    name: 'Malthe',
+    email: 'malthe@example.com',
+    address: { street: 'Finlandsgade 22', postalCode: '8200', city: 'Aarhus N' },
+  });
+
+  render(<HomeScreen />);
+  await screen.findByText('Welcome, Malthe');
+
+  expect(screen.queryByText('Finlandsgade 22')).toBeNull();
+  expect(screen.queryByText(/8200/)).toBeNull();
+  expect(screen.queryByText(/Aarhus N/)).toBeNull();
 });

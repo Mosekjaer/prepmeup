@@ -4,21 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Button, Text, View } from 'react-native';
 
 import { isNotFound, subscriptionClient } from '../lib/api';
+import { formatDate } from '../lib/format';
 
 type State =
   | { kind: 'loading' }
   | { kind: 'none' }
   | { kind: 'error' }
   | { kind: 'loaded'; subscription: SubscriptionResponse };
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  });
-}
 
 export function SubscriptionSummary() {
   const router = useRouter();
@@ -58,27 +50,9 @@ export function SubscriptionSummary() {
     );
   }
 
-  const { subscription } = state;
-  const nextOrder = subscription.orders
-    .filter((order) => !order.sentAt)
-    .sort((a, b) => new Date(a.plannedAt).getTime() - new Date(b.plannedAt).getTime())[0];
-
   return (
     <View>
-      <Text>Active since {formatDate(subscription.startedAt)}</Text>
-      {nextOrder ? (
-        <>
-          <Text>Planned for {formatDate(nextOrder.plannedAt)}</Text>
-          <Text>Status: Planned</Text>
-          {nextOrder.lines.map((line) => (
-            <Text key={line.packageTypeId}>
-              {line.packageTypeName} × {line.quantity}
-            </Text>
-          ))}
-        </>
-      ) : (
-        <Text>No order planned.</Text>
-      )}
+      <Text>Active since {formatDate(state.subscription.startedAt)}</Text>
     </View>
   );
 }

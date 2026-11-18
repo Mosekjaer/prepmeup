@@ -37,7 +37,8 @@ public class Order
         ExpiresAt = sentAt.AddYears(1); // AddYears() is a .NET built-in function that takes leap year into account.
     }
 
-    public bool IsNearExpiry(DateTimeOffset now)
+    // Method that tells whether this order has reached the point, where the next order must be made.
+    public bool IsDueForReplacement(DateTimeOffset now)
     {
         if (ExpiresAt is null)
         {

@@ -59,4 +59,28 @@ public class SubscriptionService(
         return SubscribeResult.Subscribed;
     }
 
+    // Method that fetches ALL active subscriptions and plans next orders for those needed.
+    public async Task<int> PlanNextOrdersAsync(CancellationToken cancellationToken)
+    {
+        var now = clock.UtcNow;
+        var subscriptions = await subscriptionRepository.GetActiveAsync(cancellationToken);
+
+        var planned = 0;
+        foreach (var subscription in subscriptions)
+        {
+            if (subscription.NextOrderShouldBePlanned(now))
+            {
+                subscription.PlanNextOrder(now);
+                planned++;
+            }
+        }
+
+        if (planned > 0)
+        {
+            await subscriptionRepository.SaveChangesAsync(cancellationToken);
+        }
+
+        return planned;
+    }
+
 }

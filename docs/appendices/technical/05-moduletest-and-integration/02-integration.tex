@@ -19,6 +19,7 @@
   1.4 & 11-11-2026 & Group 3 & Subscription plan added \\
   1.5 & 11-11-2026 & Group 3 & Tokens without a user ID added \\
   1.6 & 18-11-2026 & Group 3 & Plans split into backend plans and user story plans, plans for admin orders and admin sends an order added \\
+  1.7 & 18-11-2026 & Group 3 & Plans for package types and sign up and first order added, log in and default package types covered by other plans \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -45,9 +46,8 @@ Table~\ref{tab:backend-overview} shows part 1, and Table~\ref{tab:use-case-overv
 \begin{enumerate}
   \item Sign up and first order (FR-01, FR-03).
   \item Admin sends an order (FR-05, FR-06, NFR-10).
-  \item Log in, for the customer and for the administrator.
-  \item Default package types (FR-03).
 \end{enumerate}
+Two user stories have no plan of their own, because they are already integrated in other plans (Section~\ref{sec:user-story-overview}).
 
 \begin{table}[H]
 \centering
@@ -60,8 +60,6 @@ Table~\ref{tab:backend-overview} shows part 1, and Table~\ref{tab:use-case-overv
 \hline
 Sign up and first order  & X & X & X & X & \\
 Admin sends an order     & X &   &   &   & X \\
-Log in                   & X &   &   &   & \\
-Default package types    & X &   &   & X & \\
 \end{tabular}
 \caption{The backend plans that each user story integration plan builds on.}
 \label{tab:use-case-trace}
@@ -304,6 +302,7 @@ The tests check that the result has the id and name of each item, and that an em
 Now the tests send HTTP requests, so JwtBearer is X and Keycloak is S. A request with a valid test token gets 200 with the items as JSON, and a request without a valid token gets 401. This checks that ItemsController has the [Authorize] attribute, and that the route and the JSON answer work.
 
 \section{Backend plan: Onboarding}
+\label{sec:onboarding-plan}
 \subsection{Scope}
 This plan tests how a logged-in user creates and reads their customer profile through \texttt{PUT /user} and \texttt{GET /user}. 
 How the access token is validated is tested by the authenticatian and integration plan (Section~\ref{sec:auth-plan}). In this plan
@@ -439,7 +438,64 @@ Now the tests send HTTP requests, so SubscriptionController is T, JwtBearer is X
 
 \section{Backend plan: Package Types}
 \label{sec:package-types-backend-plan}
-% TODO: write this plan. The tests for the package type endpoint and repository exist, but the plan does not. Check whether GET /package-types needs a login before the table in the overview is final.
+
+\subsection{Scope}
+This plan tests how a logged-in user reads the active package types through \texttt{GET /package-types}. The customer uses the list when choosing the order lines of a subscription, and the subscription plan (Section~\ref{sec:subscription-plan}) uses the same package types when it checks an order. Token validation is covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}).
+
+\subsection{Strategy}
+Bottom-up: first the repository against the database, then the controller with the service on top.
+
+\subsection{Rules}
+\begin{itemize}
+  \item The two standard package types, \textit{Normal -- Adult} and \textit{Normal -- Child}, are created by the migrations. The tests use them and do not create their own.
+  \item The endpoint needs a valid token but no particular role, so both a customer and an administrator can read the list.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:package-types-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+PackageTypesController &   & T \\
+PackageTypeService     &   & X \\
+PackageTypeRepository  & T & X \\
+JwtBearer              &   & X \\
+DbContext              & X & X \\
+Database               & X (SQLite) & X (SQLite) \\
+Keycloak               &   & S \\
+\end{tabular}
+\caption{Integration plan for package types.}
+\label{tab:package-types-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does PackageTypeRepository save and read package types with their contents through the real DbContext?}
+The tests use the repository and the DbContext directly, without an HTTP request. A fake repository cannot show that the contents and quantities are mapped correctly, so this needs a real database. The tests check the following:
+\begin{itemize}
+  \item A package type saved with two items is read back with the same items, item types and quantities.
+  \item A replaced package type keeps its name and status.
+  \item The package types are ordered by name.
+  \item A new database has one active adult and one active child package type, and every content line has a quantity above 0.
+  \item The database rejects the same item twice in one package type, and a quantity below 1. The domain already stops these cases, so this checks the last line of defence, as in step 1 of the subscription plan.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Can a logged-in user read the active package types through /package-types?}
+Now the tests send HTTP requests, so PackageTypesController is T, JwtBearer is X and Keycloak is S. PackageTypeService removes the replaced package types, so it is part of the step. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401.
+  \item A request with a valid token gets 200, both for a customer and for an administrator, and also for a token without roles.
+  \item A replaced package type in the database is not in the answer. Only the two active standard package types are.
+  \item The contents are ordered by item name.
+  \item Each content line has only item id, item name, item type and quantity, and no unit or price.
+\end{itemize}
+
+The last two checks look at the response itself. The ordering by item name is tested on the response mapping alone, and the check of the fields is made on the JSON from the real endpoint.
+
 
 \section{Backend plan: Admin Orders}
 \label{sec:admin-orders-plan}
@@ -563,6 +619,7 @@ The test only covers a subscription that is ready. That the planner logs a failu
 \end{itemize}
 
 \subsection{Overview of the User Story Integration Plans}
+\label{sec:user-story-overview}
 A column shows the parts that are included in the user story integration plans.
 
 \begin{table}[H]
@@ -571,30 +628,91 @@ A column shows the parts that are included in the user story integration plans.
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \rowcolors{2}{gray!15}{white}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
-\textbf{Component} & \textbf{Sign up and first order} & \textbf{Admin sends an order} & \textbf{Log in} & \textbf{Default package types} \\
+\begin{tabular}{@{}l C{2.4cm} C{2.4cm}@{}}
+\textbf{Component} & \textbf{Sign up and first order} & \textbf{Admin sends an order} \\
 \hline
-mobile-app                       & T &   & T & T \\
-admin-panel                      &   & T & T & \\
-api-client                       & X & X & X & X \\
-Controllers                      & X & X & X & X \\
-AdminOnly policy                 &   & X & X & \\
-KeycloakRoleClaimsTransformation &   & X & X & \\
-JwtBearer                        & X & X & X & X \\
-Services                         & X & X &   & X \\
-Repositories                     & X & X &   & X \\
-System clock                     & X & X &   & \\
-DbContext                        & X & X &   & X \\
-Database                         & X & X &   & X \\
-Keycloak                         & X & X & X & X \\
+mobile-app                       & T &   \\
+admin-panel                      &   & T \\
+api-client                       & X & X \\
+Controllers                      & X & X \\
+AdminOnly policy                 &   & X \\
+KeycloakRoleClaimsTransformation &   & X \\
+JwtBearer                        & X & X \\
+Services                         & X & X \\
+Repositories                     & X & X \\
+System clock                     & X & X \\
+DbContext                        & X & X \\
+Database                         & X & X \\
+Keycloak                         & X & X \\
 \end{tabular}
 \caption{Part 2: the user story integration plans. The last step runs against the deployed system, so Keycloak is real.}
 \label{tab:use-case-overview}
 \end{table}
 
+Two user stories have no plan of their own, because all the connections they need are already tested in other plans, and a plan here would only repeat them:
+\begin{itemize}
+  \item \textbf{Log in, for the customer and for the administrator (NFR-10).} The sign-in, the stored tokens and the answers of the API in both apps are tested in step 5 of the authentication and authorization plan (Section~\ref{sec:auth-plan}), and the login with all parts real in step 6.
+  \item \textbf{Default package types (FR-03).} The package types in the database and the endpoint are tested in the plan for package types (Section~\ref{sec:package-types-backend-plan}), and the screens that show them in step 1 of the plan for sign up and first order (Section~\ref{sec:sign-up-plan}). Whether the default package types exist in a newly deployed system is checked by the acceptance test for FR-03 (appendix 6.1).
+\end{itemize}
+
 \section{User story integration plan: Sign Up and First Order}
 \label{sec:sign-up-plan}
-% TODO: write scope, plan table and steps. The backend is tested in the plans for onboarding, subscription and package types. Step 1 is the sign-up screens with a fake api-client; check what the tests in clients/apps/mobile cover. Step 2 is the app against the deployed system with a real Keycloak.
+
+\subsection{Scope}
+This plan follows the user stories of the customer in the epics Account, Household and Subscription: to create a profile, to choose the package types of the first order, and to sign up for the subscription. The backend of the stories is tested in the plans for onboarding (Section~\ref{sec:onboarding-plan}), package types (Section~\ref{sec:package-types-backend-plan}) and subscription (Section~\ref{sec:subscription-plan}), and the login in the authentication and authorization plan (Section~\ref{sec:auth-plan}). This plan tests the mobile app on top of them.
+
+\subsection{Strategy}
+Top-down: first the screens of the mobile app with a fake api-client, then the mobile app together with the real API.
+
+\subsection{Rules}
+\begin{itemize}
+  \item The API part of step 2 is run with the Postman collection for FR-02, and the part in the app is run by hand.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:sign-up-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+mobile-app             & T & T \\
+api-client             & S & X \\
+UserController         &   & X \\
+PackageTypesController &   & X \\
+SubscriptionController &   & X \\
+JwtBearer              &   & X \\
+CustomerService        &   & X \\
+PackageTypeService     &   & X \\
+SubscriptionService    &   & X \\
+Repositories           &   & X \\
+System clock           &   & X \\
+DbContext              &   & X \\
+Database               &   & X (SQL Server) \\
+Keycloak               &   & X \\
+\end{tabular}
+\caption{Integration plan for sign up and first order.}
+\label{tab:sign-up-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Do the sign-up screens show the right content and send the right calls?}
+The tests render the screens of the sign-up and fake the api-client. They check what the customer sees and what the screens send to the api-client. The tests check the following:
+\begin{itemize}
+  \item Home sends a customer who has not onboarded to onboarding, and welcomes an onboarded customer by name. Nothing is loaded while the customer is signed out.
+  \item Onboarding saves the details and goes back. An empty phone field sends no phone. When the API rejects a field, the screen names every field it rejects.
+  \item Home offers to subscribe when the customer has no subscription, and the button opens the order builder instead of subscribing right away.
+  \item The order builder shows a loading indicator, an error with a way to try again, and an explanation when there are no package types. It has a counter for each package type that never goes below zero. Continue is only enabled when at least one package is chosen, and it opens the confirmation with only the chosen package types.
+  \item The page of a package type shows its name and contents, and says that the package type is no longer available when it is not active.
+  \item The confirmation shows the chosen package types with their quantities, and subscribes with the same lines when the customer confirms. The button is disabled while the subscription is being created, and the customer goes back to Home when it is created.
+  \item When the API answers 409, the confirmation says that the customer already has a subscription. When it answers 400, it says that a package type is no longer available, and goes back to the order. Any other error gives an error with a way to try again.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Can a new customer sign up and get a first order in the real system?}
+The login with a real Keycloak is already checked in step 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}), so this step uses it as the starting point and does not check the tokens again. A new user logs in to the app, fills in the profile, chooses the package types, confirms, and sees the subscription on Home. The step also checks the answers the app must handle: a second sign-up from the same customer gives the message that the customer already has a subscription. The API part of the same cases is run with the Postman collection for FR-02.
 
 
 \section{User story integration plan: Admin Sends an Order}
@@ -651,13 +769,5 @@ The tests render the dispatch queue and the hook that marks an order as sent, an
 
 \subsubsection*{Step 2 -- Can the administrator see and send an order in the real system?}
 The administrator logs in at the admin panel with a real Keycloak, sees the planned orders, presses the button to mark one as sent, and sees it leave the list. The step also checks the answers the panel must handle: an order that is already sent gives the message that it has been shipped, and the list is loaded again. The API part of the same cases is run with the Postman collections for FR-05 and FR-06.
-
-\section{User story integration plan: Log In}
-\label{sec:login-plan}
-This plan follows the user stories about logging in, for the customer and for the administrator (NFR-10). The login is tested in steps 5 and 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}): step 5 with a fake Keycloak and API, and step 6 by hand with all parts real. % TODO: decide whether this plan is only that reference
-
-\section{User story integration plan: Default Package Types}
-\label{sec:package-types-plan}
-% TODO: write scope, plan table and steps. The backend is tested in the plan for package types (Section~\ref{sec:package-types-backend-plan}).
 
 \end{document}

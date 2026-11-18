@@ -22,6 +22,7 @@
   1.7 & 04-11-2026 & Group 3 & Expiry date set to one year after the sent date \\
   1.8 & 04-11-2026 & Group 3 & Package types are never changed after creation and have a status \\
   1.9 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01), and added order line to the glossary \\
+  1.10 & 18-11-2026 & Group 3 & NFR-09: the customer is identified from the access token only, and 403 applies to endpoints that take an id \\
 \end{versionhistory}
 
 \section{Glossary}
@@ -248,7 +249,7 @@ We have written each non-functional requirement so it can be measured, not judge
 
 \paragraph{Security}
 \begin{enumerate}[label=\reqlabel{NFR}, start=9]
-    \item A customer can only view and change their own data (subscription, orders, name and address). The API identifies the customer from the access token, and a request for a resource that belongs to another customer, e.g. an order, is rejected with HTTP 403.
+    \item A customer can only view and change their own data (subscription, orders, name and address). The API identifies the customer from the access token only, so no customer endpoint takes the id of a customer, a subscription or an order. If an endpoint that takes such an id is added later, a request for a resource that belongs to another customer is rejected with HTTP 403.
     \item Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403.
     \item Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401.
 \end{enumerate}

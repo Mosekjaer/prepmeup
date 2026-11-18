@@ -43,6 +43,7 @@
   1.5 & 11-11-2026 & Group 3 & FR-01 includes choosing the contents of the first order \\
   1.6 & 11-11-2026 & Group 3 & Added the Postman collection to the test environment and ran the test for FR-02 \\
   1.7 & 12-11-2026 & Group 3 & Ran the test for FR-01 \\
+  1.8 & 18-11-2026 & Group 3 & NFR-09 tests that no customer endpoint takes an id, in line with requirements specification 1.10 \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -245,7 +246,7 @@ NFR-08 & Every API endpoint is covered by at least one automated test that runs 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only view and change their own data. The API identifies the customer from the access token, and a request for another customer's resource is rejected with HTTP 403. & With A's token, call GET /user and confirm only A's name and address are returned. Request an order that belongs to customer B with A's token and confirm the response is HTTP 403. & & \\
+NFR-09 & A customer can only view and change their own data. The API identifies the customer from the access token only, and no customer endpoint takes the id of a customer, a subscription or an order. & List every endpoint in the API's OpenAPI document that is not an administrator endpoint, and confirm that none of them has a customer, subscription or order id in the path or the query. Call GET /user and GET /subscription with A's token and confirm that only A's data is returned. Repeat with B's token and confirm that only B's data is returned. & & \\
 \hline
 NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
 \hline

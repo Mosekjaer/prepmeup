@@ -18,8 +18,7 @@
   1.3 & 11-11-2026 & Group 3 & Integration overview added \\
   1.4 & 11-11-2026 & Group 3 & Subscription plan added \\
   1.5 & 11-11-2026 & Group 3 & Tokens without a user ID added \\
-  1.6 & 18-11-2026 & Group 3 & Planned orders plan added \\
-  1.7 & 18-11-2026 & Group 3 & Mark as sent plan added \\
+  1.6 & 18-11-2026 & Group 3 & Plans split into backend plans and user story plans, plans for admin orders and admin sends an order added \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -37,15 +36,42 @@ Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the 
 \section{Integration Overview}
 
 \subsection{Strategy}
-We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step. Each column in Table~\ref{tab:integration-overview} is a feature. Each feature gets an integration plan of its own.
+We use collaboration integration. A feature or a user story is integrated with the parts that it needs. Each has a column in an overview table and its own integration plan. The backend features are built from the bottom of the dependency tree: when a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. The user story integration plans are built from the top: first an app with a fake api-client, and then the app with the real API. Authentication and authorization is built in both directions (Section~\ref{sec:auth-plan}). Each step adds one part, so if a test fails, we know which connection is wrong.
 
-\subsection{Rules for All Integration Plans}
+\subsection{Structure of This Appendix}
+The plans are in two parts, from the bottom of the dependency tree to the top. Part 1 has the backend plans. They test the backend from the database up to the controllers, and the controllers are tested through HTTP with test tokens. The authentication and authorization plan is the exception. Part 2 has the user story plans. A user story plan is a flow through the system that realises one or more of the user stories in the requirements specification, for example signing up and getting a first order. It follows the flow from an app to the database. The top part is the customer app or the admin panel, and the backend is the one that part 1 already tested, so a user story plan does not test it again. This is the sandwich strategy of the authentication plan (Section~\ref{sec:auth-plan}), used for the whole system: the backend is built bottom-up, the apps top-down, and they meet in the last step of each user story integration plan.
+
+Table~\ref{tab:backend-overview} shows part 1, and Table~\ref{tab:use-case-overview} shows part 2. Table~\ref{tab:use-case-trace} shows which backend plans each user story plan builds on. The user story integration plans are:
+\begin{enumerate}
+  \item Sign up and first order (FR-01, FR-03).
+  \item Next order before expiry (FR-04, FR-19).
+  \item Admin sends an order (FR-05, FR-06, NFR-10).
+  \item Log in, for the customer and for the administrator.
+  \item Default package types (FR-03).
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l C{2.4cm} C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
+\textbf{User story} & \textbf{Authentication and authorization} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{Package types} & \textbf{Admin orders} \\
+\hline
+Sign up and first order  & X & X & X & X &   \\
+Next order before expiry &   &   & X &   & X \\
+Admin sends an order     & X &   &   &   & X \\
+Log in                   & X &   &   &   &   \\
+Default package types    & X &   &   & X &   \\
+\end{tabular}
+\caption{The backend plans that each user story plan builds on.}
+\label{tab:use-case-trace}
+\end{table}
+
+\subsection{General Rules}
 \begin{itemize}
   \item A part is integrated only when its unit tests pass.
-  \item A step drives one top part. The test uses the interface of that part, for example an endpoint, a service or a repository.
-  \item The parts below the top are real, unless the plan says otherwise.
-  \item In the automated tests, Keycloak is faked with test tokens. It is outside our system, and we do not want the tests to need a running server. The only step with a real Keycloak is step 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}), which is manual.
-  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item The parts below the top module are real, unless the plan says otherwise.
   \item A step can have several test cases, for example with a valid, a missing and an expired access token.
   \item In a table representing an integration plan:
     \begin{itemize}
@@ -55,7 +81,48 @@ We use collaboration integration. A step in the plan is a feature, and a step in
     \end{itemize}
 \end{itemize}
 
-\subsection{Database in the Tests}
+\section{Backend Integration}
+
+\subsection{Rules for the Backend Plans}
+\begin{itemize}
+  \item Keycloak is faked with test tokens. It is outside our system, and we do not want the tests to need a running server. The only backend step with a real Keycloak is step 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}), which is run by hand.
+  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
+  \item Every test uses its own database or its own user id, so the tests do not depend on each other.
+\end{itemize}
+
+\subsection{Overview of the Backend Plans}
+A column shows the parts that are included at the last step of the feature.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\rowcolors{2}{gray!15}{white}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l C{1.9cm} C{2.6cm} C{1.6cm} C{1.9cm} C{1.9cm} C{1.9cm} C{1.7cm}@{}}
+\textbf{Component} & \textbf{Database connection} & \textbf{Authentication and authorization} & \textbf{Get items} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{Package types} & \textbf{Admin orders} \\
+\hline
+mobile-app                       &   & T &   &   &   &   &   \\
+admin-panel                      &   & T &   &   &   &   &   \\
+api-client                       &   & X &   &   &   &   &   \\
+Controllers                      &   & X & T & T & T & T & T \\
+AdminOnly policy                 &   & X &   &   &   &   & X \\
+KeycloakRoleClaimsTransformation &   & X &   &   &   &   & X \\
+JwtBearer                        &   & X & X & X & X & X & X \\
+Services                         &   &   & X & X & X & X & X \\
+Repositories                     & T &   & X & X & X & X & X \\
+System clock                     &   &   &   &   & X &   & X \\
+DbContext                        & X &   & X & X & X & X & X \\
+Database                         & X &   & X & X & X & X & X \\
+Keycloak                         &   & X & S & S & S & S & S \\
+\end{tabular}%
+}
+\caption{Part 1: the backend plans.}
+\label{tab:backend-overview}
+\end{table}
+
+\subsection{Database in the Backend Tests}
 We use SQLite in the tests as much as possible, because:
 \begin{itemize}
   \item The tests are fast.
@@ -80,38 +147,7 @@ Database connection & Step 2 & The migrations run, and the maximum lengths are e
 \label{tab:sql-server-tests}
 \end{table}
 
-\subsection{Overview of the Integration Plans}
-Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own section in this document. A column shows the parts that are included at the last step of the feature's integration plan.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\rowcolors{2}{gray!15}{white}
-\setlength{\tabcolsep}{4pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}l c c c c c c c@{}}
-\textbf{Component} & \textbf{\shortstack{Database\\connection}} & \textbf{\shortstack{Authentication\\and authorization}} & \textbf{\shortstack{Get\\items}} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{\shortstack{Planned\\orders}} & \textbf{\shortstack{Mark as\\sent}} \\
-\hline
-mobile-app                       &   & T &   &   &   &   &   \\
-admin-panel                      &   & T &   &   &   &   &   \\
-api-client                       &   & X &   &   &   &   &   \\
-Controllers                      &   & X & T & T & T & T & T \\
-AdminOnly policy                 &   & X &   &   &   & X & X \\
-KeycloakRoleClaimsTransformation &   & X &   &   &   & X & X \\
-JwtBearer                        &   & X & X & X & X & X & X \\
-Services                         &   &   & X & X & X & X & X \\
-Repositories                     & T &   & X & X & X & X & X \\
-System clock                     &   &   &   &   & X &   & X \\
-DbContext                        & X &   & X & X & X & X & X \\
-Database                         & X &   & X & X & X & X & X \\
-Keycloak                         &   & X & S & S & S & S & S \\
-\end{tabular}%
-}
-\caption{Overview of the integration plans, in the order they are integrated.}
-\label{tab:integration-overview}
-\end{table}
-
-\section{Integration plan: Database connection}
+\section{Backend plan: Database Connection}
 \label{sec:db-plan}
 
 \begin{table}[H]
@@ -130,9 +166,9 @@ Database     & X (SQLite) & X (SQL Server) \\
 \end{table}
 
 \subsubsection*{Step 1 -- Do the repositories save and read data correctly through the DbContext?}
-Since this step focuses on testing that cooperation between repositories and DbContext works properly.
+Since this step focuses on testing that the cooperation, between repositories and DbContext, works properly.
 We use SQLite, so the tests run faster.
-We are mainly interested in testing to things:
+We are mainly interested in testing two things:
 \begin{enumerate}
   \item Mapping between C\# objects and a row in a table.
   \item That the unique KeycloakId works.
@@ -140,9 +176,9 @@ We are mainly interested in testing to things:
 
 \subsubsection*{Step 2 -- Do the migrations and constraints work on SQL Server?}
 SQLite does not enforce maximum lengths (which we have some constraints about in e.g. Customer class), and it does not run our migrations.
-So for this step, we use a real SQL Sever in Docker, so we can check the constraints that SQLite ignores and run migrations.
+So for this step, we use a real SQL Server in Docker, so we can check the constraints that SQLite ignores and run migrations.
 
-\section{Integration plan: Authentication and Authorization}
+\section{Backend plan: Authentication and Authorization}
 \label{sec:auth-plan}
 
 \subsection{Scope}
@@ -218,7 +254,7 @@ The step has two stages. Each stage adds one more real part, so an error always 
 \end{enumerate}
 
 \subsubsection*{Step 3 -- Is access to a non-admin controller correctly enforced based on the access token's validity?}
-Non-admin controllers with [authorize] should only allow acces for requests with a valid access token.
+Non-admin controllers with [authorize] should only allow access for requests with a valid access token.
 So the tests in this step should focus on the \textit{mechanism} behind the enforcement of this rule.
 Note 1: The [authorize] functionality should still be tested for each individual controller in the different feature integration plans.
 Note 2: KeycloakRoleClaimsTransformation \textit{does} run automatically, since it is registered as IClaimsTransformation and runs (only) when JwtBearer has approved the access token.
@@ -234,7 +270,7 @@ Keycloak and the API are S. The apps cannot run against Keycloak in automated te
 \subsubsection*{Step 6 -- Manual test with all components}
 Keycloak is no longer stubbed, nor is any other component. This is the final step where the sandwich meets in the middle. Note that this is the only step that checks real access tokens from Keycloak.
 
-\section{Integration plan: Get Items}
+\section{Backend plan: Get Items}
 \label{sec:items-plan}
 
 \begin{table}[H]
@@ -266,11 +302,11 @@ The tests check that the result has the id and name of each item, and that an em
 \subsubsection*{Step 2 -- Is GET /items only available to a logged-in user?}
 Now the tests send HTTP requests, so JwtBearer is X and Keycloak is S. A request with a valid test token gets 200 with the items as JSON, and a request without a valid token gets 401. This checks that ItemsController has the [Authorize] attribute, and that the route and the JSON answer work.
 
-\section{Integration plan: Onboarding}
+\section{Backend plan: Onboarding}
 \subsection{Scope}
 This plan tests how a logged-in user creates and reads their customer profile through \texttt{PUT /user} and \texttt{GET /user}. 
-How the access token is validated is tested by the authenticatioan and integration plan (Section~\ref{sec:auth-plan}). In this plan
- it is only checked that the user in the token is the user whose profile is saced and read.
+How the access token is validated is tested by the authenticatian and integration plan (Section~\ref{sec:auth-plan}). In this plan
+ it is only checked that the user in the token is the user whose profile is saved and read.
 
 \subsection{Strategy}
 The plan follows the bottom-up strategy. 
@@ -281,9 +317,7 @@ The plan follows the bottom-up strategy.
 
 \subsection{Rules}
 \begin{itemize}
-  \item The database is SQLite. The maximum lengths of name and address are enforced by the domain, so the tests do not need SQL Server. The limits in the database itself are checked in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
-  \item Keycloak is faked with test tokens, as in the other plans.
-  \item Every test uses its own user id, so the tests do not depend on each other.
+  \item The maximum lengths of name and address are enforced by the domain, so the tests do not need SQL Server. The limits in the database itself are checked in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
 \end{itemize}
 
 
@@ -310,7 +344,7 @@ Keycloak           &   & S \\
 \end{table}
 
 \subsection{Steps}
-\subsubsection*{Step 1 - Does CustomerService save and read a custommer through the real repository and database}
+\subsubsection*{Step 1 -- Does CustomerService save and read a customer through the real repository and database?}
 The tests call CustomerService directly, without an HTTP request, so JwtBearer is not part of the step. CustomerService decides whether a customer is new or already exists. The repository only adds a new customer. An existing customer is changed on the object that the repository loaded, and the change is saved when the service asks the repository to save. That connection only exists with a real DbContext, so a unit test with a fake repository cannot find an error in it. The tests check the following:
 \begin{itemize}
   \item A new user id is saved, and the same details are read back.
@@ -318,10 +352,11 @@ The tests call CustomerService directly, without an HTTP request, so JwtBearer i
   \item Invalid details are rejected, and nothing is saved.
 \end{itemize}
 
-\subsubsection*{Step 2 - Can a logged-in user create and read their own profile through /user?}
+\subsubsection*{Step 2 -- Can a logged-in user create and read their own profile through /user?}
 Now the tests send HTTP requests, so UserController is T, JwtBearer is X and Keycloak is S. The tests make their own tokens, and the id of the user is the \texttt{sub} claim in the token. The tests check the following:
 \begin{itemize}
   \item A request without a token gets 401, both for \texttt{GET} and \texttt{PUT}.
+  \item A token that is valid but has no user ID, or a blank one, gets 401, both for \texttt{GET} and \texttt{PUT}. The call carries a valid body, because the API checks the body before the controller runs, and the user ID is checked in the controller. We ran this test before the fix, and it failed with 404 and 500, so it hit the actual problem.
   \item \texttt{GET} before onboarding gets 404.
   \item The first \texttt{PUT} gets 204, and a \texttt{GET} with the same token returns the details.
   \item A second \texttt{PUT} gets 204, and a \texttt{GET} returns the latest details.
@@ -330,9 +365,9 @@ Now the tests send HTTP requests, so UserController is T, JwtBearer is X and Key
   \item A user who has not onboarded gets 404, also when another user has. This shows that the \texttt{sub} claim reaches the service as the user id, so users cannot see each other's profiles.
 \end{itemize}
 
-The test for the missing token is only a quick check that UserController has the \texttt{[Authorize]} attribute. The mechanism behind it is tested in step 3 of the authentication and authorization plan.
+The test for the missing token is only a quick check that UserController has the \texttt{[Authorize]} attribute. The mechanism behind it is tested in step 3 of the authentication and authorization plan. The helper that reads the user ID from the token is tested on its own with a present, missing, empty and blank ID, so the tests for a token without a user ID only show that the controllers use it.
 
-\section{Integration plan: Subscription}
+\section{Backend plan: Subscription}
 \label{sec:subscription-plan}
 
 \subsection{Scope}
@@ -343,9 +378,7 @@ Bottom-up: first the database, then SubscriptionService, then SubscriptionContro
 
 \subsection{Rules}
 \begin{itemize}
-  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
   \item The system clock is real, because the tests only compare times from the same clock. A stub is first needed for the expiry of orders.
-  \item Every test uses its own user id or its own database.
 \end{itemize}
 
 \subsection{Plan}
@@ -393,6 +426,7 @@ The tests call SubscriptionService directly, without an HTTP request. Subscripti
 Now the tests send HTTP requests, so SubscriptionController is T, JwtBearer is X and Keycloak is S. The tests check the following:
 \begin{itemize}
   \item A request without a token gets 401, both for \texttt{GET} and \texttt{POST}.
+  \item A token that is valid but has no user ID, or a blank one, gets 401, both for \texttt{GET} and \texttt{POST}. The call carries a valid body, as in the onboarding plan.
   \item \texttt{POST} from a user who has not onboarded gets 404.
   \item \texttt{POST} with valid lines gets 201, and the first order has the chosen package types and quantities.
   \item \texttt{POST} with no lines, a quantity below 1, an unknown or replaced package type, or the same package type twice gets 400, and no subscription is created.
@@ -402,93 +436,28 @@ Now the tests send HTTP requests, so SubscriptionController is T, JwtBearer is X
   \item The status is sent as text, for example \texttt{"Active"}, and not as a number.
 \end{itemize}
 
-\section{Tokens Without a User ID}
-The user and subscription endpoints find the household from the user ID in the access token, which Keycloak puts in the subject claim. A token can be valid and still lack that claim, or have it empty. Before, the API then answered 404, which looks like a user who is not onboarded yet, or 500, because a customer cannot be created without an ID.
+\section{Backend plan: Package Types}
+\label{sec:package-types-backend-plan}
+% TODO: write this plan. The tests for the package type endpoint and repository exist, but the plan does not. Check whether GET /package-types needs a login before the table in the overview is final.
 
-We decided that the API answers 401 Unauthorized in that case. The token is not enough to tell who the user is, so the request is treated as not authenticated. The check sits in the API layer, before the controllers call the services, so Application and Domain never get an empty ID.
-
-The check is tested on two levels. A small helper that reads the user ID from the token is tested on its own with a present, missing, empty and blank ID. Then each of the four affected endpoints (reading and saving the user, reading and creating a subscription) is called through the real pipeline with a signed test token without a user ID and with a blank one. The calls carry a valid body, because the API checks the body before the controller runs, and the user ID is checked in the controller. All eight calls must answer 401. We ran these tests before the fix, and they failed with 404 and 500, so they hit the actual problem.
-
-\section{Integration plan: Planned Orders}
-\label{sec:planned-orders-plan}
+\section{Backend plan: Admin Orders}
+\label{sec:admin-orders-plan}
 
 \subsection{Scope}
-This plan tests how an admin reads the planned orders through \texttt{GET /admin/orders/planned}. Token validation and the admin role are covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}). Here we only check that the endpoint is closed to users who are not admins.
+This plan tests how an admin reads the planned orders through \texttt{GET /admin/orders/planned} (FR-05) and marks an order as sent through \texttt{POST /admin/orders/\{orderId\}/shipment} (FR-06). The rule that only a planned order can be sent is tested in the unit tests of Order and OrderService. This plan tests the connections around it. Token validation and the admin role are covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}).
 
 \subsection{Strategy}
 Bottom-up: first the repository against the database, then the controller.
 
 \subsection{Rules}
 \begin{itemize}
-  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
-  \item The tests put the orders directly into the database through the DbContext. That way we choose the dates, the customers and which orders are sent.
-  \item Every test uses its own database.
-\end{itemize}
-
-\subsection{Plan}
-Table~\ref{tab:planned-orders-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
-
-\begin{table}[H]
-\centering
-\small
-\rowcolors{2}{gray!15}{white}
-\begin{tabular}{@{}l c c@{}}
-\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
-\hline
-AdminController                  &   & T \\
-AdminOnly                        &   & X \\
-KeycloakRoleClaimsTransformation &   & X \\
-JwtBearer                        &   & X \\
-OrderService                     &   & X \\
-OrderRepository                  & T & X \\
-DbContext                        & X & X \\
-Database                         & X (SQLite) & X (SQLite) \\
-Keycloak                         &   & S \\
-\end{tabular}
-\caption{Integration plan for planned orders.}
-\label{tab:planned-orders-integration-plan}
-\end{table}
-
-\subsection{Steps}
-\subsubsection*{Step 1 -- Does OrderRepository return the planned orders through the real DbContext?}
-The tests call OrderRepository directly, without an HTTP request. The query joins orders, subscriptions and customers and keeps only the orders that are not sent. A unit test with a fake repository cannot show that the query works, so we run it against the database. The tests check the following:
-\begin{itemize}
-  \item An empty database gives an empty list.
-  \item A planned order has its id, planned time, customer name, address and lines, and the lines are sorted by package type name.
-  \item A sent order is left out.
-  \item Orders in the past and in the future are both returned.
-  \item The orders are sorted by planned time, also when the times have different offsets, and orders with the same time come in the same order every time.
-\end{itemize}
-
-\subsubsection*{Step 2 -- Is GET /admin/orders/planned only available to an admin, and is the answer correct?}
-Now the tests send HTTP requests, so AdminController is T, JwtBearer is X and Keycloak is S. The tests check the following:
-\begin{itemize}
-  \item A request without a token gets 401, and a token with the role household gets 403.
-  \item An admin with no orders gets 200 and an empty array.
-  \item An admin gets only the planned orders, from several customers, sorted by planned time.
-  \item The JSON has the fields \texttt{orderId}, \texttt{plannedAt}, \texttt{customerName}, \texttt{address} and \texttt{lines}.
-\end{itemize}
-
-The tests for 401 and 403 are a quick check that the controller has the admin policy. The mechanism behind them is tested in the authentication and authorization plan.
-\section{Integration plan: Mark as Sent}
-\label{sec:mark-as-sent-plan}
-
-\subsection{Scope}
-This plan tests how an admin marks a planned order as sent through \texttt{POST /admin/orders/\{orderId\}/shipment}. The rule that only a planned order can be sent is tested in the unit tests of Order and OrderService. This plan tests the connections around it. Token validation is covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}).
-
-\subsection{Strategy}
-Bottom-up: first the repository against the database, then the controller.
-
-\subsection{Rules}
-\begin{itemize}
-  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
-  \item The system clock is real. The tests only check that the time of sending is set, not what it is.
+  \item The tests put the orders directly into the database through the DbContext, so we choose the dates, the customers and which orders are sent.
+  \item The system clock is real. The tests only check that the sent time is set, not what it is.
   \item The sent time is an EF Core concurrency token, and not a SQL Server row version, because the tests run on SQLite. It is an ordinary column, so it behaves the same in both databases.
-  \item The tests put the orders directly into the database, including an order that is already sent.
 \end{itemize}
 
 \subsection{Plan}
-Table~\ref{tab:mark-as-sent-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+Table~\ref{tab:admin-orders-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
 
 \begin{table}[H]
 \centering
@@ -508,29 +477,147 @@ DbContext                        & X & X \\
 Database                         & X (SQLite) & X (SQLite) \\
 Keycloak                         &   & S \\
 \end{tabular}
-\caption{Integration plan for mark as sent.}
-\label{tab:mark-as-sent-integration-plan}
+\caption{Integration plan for admin orders.}
+\label{tab:admin-orders-plan}
 \end{table}
 
 \subsection{Steps}
-\subsubsection*{Step 1 -- Does OrderRepository find an order and save the sent time, also when two admins act at once?}
-The tests call OrderRepository directly. The case with two admins only exists with a real DbContext: EF Core adds the old sent time to the update, and the update fails if another admin has already changed it. A fake repository cannot show that. The tests check the following:
+\subsubsection*{Step 1 -- Does OrderRepository return the planned orders and save the sent time, also when two admins act at once?}
+The tests call OrderRepository directly, without an HTTP request. The query joins orders, subscriptions and customers and keeps only the orders that are not sent, and a fake repository cannot show that it works. The case with two admins only exists with a real DbContext: EF Core adds the old sent time to the update, and the update fails if another admin has already changed it. The tests check the following:
 \begin{itemize}
+  \item An empty database gives an empty list.
+  \item A planned order has its id, planned time, customer name, address and lines, and the lines are sorted by package type name.
+  \item A sent order is left out, and orders in the past and in the future are both returned.
+  \item The orders are sorted by planned time, also when the times have different offsets, and orders with the same time come in the same order every time.
   \item An unknown id gives no order, and a known id gives the order.
   \item A sent time that is saved can be read back through a new DbContext.
   \item Two DbContexts load the same planned order. The first saves, and the second gets an OrderConflictException when it saves.
 \end{itemize}
 
-\subsubsection*{Step 2 -- Can an admin mark a planned order as sent through /admin/orders/\{orderId\}/shipment?}
+\subsubsection*{Step 2 -- Can an admin see the planned orders and mark one as sent through the API?}
 Now the tests send HTTP requests, so AdminController is T, JwtBearer is X and Keycloak is S. The tests check the following:
 \begin{itemize}
-  \item A request without a token gets 401, and a token with the role household gets 403.
-  \item An admin marking a planned order gets 204, the sent time is set in the database, and the order is no longer in \texttt{GET /admin/orders/planned}.
+  \item A request without a token gets 401, and a token with the role household gets 403. This is a quick check that the controller has the admin policy. The mechanism behind it is tested in the authentication and authorization plan.
+  \item \texttt{GET /admin/orders/planned} gives 200 and an empty array when there are no orders. With orders from several customers, only the planned ones are returned, sorted by planned time, and the JSON has the fields \texttt{orderId}, \texttt{plannedAt}, \texttt{customerName}, \texttt{address} and \texttt{lines}.
+  \item \texttt{POST /admin/orders/\{orderId\}/shipment} on a planned order gives 204, the sent time is set in the database, and the order is no longer in the list.
   \item An unknown order gets 404, and so does an id that is not a GUID.
-  \item An order that is already sent gets 409, and its first sent time is not changed.
-  \item Two calls after each other get 204 and then 409.
+  \item An order that is already sent gets 409, and its first sent time is not changed. Two calls after each other get 204 and then 409.
   \item With two planned orders, only the order in the request is sent.
 \end{itemize}
 
 Two requests at the very same time are not tested through HTTP. That case is covered by step 1.
+
+\section{User Story Integration Plans}
+
+\subsection{Rules for the User Story Plans}
+\begin{itemize}
+  \item The backend is already tested by the backend plans, so a user story plan does not test it again.
+  \item In the first step, the api-client is faked, so the tests run without the API. We do not test the generated api-client itself.
+  \item The last step runs against the deployed system, with a real Keycloak and SQL Server. It is run by hand, and the API part can be run with the Postman collections of the acceptance tests (appendix 6.1).
+\end{itemize}
+
+\subsection{Overview of the User Story Integration Plans}
+A column shows the parts that are included in the user story integration plans.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\rowcolors{2}{gray!15}{white}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
+\textbf{Component} & \textbf{Sign up and first order} & \textbf{Next order before expiry} & \textbf{Admin sends an order} & \textbf{Log in} & \textbf{Default package types} \\
+\hline
+mobile-app                       & T &   &   & T & T \\
+admin-panel                      &   &   & T & T &   \\
+api-client                       & X &   & X & X & X \\
+Controllers                      & X &   & X & X & X \\
+AdminOnly policy                 &   &   & X & X &   \\
+KeycloakRoleClaimsTransformation &   &   & X & X &   \\
+JwtBearer                        & X &   & X & X & X \\
+Services                         & X & X & X &   & X \\
+Background service               &   & T &   &   &   \\
+Repositories                     & X & X & X &   & X \\
+System clock                     & X & S & X &   &   \\
+DbContext                        & X & X & X &   & X \\
+Database                         & X & X & X &   & X \\
+Keycloak                         & X &   & X & X & X \\
+\end{tabular}%
+}
+\caption{Part 2: the user story integration plans. The last step runs against the deployed system, so Keycloak is real.}
+\label{tab:use-case-overview}
+\end{table}
+
+\section{User story integration plan: Sign Up and First Order}
+\label{sec:sign-up-plan}
+% TODO: write scope, plan table and steps. The backend is tested in the plans for onboarding, subscription and package types. Step 1 is the sign-up screens with a fake api-client; check what the tests in clients/apps/mobile cover. Step 2 is the app against the deployed system with a real Keycloak.
+
+\section{User story integration plan: Next Order Before Expiry}
+\label{sec:next-order-plan}
+% TODO: write this plan when the expiry code is merged (PMU-94). The system clock is a stub in this plan, because the tests have to choose the time.
+
+\section{User story integration plan: Admin Sends an Order}
+\label{sec:admin-sends-order-plan}
+
+\subsection{Scope}
+This plan follows the user stories of the administrator in the epic Dispatch: to see the orders that should be sent (FR-05) and to mark an order as sent (FR-06). The backend of the two stories is tested in the plan for admin orders (Section~\ref{sec:admin-orders-plan}), and the login in the authentication and authorization plan (Section~\ref{sec:auth-plan}). This plan tests the admin panel on top of them.
+
+\subsection{Strategy}
+Top-down: first the admin panel with a fake api-client, then the admin panel together with the real API.
+
+\subsection{Rules}
+\begin{itemize}
+  \item The API part of step 2 is run with the Postman collections for FR-05 and FR-06 (appendix 6.1), and the panel part is run by hand.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:admin-sends-order-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+admin-panel                      & T & T \\
+api-client                       & S & X \\
+AdminController                  &   & X \\
+AdminOnly                        &   & X \\
+KeycloakRoleClaimsTransformation &   & X \\
+JwtBearer                        &   & X \\
+OrderService                     &   & X \\
+OrderRepository                  &   & X \\
+System clock                     &   & X \\
+DbContext                        &   & X \\
+Database                         &   & X (SQL Server) \\
+Keycloak                         &   & X \\
+\end{tabular}
+\caption{Integration plan for admin sends an order.}
+\label{tab:admin-sends-order-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does the dispatch queue show the planned orders and send the right order?}
+The tests render the dispatch queue and the hook that marks an order as sent, and they fake the api-client. The tests check the following:
+\begin{itemize}
+  \item The queue shows a loading indicator, an error message with a way to try again, an explanation when there are no orders, and the orders in the order they come from the API.
+  \item There is a button on every row, and pressing it sends the order in that row.
+  \item The buttons are disabled while an order is being sent.
+  \item When the order is sent, the list is loaded again.
+  \item When the API answers 409, the panel says that the order has already been shipped. When it answers 404, the panel says that the order could not be found. In both cases the list is loaded again. Any other error gives a general message, and the list is not loaded again.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Can the administrator see and send an order in the real system?}
+The administrator logs in at the admin panel with a real Keycloak, sees the planned orders, presses the button to mark one as sent, and sees it leave the list. The step also checks the answers the panel must handle: an order that is already sent gives the message that it has been shipped, and the list is loaded again. The API part of the same cases is run with the Postman collections for FR-05 and FR-06.
+
+\section{User story integration plan: Log In}
+\label{sec:login-plan}
+This plan follows the user stories about logging in, for the customer and for the administrator (NFR-10). The login is tested in steps 5 and 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}): step 5 with a fake Keycloak and API, and step 6 by hand with all parts real. % TODO: decide whether this plan is only that reference
+
+\section{User story integration plan: Default Package Types}
+\label{sec:package-types-plan}
+% TODO: write scope, plan table and steps. The backend is tested in the plan for package types (Section~\ref{sec:package-types-backend-plan}).
+
 \end{document}

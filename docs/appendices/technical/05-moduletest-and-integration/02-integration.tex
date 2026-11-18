@@ -44,7 +44,6 @@ The plans are in two parts, from the bottom of the dependency tree to the top. P
 Table~\ref{tab:backend-overview} shows part 1, and Table~\ref{tab:use-case-overview} shows part 2. Table~\ref{tab:use-case-trace} shows which backend plans each user story plan builds on. The user story integration plans are:
 \begin{enumerate}
   \item Sign up and first order (FR-01, FR-03).
-  \item Next order before expiry (FR-04, FR-19).
   \item Admin sends an order (FR-05, FR-06, NFR-10).
   \item Log in, for the customer and for the administrator.
   \item Default package types (FR-03).
@@ -55,16 +54,16 @@ Table~\ref{tab:backend-overview} shows part 1, and Table~\ref{tab:use-case-overv
 \footnotesize
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \rowcolors{2}{gray!15}{white}
-\begin{tabular}{@{}l C{2.4cm} C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l C{2.4cm} C{1.9cm} C{1.9cm} C{1.6cm} C{1.6cm}@{}}
 \textbf{User story} & \textbf{Authentication and authorization} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{Package types} & \textbf{Admin orders} \\
 \hline
-Sign up and first order  & X & X & X & X &   \\
-Next order before expiry &   &   & X &   & X \\
+Sign up and first order  & X & X & X & X & \\
 Admin sends an order     & X &   &   &   & X \\
-Log in                   & X &   &   &   &   \\
-Default package types    & X &   &   & X &   \\
+Log in                   & X &   &   &   & \\
+Default package types    & X &   &   & X & \\
 \end{tabular}
-\caption{The backend plans that each user story plan builds on.}
+\caption{The backend plans that each user story integration plan builds on.}
 \label{tab:use-case-trace}
 \end{table}
 
@@ -100,27 +99,29 @@ A column shows the parts that are included at the last step of the feature.
 \rowcolors{2}{gray!15}{white}
 \setlength{\tabcolsep}{4pt}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}l C{1.9cm} C{2.6cm} C{1.6cm} C{1.9cm} C{1.9cm} C{1.9cm} C{1.7cm}@{}}
-\textbf{Component} & \textbf{Database connection} & \textbf{Authentication and authorization} & \textbf{Get items} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{Package types} & \textbf{Admin orders} \\
+\begin{tabular}{@{}l C{1.9cm} C{2.6cm} C{1.6cm} C{1.9cm} C{1.9cm} C{1.9cm} C{1.7cm} C{1.7cm}@{}}
+\textbf{Component} & \textbf{Database connection} & \textbf{Authentication and authorization} & \textbf{Get items} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{Package types} & \textbf{Admin orders} & \textbf{Next order} \\
 \hline
-mobile-app                       &   & T &   &   &   &   &   \\
-admin-panel                      &   & T &   &   &   &   &   \\
-api-client                       &   & X &   &   &   &   &   \\
-Controllers                      &   & X & T & T & T & T & T \\
-AdminOnly policy                 &   & X &   &   &   &   & X \\
-KeycloakRoleClaimsTransformation &   & X &   &   &   &   & X \\
-JwtBearer                        &   & X & X & X & X & X & X \\
-Services                         &   &   & X & X & X & X & X \\
-Repositories                     & T &   & X & X & X & X & X \\
-System clock                     &   &   &   &   & X &   & X \\
-DbContext                        & X &   & X & X & X & X & X \\
-Database                         & X &   & X & X & X & X & X \\
-Keycloak                         &   & X & S & S & S & S & S \\
+mobile-app                       &   & T &   &   &   &   &   &   \\
+admin-panel                      &   & T &   &   &   &   &   &   \\
+api-client                       &   & X &   &   &   &   &   &   \\
+Controllers                      &   & X & T & T & T & T & T &   \\
+NextOrderPlanner                 &   &   &   &   &   &   &   & T \\
+AdminOnly policy                 &   & X &   &   &   &   & X &   \\
+KeycloakRoleClaimsTransformation &   & X &   &   &   &   & X &   \\
+JwtBearer                        &   & X & X & X & X & X & X &   \\
+Services                         &   &   & X & X & X & X & X & X \\
+Repositories                     & T &   & X & X & X & X & X & X \\
+System clock                     &   &   &   &   & X &   & X & X \\
+DbContext                        & X &   & X & X & X & X & X & X \\
+Database                         & X &   & X & X & X & X & X & X \\
+Keycloak                         &   & X & S & S & S & S & S &   \\
 \end{tabular}%
 }
 \caption{Part 1: the backend plans.}
 \label{tab:backend-overview}
 \end{table}
+
 
 \subsection{Database in the Backend Tests}
 We use SQLite in the tests as much as possible, because:
@@ -378,7 +379,7 @@ Bottom-up: first the database, then SubscriptionService, then SubscriptionContro
 
 \subsection{Rules}
 \begin{itemize}
-  \item The system clock is real, because the tests only compare times from the same clock. A stub is first needed for the expiry of orders.
+  \item The system clock is real, because the tests only compare times from the same clock. The expiry of orders is tested in the plan for next order (Section~\ref{sec:next-order-backend-plan}).
 \end{itemize}
 
 \subsection{Plan}
@@ -507,6 +508,51 @@ Now the tests send HTTP requests, so AdminController is T, JwtBearer is X and Ke
 
 Two requests at the very same time are not tested through HTTP. That case is covered by step 1.
 
+\section{Backend plan: Next Order}
+\label{sec:next-order-backend-plan}
+
+\subsection{Scope}
+This plan tests how the system creates the next order for a subscription 14 days before its latest sent order expires (FR-19). The expiry date is set when an order is sent (FR-04). The rules for when a subscription is ready are tested in the unit tests of Subscription and SubscriptionService. This plan tests the connections around them.
+
+\subsection{Strategy}
+Bottom-up: first the query against the database, then the background service.
+
+\subsection{Rules}
+\begin{itemize}
+  \item The system clock is real. The test of the planner chooses the time by saving a sent order whose sent time makes it expire in 13 days, so it does not need a stub.
+  \item The planner waits five minutes between runs. The test starts it and waits until the next order is saved, so it does not wait for a second run.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:next-order-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+NextOrderPlanner       &   & T \\
+SubscriptionService    &   & X \\
+SubscriptionRepository & T & X \\
+System clock           &   & X \\
+DbContext              & X & X \\
+Database               & X (SQLite) & X (SQLite) \\
+\end{tabular}
+\caption{Integration plan for next order.}
+\label{tab:next-order-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does the database return only the subscriptions that are ready for a next order?}
+The tests call SubscriptionRepository directly, with a fixed time. The rule for when a subscription is ready is an expression that EF Core turns into SQL, so only a real database can show that it gives the same answer as the rule in the domain. The test saves five subscriptions. One is ready, with its latest order expiring in exactly 14 days. The other four are not: one has 15 days left, one is paused, one has an order that is waiting to be sent, and one has a first order that is not sent yet. Only the ready one is returned.
+
+\subsubsection*{Step 2 -- Does the planner save the next order when it starts?}
+The test starts NextOrderPlanner on the whole API, with the real service, repository and DbContext. A subscription whose latest order expires in 13 days gets a second order saved in the database.
+
+The test only covers a subscription that is ready. That the planner logs a failure and keeps running is not tested.
+
 \section{User Story Integration Plans}
 
 \subsection{Rules for the User Story Plans}
@@ -525,26 +571,23 @@ A column shows the parts that are included in the user story integration plans.
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \rowcolors{2}{gray!15}{white}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}l C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
-\textbf{Component} & \textbf{Sign up and first order} & \textbf{Next order before expiry} & \textbf{Admin sends an order} & \textbf{Log in} & \textbf{Default package types} \\
+\begin{tabular}{@{}l C{2.0cm} C{2.0cm} C{2.0cm} C{2.0cm}@{}}
+\textbf{Component} & \textbf{Sign up and first order} & \textbf{Admin sends an order} & \textbf{Log in} & \textbf{Default package types} \\
 \hline
-mobile-app                       & T &   &   & T & T \\
-admin-panel                      &   &   & T & T &   \\
-api-client                       & X &   & X & X & X \\
-Controllers                      & X &   & X & X & X \\
-AdminOnly policy                 &   &   & X & X &   \\
-KeycloakRoleClaimsTransformation &   &   & X & X &   \\
-JwtBearer                        & X &   & X & X & X \\
-Services                         & X & X & X &   & X \\
-Background service               &   & T &   &   &   \\
-Repositories                     & X & X & X &   & X \\
-System clock                     & X & S & X &   &   \\
-DbContext                        & X & X & X &   & X \\
-Database                         & X & X & X &   & X \\
-Keycloak                         & X &   & X & X & X \\
-\end{tabular}%
-}
+mobile-app                       & T &   & T & T \\
+admin-panel                      &   & T & T & \\
+api-client                       & X & X & X & X \\
+Controllers                      & X & X & X & X \\
+AdminOnly policy                 &   & X & X & \\
+KeycloakRoleClaimsTransformation &   & X & X & \\
+JwtBearer                        & X & X & X & X \\
+Services                         & X & X &   & X \\
+Repositories                     & X & X &   & X \\
+System clock                     & X & X &   & \\
+DbContext                        & X & X &   & X \\
+Database                         & X & X &   & X \\
+Keycloak                         & X & X & X & X \\
+\end{tabular}
 \caption{Part 2: the user story integration plans. The last step runs against the deployed system, so Keycloak is real.}
 \label{tab:use-case-overview}
 \end{table}
@@ -553,9 +596,6 @@ Keycloak                         & X &   & X & X & X \\
 \label{sec:sign-up-plan}
 % TODO: write scope, plan table and steps. The backend is tested in the plans for onboarding, subscription and package types. Step 1 is the sign-up screens with a fake api-client; check what the tests in clients/apps/mobile cover. Step 2 is the app against the deployed system with a real Keycloak.
 
-\section{User story integration plan: Next Order Before Expiry}
-\label{sec:next-order-plan}
-% TODO: write this plan when the expiry code is merged (PMU-94). The system clock is a stub in this plan, because the tests have to choose the time.
 
 \section{User story integration plan: Admin Sends an Order}
 \label{sec:admin-sends-order-plan}

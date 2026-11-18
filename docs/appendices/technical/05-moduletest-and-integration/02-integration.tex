@@ -16,8 +16,10 @@
   1.1 & 04-11-2026 & Group 3 & Integration strategy and plan added \\
   1.2 & 09-11-2026 & Group 3 & Authentication and authorization plan added \\
   1.3 & 11-11-2026 & Group 3 & Integration overview added \\
-  1.4 & 12-11-2026 & Group 3 & Subscription plan added \\
+  1.4 & 11-11-2026 & Group 3 & Subscription plan added \\
   1.5 & 11-11-2026 & Group 3 & Tokens without a user ID added \\
+  1.6 & 18-11-2026 & Group 3 & Planned orders plan added \\
+  1.7 & 18-11-2026 & Group 3 & Mark as sent plan added \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -35,12 +37,14 @@ Keycloak is a separate branch of the tree. The apps log in at Keycloak, and the 
 \section{Integration Overview}
 
 \subsection{Strategy}
-We use collaboration integration. Each column in Table~\ref{tab:integration-overview} is a feature. Each feature gets an integration plan of its own.
+We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step. Each column in Table~\ref{tab:integration-overview} is a feature. Each feature gets an integration plan of its own.
 
 \subsection{Rules for All Integration Plans}
 \begin{itemize}
   \item A part is integrated only when its unit tests pass.
-  \item We are allowed to use a stub instead of Keycloak, since it is outside our system.
+  \item A step drives one top part. The test uses the interface of that part, for example an endpoint, a service or a repository.
+  \item The parts below the top are real, unless the plan says otherwise.
+  \item In the automated tests, Keycloak is faked with test tokens. It is outside our system, and we do not want the tests to need a running server. The only step with a real Keycloak is step 6 of the authentication and authorization plan (Section~\ref{sec:auth-plan}), which is manual.
   \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference, except in step 2 of the database connection plan (Section~\ref{sec:db-plan}).
   \item A step can have several test cases, for example with a valid, a missing and an expired access token.
   \item In a table representing an integration plan:
@@ -77,31 +81,32 @@ Database connection & Step 2 & The migrations run, and the maximum lengths are e
 \end{table}
 
 \subsection{Overview of the Integration Plans}
-Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own subsection in this document. A column shows the parts that are included when on the last step of the feature's integration plan.
+Table~\ref{tab:integration-overview} shows the features in the order we integrate them. Each feature has its own plan and its own section in this document. A column shows the parts that are included at the last step of the feature's integration plan.
 
 \begin{table}[H]
 \centering
 \footnotesize
-\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \rowcolors{2}{gray!15}{white}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l C{1.7cm} C{2.4cm} C{1.5cm} C{1.8cm} C{1.9cm}@{}}
-\textbf{Component} & \textbf{\mbox{Database}\newline \mbox{connection}} & \textbf{\mbox{Authentication}\newline \mbox{and authorization}} & \textbf{\mbox{Get items}} & \textbf{\mbox{Onboarding}} & \textbf{\mbox{Subscription}} \\
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l c c c c c c c@{}}
+\textbf{Component} & \textbf{\shortstack{Database\\connection}} & \textbf{\shortstack{Authentication\\and authorization}} & \textbf{\shortstack{Get\\items}} & \textbf{Onboarding} & \textbf{Subscription} & \textbf{\shortstack{Planned\\orders}} & \textbf{\shortstack{Mark as\\sent}} \\
 \hline
-mobile-app                       &   & T &   &   &   \\
-admin-panel                      &   & T &   &   &   \\
-api-client                       &   & X &   &   &   \\
-Controllers                      &   & X & T & T & T \\
-AdminOnly policy                 &   & X &   &   &   \\
-KeycloakRoleClaimsTransformation &   & X &   &   &   \\
-JwtBearer                        &   & X & X & X & X \\
-Services                         &   &   & X & X & X \\
-Repositories                     & T &   & X & X & X \\
-System clock                     &   &   &   &   & X \\
-DbContext                        & X &   & X & X & X \\
-Database                         & X &   & X & X & X \\
-Keycloak                         &   & X & S & S & S \\
-\end{tabular}
+mobile-app                       &   & T &   &   &   &   &   \\
+admin-panel                      &   & T &   &   &   &   &   \\
+api-client                       &   & X &   &   &   &   &   \\
+Controllers                      &   & X & T & T & T & T & T \\
+AdminOnly policy                 &   & X &   &   &   & X & X \\
+KeycloakRoleClaimsTransformation &   & X &   &   &   & X & X \\
+JwtBearer                        &   & X & X & X & X & X & X \\
+Services                         &   &   & X & X & X & X & X \\
+Repositories                     & T &   & X & X & X & X & X \\
+System clock                     &   &   &   &   & X &   & X \\
+DbContext                        & X &   & X & X & X & X & X \\
+Database                         & X &   & X & X & X & X & X \\
+Keycloak                         &   & X & S & S & S & S & S \\
+\end{tabular}%
+}
 \caption{Overview of the integration plans, in the order they are integrated.}
 \label{tab:integration-overview}
 \end{table}
@@ -136,84 +141,6 @@ We are mainly interested in testing to things:
 \subsubsection*{Step 2 -- Do the migrations and constraints work on SQL Server?}
 SQLite does not enforce maximum lengths (which we have some constraints about in e.g. Customer class), and it does not run our migrations.
 So for this step, we use a real SQL Sever in Docker, so we can check the constraints that SQLite ignores and run migrations.
-
-\section{Integration plan: API-to-database (DELETE?)}
-
-\subsection{Strategy}
-We use collaboration integration. A step in the plan is a feature, and a step integrates the parts that the feature needs. This fits how we work. We build a thin skeleton through all the layers first, with one or a few endpoints in the apps, the API, the database and Keycloak. Then we add features on top of it. Each feature is one more step.
-
-Inside a feature we integrate from the bottom. When a class has another real class below it, we first test the two together, and then the whole feature through the endpoint. For example, the subscription repository is tested against the database before the subscription endpoint is tested. If a test fails, we then know which connection is wrong.
-
-The weak spot of collaboration integration is that some connections in the tree may never be used by a feature. We handle that with a last step that goes through every connection and checks that a test uses it.
-
-\subsection{Rules}
-\begin{itemize}
-  \item A step drives one top part. The test calls the system the way a user would, through an endpoint or a service.
-  \item The parts below the top are real, unless a rule below says otherwise.
-  \item Keycloak is always faked with test tokens. It is outside our system, and we do not want the tests to need a running server.
-  \item The database engine is SQLite in the tests and SQL Server in production. We accept that difference.
-\end{itemize}
-
-\subsection{Plan}
-Table~\ref{tab:integration-plan} shows one step for each feature we have today. T is the part the test drives, X is a real part and S is a fake. An empty cell means the part is not used by the feature.
-
-\begin{table}[H]
-\centering
-\small
-\rowcolors{2}{gray!15}{white}
-\begin{tabular}{@{}l c c c c@{}}
-\textbf{Part} & \textbf{1 Admin access} & \textbf{2 Get items} & \textbf{3 Onboard} & \textbf{4 Subscribe} \\
-\hline
-Keycloak & S & S & S & S \\
-Authentication and roles & X & X & X & X \\
-Admin controller & T & & & \\
-Items controller & & T & & \\
-User controller & & & T & \\
-Subscription controller & & & & T \\
-Item service & & X & & \\
-Customer service & & & X & \\
-Subscription service & & & & X \\
-Item repository & & X & & \\
-Customer repository & & & X & X \\
-Subscription repository & & & & X \\
-System clock & & & & X \\
-DbContext & & X & X & X \\
-\end{tabular}
-\caption{Integration plan for the features we have today.}
-\label{tab:integration-plan}
-\end{table}
-
-A last step goes through every connection in the dependency tree and checks that at least one of the steps above uses it. A connection that no step uses becomes a new test.
-
-\subsection{Test Cases}
-There is no tool that measures how many connections an integration test covers, so we choose the test cases ourselves. For each step we start from the feature and test what a user can do with it, including the cases where it must fail. We also look at how the unit tests of the lower classes use their interfaces, and we check that the same cases can be sent through the top part.
-
-\subsection{Example: Admin Access}
-Step 1 in the plan is the admin endpoint. Only a user with the admin role may call it. A request without a valid token must get the answer unauthorized, and a request with a valid token but without the admin role must get the answer forbidden.
-
-The admin controller is the top part (T). The authentication and the role check are real (X). Keycloak is faked (S). The tests make their own tokens with a test key, and the API is set to trust that key.
-
-The class that reads the roles from the token is already tested alone. The integration test checks the connections around it. They only exist when the API runs, so a test of a single class cannot find an error in them:
-
-\begin{itemize}
-  \item The token settings in the API: the key, the issuer, the audience and the expiry.
-  \item The order of the middleware, with authentication before authorization.
-  \item The registration of the role reader, so the roles from the token reach the policy.
-  \item The admin policy, which must give unauthorized without a token and forbidden without the admin role.
-\end{itemize}
-
-The test cases and the result are in appendix 5.2.1.
-
-If one of these is wrong, the tests of the single classes still pass, but the endpoint gives the wrong answer. If we forget to register the role reader, an admin gets the answer forbidden.
-
-We build the tests in two stages. Each stage adds one more real part, so an error always points to the part that was added last.
-
-\begin{enumerate}
-  \item \emph{The token check.} We send requests where the token is missing, is not a JWT, is signed with another key, has expired, or is made for another audience or issuer. All of them must give unauthorized. The role check is never reached here, so a failure is an error in the token settings or in the order of the middleware.
-  \item \emph{The role check.} The token is valid, and only the roles change. A token without the admin role must give forbidden, and a token with the admin role must give ok, also when the user has more roles. The token check is already tested, so a failure is an error in the registration of the role reader or in the policy.
-\end{enumerate}
-
-If we only had one test with a valid admin token, a failure could come from any of the four connections, and we would have to search. With the tests in this order, the first failing stage tells us where to look.
 
 \section{Integration plan: Authentication and Authorization}
 \label{sec:auth-plan}
@@ -272,6 +199,23 @@ This time, JwtBearer is X, because the tests send http-requests to AdminControll
   \item The RSA key pair: A private key used to sign the access token and a public key that is later used to verify the signature on the access token.
   \item A method that provides signed access tokens.
 \end{itemize}
+
+These connections only exist when the API runs, so a test of a single class cannot find an error in them:
+\begin{itemize}
+  \item The token settings in the API: the key, the issuer, the audience and the expiry.
+  \item The order of the middleware, with authentication before authorization.
+  \item The registration of KeycloakRoleClaimsTransformation, so the roles from the token reach the policy.
+  \item The AdminOnly policy, which must give 401 without a token and 403 without the admin role.
+\end{itemize}
+
+If one of them is wrong, the tests of the single classes still pass, but the endpoint gives the wrong answer. If KeycloakRoleClaimsTransformation is not registered, an admin gets 403.
+
+
+The step has two stages. Each stage adds one more real part, so an error always points to the part that was added last.
+\begin{enumerate}
+ \item \emph{The token check.} The token is missing, is not a JWT, is signed with another key, has expired, or is made for another audience or issuer. All of them must give 401. The role check is never reached, so a failure is an error in the token settings or in the order of the middleware.
+  \item \emph{The role check.} The token is valid, and only the roles change. A token without the admin role must give 403, and a token with the admin role must give 200, also when the user has more roles. The token check is already tested, so a failure is an error in the registration of KeycloakRoleClaimsTransformation or in the AdminOnly policy.
+\end{enumerate}
 
 \subsubsection*{Step 3 -- Is access to a non-admin controller correctly enforced based on the access token's validity?}
 Non-admin controllers with [authorize] should only allow acces for requests with a valid access token.
@@ -465,4 +409,128 @@ We decided that the API answers 401 Unauthorized in that case. The token is not 
 
 The check is tested on two levels. A small helper that reads the user ID from the token is tested on its own with a present, missing, empty and blank ID. Then each of the four affected endpoints (reading and saving the user, reading and creating a subscription) is called through the real pipeline with a signed test token without a user ID and with a blank one. The calls carry a valid body, because the API checks the body before the controller runs, and the user ID is checked in the controller. All eight calls must answer 401. We ran these tests before the fix, and they failed with 404 and 500, so they hit the actual problem.
 
+\section{Integration plan: Planned Orders}
+\label{sec:planned-orders-plan}
+
+\subsection{Scope}
+This plan tests how an admin reads the planned orders through \texttt{GET /admin/orders/planned}. Token validation and the admin role are covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}). Here we only check that the endpoint is closed to users who are not admins.
+
+\subsection{Strategy}
+Bottom-up: first the repository against the database, then the controller.
+
+\subsection{Rules}
+\begin{itemize}
+  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
+  \item The tests put the orders directly into the database through the DbContext. That way we choose the dates, the customers and which orders are sent.
+  \item Every test uses its own database.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:planned-orders-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+AdminController                  &   & T \\
+AdminOnly                        &   & X \\
+KeycloakRoleClaimsTransformation &   & X \\
+JwtBearer                        &   & X \\
+OrderService                     &   & X \\
+OrderRepository                  & T & X \\
+DbContext                        & X & X \\
+Database                         & X (SQLite) & X (SQLite) \\
+Keycloak                         &   & S \\
+\end{tabular}
+\caption{Integration plan for planned orders.}
+\label{tab:planned-orders-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does OrderRepository return the planned orders through the real DbContext?}
+The tests call OrderRepository directly, without an HTTP request. The query joins orders, subscriptions and customers and keeps only the orders that are not sent. A unit test with a fake repository cannot show that the query works, so we run it against the database. The tests check the following:
+\begin{itemize}
+  \item An empty database gives an empty list.
+  \item A planned order has its id, planned time, customer name, address and lines, and the lines are sorted by package type name.
+  \item A sent order is left out.
+  \item Orders in the past and in the future are both returned.
+  \item The orders are sorted by planned time, also when the times have different offsets, and orders with the same time come in the same order every time.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Is GET /admin/orders/planned only available to an admin, and is the answer correct?}
+Now the tests send HTTP requests, so AdminController is T, JwtBearer is X and Keycloak is S. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401, and a token with the role household gets 403.
+  \item An admin with no orders gets 200 and an empty array.
+  \item An admin gets only the planned orders, from several customers, sorted by planned time.
+  \item The JSON has the fields \texttt{orderId}, \texttt{plannedAt}, \texttt{customerName}, \texttt{address} and \texttt{lines}.
+\end{itemize}
+
+The tests for 401 and 403 are a quick check that the controller has the admin policy. The mechanism behind them is tested in the authentication and authorization plan.
+\section{Integration plan: Mark as Sent}
+\label{sec:mark-as-sent-plan}
+
+\subsection{Scope}
+This plan tests how an admin marks a planned order as sent through \texttt{POST /admin/orders/\{orderId\}/shipment}. The rule that only a planned order can be sent is tested in the unit tests of Order and OrderService. This plan tests the connections around it. Token validation is covered by the authentication and authorization plan (Section~\ref{sec:auth-plan}).
+
+\subsection{Strategy}
+Bottom-up: first the repository against the database, then the controller.
+
+\subsection{Rules}
+\begin{itemize}
+  \item SQLite, and Keycloak is faked with test tokens, as in the other plans.
+  \item The system clock is real. The tests only check that the time of sending is set, not what it is.
+  \item The sent time is an EF Core concurrency token, and not a SQL Server row version, because the tests run on SQLite. It is an ordinary column, so it behaves the same in both databases.
+  \item The tests put the orders directly into the database, including an order that is already sent.
+\end{itemize}
+
+\subsection{Plan}
+Table~\ref{tab:mark-as-sent-integration-plan} shows the steps. T is the top module, X is a real part and S is a stub. An empty cell means the part is not part of the step.
+
+\begin{table}[H]
+\centering
+\small
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{@{}l c c@{}}
+\textbf{Component} & \textbf{Step 1} & \textbf{Step 2} \\
+\hline
+AdminController                  &   & T \\
+AdminOnly                        &   & X \\
+KeycloakRoleClaimsTransformation &   & X \\
+JwtBearer                        &   & X \\
+OrderService                     &   & X \\
+OrderRepository                  & T & X \\
+System clock                     &   & X \\
+DbContext                        & X & X \\
+Database                         & X (SQLite) & X (SQLite) \\
+Keycloak                         &   & S \\
+\end{tabular}
+\caption{Integration plan for mark as sent.}
+\label{tab:mark-as-sent-integration-plan}
+\end{table}
+
+\subsection{Steps}
+\subsubsection*{Step 1 -- Does OrderRepository find an order and save the sent time, also when two admins act at once?}
+The tests call OrderRepository directly. The case with two admins only exists with a real DbContext: EF Core adds the old sent time to the update, and the update fails if another admin has already changed it. A fake repository cannot show that. The tests check the following:
+\begin{itemize}
+  \item An unknown id gives no order, and a known id gives the order.
+  \item A sent time that is saved can be read back through a new DbContext.
+  \item Two DbContexts load the same planned order. The first saves, and the second gets an OrderConflictException when it saves.
+\end{itemize}
+
+\subsubsection*{Step 2 -- Can an admin mark a planned order as sent through /admin/orders/\{orderId\}/shipment?}
+Now the tests send HTTP requests, so AdminController is T, JwtBearer is X and Keycloak is S. The tests check the following:
+\begin{itemize}
+  \item A request without a token gets 401, and a token with the role household gets 403.
+  \item An admin marking a planned order gets 204, the sent time is set in the database, and the order is no longer in \texttt{GET /admin/orders/planned}.
+  \item An unknown order gets 404, and so does an id that is not a GUID.
+  \item An order that is already sent gets 409, and its first sent time is not changed.
+  \item Two calls after each other get 204 and then 409.
+  \item With two planned orders, only the order in the request is sent.
+\end{itemize}
+
+Two requests at the very same time are not tested through HTTP. That case is covered by step 1.
 \end{document}

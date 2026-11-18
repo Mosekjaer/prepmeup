@@ -61,6 +61,27 @@ public class OrderExpiryTests
         Assert.That(_order.ExpiresAt, Is.EqualTo(new DateTimeOffset(2027, 11, 18, 12, 0, 0, TimeSpan.Zero)));
     }
 
+    [Test]
+    [Description("Planned order, not sent")]
+    public void IsNextOrderDue_PlannedOrder_ReturnsFalse()
+    {
+        var now = new DateTimeOffset(2027, 11, 10, 12, 0, 0, TimeSpan.Zero);
+
+        Assert.That(_order.IsNextOrderDue(now), Is.False);
+    }
+
+    [Description("Boundary: just before, right on and just after 14 days before expiry")]
+    [TestCase(-1, false)] // (num-seconds-after-boundary-date, to-be-planned-now)
+    [TestCase(0, true)]
+    [TestCase(1, true)]
+    public void IsNextOrderDue_AroundFourteenDaysBeforeExpiry_ReturnsExpected(int secondsFromBoundary, bool expected)
+    {
+        _order.MarkAsSent(new DateTimeOffset(2026, 11, 18, 12, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2027, 11, 4, 12, 0, 0, TimeSpan.Zero).AddSeconds(secondsFromBoundary);
+
+        Assert.That(_order.IsNextOrderDue(now), Is.EqualTo(expected));
+    }
+
     private static OrderLine NewLine(string packageTypeName, int quantity) =>
         new(
             PackageType.Create(

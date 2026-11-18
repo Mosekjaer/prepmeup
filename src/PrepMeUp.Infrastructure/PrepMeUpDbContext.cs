@@ -57,6 +57,7 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
             entity.HasKey(order => order.Id);
             entity.Property(order => order.SentAt).IsConcurrencyToken();
             entity.HasMany(order => order.Lines).WithOne().HasForeignKey("OrderId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(order => new { order.SubscriptionId, order.ExpiresAt });
             if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
             {
                 entity.Property(order => order.ExpiresAt).HasConversion(new UtcTicksConverter());

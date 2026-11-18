@@ -36,4 +36,16 @@ public class Order
         SentAt = sentAt;
         ExpiresAt = sentAt.AddYears(1); // AddYears() is a .NET built-in function that takes leap year into account.
     }
+
+    public bool IsNearExpiry(DateTimeOffset now)
+    {
+        if (ExpiresAt is null)
+        {
+            return false;
+        }
+
+        // 14 days or less until order expires -> return true
+        // More than 14 days until order expires -> return false
+        return now >= ExpiresAt.Value.AddDays(-14);
+    }
 }

@@ -1,0 +1,62 @@
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
+BEGIN TRANSACTION;
+
+DELETE ol
+FROM OrderLines ol
+JOIN Orders o ON o.Id = ol.OrderId
+JOIN Subscriptions s ON s.Id = o.SubscriptionId
+JOIN Customers c ON c.Id = s.CustomerId
+WHERE c.KeycloakId LIKE 'fr05-%';
+
+DELETE o
+FROM Orders o
+JOIN Subscriptions s ON s.Id = o.SubscriptionId
+JOIN Customers c ON c.Id = s.CustomerId
+WHERE c.KeycloakId LIKE 'fr05-%';
+
+DELETE s
+FROM Subscriptions s
+JOIN Customers c ON c.Id = s.CustomerId
+WHERE c.KeycloakId LIKE 'fr05-%';
+
+DELETE FROM Customers WHERE KeycloakId LIKE 'fr05-%';
+
+DECLARE @now DATETIMEOFFSET = SYSDATETIMEOFFSET();
+DECLARE @adult UNIQUEIDENTIFIER = 'dbd55106-cbca-4197-bf2b-e1b21b36e7bd';
+DECLARE @child UNIQUEIDENTIFIER = '52f89479-6e11-4698-8602-e7cbe63004ec';
+
+INSERT INTO Customers (Id, KeycloakId, Name, Email, Phone, Street, PostalCode, City) VALUES
+  ('f0500000-0000-0000-0000-00000000000a', 'fr05-a', 'FR-05 A', 'fr05-a@example.com', NULL, 'Testvej 1', '8000', 'Aarhus C'),
+  ('f0500000-0000-0000-0000-00000000000b', 'fr05-b', 'FR-05 B', 'fr05-b@example.com', NULL, 'Testvej 1', '8000', 'Aarhus C'),
+  ('f0500000-0000-0000-0000-00000000000c', 'fr05-c', 'FR-05 C', 'fr05-c@example.com', NULL, 'Testvej 1', '8000', 'Aarhus C'),
+  ('f0500000-0000-0000-0000-00000000000d', 'fr05-d', 'FR-05 D', 'fr05-d@example.com', NULL, 'Testvej 1', '8000', 'Aarhus C');
+
+INSERT INTO Subscriptions (Id, CustomerId, StartedAt, Status) VALUES
+  ('f0510000-0000-0000-0000-00000000000a', 'f0500000-0000-0000-0000-00000000000a', DATEADD(day, -20, @now), 0),
+  ('f0510000-0000-0000-0000-00000000000b', 'f0500000-0000-0000-0000-00000000000b', DATEADD(day, -20, @now), 0),
+  ('f0510000-0000-0000-0000-00000000000c', 'f0500000-0000-0000-0000-00000000000c', DATEADD(day, -20, @now), 0),
+  ('f0510000-0000-0000-0000-00000000000d', 'f0500000-0000-0000-0000-00000000000d', DATEADD(day, -20, @now), 0);
+
+INSERT INTO Orders (Id, SubscriptionId, PlannedAt, SentAt) VALUES
+  ('f0520000-0000-0000-0000-00000000000a', 'f0510000-0000-0000-0000-00000000000a', DATEADD(day, 9, @now), NULL),
+  ('f0520000-0000-0000-0000-00000000000b', 'f0510000-0000-0000-0000-00000000000b', DATEADD(day, 2, @now), NULL),
+  ('f0520000-0000-0000-0000-00000000000c', 'f0510000-0000-0000-0000-00000000000c', DATEADD(day, 5, @now), NULL),
+  ('f0520000-0000-0000-0000-00000000000d', 'f0510000-0000-0000-0000-00000000000d', DATEADD(day, -20, @now), DATEADD(day, -20, @now));
+
+INSERT INTO OrderLines (Id, OrderId, PackageTypeId, Quantity) VALUES
+  ('f0530000-0000-0000-0000-000000000001', 'f0520000-0000-0000-0000-00000000000a', @adult, 2),
+  ('f0530000-0000-0000-0000-000000000002', 'f0520000-0000-0000-0000-00000000000a', @child, 1),
+  ('f0530000-0000-0000-0000-000000000003', 'f0520000-0000-0000-0000-00000000000b', @adult, 1),
+  ('f0530000-0000-0000-0000-000000000004', 'f0520000-0000-0000-0000-00000000000c', @child, 3),
+  ('f0530000-0000-0000-0000-000000000005', 'f0520000-0000-0000-0000-00000000000d', @adult, 1);
+
+COMMIT TRANSACTION;
+
+SELECT c.Name, o.PlannedAt, o.SentAt
+FROM Orders o
+JOIN Subscriptions s ON s.Id = o.SubscriptionId
+JOIN Customers c ON c.Id = s.CustomerId
+WHERE c.KeycloakId LIKE 'fr05-%'
+ORDER BY c.Name;

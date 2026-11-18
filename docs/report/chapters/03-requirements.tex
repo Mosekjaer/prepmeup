@@ -1,5 +1,189 @@
 \chapter{User Requirements}\label{ch:requirements}
-% Functional and non-functional requirements (use cases, FURPS+, domain model).
-% The full requirements specification lives as an appendix:
-%   appendices/Technical/01Specifications/
 
+This chapter describes what PrepMeUp must do, seen from the people who use it. We
+start with the users, then the user stories and the functional requirements, then
+the requirements for quality, and finally the domain model, which shows the concepts
+the requirements talk about. The full requirements specification is in Appendix 1.2.
+Here we only show an overview and the requirements that matter most.
+
+\section{Users and System Context}\label{sec:req-users}
+
+PrepMeUp has two kinds of users. The \emph{customer} is a person who wants an
+emergency stock at home. The customer signs up for a subscription in the customer
+app, composes the orders and receives them. The \emph{administrator} is an employee of
+PrepMeUp. The administrator maintains the package types the customers choose from and
+sends the orders. \autoref{fig:rich-picture} in \autoref{ch:introduction} shows both
+users and what moves between them and the system.
+
+Both users log in through a separate identity provider. That is where they create an
+account, log in and change their password, so PrepMeUp never handles a password. The
+customer creates the account on the identity provider's login page and then enters
+name and address in the app. We call that step onboarding. Only an existing
+administrator can make another user an administrator. How the system and the identity
+provider fit together is shown in Appendix 3.3.
+
+Payment is simulated. The customer pays a subscription fee to a stored, fake card, and
+no money is charged. There is no real grocery supplier either. Hardware, logistics and
+the actual supply of goods are outside the project.
+
+\section{Epics and User Stories}\label{sec:req-stories}
+
+We have written the requirements as user stories, grouped into six epics.
+\autoref{tab:epics} shows the epics and the functional requirements that realise them.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}l p{5.6cm} l@{}}
+        \hline
+        Epic & What it covers & Requirements \\
+        \hline
+        Account & Creating an account, logging in, changing the password and deleting the account & FR-01, FR-08, FR-21 \\
+        Order contents & Choosing the number of adult and child packages, their package types and extra equipment & FR-07, FR-09, FR-13 \\
+        Subscription and orders & Getting a new order before the old one expires, seeing its status, pausing or cancelling & FR-01, FR-04, FR-07, FR-19 \\
+        Notifications & Being told before the next order is sent & FR-20 \\
+        Package catalogue & Adding package types and replacing them with new versions & FR-03, FR-11, FR-15 \\
+        Dispatch & Seeing which orders to send and marking them as sent & FR-05, FR-06, NFR-10 \\
+        \hline
+    \end{tabular}
+    \caption{The epics in the requirements specification and the requirements that realise them.}
+    \label{tab:epics}
+\end{table}
+
+Three user stories describe the core of the product. The first is about the customer:
+
+\begin{quote}
+As a customer, I want to automatically receive a new order before the old one expires,
+so that I don't have to keep track of the expiry date myself and have a chance to use
+the soon-to-expire items.
+\end{quote}
+
+The two others are about the administrator:
+
+\begin{quote}
+As an administrator, I want to see the orders that should be sent, sorted by which order
+should be sent first, so that orders are sent before the customer's previous order
+expires.
+\end{quote}
+
+\begin{quote}
+As an administrator, I want to mark an order as sent, so that the customer can see it is
+on its way.
+\end{quote}
+
+Together they describe the loop that keeps the stock in date. The system plans the next
+order, the administrator sends it, and the clock starts again.
+
+\section{Functional Requirements}\label{sec:req-functional}
+
+Each functional requirement has a number, FR-\emph{nn}, and a priority after the
+MoSCoW method: must have, should have, could have or won't have. A requirement keeps
+its number if it moves to another priority, so the numbers are not in order within
+each priority. The must-have requirements are the smallest system that lets a customer
+subscribe and receive a first order. They are shown in \autoref{tab:must-have}.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}p{1.6cm} p{12.6cm}@{}}
+        \hline
+        Number & Requirement \\
+        \hline
+        FR-01 & The customer can create an account and sign up for a PrepMeUp subscription in the customer app. \\
+        FR-02 & The back-end stores the customers, their subscriptions and their orders. \\
+        FR-03 & There are default package types for a normal diet, one for adults and one for children. \\
+        FR-04 & When an order is sent, its expiry date is set to one year after the sent date and kept for each of the customer's past orders. \\
+        FR-05 & The administrator can see all planned orders, sorted by planned send date, earliest first. \\
+        FR-06 & The administrator can register an order as sent. \\
+        FR-19 & 14 days before an order's expiry date, the system creates the next order for a customer with an active subscription. It has the same package types and quantities as the previous order. \\
+        \hline
+    \end{tabular}
+    \caption{The must-have functional requirements.}
+    \label{tab:must-have}
+\end{table}
+
+The should-have requirements make the product more useful for the customer. The
+customer can see the status of the orders and change a planned order (FR-07), change
+name and address (FR-08), and choose which package types an order contains and how
+many of each (FR-09). The customer also gets a notification when the next order is
+created, so there is time to change it before it is sent (FR-20). The could-have
+requirements include equipment packages such as a flashlight (FR-13) and a web build of
+the customer app (FR-16).
+
+Some requirements are won't have. A customer cannot choose how many days a package
+lasts (FR-12). A customer who wants to cover more days orders more packages instead.
+There are no packages made for allergies (FR-17) and no real grocery supplier (FR-18).
+Deleting the account (FR-21) is also left out, because it is not needed to show the
+core flow of the product.
+
+The requirements changed along the way. The biggest change came in version 1.4, when
+the orders went from being calculated from a household to being composed from package
+types. We explain that change with the domain model in \autoref{sec:req-domain-model}.
+In version 1.7 we set the expiry date to one year after the sent date, so it no longer
+depends on the items in the order.
+
+\section{Non-functional Requirements}\label{sec:req-nonfunctional}
+
+The non-functional requirements are grouped by the categories in FURPS+. We have written
+each of them so it can be measured and not just judged, and Appendix 6.1 describes how
+each one is tested. \autoref{tab:nfr} gives a short version of each requirement.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}p{2.6cm} p{1.6cm} p{10cm}@{}}
+        \hline
+        Category & Number & Requirement in short \\
+        \hline
+        Usability & NFR-01 & All text in the apps is in English, also error messages from the API. \\
+                  & NFR-02 & An error message says what went wrong and what the user can do, without technical details. \\
+        Reliability & NFR-03 & The customer app shows a connection error with an option to try again if the back-end cannot be reached. \\
+                    & NFR-04 & The API answers 503 with an English message if the database cannot be reached. \\
+        Performance & NFR-05 & With 10 users at the same time, 90\% of requests are answered in under 1 second. \\
+        Portability & NFR-06 & The customer app runs as an Android app. \\
+        Supportability & NFR-07 & Outside development, the API refuses to start without the address of the identity provider or the database. \\
+                       & NFR-08 & Every API endpoint is covered by at least one automated test. \\
+        Security & NFR-09 & A customer can only see and change their own data. \\
+                 & NFR-10 & Endpoints for administrators reject customers. \\
+                 & NFR-11 & Endpoints that need a logged-in user reject requests without a valid login. \\
+        \hline
+    \end{tabular}
+    \caption{The non-functional requirements in short. The full wording is in Appendix 1.2.}
+    \label{tab:nfr}
+\end{table}
+
+The security requirements matter most for the customer, because the system stores
+their name and address. NFR-09 means that a customer can never see another customer's
+orders, even by changing a number in a request.
+
+\section{Domain Model}\label{sec:req-domain-model}
+
+\autoref{fig:domain-model} shows the domain model. It shows the concepts the
+requirements talk about and how they relate, without any technology. Appendix 2.2
+describes it in more detail.
+
+\drawiofig[\linewidth]{domain-model}{Domain model of PrepMeUp: the concepts from the requirements and how they are associated, without technology.}{fig:domain-model}
+
+A customer lives at one address and has at most one subscription, and the subscription
+schedules the orders. An order contains one or more packages. Each package is
+described by a package type, for example an adult package or a child package, and the
+administrator maintains the package types and sends the orders. A package type lists
+its contents, which are items with a quantity. An item is either food or equipment, so
+a flashlight is offered in the same way as food and water.
+
+An order's status is not stored. It follows from whether the order has a sent date, so
+an order is either planned or sent. The expiry date is stored on the order. It is one
+year after the sent date, and the next order is created 14 days before it. The
+customer has at most one payment method, and a notification tells the customer about
+an order.
+
+\subsection{From Household to Package Types}
+
+In the first domain model, the customer described a household with members and a diet,
+and the system calculated the package from it. In version 1.4 we removed the household,
+and the customer now composes each order from package types instead.
+
+We had already chosen packages with fixed contents, so the system did not need to know
+who lives in the house, only how many packages of each type to send. That made the model
+smaller. The diet became part of the package type, for example Vegetarian Adult.
+
+The cost is that the customer now works out how many adult and child packages they
+need. That is one of the barriers from \autoref{ch:introduction}, which the household
+profile used to handle for them.

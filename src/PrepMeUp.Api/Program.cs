@@ -21,7 +21,9 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 builder.Services.AddInfrastructure(builder.Configuration); // Here, PrepMeUpContext and e.g. IItemRepository become know to the app
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<PackageTypeService>();
 builder.Services.AddScoped<SubscriptionService>();
+builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -82,17 +84,6 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("PrepMe
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
     dbContext.Database.Migrate();
-
-    // Seed the same items the PMU-9 spike hardcoded, so the endpoint has
-    // real data to return the first time the table is created.
-    if (!dbContext.Items.Any())
-    {
-        dbContext.Items.AddRange(
-            new Item { Id = Guid.NewGuid(), Name = "torch" },
-            new Item { Id = Guid.NewGuid(), Name = "water" },
-            new Item { Id = Guid.NewGuid(), Name = "radio" });
-        dbContext.SaveChanges();
-    }
 }
 
 app.UseExceptionHandler();

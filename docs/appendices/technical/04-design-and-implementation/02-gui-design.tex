@@ -14,6 +14,7 @@
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & Low-fidelity mockups of the customer app and the admin panel inserted \\
   1.1 & 04-11-2026 & Group 3 & Added navigation \\
+  1.2 & 12-11-2026 & Group 3 & Added what is different in K3 to K6 \\
 \end{versionhistory}
 
 \section{Low-fidelity Mockups}
@@ -31,6 +32,9 @@ The mockups were drawn before requirements specification 1.5, so a few details h
     \item Signing in and creating an account happen on the login page of the identity provider (Keycloak), which the app opens. K2 is the onboarding screen that follows.
     \item The password is changed on the identity provider's page, not in the app (K9).
     \item Deleting the account (K9) is now a won't-have (FR-21).
+    \item Build order (K3) has a counter for each active package type, so the app does not need to know which type is for adults and which for children. Equipment (FR-13) is not built. Each row has a Contents button that opens the package type (K4).
+    \item Payment (K5) is only the confirm button, with the order shown above it. Card details and a price (FR-10) are not built.
+    \item The home screen (K6) shows when the subscription started, the planned date, the status and the lines of the next order. It does not show an expiry date or a button to edit the next order (FR-07).
 \end{itemize}
 
 \subsection{Admin Panel}

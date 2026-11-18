@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.Contracts;
 using PrepMeUp.Application;
+using PrepMeUp.Domain;
 
 namespace PrepMeUp.Api.Controllers;
 
@@ -29,7 +31,11 @@ public class UserController(CustomerService customerService) : ControllerBase
             return NotFound();
         }
 
-        return Ok(new CustomerResponse(customer.Name, customer.Address));
+        return Ok(new CustomerResponse(
+            customer.Name,
+            customer.Email,
+            customer.Phone,
+            new AddressContract(customer.Address.Street, customer.Address.PostalCode, customer.Address.City)));
     }
 
     [HttpPut(Name = "User_SaveCustomer")]
@@ -44,7 +50,16 @@ public class UserController(CustomerService customerService) : ControllerBase
             return Unauthorized();
         }
 
-        await customerService.SaveDetailsAsync(keycloakId, request.Name, request.Address, cancellationToken);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return Unauthorized();
+        }
+
+        var phone = string.IsNullOrWhiteSpace(request.Phone) ? null : request.Phone;
+        var address = new Address(request.Address.Street, request.Address.PostalCode, request.Address.City);
+
+        await customerService.SaveDetailsAsync(keycloakId, email, request.Name, phone, address, cancellationToken);
         return NoContent();
     }
 }

@@ -17,11 +17,19 @@ public class SubscriptionRepository : ISubscriptionRepository
     {
         return _dbContext.Subscriptions
             .Include(subscription => subscription.Orders)
+            .ThenInclude(order => order.Lines)
+            .ThenInclude(line => line.PackageType)
             .SingleOrDefaultAsync(subscription => subscription.CustomerId == customerId, cancellationToken);
     }
 
     public async Task AddAsync(Subscription subscription, CancellationToken cancellationToken)
     {
+        var packageTypes = subscription.Orders.SelectMany(order => order.Lines).Select(line => line.PackageType).Distinct();
+        foreach (var packageType in packageTypes)
+        {
+            _dbContext.Entry(packageType).State = EntityState.Unchanged;
+        }
+
         await _dbContext.Subscriptions.AddAsync(subscription, cancellationToken);
     }
 

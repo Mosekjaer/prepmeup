@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   token: undefined as string | undefined,
   router: { push: vi.fn(), back: vi.fn() },
   getCustomer: vi.fn(),
+  getSubscription: vi.fn(),
 }));
 
 vi.mock('expo-router', async () => {
@@ -24,12 +25,15 @@ vi.mock('../src/lib/auth', () => ({
 vi.mock('../src/lib/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../src/lib/api')>()),
   userClient: { getCustomer: mocks.getCustomer },
+  subscriptionClient: { getSubscription: mocks.getSubscription, subscribe: vi.fn() },
 }));
 
 beforeEach(() => {
   mocks.token = 'access-token';
   mocks.router.push.mockReset();
   mocks.getCustomer.mockReset();
+  mocks.getSubscription.mockReset();
+  mocks.getSubscription.mockReturnValue(new Promise(() => {}));
 });
 
 it('does not load the customer when signed out', () => {
@@ -42,11 +46,17 @@ it('does not load the customer when signed out', () => {
 });
 
 it('welcomes an onboarded customer by name', async () => {
-  mocks.getCustomer.mockResolvedValue({ name: 'Malthe', address: 'Finlandsgade 22' });
+  mocks.getCustomer.mockResolvedValue({
+    name: 'Malthe',
+    email: 'malthe@example.com',
+    address: { street: 'Finlandsgade 22', postalCode: '8200', city: 'Aarhus N' },
+  });
 
   render(<HomeScreen />);
 
   expect(await screen.findByText('Welcome, Malthe')).toBeTruthy();
+  expect(screen.getByText('Finlandsgade 22')).toBeTruthy();
+  expect(screen.getByText('8200 Aarhus N')).toBeTruthy();
 });
 
 it('sends a customer who has not onboarded to onboarding', async () => {
@@ -65,4 +75,34 @@ it('shows an error that can be retried when loading fails', async () => {
 
   await waitFor(() => expect(mocks.getCustomer).toHaveBeenCalledTimes(2));
   expect(await screen.findByText('Could not load your profile.')).toBeTruthy();
+});
+
+it('shows the subscription of an onboarded customer', async () => {
+  mocks.getCustomer.mockResolvedValue({ name: 'Malthe', address: 'Finlandsgade 22' });
+  mocks.getSubscription.mockResolvedValue({
+    status: 'Active',
+    startedAt: '2026-10-01T10:26:32+00:00',
+    orders: [],
+  });
+
+  render(<HomeScreen />);
+
+  expect(await screen.findByText('Active since 1 Oct 2026')).toBeTruthy();
+});
+
+it('does not load the subscription when signed out', () => {
+  mocks.token = undefined;
+
+  render(<HomeScreen />);
+
+  expect(mocks.getSubscription).not.toHaveBeenCalled();
+});
+
+it('does not load the subscription for a customer who has not onboarded', async () => {
+  mocks.getCustomer.mockRejectedValue({ status: 404 });
+
+  render(<HomeScreen />);
+
+  await waitFor(() => expect(mocks.router.push).toHaveBeenCalledWith('/onboarding'));
+  expect(mocks.getSubscription).not.toHaveBeenCalled();
 });

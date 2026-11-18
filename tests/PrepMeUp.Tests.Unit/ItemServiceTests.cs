@@ -10,7 +10,7 @@ public class ItemServiceTests
     public async Task GetAllAsync_ReturnsItemsFromRepository()
     {
         var repository = Substitute.For<IItemRepository>();
-        IReadOnlyList<Item> items = [new Item { Id = Guid.NewGuid(), Name = "Water" }];
+        IReadOnlyList<Item> items = [new Item { Id = Guid.NewGuid(), Name = "Water", Type = ItemType.Food }];
         repository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(items);
         var sut = new ItemService(repository);
 

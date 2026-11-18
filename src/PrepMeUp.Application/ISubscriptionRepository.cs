@@ -5,7 +5,7 @@ namespace PrepMeUp.Application;
 public interface ISubscriptionRepository
 {
     Task<Subscription?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken);
-    Task<IReadOnlyList<Subscription>> GetActiveAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<Subscription>> GetReadyForNextOrderAsync(DateTimeOffset now, CancellationToken cancellationToken);
     Task AddAsync(Subscription subscription, CancellationToken cancellationToken);
     Task SaveChangesAsync(CancellationToken cancellationToken);
 }

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace PrepMeUp.Domain;
 
 public class Subscription
@@ -35,24 +37,21 @@ public class Subscription
         Status = SubscriptionStatus.Paused;
     }
 
-    public bool NextOrderShouldBePlanned(DateTimeOffset now)
+    public static Expression<Func<Subscription, bool>> NextOrderShouldBePlannedExpression(DateTimeOffset now)
     {
-        // Check 1: the subscription is active
-        if (Status != SubscriptionStatus.Active)
-        {
-            return false;
-        }
+        var latestAllowedExpiry = now.AddDays(Order.ReorderDaysBeforeExpiry); // The latest expiry-time we include this time around.
 
-        // Check 2: no order is waiting to be sent
-        if (_orders.Any(order => order.IsPlanned))
-        {
-            return false;
-        }
-
-        // Check 3: the latest sent order has reached its reorder date (14 days before it expires)
-        var latestSentOrder = _orders.MaxBy(order => order.SentAt);
-        return latestSentOrder is not null && latestSentOrder.HasReachedReorderDate(now);
+        return subscription =>
+            // Check 1: the subscription is active
+            subscription.Status == SubscriptionStatus.Active
+            // Check 2: no order is waiting to be sent
+            && subscription.Orders.All(order => order.SentAt != null)
+            // Check 3: the latest sent order has reached its reorder date (14 days before it expires)
+            && subscription.Orders.Max(order => order.ExpiresAt) <= latestAllowedExpiry;
     }
+
+    public bool NextOrderShouldBePlanned(DateTimeOffset now) =>
+        NextOrderShouldBePlannedExpression(now).Compile()(this);
 
     public void PlanNextOrder(DateTimeOffset now)
     {

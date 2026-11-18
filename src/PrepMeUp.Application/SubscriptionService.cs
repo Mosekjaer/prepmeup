@@ -63,24 +63,20 @@ public class SubscriptionService(
     public async Task<int> PlanNextOrdersAsync(CancellationToken cancellationToken)
     {
         var now = clock.UtcNow;
-        var subscriptions = await subscriptionRepository.GetActiveAsync(cancellationToken);
+        // Get active subscriptions that soon needs nex order (checks are handled in repository)
+        var subscriptions = await subscriptionRepository.GetReadyForNextOrderAsync(now, cancellationToken);
 
-        var planned = 0;
         foreach (var subscription in subscriptions)
         {
-            if (subscription.NextOrderShouldBePlanned(now))
-            {
-                subscription.PlanNextOrder(now);
-                planned++;
-            }
+            subscription.PlanNextOrder(now);
         }
 
-        if (planned > 0)
+        if (subscriptions.Count > 0)
         {
             await subscriptionRepository.SaveChangesAsync(cancellationToken);
         }
 
-        return planned;
+        return subscriptions.Count;
     }
 
 }

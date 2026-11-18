@@ -22,13 +22,13 @@ public class SubscriptionRepository : ISubscriptionRepository
             .SingleOrDefaultAsync(subscription => subscription.CustomerId == customerId, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Subscription>> GetActiveAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Subscription>> GetReadyForNextOrderAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
         return await _dbContext.Subscriptions
+            .Where(Subscription.NextOrderShouldBePlannedExpression(now))
             .Include(subscription => subscription.Orders)
             .ThenInclude(order => order.Lines)
             .ThenInclude(line => line.PackageType)
-            .Where(subscription => subscription.Status == SubscriptionStatus.Active)
             .ToListAsync(cancellationToken);
     }
 

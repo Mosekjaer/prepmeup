@@ -19,6 +19,7 @@
   1.3 & 28-10-2026 & Group 3 & Token renewal in the customer app \\
   1.4 & 28-10-2026 & Group 3 & The admin panel as a container \\
   1.5 & 04-11-2026 & Group 3 & Local and production setup moved to appendix 10.3, session lengths and token validation corrected \\
+  1.6 & 11-11-2026 & Group 3 & A token without a user id gives 401 \\
 \end{versionhistory}
 
 \section{Overview}
@@ -45,7 +46,7 @@ The numbers below match the arrows in the figure.
 
 \paragraph{7. Get Keycloak's keys.} The first time, the API fetches Keycloak's public signing keys and keeps them. After that it only fetches them again when it sees a key it does not know, or after a long time.
 
-\paragraph{8. Check the token and answer.} The API checks the token on its own: the signature, who issued it, that it is meant for our API, and that it has not expired \cite{ietf-rfc7519-jwt}. It then reads the user's roles from the token. A missing or invalid token gives 401. A valid token without the admin role gives 403 on admin endpoints.
+\paragraph{8. Check the token and answer.} The API checks the token on its own: the signature, who issued it, that it is meant for our API, and that it has not expired \cite{ietf-rfc7519-jwt}. It then reads the user's roles from the token. A missing or invalid token gives 401. So does a valid token without a user id, because the API cannot tell who the user is. A valid token without the admin role gives 403 on admin endpoints.
 
 So the password only travels between the user and Keycloak, and the API only ever sees the token. This is what the supervisor asked us to show at the meeting on 6/10.
 

@@ -6,11 +6,15 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.BackgroundServices;
+using PrepMeUp.Api.Configuration;
+using PrepMeUp.Api.ErrorHandling;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
 
 var builder = WebApplication.CreateBuilder(args);
+
+RequiredConfiguration.EnsurePresent(builder.Configuration, builder.Environment);
 
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
@@ -31,6 +35,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DatabaseUnavailableExceptionHandler>();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 

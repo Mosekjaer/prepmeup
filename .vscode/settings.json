@@ -14,6 +14,8 @@
             "name": "latexmk-shellescape",
             "command": "latexmk",
             "args": [
+                "-r",
+                "%WORKSPACE_FOLDER%/docs/latexmkrc",
                 "-pdf",
                 "-shell-escape",
                 "-synctex=1",

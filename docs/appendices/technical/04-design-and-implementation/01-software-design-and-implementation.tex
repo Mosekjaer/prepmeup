@@ -20,6 +20,8 @@
   1.4 & 04-11-2026 & Group 3 & Added onboarding flows for customers and administrators \\
   1.5 & 11-11-2026 & Group 3 & Added zombie users \\
   1.6 & 12-11-2026 & Group 3 & Added order lines \\
+  1.7 & 12-11-2026 & Group 3 & Added what the app does with errors when subscribing \\
+  1.8 & 11-11-2026 & Group 3 & A token without a user id gives 401 \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -85,7 +87,7 @@ The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 
 \paragraph{1 and 2. The app sends the data.} The customer types a name and an address and taps Save. The app sends both to the API as PUT /user through the generated API client, with the access token in the Authorization header. The login flow that gives the app the token is in appendix 3.1.
 
-\paragraph{3. The Api layer checks the request.} Before the controller runs, ASP.NET Core checks the token and the request body. A missing or invalid token gives 401. An empty name or address, or one that is too long, gives 400. The controller then takes the user id from the token and calls the customer service. The id is never sent in the body, so a customer can only change their own data.
+\paragraph{3. The Api layer checks the request.} Before the controller runs, ASP.NET Core checks the token and the request body. A missing or invalid token gives 401. An empty name or address, or one that is too long, gives 400. The controller then takes the user id from the token and calls the customer service. If the token has no user id, the controller answers 401 and does not call the service, see appendix 5.2. The id is never sent in the body, so a customer can only change their own data.
 
 \paragraph{4. Find the customer.} The service asks the repository for the customer with that user id. The repository is an interface in the Application layer. The Infrastructure layer implements it with EF Core, which turns the call into a SELECT.
 
@@ -266,6 +268,8 @@ This section explains what an order contains and why we store it the way we do. 
 \paragraph{The rules.} The rules are in the Domain project, so we can test them without a database. A quantity must be at least one, and a package type that has been replaced cannot be ordered. An order needs at least one line, and a package type can only appear once in an order. The database checks the quantity and the one line per package type as well, because it is the last place where wrong data can be stopped.
 
 \paragraph{From request to answer.} The app sends the lines in POST /subscription. The API checks that the list is not empty and that every quantity is at least one. The service then looks up the package types. If one of them is unknown, replaced or used twice, the service gives an error, and the API turns it into 400 Bad Request. A customer who is not onboarded gets 404, and a customer who already has a subscription gets 409. In the answer, every line has the name of its package type, so the app can show it without a second request, also for a type that has been replaced.
+
+\paragraph{In the app.} The customer chooses the quantities on one screen, with a counter for each active package type, and confirms on the next screen. If the API answers 409, the customer already has a subscription. The app says so and offers to go to the home screen. If the API answers 400 because a package type is no longer available, the app says that and goes back to the order. For any other error the app shows a message and a button to try again.
 
 \printbibliography
 

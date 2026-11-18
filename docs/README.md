@@ -58,12 +58,19 @@ Appendices are standalone documents and compile individually:
 
 ```
 cd docs/appendices/technical/02-analysis
-latexmk -pdf -outdir=build 01-technical-analysis.tex
+latexmk -r ../../../latexmkrc -pdf -outdir=build 01-technical-analysis.tex
 ```
 
-`-outdir=build` matters: `latexmkrc` is only read from `docs/`, so without the flag
-the aux files land next to the `.tex` file. A stale `.bbl` there makes the VS Code
-build run `bibtex` instead of `biber` and fail.
+latexmk only reads `latexmkrc` from the folder it runs in, so an appendix build
+does not see `docs/latexmkrc` on its own. `-r ../../../latexmkrc` loads it anyway,
+which turns on the DrawIO rule: a changed diagram is exported again during the
+same build. Without `-r`, the appendix uses whatever PDF is already in
+`assets/drawio/`, which may be outdated or missing. All appendices sit three
+folders below `docs/`, so the path is the same for each of them.
+
+`-outdir=build` matters too: without it the aux files land next to the `.tex`
+file. A stale `.bbl` there makes the VS Code build run `bibtex` instead of
+`biber` and fail.
 
 ## Inserting DrawIO diagrams
 
@@ -104,6 +111,9 @@ Shared VS Code settings for LaTeX Workshop live in the **repo root** `.vscode/`
 `docs/`, not inside it). They build with the `latexmk` recipe and output to
 `build/` next to the `.tex` file, so Ctrl+S behaves exactly like running
 `latexmk` in the terminal instead of dumping aux files in the source folder.
+The recipe passes `-r <repo>/docs/latexmkrc`, so saving an appendix also
+re-exports changed diagrams. That needs your local `docs/latexmkrc` (see
+One-time setup); without it latexmk stops with "RC file ... does not exist".
 
 ## Folder overview
 

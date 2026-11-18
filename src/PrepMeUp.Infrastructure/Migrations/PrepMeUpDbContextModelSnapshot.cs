@@ -123,10 +123,14 @@ namespace PrepMeUp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset?>("ExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset>("PlannedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("SentAt")
+                        .IsConcurrencyToken()
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("SubscriptionId")

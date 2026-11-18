@@ -180,6 +180,24 @@ public class UserEndpointTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task GetUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Get, sub);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task PutUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Put, sub, Body());
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
     private static string NewSub() => Guid.NewGuid().ToString();
 
     private static SaveCustomerRequest Body(string name = "Malthe", string? phone = null, AddressContract? address = null)
@@ -191,10 +209,15 @@ public class UserEndpointTests
         return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<CustomerResponse>() : null;
     }
 
-    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string sub, object? body = null, string? email = Email)
+    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string? sub, object? body = null, string? email = Email)
     {
         var request = new HttpRequestMessage(method, "/user");
-        var claims = new Dictionary<string, object> { ["sub"] = sub };
+        var claims = new Dictionary<string, object>();
+        if (sub is not null)
+        {
+            claims["sub"] = sub;
+        }
+
         if (email is not null)
         {
             claims["email"] = email;

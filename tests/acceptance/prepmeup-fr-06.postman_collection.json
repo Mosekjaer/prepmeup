@@ -1,0 +1,356 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-06 mark an order as sent",
+    "description": "Acceptance test for FR-06 (appendix 6.1). Load the test data with seed-fr-05.sql, get a token as the administrator and run the folder 'As administrator'. Run 'Without a token' without any token. Then get a token as a customer and run 'As customer'. Load the test data again before every run. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "As administrator",
+      "item": [
+        {
+          "name": "1 Mark order A as sent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderA}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderA}}",
+                "shipment"
+              ]
+            },
+            "description": "Marks the planned order for A as sent with an administrator token."
+          },
+          "response": []
+        },
+        {
+          "name": "2 Order A has left the list of planned orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var names = pm.response.json().map(function (order) { return order.customerName; });",
+                  "pm.test('Order A is no longer planned', function () {",
+                  "    pm.expect(names).to.not.include('FR-05 A');",
+                  "});",
+                  "pm.test('The other planned orders B and C are still in the list', function () {",
+                  "    pm.expect(names).to.include('FR-05 B');",
+                  "    pm.expect(names).to.include('FR-05 C');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/planned",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "planned"
+              ]
+            },
+            "description": "Reads the list of planned orders after step 1."
+          },
+          "response": []
+        },
+        {
+          "name": "3 Mark order A as sent again",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test('The response is a problem details document with status 409', function () {",
+                  "    pm.expect(pm.response.json().status).to.equal(409);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderA}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderA}}",
+                "shipment"
+              ]
+            },
+            "description": "Only a planned order can be marked as sent. Order A was sent in step 1, so the same call is refused and the order is not sent twice."
+          },
+          "response": []
+        },
+        {
+          "name": "4 Mark an order that is already sent in the seed data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderD}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderD}}",
+                "shipment"
+              ]
+            },
+            "description": "The seed data has a sent order for D. It is refused in the same way as a second call for order A."
+          },
+          "response": []
+        },
+        {
+          "name": "5 Mark an order that does not exist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{unknownOrder}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{unknownOrder}}",
+                "shipment"
+              ]
+            },
+            "description": "An id that belongs to no order."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Without a token",
+      "item": [
+        {
+          "name": "6 Mark order B as sent without a token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderB}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderB}}",
+                "shipment"
+              ]
+            },
+            "description": "The request carries no token, so authentication fails."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "As customer",
+      "item": [
+        {
+          "name": "7 Mark order B as sent as a customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderB}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderB}}",
+                "shipment"
+              ]
+            },
+            "description": "A customer token is refused. The endpoint is for administrators only (NFR-10), and order B stays planned."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "orderA",
+      "value": "f0520000-0000-0000-0000-00000000000a"
+    },
+    {
+      "key": "orderB",
+      "value": "f0520000-0000-0000-0000-00000000000b"
+    },
+    {
+      "key": "orderD",
+      "value": "f0520000-0000-0000-0000-00000000000d"
+    },
+    {
+      "key": "unknownOrder",
+      "value": "f05f0000-0000-0000-0000-000000000000"
+    }
+  ]
+}

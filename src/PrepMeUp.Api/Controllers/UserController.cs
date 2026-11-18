@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.Contracts;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
@@ -18,7 +19,13 @@ public class UserController(CustomerService customerService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CustomerResponse>> GetCustomer(CancellationToken cancellationToken)
     {
-        var customer = await customerService.GetAsync(KeycloakId, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        var customer = await customerService.GetAsync(keycloakId, cancellationToken);
         if (customer is null)
         {
             return NotFound();
@@ -37,6 +44,12 @@ public class UserController(CustomerService customerService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SaveCustomer(SaveCustomerRequest request, CancellationToken cancellationToken)
     {
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
         var email = User.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrWhiteSpace(email))
         {
@@ -46,9 +59,7 @@ public class UserController(CustomerService customerService) : ControllerBase
         var phone = string.IsNullOrWhiteSpace(request.Phone) ? null : request.Phone;
         var address = new Address(request.Address.Street, request.Address.PostalCode, request.Address.City);
 
-        await customerService.SaveDetailsAsync(KeycloakId, email, request.Name, phone, address, cancellationToken);
+        await customerService.SaveDetailsAsync(keycloakId, email, request.Name, phone, address, cancellationToken);
         return NoContent();
     }
-
-    private string KeycloakId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 }

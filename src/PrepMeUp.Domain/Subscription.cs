@@ -35,6 +35,25 @@ public class Subscription
         Status = SubscriptionStatus.Paused;
     }
 
+    public bool NextOrderShouldBePlanned(DateTimeOffset now)
+    {
+        // Check 1: the subscription is active
+        if (Status != SubscriptionStatus.Active)
+        {
+            return false;
+        }
+
+        // Check 2: no order is waiting to be sent
+        if (_orders.Any(order => order.IsPlanned))
+        {
+            return false;
+        }
+
+        // Check 3: the latest sent order has reached its reorder date (14 days before it expires)
+        var latestSentOrder = _orders.MaxBy(order => order.SentAt);
+        return latestSentOrder is not null && latestSentOrder.HasReachedReorderDate(now);
+    }
+
     public void PlanNextOrder(DateTimeOffset now)
     {
         // If subscription isn't even active -> trow exception

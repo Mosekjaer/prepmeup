@@ -30,6 +30,30 @@ public class Subscription
         return Start(customerId, startedAt, new Order(startedAt, lineList));
     }
 
+    public void Pause()
+    {
+        Status = SubscriptionStatus.Paused;
+    }
+
+    public void PlanNextOrder(DateTimeOffset now)
+    {
+        // If subscription isn't even active -> trow exception
+        if (Status != SubscriptionStatus.Active)
+        {
+            throw new InvalidOperationException("Only an active subscription can get a next order.");
+        }
+
+        // If there is already a pending order -> trow exception
+        if (_orders.Any(order => order.IsPlanned))
+        {
+            throw new InvalidOperationException("The subscription already has an order that is not sent.");
+        }
+
+        var previousOrder = _orders.MaxBy(order => order.SentAt)!;  // Look into this subscriptions own order-list and get last sent one.
+        var lines = previousOrder.Lines.Select(line => new OrderLine(line.PackageType, line.Quantity));
+        _orders.Add(new Order(now, lines)); // Add orderline-objects from previous order to this new one
+    }
+
     private static Subscription Start(Guid customerId, DateTimeOffset startedAt, Order firstOrder)
     {
         if (customerId == Guid.Empty)

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using PrepMeUp.Api.Authentication;
+using PrepMeUp.Api.ErrorHandling;
 using PrepMeUp.Application;
 using PrepMeUp.Domain;
 using PrepMeUp.Infrastructure; // AddInfrastructure() and AddApplicaiton()
@@ -29,6 +30,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DatabaseUnavailableExceptionHandler>();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 

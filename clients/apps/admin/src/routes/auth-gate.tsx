@@ -44,7 +44,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     return (
       <section>
         <h1>PrepMeUp Admin</h1>
-        <p>This account does not have access to the admin panel.</p>
+        <p>This account does not have access to the admin panel. Sign out and sign in with an administrator account.</p>
         <button onClick={signOut}>Sign out</button>
       </section>
     );

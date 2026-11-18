@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrepMeUp.Domain;
 
 namespace PrepMeUp.Infrastructure;
@@ -10,6 +11,11 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<PackageType> PackageTypes => Set<PackageType>();
     public DbSet<Order> Orders => Set<Order>();
+
+
+    private class UtcTicksConverter() : ValueConverter<DateTimeOffset, long>(
+        value => value.UtcTicks,
+        ticks => new DateTimeOffset(ticks, TimeSpan.Zero));
 
     // Called exactly once by EF core to check how the database should be built
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +57,11 @@ public class PrepMeUpDbContext(DbContextOptions<PrepMeUpDbContext> options) : Db
             entity.HasKey(order => order.Id);
             entity.Property(order => order.SentAt).IsConcurrencyToken();
             entity.HasMany(order => order.Lines).WithOne().HasForeignKey("OrderId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(order => new { order.SubscriptionId, order.ExpiresAt });
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                entity.Property(order => order.ExpiresAt).HasConversion(new UtcTicksConverter());
+            }
         });
 
         modelBuilder.Entity<OrderLine>(entity =>

@@ -55,7 +55,7 @@ export default function ConfirmOrderScreen() {
   if (state.kind === 'conflict') {
     return (
       <View style={styles.container}>
-        <Text>You already have a subscription.</Text>
+        <Text>You already have a subscription, so you cannot sign up again. Go to Home to see it.</Text>
         <Button title="Go to Home" onPress={() => router.dismissTo('/')} />
       </View>
     );
@@ -64,7 +64,7 @@ export default function ConfirmOrderScreen() {
   if (state.kind === 'failed') {
     return (
       <View style={styles.container}>
-        <Text>Could not create your subscription.</Text>
+        <Text>We could not create your subscription. Check your internet connection and try again.</Text>
         <Button title="Try again" onPress={confirm} />
       </View>
     );
@@ -73,7 +73,7 @@ export default function ConfirmOrderScreen() {
   if (state.kind === 'unavailable') {
     return (
       <View style={styles.container}>
-        <Text>One of the package types is no longer available.</Text>
+        <Text>One of the package types is no longer available. Go back to your order and choose again.</Text>
         <Button title="Back to order" onPress={() => router.back()} />
       </View>
     );

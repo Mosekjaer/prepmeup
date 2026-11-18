@@ -124,7 +124,7 @@ it('shows a denial message when ping answers 403', async () => {
     </AuthGate>,
   );
 
-  expect(await screen.findByText('This account does not have access to the admin panel.')).toBeInTheDocument();
+  expect(await screen.findByText('This account does not have access to the admin panel. Sign out and sign in with an administrator account.')).toBeInTheDocument();
   expect(screen.queryByText('Panel')).not.toBeInTheDocument();
   expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });

@@ -92,7 +92,7 @@ it('shows an error that can be retried when loading fails', async () => {
   mocks.getActivePackageTypes.mockRejectedValueOnce({ status: 500 });
   mocks.getActivePackageTypes.mockResolvedValueOnce([adultType]);
   render(<BuildOrderScreen />);
-  expect(await screen.findByText('Could not load the package types.')).toBeTruthy();
+  expect(await screen.findByText('We could not load the package types. Check your internet connection and try again.')).toBeTruthy();
 
   fireEvent.click(screen.getByText('Try again'));
 

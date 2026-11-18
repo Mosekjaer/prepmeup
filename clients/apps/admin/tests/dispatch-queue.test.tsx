@@ -145,13 +145,13 @@ it('shows the error message when the order could not be marked as shipped', () =
   const orders = [orderFor('Malthe', '2026-12-01T10:00:00+01:00')];
   mocks.usePlannedOrders.mockReturnValue({ state: { status: 'ready', orders }, retry: mocks.retry });
   mocks.useMarkOrderShipped.mockReturnValue({
-    state: { status: 'error', orderId: 'order-Malthe', message: 'This order has already been shipped.' },
+    state: { status: 'error', orderId: 'order-Malthe', message: 'This order has already been shipped. It has been removed from the list.' },
     markShipped: mocks.markShipped,
   });
 
   render(<DispatchQueueRoute />);
 
-  expect(screen.getByRole('alert')).toHaveTextContent('This order has already been shipped.');
+  expect(screen.getByRole('alert')).toHaveTextContent('This order has already been shipped. It has been removed from the list.');
 });
 
 it('reloads the planned orders when the hook is done', () => {

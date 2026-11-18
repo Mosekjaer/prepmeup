@@ -27,13 +27,13 @@ export function useMarkOrderShipped(onDone: () => void): {
             onDone();
         }).catch((error: unknown) => {
             if (statusOf(error) === 409) {
-                setState({ status: 'error', orderId, message: 'This order has already been shipped.' });
+                setState({ status: 'error', orderId, message: 'This order has already been shipped. It has been removed from the list.' });
                 onDone();
                 return;
             }
 
             if (statusOf(error) === 404) {
-                setState({ status: 'error', orderId, message: 'This order could not be found.' });
+                setState({ status: 'error', orderId, message: 'This order could not be found. Reload the page to see the current list.' });
                 onDone();
                 return;
             }

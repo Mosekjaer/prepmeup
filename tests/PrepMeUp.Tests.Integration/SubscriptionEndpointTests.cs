@@ -234,6 +234,26 @@ public class SubscriptionEndpointTests
         Assert.That(createdBody, Does.Contain("\"packageTypeName\"").And.Contain("\"quantity\":1"));
     }
 
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task GetSubscription_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var response = await SendAsync(HttpMethod.Get, "/subscription", sub);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
+    [TestCase(null)]
+    [TestCase("   ")]
+    public async Task PostSubscription_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    {
+        var request = new { lines = new[] { new { packageTypeId = Guid.NewGuid(), quantity = 1 } } };
+
+        var response = await SendAsync(HttpMethod.Post, "/subscription", sub, request);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+    }
+
     private static string NewSub() => Guid.NewGuid().ToString();
 
     private async Task AssertNotSubscribedAsync(string sub, HttpResponseMessage response, HttpStatusCode expected)
@@ -265,10 +285,16 @@ public class SubscriptionEndpointTests
         return sub;
     }
 
-    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string sub, object? body = null)
+    private Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? sub, object? body = null)
     {
         var request = new HttpRequestMessage(method, path);
-        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: new() { ["sub"] = sub, ["email"] = "malthe@example.com" });
+        var claims = new Dictionary<string, object> { ["email"] = "malthe@example.com" };
+        if (sub is not null)
+        {
+            claims["sub"] = sub;
+        }
+
+        var token = TestJwt.Create(TestJwt.TrustedKey, ["household"], additionalClaims: claims);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null)
         {

@@ -17,6 +17,7 @@
   1.2 & 09-11-2026 & Group 3 & Authentication and authorization plan added \\
   1.3 & 11-11-2026 & Group 3 & Integration overview added \\
   1.4 & 12-11-2026 & Group 3 & Subscription plan added \\
+  1.5 & 11-11-2026 & Group 3 & Tokens without a user ID added \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -456,5 +457,12 @@ Now the tests send HTTP requests, so SubscriptionController is T, JwtBearer is X
   \item \texttt{GET} before signing up gets 404, and \texttt{GET} after signing up returns the same subscription.
   \item The status is sent as text, for example \texttt{"Active"}, and not as a number.
 \end{itemize}
+
+\section{Tokens Without a User ID}
+The user and subscription endpoints find the household from the user ID in the access token, which Keycloak puts in the subject claim. A token can be valid and still lack that claim, or have it empty. Before, the API then answered 404, which looks like a user who is not onboarded yet, or 500, because a customer cannot be created without an ID.
+
+We decided that the API answers 401 Unauthorized in that case. The token is not enough to tell who the user is, so the request is treated as not authenticated. The check sits in the API layer, before the controllers call the services, so Application and Domain never get an empty ID.
+
+The check is tested on two levels. A small helper that reads the user ID from the token is tested on its own with a present, missing, empty and blank ID. Then each of the four affected endpoints (reading and saving the user, reading and creating a subscription) is called through the real pipeline with a signed test token without a user ID and with a blank one. The calls carry a valid body, because the API checks the body before the controller runs, and the user ID is checked in the controller. All eight calls must answer 401. We ran these tests before the fix, and they failed with 404 and 500, so they hit the actual problem.
 
 \end{document}

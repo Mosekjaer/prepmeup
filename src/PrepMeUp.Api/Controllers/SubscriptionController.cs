@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrepMeUp.Api.Authentication;
 using PrepMeUp.Api.Contracts;
 using PrepMeUp.Application;
 
@@ -17,7 +17,13 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SubscriptionResponse>> GetSubscription(CancellationToken cancellationToken)
     {
-        var subscription = await subscriptionService.GetAsync(KeycloakId, cancellationToken);
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
+        var subscription = await subscriptionService.GetAsync(keycloakId, cancellationToken);
         if (subscription is null)
         {
             return NotFound();
@@ -34,8 +40,14 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<SubscriptionResponse>> Subscribe(SubscribeRequest request, CancellationToken cancellationToken)
     {
+        var keycloakId = User.GetKeycloakId();
+        if (keycloakId is null)
+        {
+            return Unauthorized();
+        }
+
         var lines = request.Lines.Select(line => new SubscribeLine(line.PackageTypeId, line.Quantity)).ToList();
-        var result = await subscriptionService.SubscribeAsync(KeycloakId, lines, cancellationToken);
+        var result = await subscriptionService.SubscribeAsync(keycloakId, lines, cancellationToken);
 
         switch (result)
         {
@@ -51,9 +63,7 @@ public class SubscriptionController(SubscriptionService subscriptionService) : C
                 return ValidationProblem(ModelState);
         }
 
-        var subscription = await subscriptionService.GetAsync(KeycloakId, cancellationToken);
+        var subscription = await subscriptionService.GetAsync(keycloakId, cancellationToken);
         return Created("/subscription", SubscriptionResponse.From(subscription!));
     }
-
-    private string KeycloakId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 }

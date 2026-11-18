@@ -1,3 +1,179 @@
 \chapter{System Architecture}\label{ch:architecture}
-% Overall system architecture (component, deployment and sequence diagrams).
 
+This chapter describes how PrepMeUp is built, from the outside and in. We start with
+the system and its surroundings, then the parts it consists of, the choices that shape
+the architecture, how the code is organised, how the parts talk to each other, how the
+system runs in production, and finally the data model. The details are in Appendix 2.1
+(technical analysis), Appendix 3.1, 3.2 and 3.3 (architecture) and Appendix 10.3
+(deployment).
+
+\textcolor{red}{\textbf{[TODO: This chapter is a draft. Places where the system is not built yet, or where something is not decided, are marked with a red TODO like this one. Remove this note and all the other TODOs before hand-in.]}}
+
+\section{System Context}\label{sec:arch-context}
+
+\autoref{fig:c4-context} shows PrepMeUp as one system with its two users and the one
+system it depends on. We use the C4 model for this \cite{brown-c4-model}.
+
+\drawiofig[\linewidth]{c4-context}{System context of PrepMeUp (C4 level 1). Both users log in at Keycloak, so PrepMeUp never handles a password.}{fig:c4-context}
+
+The customer and the administrator are the users from \autoref{ch:requirements}.
+Keycloak is the identity provider. It runs in our own deployment, but we only configure
+it and do not program it, so we draw it outside the system. The arrow between PrepMeUp
+and Keycloak only points one way, because PrepMeUp always starts the exchange, and
+Keycloak only answers. There is no supplier and no payment provider in the figure,
+because PrepMeUp does not integrate with either of them.
+
+\section{Containers}\label{sec:arch-containers}
+
+\autoref{fig:c4-containers} zooms in on PrepMeUp. In the C4 model, a container is a
+part that has to run for the system to work, either an application or a data store,
+and it runs as its own process \cite{brown-c4-model}. That is why the customer app is a
+container even though it runs on a phone and not in Docker.
+
+\drawiofig[\linewidth]{c4-containers}{Containers in PrepMeUp (C4 level 2). Only the Web API talks to the database.}{fig:c4-containers}
+
+PrepMeUp has four containers. The customer app is an Expo app for Android, and the admin
+panel is a React app that runs in the browser. Both call the Web API, which is an ASP.NET
+Core application and the only container with business rules. The Web API is also the
+only container that talks to the database, which is SQL Server. Each app logs in at
+Keycloak on its own and sends the token with every call to the Web API.
+
+\section{Architectural Choices}\label{sec:arch-choices}
+
+Three choices shape the architecture more than the others. \autoref{tab:arch-choices}
+sums them up, and Appendix 2.1 compares each of them with the alternatives.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}p{3.2cm} p{5.4cm} p{5.6cm}@{}}
+        \hline
+        Choice & What we chose & Main reason \\
+        \hline
+        Backend structure & Four layers in separate projects, where the data layer depends on the business rules and not the other way round & The rules for expiry and the next order can be tested without a database \\
+        Login & Keycloak as an external identity provider in our own deployment & Standard login with OpenID Connect, and user data stays on our own server \\
+        Deployment & Coolify on our own server & Free, deploys straight from docker compose and handles HTTPS \\
+        \hline
+    \end{tabular}
+    \caption{The three choices that shape the architecture most.}
+    \label{tab:arch-choices}
+\end{table}
+
+The layers are the most important of the three. The usual layered design puts the
+data layer at the bottom, so the business logic depends on it
+\cite[ch.~5]{microsoft-application-architecture-guide}. We turned that around. The
+Application layer defines the interfaces it needs, for example a repository for
+customers, and the Infrastructure layer implements them with EF Core. This is the
+Dependency Inversion Principle \cite[ch.~4, pp.~139--141]{freeman-head-first-design-patterns}.
+Layers where all dependencies point in towards the domain are also known as Clean
+Architecture \cite[sec.~8.4.1]{goldman-maui-in-action}, but we use the course's word,
+layers.
+The downside is four projects and an extra interface for every table, but the files are the
+same kind every time, and the rules we are most likely to get wrong can be tested on
+their own.
+
+Keycloak and Coolify both have a downside we accept. Keycloak takes more work to set up
+than a hosted service, and everything runs on one server that one group member owns. The
+second is risk T3 in the risk analysis (Appendix 2.3).
+
+\section{Structure of the Code}\label{sec:arch-packages}
+
+\autoref{fig:package-diagram} shows how the code is split into packages. A package is a
+.NET project in the backend or an npm workspace in the clients.
+
+\drawiofig[\linewidth]{package-diagram}{Package diagram of the backend, the clients and the tests.}{fig:package-diagram}
+
+The backend has the four layers from \autoref{sec:arch-choices}. The Api project
+receives the requests and uses Application, and Application uses Domain. Infrastructure
+implements the interfaces from Application and uses Domain. Api only knows about
+Infrastructure at startup, where the implementations are registered for dependency
+injection. Domain refers to nothing, so the compiler stops anybody from using EF Core in
+the business rules.
+
+The clients are an npm workspace with three packages, the two apps and the API client.
+The apps only reach the backend through the API client, over HTTP. The unit tests use
+Application and Domain with fake repositories, and the integration tests start the whole
+API.
+
+\textcolor{red}{\textbf{[TODO: The scheduler that creates the next order (FR-19) is planned as a background service in the Api project, so it uses the same use cases as the controllers (Appendix 2.1). It is not built yet.]}}
+
+\section{Interfaces}\label{sec:arch-interfaces}
+
+The apps and the Web API talk through a REST API with JSON over HTTPS. The OpenAPI
+document that ASP.NET Core builds from the controllers is the contract between them.
+The apps do not have hand-written code for calling the API. They use a TypeScript client
+that NSwag generates from the OpenAPI document, so we only write the contract once, in
+C\#. If the API changes in a way that breaks an app, the TypeScript compiler fails in CI
+before a user finds out. Appendix 3.2 describes the chain from the C\# code to the apps.
+
+\autoref{tab:endpoints} shows the endpoints the API has today.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}l l p{8.4cm}@{}}
+        \hline
+        Method & Path & Purpose \\
+        \hline
+        GET, PUT & /user & Read or save the customer's name and address \\
+        GET, POST & /subscription & Read the subscription, or sign up for one \\
+        GET & /items & List the items \\
+        GET & /admin/ping & Check that the user has the admin role \\
+        \hline
+    \end{tabular}
+    \caption{The endpoints of the Web API today.}
+    \label{tab:endpoints}
+\end{table}
+
+\textcolor{red}{\textbf{[TODO: Endpoints for the must-have requirements are missing: list the orders to send (FR-05), mark an order as sent (FR-06), and the order contents for sign-up (FR-01, FR-09). Add them to the table when they are built.]}}
+
+\section{Login and Token Check}\label{sec:arch-login}
+
+Both apps log in with the Authorization Code flow with PKCE.
+\autoref{fig:login-flowchart} shows the steps and the checks in the app and in
+Keycloak. Appendix 3.1 and 4.1 go through the flow in detail.
+
+\drawiofig[0.82\linewidth]{keycloak-login-flowchart-detailed}{Login with Keycloak for the customer app and the admin panel. The red boxes are where the login stops, and the green boxes with a thick frame are where it succeeds.}{fig:login-flowchart}
+
+The user types the password on Keycloak's own page, so the apps and the API never see
+it. The app checks that the answer from Keycloak belongs to its own request, and
+Keycloak checks that the app that asks for the token is the one that started the login.
+Then the app gets a token from Keycloak and sends it with every call. The API checks the
+token on its own, using Keycloak's public signing keys, and does not ask Keycloak about
+each request. It then reads the user's roles from the token. A customer has the
+household role, an administrator has the admin role, and the admin endpoints answer 403
+to anybody without it (NFR-10).
+
+\section{Deployment}\label{sec:arch-deployment}
+
+\autoref{fig:deployment-production} shows how the system runs in production on our
+server. Appendix 10.3 also shows the local setup.
+
+\drawiofig[\linewidth]{deployment-production}{Deployment diagram of the production setup. Traffic from the internet goes through Cloudflare to the Coolify proxy.}{fig:deployment-production}
+
+All containers run on one server with Coolify, from one compose file. No container
+publishes a port. A request from an app goes to Cloudflare, then to Coolify's proxy,
+which sends it on to the API, Keycloak or the admin panel inside the Docker network. The
+two databases have no route from outside, so only the API reaches SQL Server, and only
+Keycloak reaches its own PostgreSQL database. Keycloak keeps the users apart from the
+application data in that way.
+
+The customer app is not deployed on the server. It is built with Expo and installed on
+the phone, and it calls the API on its public address. GitHub Actions builds and tests
+everything on every push, builds the images and tells Coolify to deploy them. Appendix
+10.3 describes the pipeline.
+
+\section{Data Model}\label{sec:arch-data}
+
+\autoref{fig:er-diagram} shows the data model as an E/R diagram. It follows the domain
+model in \autoref{ch:requirements} and shows which entities we store and how they
+are related.
+
+\drawiofig[\linewidth]{er-diagram}{E/R diagram of the data model.}{fig:er-diagram}
+
+The tables are created from the entities in Domain with EF Core migrations, so the
+database schema is only changed through code. Passwords are not in the data model,
+because Keycloak stores them. A customer is linked to the account in Keycloak through
+the user's id from the token.
+
+\textcolor{red}{\textbf{[TODO: The diagram has an email on Customer and an Administrator entity. The requirements say that Keycloak stores the email addresses (Appendix 1.2), and administrators have no row in our database (Appendix 4.1). Decide which is right and change either the diagram or the text.]}}
+
+\textcolor{red}{\textbf{[TODO: The database has tables for customers, subscriptions, orders and items today. Package types, packages in an order, the expiry date, notifications and payment are not built yet. Update this section to say which parts of the diagram exist, and decide whether payment is still in scope.]}}

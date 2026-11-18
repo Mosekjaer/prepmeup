@@ -1,3 +1,4 @@
+import { ValidationProblemDetails } from '@prepmeup/api-client';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
@@ -61,12 +62,46 @@ it('sends no phone when the field is left empty', async () => {
   expect(request?.phone).toBeUndefined();
 });
 
-it('shows an error and stays when saving fails', async () => {
-  mocks.saveCustomer.mockRejectedValue({ status: 400 });
+it('asks to check the connection and stays when saving fails without validation errors', async () => {
+  mocks.saveCustomer.mockRejectedValue(new Error('Network request failed'));
   render(<OnboardingScreen />);
 
   fillInAndSave();
 
-  expect(await screen.findByText(/Could not save your details/)).toBeTruthy();
+  expect(
+    await screen.findByText('We could not save your details. Check your internet connection and try again.'),
+  ).toBeTruthy();
   expect(mocks.router.back).not.toHaveBeenCalled();
+});
+
+it('says that the name is missing when the API rejects an empty name', async () => {
+  mocks.saveCustomer.mockRejectedValue(
+    new ValidationProblemDetails({ status: 400, errors: { Name: ['The Name field is required.'] } }),
+  );
+  render(<OnboardingScreen />);
+
+  fillInAndSave();
+
+  expect(await screen.findByText('We could not save your details. Enter your name.')).toBeTruthy();
+});
+
+it('names every field the API rejects', async () => {
+  mocks.saveCustomer.mockRejectedValue(
+    new ValidationProblemDetails({
+      status: 400,
+      errors: {
+        Phone: ['Phone must be 8 digits.'],
+        'Address.PostalCode': ['Postal code must be 4 digits between 1000 and 9999.'],
+      },
+    }),
+  );
+  render(<OnboardingScreen />);
+
+  fillInAndSave();
+
+  expect(
+    await screen.findByText(
+      'We could not save your details. Enter a phone number with 8 digits, or leave it empty. Enter a postal code with 4 digits.',
+    ),
+  ).toBeTruthy();
 });

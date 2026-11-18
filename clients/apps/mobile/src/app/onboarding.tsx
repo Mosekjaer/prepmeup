@@ -1,9 +1,25 @@
-import { AddressContract, SaveCustomerRequest } from '@prepmeup/api-client';
+import { AddressContract, SaveCustomerRequest, ValidationProblemDetails } from '@prepmeup/api-client';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { userClient } from '../lib/api';
+
+const fieldHints: Record<string, string> = {
+  Name: 'Enter your name.',
+  Phone: 'Enter a phone number with 8 digits, or leave it empty.',
+  'Address.Street': 'Enter your street.',
+  'Address.PostalCode': 'Enter a postal code with 4 digits.',
+  'Address.City': 'Enter your city.',
+};
+
+function saveErrorMessage(reason: unknown): string {
+  const fields = reason instanceof ValidationProblemDetails ? Object.keys(reason.errors ?? {}) : [];
+  const hints = fields.map((field) => fieldHints[field]).filter((hint) => hint !== undefined);
+  return hints.length > 0
+    ? `We could not save your details. ${hints.join(' ')}`
+    : 'We could not save your details. Check your internet connection and try again.';
+}
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -13,11 +29,11 @@ export default function OnboardingScreen() {
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string>();
 
   function save() {
     setSaving(true);
-    setError(false);
+    setError(undefined);
     const request = new SaveCustomerRequest({
       name,
       phone: phone || undefined,
@@ -26,8 +42,8 @@ export default function OnboardingScreen() {
     userClient
       .saveCustomer(request)
       .then(() => router.back())
-      .catch(() => {
-        setError(true);
+      .catch((reason: unknown) => {
+        setError(saveErrorMessage(reason));
         setSaving(false);
       });
   }
@@ -53,11 +69,7 @@ export default function OnboardingScreen() {
         onChangeText={setPostalCode}
       />
       <TextInput style={styles.input} placeholder="City" value={city} onChangeText={setCity} />
-      {error && (
-        <Text>
-          Could not save your details. Check that your postal code has 4 digits and your phone number has 8 digits.
-        </Text>
-      )}
+      {error && <Text>{error}</Text>}
       <Button title="Save" onPress={save} disabled={saving} />
     </View>
   );

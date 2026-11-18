@@ -39,7 +39,8 @@ public class Subscription
 
     public static Expression<Func<Subscription, bool>> NextOrderShouldBePlannedExpression(DateTimeOffset now)
     {
-        var latestAllowedExpiry = now.AddDays(Order.ReorderDaysBeforeExpiry); // The latest expiry-time we include this time around.
+        // The latest expiry-time we include this time around.
+        var latestAllowedExpiry = now.AddDays(Order.ReorderDaysBeforeExpiry);
 
         return subscription =>
             // Check 1: the subscription is active

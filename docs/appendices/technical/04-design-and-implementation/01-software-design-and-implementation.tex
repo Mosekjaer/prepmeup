@@ -22,6 +22,7 @@
   1.6 & 12-11-2026 & Group 3 & Added order lines \\
   1.7 & 12-11-2026 & Group 3 & Added what the app does with errors when subscribing \\
   1.8 & 11-11-2026 & Group 3 & A token without a user id gives 401 \\
+  1.9 & 18-11-2026 & Group 3 & Added that the mobile app has no token while the session is restored \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -62,7 +63,7 @@ The admin panel logs in with react-oidc-context, which is built on oidc-client-t
 The token is kept in memory only, so a script injected into the page cannot read it from browser storage. A reload loses the token. The admin panel then sends the user to Keycloak, which logs them in again without a password as long as the Keycloak session is alive.
 
 \subsection{Where the Mobile App Keeps the Token}
-On the phone we keep the refresh token in Expo SecureStore. On Android SecureStore stores the value in SharedPreferences, encrypted with a key from the Android Keystore. On iOS it stores the value with the Keychain services \cite{expo-securestore}. The key in the Android Keystore never enters the process of the app \cite{android-keystore}. The access token is only kept in memory. When the app starts, it uses the stored refresh token to get a new access token.
+On the phone we keep the refresh token in Expo SecureStore. On Android SecureStore stores the value in SharedPreferences, encrypted with a key from the Android Keystore. On iOS it stores the value with the Keychain services \cite{expo-securestore}. The key in the Android Keystore never enters the process of the app \cite{android-keystore}. The access token is only kept in memory. When the app starts, it uses the stored refresh token to get a new access token. Until the answer arrives, the app has no access token, so a screen must not treat a missing token as a customer who is logged out.
 
 A browser has no such storage. A script running on the page can read everything in web storage \cite{owasp-html5-security}, and SecureStore itself is only available on Android and iOS \cite{expo-securestore}. For that reason the mobile app does not support web, and the admin panel keeps its token in memory only.
 

@@ -43,10 +43,6 @@ export default function HomeScreen() {
           ) : customer ? (
             <>
               <Text>Welcome, {customer.name}</Text>
-              <Text>{customer.address.street}</Text>
-              <Text>
-                {customer.address.postalCode} {customer.address.city}
-              </Text>
               <SubscriptionSummary />
             </>
           ) : (
@@ -55,7 +51,6 @@ export default function HomeScreen() {
           <Button title="Sign out" onPress={signOut} />
         </>
       )}
-      <Button title="Go to second screen" onPress={() => router.push('/second')} />
     </View>
   );
 }

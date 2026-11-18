@@ -42,6 +42,7 @@
   1.4 & 11-11-2026 & Group 3 & FR-03 also tests that replaced package types are hidden and that contents cannot be changed \\
   1.5 & 11-11-2026 & Group 3 & FR-01 includes choosing the contents of the first order \\
   1.6 & 11-11-2026 & Group 3 & Added the Postman collection to the test environment and ran the test for FR-02 \\
+  1.7 & 12-11-2026 & Group 3 & Ran the test for FR-01 \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -66,19 +67,21 @@ This section tests the must-have functional requirements in appendix 1.2, which 
   {The customer app is installed on an Android device. The tester has an e-mail address that is not registered yet.}
   {The customer has an account, name and address are stored, and the customer has an active subscription with a planned order that contains the chosen packages.}
 \begin{steps}
-1 & The customer opens the app and taps Sign in. & The PrepMeUp login page of the identity provider opens, with a link to register. & & \\
+1 & The customer opens the app and taps Sign in. & The PrepMeUp login page of the identity provider opens, with a link to register. & The login page opened, with a link to register. & Pass \\
 \hline
-2 & The customer registers with the e-mail address and a password. & The app opens again and shows the onboarding screen, which asks for name and address. & & \\
+2 & The customer registers with the e-mail address and a password. & The app opens again and shows the onboarding screen, which asks for name and address. & The app opened again and showed the onboarding screen with name, phone, street, postal code and city. & Pass \\
 \hline
-3 & The customer saves onboarding with an empty name. & The details are not saved, and a message says that the name is missing. & & \\
+3 & The customer saves onboarding with an empty name. & The details are not saved, and a message says that the name is missing. & Nothing was saved. The app said: Could not save your details. Check that your postal code has 4 digits and your phone number has 8 digits. It does not mention the name. & Fail \\
 \hline
-4 & The customer enters name and address and saves. & The app shows the home screen with the customer's name. & & \\
+4 & The customer enters name and address and saves. & The app shows the home screen with the customer's name. & The home screen showed the name and the address. & Pass \\
 \hline
-5 & The customer chooses 2 adult packages and 1 child package and signs up for a subscription. & The app shows the subscription with status active and a planned order with 2 adult packages and 1 child package. & & \\
+5 & The customer chooses 2 adult packages and 1 child package and signs up for a subscription. & The app shows the subscription with status active and a planned order with 2 adult packages and 1 child package. & The home screen showed the subscription as active, with a planned order of 2 adult packages and 1 child package. & Pass \\
 \hline
-6 & The customer closes the app, opens it again and signs in. & The app does not show onboarding again. The subscription is still active, the planned order still has 2 adult packages and 1 child package, and name and address are the ones from step 4. & & \\
+6 & The customer closes the app, opens it again and signs in. & The app does not show onboarding again. The subscription is still active, the planned order still has 2 adult packages and 1 child package, and name and address are the ones from step 4. & The app did not show onboarding. The subscription, the planned order and the customer details were the same. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 12-11-2026 against the system started locally with Docker (make up). The customer app ran in Expo Go on an Android emulator and not as an EAS build, and the tester closed the app with adb before step 6. A new e-mail address was registered for the test, so the customer had no subscription before step 5.
 
 \subsection{FR-02: Persistent storage}
 \scenarioinfo{FR-02}

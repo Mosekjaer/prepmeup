@@ -59,14 +59,14 @@ it('says that the package type is no longer available when it is not active', as
 
   render(<PackageTypeScreen />);
 
-  expect(await screen.findByText('This package type is no longer available.')).toBeTruthy();
+  expect(await screen.findByText('This package type is no longer available. Go back and choose another one.')).toBeTruthy();
 });
 
 it('shows an error that can be retried when loading fails', async () => {
   mocks.getActivePackageTypes.mockRejectedValueOnce({ status: 500 });
   mocks.getActivePackageTypes.mockResolvedValueOnce([adultType]);
   render(<PackageTypeScreen />);
-  expect(await screen.findByText('Could not load the package type.')).toBeTruthy();
+  expect(await screen.findByText('We could not load the package type. Check your internet connection and try again.')).toBeTruthy();
 
   fireEvent.click(screen.getByText('Try again'));
 

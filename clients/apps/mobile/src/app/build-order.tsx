@@ -28,7 +28,7 @@ export default function BuildOrderScreen() {
   if (error) {
     return (
       <View style={styles.message}>
-        <Text>Could not load the package types.</Text>
+        <Text>We could not load the package types. Check your internet connection and try again.</Text>
         <Button title="Try again" onPress={load} />
       </View>
     );

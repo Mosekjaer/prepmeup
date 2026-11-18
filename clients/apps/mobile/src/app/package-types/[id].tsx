@@ -35,7 +35,7 @@ export default function PackageTypeScreen() {
   if (state.kind === 'error') {
     return (
       <View style={styles.container}>
-        <Text>Could not load the package type.</Text>
+        <Text>We could not load the package type. Check your internet connection and try again.</Text>
         <Button title="Try again" onPress={load} />
       </View>
     );
@@ -44,7 +44,7 @@ export default function PackageTypeScreen() {
   if (state.kind === 'unavailable') {
     return (
       <View style={styles.container}>
-        <Text>This package type is no longer available.</Text>
+        <Text>This package type is no longer available. Go back and choose another one.</Text>
       </View>
     );
   }

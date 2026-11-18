@@ -82,7 +82,7 @@ it('says that the customer already has a subscription and offers Home when the A
 
   fireEvent.click(screen.getByRole('button', { name: 'Confirm and subscribe' }));
 
-  expect(await screen.findByText('You already have a subscription.')).toBeTruthy();
+  expect(await screen.findByText('You already have a subscription, so you cannot sign up again. Go to Home to see it.')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Go to Home' }));
   expect(mocks.router.dismissTo).toHaveBeenCalledWith('/');
 });
@@ -93,7 +93,7 @@ it('says that a package type is no longer available and goes back to the order w
 
   fireEvent.click(screen.getByRole('button', { name: 'Confirm and subscribe' }));
 
-  expect(await screen.findByText('One of the package types is no longer available.')).toBeTruthy();
+  expect(await screen.findByText('One of the package types is no longer available. Go back to your order and choose again.')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Back to order' }));
   expect(mocks.router.back).toHaveBeenCalledTimes(1);
 });
@@ -103,7 +103,7 @@ it('shows an error that can be retried when subscribing fails for another reason
   mocks.subscribe.mockResolvedValueOnce({ status: 'Active', startedAt: '2026-11-12T10:00:00+00:00', orders: [] });
   render(<ConfirmOrderScreen />);
   fireEvent.click(screen.getByRole('button', { name: 'Confirm and subscribe' }));
-  expect(await screen.findByText('Could not create your subscription.')).toBeTruthy();
+  expect(await screen.findByText('We could not create your subscription. Check your internet connection and try again.')).toBeTruthy();
 
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
 

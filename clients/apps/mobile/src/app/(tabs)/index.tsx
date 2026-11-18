@@ -37,7 +37,7 @@ export default function HomeScreen() {
         <>
           {error ? (
             <>
-              <Text>Could not load your profile.</Text>
+              <Text>We could not load your profile. Check your internet connection and try again.</Text>
               <Button title="Try again" onPress={loadCustomer} />
             </>
           ) : customer ? (

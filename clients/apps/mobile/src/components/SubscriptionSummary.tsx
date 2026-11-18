@@ -43,7 +43,7 @@ export function SubscriptionSummary() {
   if (state.kind === 'error') {
     return (
       <View>
-        <Text>Could not load your subscription.</Text>
+        <Text>We could not load your subscription. Check your internet connection and try again.</Text>
         <Button title="Try again" onPress={load} />
       </View>
     );

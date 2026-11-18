@@ -54,7 +54,7 @@ it('explains that the order was already shipped and calls onDone on a 409', asyn
     expect(result.current.state).toEqual({
       status: 'error',
       orderId: 'order-1',
-      message: 'This order has already been shipped.',
+      message: 'This order has already been shipped. It has been removed from the list.',
     }),
   );
   expect(mocks.onDone).toHaveBeenCalledTimes(1);
@@ -70,7 +70,7 @@ it('explains that the order was not found and calls onDone on a 404', async () =
     expect(result.current.state).toEqual({
       status: 'error',
       orderId: 'order-1',
-      message: 'This order could not be found.',
+      message: 'This order could not be found. Reload the page to see the current list.',
     }),
   );
   expect(mocks.onDone).toHaveBeenCalledTimes(1);

@@ -43,10 +43,20 @@
   1.5 & 11-11-2026 & Group 3 & FR-01 includes choosing the contents of the first order \\
   1.6 & 11-11-2026 & Group 3 & Added the Postman collection to the test environment and ran the test for FR-02 \\
   1.7 & 12-11-2026 & Group 3 & Ran the test for FR-01 \\
+  1.8 & 18-11-2026 & Group 3 & New test for NFR-09 \\
+  1.9 & 18-11-2026 & Group 3 & Test environment changed to a local run from main and one run on the server \\
 \end{versionhistory}
 
 \section{Test Environment}
-The tests are run against the deployed system, from a device outside the server. The customer app is installed on an Android device from the latest EAS build, and the administrator interface is opened in a browser.
+We run the tests in two places. Each test belongs to one of them, and the lists below say which.
+
+\subsection{Local Run}
+Most tests are run on the tester's own computer. The tester pulls the latest main, starts the system with docker compose (make up) and uses an Android emulator with the customer app in Expo Go. The administrator interface and Keycloak run in the same compose file. These tests check how the code behaves, and that is the same locally and on the server, because the containers are the same (appendix 10.3). The local run covers FR-01--06, FR-19, NFR-01--04, NFR-07 and NFR-09--11.
+
+The result depends on the code, so the tester writes the commit that was tested next to the result, for example commit 1aca1c5. A container built before the latest pull can give another answer. NFR-04 gives 500 with an API image built before the error handling was merged, and 503 with the latest one.
+
+\subsection{Run on the Server}
+A local run does not show that the deployment works. We have one production environment and no test environment (appendix 10.3), and the system has behaved differently on the server before, when Keycloak started without our realm on Coolify (appendix 2.3). So the tester also runs these tests once before the deadline, against the deployed system from a device outside the server: NFR-05 and NFR-06, and a short check that a customer can sign in and sign up in the app installed from the latest EAS build, and that the administrator can sign in to the administrator interface in a browser. NFR-08 is checked in GitHub Actions and needs neither.
 
 Customer A and customer B register through the customer app (FR-01) and get the household role. Administrator ADM is a user who has been given the admin role in the Keycloak admin console.
 
@@ -56,7 +66,7 @@ The tests that call the API directly are kept as a Postman collection in the fol
 
 Tests that need orders with given dates use test data that is put into the database before the test. The data is described in the precondition of each test, and all dates are relative to the day the test is run.
 
-NFR-03, NFR-04 and NFR-07 stop or start a single container, so the tester needs access to the server.
+NFR-03, NFR-04 and NFR-07 stop or start a single container. In the local run that is docker compose stop and start.
 
 \section{Functional Requirements}
 This section tests the must-have functional requirements in appendix 1.2, which are FR-01--06 and FR-19. Each test is a scenario that is run step by step against the deployed system. The actual result and the verdict are filled in when the test is run. The should-have and could-have requirements get tests when they are planned into a sprint.
@@ -193,9 +203,9 @@ NFR-02 & Every error message is a complete sentence in English stating what went
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & & \\
+NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & Run locally. The home screen said ``We could not load your profile. Check your internet connection and try again.'' and showed Try again. The app kept running. After the API was started and Try again was tapped, the home screen loaded. & Pass \\
 \hline
-NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & & \\
+NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
 \hline
 \end{tabular}
 \end{center}
@@ -231,7 +241,7 @@ NFR-06 & The customer app runs as an Android app built with Expo (React Native).
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-07 & Outside development and test, the API refuses to start if the identity provider address or the database connection string is missing. & Start the API image on the server with the environment set to Production, first without the identity provider address and then without the connection string. Confirm each time that the process stops with an error that names the missing value. & & \\
+NFR-07 & Outside development and test, the API refuses to start if the identity provider address or the database connection string is missing. & Start the API image with the environment set to Production, first without the identity provider address and then without the connection string. Confirm each time that the process stops with an error that names the missing value. & & \\
 \hline
 NFR-08 & Every API endpoint is covered by at least one automated test that runs in CI. & List every endpoint in the API's OpenAPI document. For each endpoint, name a test in the test projects that calls it, and confirm that the latest CI run on the main branch ran the tests and was green. & & \\
 \hline
@@ -245,7 +255,7 @@ NFR-08 & Every API endpoint is covered by at least one automated test that runs 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only view and change their own data. The API identifies the customer from the access token, and a request for another customer's resource is rejected with HTTP 403. & With A's token, call GET /user and confirm only A's name and address are returned. Request an order that belongs to customer B with A's token and confirm the response is HTTP 403. & & \\
+NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /user and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & & \\
 \hline
 NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
 \hline

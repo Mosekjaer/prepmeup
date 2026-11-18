@@ -1,13 +1,20 @@
 import { Tabs } from 'expo-router';
 
+import { useAuth } from '../../lib/auth';
+
 export default function TabsLayout() {
+  const { token } = useAuth();
+  const signedIn = token !== undefined;
+
   return (
     <Tabs
       screenOptions={{
         headerTitleAlign: 'left',
         headerStyle: { backgroundColor: '#E6E6E6' },
         headerTitleStyle: { color: '#333333', fontSize: 16, fontWeight: '700' },
-        tabBarStyle: { height: 56, backgroundColor: '#EEEEEE', borderTopColor: '#BBBBBB' },
+        tabBarStyle: signedIn
+          ? { height: 56, backgroundColor: '#EEEEEE', borderTopColor: '#BBBBBB' }
+          : { display: 'none' },
         tabBarItemStyle: { borderLeftWidth: 1, borderColor: '#BBBBBB' },
         tabBarActiveBackgroundColor: '#D0D0D0',
         tabBarInactiveBackgroundColor: '#EEEEEE',
@@ -18,8 +25,10 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
-      <Tabs.Screen name="orders" options={{ title: 'Orders' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+      <Tabs.Protected guard={signedIn}>
+        <Tabs.Screen name="orders" options={{ title: 'Orders' }} />
+        <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+      </Tabs.Protected>
     </Tabs>
   );
 }

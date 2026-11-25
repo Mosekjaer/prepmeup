@@ -105,7 +105,7 @@ it('says that no order is planned when the customer has no subscription', async 
   render(<OrdersScreen />);
 
   expect(await screen.findByText('No order planned.')).toBeTruthy();
-  expect(screen.queryByRole('button', { name: 'Subscribe' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Prep me up' })).toBeNull();
   expect(screen.queryByText('You do not have a subscription yet.')).toBeNull();
 });
 

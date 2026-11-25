@@ -53,14 +53,14 @@ it('offers to subscribe when the customer has no subscription', async () => {
   render(<SubscriptionSummary />);
 
   expect(await screen.findByText('You do not have a subscription yet.')).toBeTruthy();
-  expect(screen.getByText('Subscribe')).toBeTruthy();
+  expect(screen.getByText('Prep me up')).toBeTruthy();
 });
 
 it('opens the order builder instead of subscribing right away', async () => {
   mocks.getSubscription.mockRejectedValue({ status: 404 });
   render(<SubscriptionSummary />);
 
-  fireEvent.click(await screen.findByText('Subscribe'));
+  fireEvent.click(await screen.findByText('Prep me up'));
 
   expect(mocks.router.push).toHaveBeenCalledWith('/build-order');
   expect(mocks.subscribe).not.toHaveBeenCalled();

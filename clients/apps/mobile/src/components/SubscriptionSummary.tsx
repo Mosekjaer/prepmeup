@@ -45,7 +45,7 @@ export function SubscriptionSummary() {
     return (
       <View>
         <Text>You do not have a subscription yet.</Text>
-        <Button title="Subscribe" onPress={() => router.push('/build-order')} />
+        <Button title="Prep me up" onPress={() => router.push('/build-order')} />
       </View>
     );
   }

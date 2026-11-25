@@ -128,7 +128,10 @@ before a user finds out. Appendix 3.2 describes the chain from the C\# code to t
 \end{table}
 
 No customer endpoint takes an id. The API finds the customer from the token, so a
-customer can only reach their own data (NFR-09).
+customer can only reach their own data (NFR-09). For the same reason the route is
+/user and the controller is UserController, while Application and Domain call it
+CustomerService and Customer. The route is about the user who is logged in, and the
+layers below are about the customer as a business object.
 
 \section{Login and Token Check}\label{sec:arch-login}
 

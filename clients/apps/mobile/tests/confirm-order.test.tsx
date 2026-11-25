@@ -33,8 +33,8 @@ beforeEach(() => {
 it('shows the chosen package types with their quantities and the confirm button', () => {
   render(<ConfirmOrderScreen />);
 
-  expect(screen.getByText('Normal - Adult × 2')).toBeTruthy();
-  expect(screen.getByText('Normal - Child × 1')).toBeTruthy();
+  expect(screen.getByText('2 × Normal - Adult')).toBeTruthy();
+  expect(screen.getByText('1 × Normal - Child')).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Confirm and subscribe' })).toBeTruthy();
 });
 

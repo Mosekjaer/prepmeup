@@ -11,6 +11,53 @@
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 25-11-2026 & Group 3 & First version \\
+\end{versionhistory}
+
+\section{Purpose}
+This appendix sums up how we test PrepMeUp, from the smallest rule in the code to the whole system on the server. Each level has its own appendix with the details. The strategy says which level tests what, so the same thing is not tested twice and nothing falls between two levels.
+
+\section{Test Levels}
+We test on four levels. The lower levels run on every push in GitHub Actions. The acceptance test is run by hand.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{2.4cm}p{4.6cm}p{3.4cm}p{3.2cm}@{}}
+\hline
+\textbf{Level} & \textbf{What it tests} & \textbf{Tools} & \textbf{Where} \\
+\hline
+Module test & The rules in Domain and the use cases in Application, one class at a time & NUnit, NSubstitute & Appendix 5.1, CI \\
+Client test & Screens and hooks in the customer app and the admin panel & Vitest & Appendix 5.1, CI \\
+Integration test & The API with its layers put together, from HTTP request to database & NUnit, WebApplicationFactory, SQLite & Appendix 5.2, CI \\
+Acceptance test & The requirements, on the running system & The apps, Postman, k6 & Appendix 6.1, by hand \\
+\hline
+\end{tabular}
+\caption{The four test levels.}
+\end{table}
+
+\section{Module Test}
+The module tests cover the Domain and Application projects. Domain has no references to other projects, so its rules can be tested without a database, HTTP or a browser. Examples are the rules for addresses and names, the expiry date one year after an order is sent, and when the next order is due.
+
+The services in Application are tested with fake repositories made with NSubstitute. The clock is also a fake, so a test can decide what time it is. That is how we test the 14 days before expiry without waiting.
+
+\section{Client Test}
+The client tests render a screen with a fake API client and check what the user sees. The screens that load data are tested while loading, with no data, with an error and with data. The tests run with Vitest. The customer app runs on react-native-web in the tests.
+
+\section{Integration Test}
+The integration tests start the whole API in the test process with WebApplicationFactory. The database is SQLite in memory, so the tests use the real EF Core mapping and the real queries. Keycloak is replaced by tokens that the tests sign with their own key, so the tests can make a token with or without a role or a user id.
+
+We use collaboration integration, so each feature gets its own integration plan. The plans are in appendix 5.2.
+
+\section{Acceptance Test}
+The acceptance test has one test for each must-have functional requirement and each non-functional requirement. Most tests are run on the tester's computer with the system started from the main branch. The performance test (NFR-05) and the Android test (NFR-06) are run against the server. Tests that call the API directly use Postman collections, and tests that need orders with given dates use SQL scripts with test data. The collections and the scripts are in the tests folder of the repository.
+
+\section{What Is Not Tested Automatically}
+\begin{itemize}
+  \item Keycloak itself, for example the login page and registration. We only configure it, and the acceptance test covers the login.
+  \item SQL Server. The integration tests use SQLite, so a difference between the two can only show up in the acceptance test.
+  \item The deployment on the server. It is checked by the acceptance test run on the server.
+\end{itemize}
 
 \end{document}

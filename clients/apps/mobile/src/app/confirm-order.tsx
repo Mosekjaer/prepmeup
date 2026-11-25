@@ -83,7 +83,7 @@ export default function ConfirmOrderScreen() {
     <View style={styles.container}>
       {chosenLines.map((line) => (
         <Text key={line.packageTypeId}>
-          {line.name} × {line.quantity}
+          {line.quantity} × {line.name}
         </Text>
       ))}
       {state.kind === 'submitting' && <ActivityIndicator />}

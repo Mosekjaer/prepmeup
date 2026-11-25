@@ -1,8 +1,8 @@
 # PrepMeUp
 
-Beredskabsabonnement. En husstand opretter en profil med sin sammensætning (voksne, børn, præferencer), og systemet beregner en anbefalet beredskabspakke efter Beredskabsstyrelsens retningslinjer.
-Første pakke leveres samlet, og systemet registrerer udløbsdatoen på hver vare i husstandens lager. Når en vare nærmer sig udløb, planlægges en genbestilling automatisk, og brugeren får besked.
-Leverandøren er ikke en rigtig integration: den er simuleret internt med et varekatalog og et mock betalings- og leveringsflow.
+Beredskabsabonnement. En kunde opretter en konto og tilmelder sig med en første ordre, hvor kunden vælger antal pakker af standard-pakketyperne for voksne og børn (Beredskabsstyrelsens retningslinjer for en normal kost).
+Når administratoren markerer en ordre som sendt, får ordren en udløbsdato ét år efter. 14 dage før udløb opretter systemet automatisk næste ordre med samme pakketyper og antal, og administratoren ser de planlagte ordrer i admin-panelet.
+Leverandøren er ikke en rigtig integration, og betaling og notifikationer er ikke en del af version 1.0 (kravspecifikationen, bilag 1.2).
 SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 
 ## Stak
@@ -58,7 +58,7 @@ Fra `docs/standalone/architecture-pitch.tex`, slide 5.
 |---|---|---|
 | `Api` | route, validere, mappe contract mod domæne, statuskoder, autorisation | forretningsregler; kende `DbContext` |
 | `Application` | orkestrere use cases, definere repository-interfaces, transaktionsgrænser | kende HTTP, `ControllerBase`, EF-typer, SQL |
-| `Domain` | entiteter, invarianter, vandbehov, pakkeindhold, udløb | referere til noget andet projekt overhovedet |
+| `Domain` | entiteter, invarianter, pakkeindhold, udløb, næste ordre | referere til noget andet projekt overhovedet |
 | `Infrastructure` | EF-konfiguration, queries, migrations | træffe beslutninger — den henter og gemmer |
 | `clients/apps` | kalde API'et via `api-client`, holde UI-state | duplikere forretningsregler; gå uden om klientpakken |
 

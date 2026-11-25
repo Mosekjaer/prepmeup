@@ -4,13 +4,74 @@
 \usepackage[english]{babel}
 \usepackage{../../appendix-style}
 
-\title{5.1 Module Test -- [module name]}
+\title{5.1 Module Test}
 \author{SW4PRJ4 -- Group 3}
 \date{\today}
 
 \begin{document}
 \maketitle
 
-% Content goes here...
+\begin{versionhistory}
+  1.0 & 25-11-2026 & Group 3 & First version \\
+\end{versionhistory}
+
+\section{Purpose}
+This appendix lists the module tests: the unit tests of the backend and the tests of the two clients. The test strategy in appendix 5.3 says where they fit with the other test levels. All the tests run in GitHub Actions on every push, and a pull request cannot be merged if one of them fails.
+
+\section{Backend}
+The unit tests are in the project PrepMeUp.Tests.Unit and use NUnit. The project only refers to Domain and Application, so a test can never reach the database or HTTP by mistake.
+
+\subsection{Domain}
+The entities in Domain are tested directly, without fakes, because they have no dependencies.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{5.2cm}p{9cm}@{}}
+\hline
+\textbf{Test class} & \textbf{What it checks} \\
+\hline
+AddressTests, CustomerTests & Street, postal code, city, name and phone: required values, lengths and formats \\
+PackageTypeTests & A package type needs a name and contents, and a replaced type cannot be replaced again \\
+OrderLineTests & A line needs a package type that is not replaced, and a quantity of at least 1 \\
+OrderTests, OrderExpiryTests & An order is planned until it is sent. When it is sent, it gets an expiry date one year later, and it is due for a new order 14 days before that \\
+SubscriptionTests & A subscription starts active with its first order \\
+SubscriptionNextOrderShouldBePlannedTests & The next order is only due for an active subscription with no planned order, when the newest order expires within 14 days \\
+SubscriptionPlanNextOrderTests & The next order copies the package types and quantities of the previous one \\
+\hline
+\end{tabular}
+\caption{Module tests of Domain.}
+\end{table}
+
+\subsection{Application}
+The services in Application are tested with fake repositories made with NSubstitute. The clock is a fake too, so a test decides the time.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{5.2cm}p{9cm}@{}}
+\hline
+\textbf{Test class} & \textbf{What it checks} \\
+\hline
+CustomerServiceTests & A customer is created the first time and updated after that, and the e-mail from the first save is kept \\
+SubscriptionServiceTests & Sign-up needs a customer, known package types and no existing subscription \\
+SubscriptionServicePlanNextOrdersTests & The service plans the next order for each subscription the repository finds, and saves once \\
+OrderServiceTests & Marking an order as sent uses the time from the clock, and answers not found or not planned \\
+PackageTypeServiceTests, ItemServiceTests & The services return what the repository finds \\
+ItemKeyValidatorTests & An item key is only valid when it is not empty \\
+\hline
+\end{tabular}
+\caption{Module tests of Application.}
+\end{table}
+
+\section{Clients}
+The clients are tested with Vitest. A test renders a screen or runs a hook with a fake API client, so no test calls the real API. The customer app is rendered with react-native-web.
+
+\begin{itemize}
+  \item Customer app: the API setup and the login, the home screen, onboarding, building and confirming the first order, the package type screen, the orders tab, the profile tab and the tab layout.
+  \item Admin panel: the configuration, the login gate and the layout, the router, the list of planned orders and marking an order as sent.
+\end{itemize}
+
+The screens that load data are tested while loading, with no data, with an error and with data, so a screen never shows a blank page.
 
 \end{document}

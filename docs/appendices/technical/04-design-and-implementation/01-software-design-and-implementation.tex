@@ -24,6 +24,7 @@
   1.8 & 11-11-2026 & Group 3 & A token without a user id gives 401 \\
   1.9 & 18-11-2026 & Group 3 & Added that the mobile app has no token while the session is restored \\
   1.10 & 25-11-2026 & Group 3 & The customer endpoint is now /customer, and its controller CustomerController \\
+  1.11 & 25-11-2026 & Group 3 & Added Reading Data with the get items flow, and the save flows for sign-up and sent orders \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -81,7 +82,7 @@ Both apps use the refresh token to renew the access token shortly before it expi
 We test the admin login with Vitest and mock react-oidc-context and the network, like the mobile app does with expo-auth-session. The tests check that the token is sent to the API, that a 403 shows the message, and that sign-out ends the session. The flow against Keycloak itself is checked by hand.
 
 \section{Saving Data}
-This section shows how data travels from the customer app to the database. The example is the onboarding screen, where the customer saves a name and an address. It is the only place in the system where data is saved so far.
+This section shows how data travels from the customer app to the database. The example is the onboarding screen, where the customer saves a name and an address. Signing up with the first order (POST /subscription) and marking an order as sent take the same path through the layers.
 
 \drawiofig[\linewidth]{save-customer-flow}{Saving a customer's name and address, from the app through the layers of the API to the database.}{fig:save-customer-flow}
 
@@ -99,7 +100,22 @@ The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 
 \paragraph{7. Answer.} The API answers 204 No Content. The app then goes back to the previous screen. If the request fails, the app shows an error and the customer can try again.
 
-The admin panel does not save anything yet. Its only call is a check that the user is an admin, so there is no admin save flow to draw.
+The admin panel saves one thing: an order marked as sent, with POST /admin/orders/\{orderId\}/shipment. It goes through the same layers, with the order service and the order repository, and the Order entity sets the sent date and the expiry date.
+
+\section{Reading Data}\label{sec:reading-data}
+This section shows the shortest way through the layers, where the API only reads. The example is GET /items, which lists the items in the database. No screen in the customer app uses it after the second screen was removed, but the call is the same for every list the apps read, for example the package types.
+
+\drawiofig[\linewidth]{get-items-flow}{Reading the items, from the client through the layers of the API to the database.}{fig:get-items-flow}
+
+The numbers below match the arrows in Figure~\ref{fig:get-items-flow}.
+
+\paragraph{1 and 2. The client asks.} The client sends GET /items through the generated API client, with the access token in the Authorization header.
+
+\paragraph{3 and 4. Through the layers.} ASP.NET Core checks the token before the controller runs. The controller calls the item service, which only passes the call on to the repository interface. The Infrastructure layer implements it with EF Core.
+
+\paragraph{5 and 6. The database.} EF Core turns the call into a SELECT and makes one Item entity from the Domain layer for each row.
+
+\paragraph{7. Answer.} The controller maps each Item to the contract ItemResponse, so the API never sends a domain entity, and answers 200 with the list. A missing or invalid token gives 401 before the controller runs.
 
 \section{Keycloak Login flow: Client and admin}
 

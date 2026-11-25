@@ -11,7 +11,7 @@ namespace PrepMeUp.Api.Controllers;
 [Authorize(Policy = "AdminOnly")]
 public class AdminController(OrderService orderService) : ControllerBase
 {
-    //bruges til at tjekke om kaldet kommer fra en admin, og dermed om tokenet er validt. Kan bruges til at tjekke om admin er på browser, eller om en household er logget ind.
+    // Used to check whether the call comes from an admin, and so whether the token is valid. Can be used to check whether an admin is in the browser, or whether a household user is logged in.
     [HttpGet("ping", Name = "Admin_Ping")]
     public IActionResult Ping() => Ok();
 

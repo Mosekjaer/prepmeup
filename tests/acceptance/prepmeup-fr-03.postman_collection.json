@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-03 default package types",
+    "description": "Acceptance test for FR-03 (appendix 6.1). Use a fresh database (make db-reset), load seed-fr-03.sql, get a token as the administrator and run the requests in order. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1 List the package types",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var types = pm.response.json();",
+              "pm.test('Exactly one package type for adults and one for children are listed', function () {",
+              "    pm.expect(types.map(function (type) { return type.name; }).sort()).to.eql(['Normal - Adult', 'Normal - Child']);",
+              "});",
+              "pm.test('The replaced package type is not listed', function () {",
+              "    pm.expect(types.some(function (type) { return type.name === 'FR-03 Replaced'; })).to.equal(false);",
+              "});",
+              "var adult = types.find(function (type) { return type.name === 'Normal - Adult'; });",
+              "pm.collectionVariables.set('adultId', adult.id);",
+              "pm.collectionVariables.set('adultContents', JSON.stringify(adult.contents));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/package-types",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "package-types"
+          ]
+        },
+        "description": "Step 1. Lists the active package types. seed-fr-03.sql adds one replaced package type, which must not be listed."
+      },
+      "response": []
+    },
+    {
+      "name": "2 Each package type has contents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.response.json().forEach(function (type) {",
+              "    pm.test(type.name + ' contains at least one item with a quantity greater than 0', function () {",
+              "        pm.expect(type.contents.length).to.be.above(0);",
+              "        type.contents.forEach(function (content) { pm.expect(content.quantity).to.be.above(0); });",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/package-types",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "package-types"
+          ]
+        },
+        "description": "Step 2. Checks the contents of each package type."
+      },
+      "response": []
+    },
+    {
+      "name": "3 Try to change the contents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('The API does not accept the change and answers 404 or 405', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([404, 405]);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Normal - Adult\",\"contents\":[]}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/package-types/{{adultId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "package-types",
+            "{{adultId}}"
+          ]
+        },
+        "description": "Step 3. Tries to replace the contents of the adult package type."
+      },
+      "response": []
+    },
+    {
+      "name": "4 The contents are unchanged",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('The contents are the same as in step 1 and 2', function () {",
+              "    var adult = pm.response.json().find(function (type) { return type.id === pm.collectionVariables.get('adultId'); });",
+              "    pm.expect(adult.contents).to.eql(JSON.parse(pm.collectionVariables.get('adultContents')));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/package-types",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "package-types"
+          ]
+        },
+        "description": "Step 4. Reads the adult package type again."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    }
+  ]
+}

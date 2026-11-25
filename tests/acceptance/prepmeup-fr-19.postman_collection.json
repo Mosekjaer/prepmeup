@@ -1,0 +1,190 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-19 next order 14 days before expiry",
+    "description": "Acceptance test for FR-19 (appendix 6.1). Load seed-fr-19.sql, wait for the next check of expiry dates (restart the API or wait 5 minutes), get a token as the administrator and run request 1 and 2. Wait for one more check and run request 3. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1 Only C14 gets a planned order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var orders = pm.response.json().filter(function (order) { return order.customerName.indexOf('FR-19') === 0; });",
+              "pm.test('The list contains a planned order for C14 and none for C15 or CP', function () {",
+              "    pm.expect(orders.map(function (order) { return order.customerName; })).to.eql(['FR-19 C14']);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/orders/planned",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "orders",
+            "planned"
+          ]
+        },
+        "description": "Step 1. The seed data has sent orders for C15 (expires today+15), C14 (today+14, active) and CP (today+14, paused). Only C14 must get a next order."
+      },
+      "response": []
+    },
+    {
+      "name": "2 The new order copies the previous one",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var orders = pm.response.json().filter(function (order) { return order.customerName.indexOf('FR-19') === 0; });",
+              "pm.test('The order contains 2 adult packages and 1 child package', function () {",
+              "    var c14 = orders.find(function (order) { return order.customerName === 'FR-19 C14'; });",
+              "    var lines = c14.lines.map(function (line) { return line.quantity + ' x ' + line.packageTypeName; }).sort();",
+              "    pm.expect(lines).to.eql(['1 x Normal - Child', '2 x Normal - Adult']);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/orders/planned",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "orders",
+            "planned"
+          ]
+        },
+        "description": "Step 2. Reads the lines of the new order for C14."
+      },
+      "response": []
+    },
+    {
+      "name": "3 Still one planned order after the next check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var orders = pm.response.json().filter(function (order) { return order.customerName.indexOf('FR-19') === 0; });",
+              "pm.test('C14 still has exactly one planned order', function () {",
+              "    pm.expect(orders.filter(function (order) { return order.customerName === 'FR-19 C14'; }).length).to.equal(1);",
+              "});",
+              "pm.test('C15 and CP still have none', function () {",
+              "    pm.expect(orders.length).to.equal(1);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/orders/planned",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "orders",
+            "planned"
+          ]
+        },
+        "description": "Step 3. Run after the back-end has checked the expiry dates again."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    }
+  ]
+}

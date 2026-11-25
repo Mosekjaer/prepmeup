@@ -1,6 +1,6 @@
 # Acceptance tests (Postman)
 
-`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-05.postman_collection.json` runs the API part of FR-05 and `prepmeup-fr-06.postman_collection.json` the API part of FR-06 (see the end of this file). The collections hold no tokens or passwords.
+`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-03.postman_collection.json`, `prepmeup-fr-05.postman_collection.json`, `prepmeup-fr-06.postman_collection.json` and `prepmeup-fr-19.postman_collection.json` run the API part of FR-03, FR-05, FR-06 and FR-19 (see the end of this file). The collections hold no tokens or passwords.
 
 ## Prerequisites
 
@@ -58,3 +58,44 @@ The same as for FR-05: the stack runs locally (`make up`) on a database where th
 4. Get a new token, sign in as the customer, and run the folder **As customer** (request 7). Order B stays planned.
 
 Run the FR-05 collection before FR-06, or load the test data again between them, since FR-05 expects the three planned orders A, B and C.
+
+## FR-03: default package types
+
+`prepmeup-fr-03.postman_collection.json` checks that exactly the two default package types are listed, that a replaced package type is hidden, that each has contents, and that the contents cannot be changed through the API.
+
+### Prerequisites
+
+- A fresh database (`make db-reset`), so no administrator has created a package type.
+- A user with the admin role is registered in Keycloak.
+
+### Run
+
+1. Load the test data. It adds one package type with the status replaced, called `FR-03 Replaced`, and can be run again:
+   ```
+   docker compose cp tests/acceptance/seed-fr-03.sql db:/tmp/seed-fr-03.sql
+   docker compose exec db sh -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -d PrepMeUp -b -i /tmp/seed-fr-03.sql'
+   ```
+   The script ends by listing all package types: the replaced one and the two default ones.
+2. Import the collection, get a token as the administrator and run requests 1 to 4 in order. Request 3 uses the id that request 1 saves, and request 4 compares with the contents from request 1.
+
+## FR-19: next order 14 days before expiry
+
+`prepmeup-fr-19.postman_collection.json` checks that the back-end plans a next order for an active subscription whose order expires within 14 days, with the same package types and quantities, and only once.
+
+### Prerequisites
+
+The same as for FR-05. The API plans next orders when it starts and then every 5 minutes.
+
+### Run
+
+1. Load the test data. The script deletes and recreates the three test customers (key `fr19-...`), so it can be run again before every run:
+   ```
+   docker compose cp tests/acceptance/seed-fr-19.sql db:/tmp/seed-fr-19.sql
+   docker compose exec db sh -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -d PrepMeUp -b -i /tmp/seed-fr-19.sql'
+   ```
+   Each customer has one sent order with 2 adult packages and 1 child package. C15 expires today+15, C14 and CP expire today+14, and CP's subscription is paused.
+2. Make the back-end check the expiry dates: `docker compose restart api`, or wait 5 minutes.
+3. Import the collection, get a token as the administrator and run requests 1 and 2.
+4. Restart the API again (or wait 5 minutes) and run request 3. C14 must still have exactly one planned order.
+
+The collection only looks at orders for customers whose name starts with `FR-19`. The planned order for C14 does show up in the FR-05 list, so load the FR-05 test data on a database without it, or run FR-19 after FR-05 and FR-06.

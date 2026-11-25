@@ -45,6 +45,7 @@
   1.7 & 12-11-2026 & Group 3 & Ran the test for FR-01 \\
   1.8 & 18-11-2026 & Group 3 & New test for NFR-09 \\
   1.9 & 18-11-2026 & Group 3 & Test environment changed to a local run from main and one run on the server \\
+  1.10 & 25-11-2026 & Group 3 & Ran the tests for NFR-07 and NFR-08 \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -241,9 +242,9 @@ NFR-06 & The customer app runs as an Android app built with Expo (React Native).
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-07 & Outside development and test, the API refuses to start if the identity provider address or the database connection string is missing. & Start the API image with the environment set to Production, first without the identity provider address and then without the connection string. Confirm each time that the process stops with an error that names the missing value. & & \\
+NFR-07 & Outside development and test, the API refuses to start if the identity provider address or the database connection string is missing. & Start the API image with the environment set to Production, first without the identity provider address and then without the connection string. Confirm each time that the process stops with an error that names the missing value. & Run locally on commit 3d50f82. Without the identity provider address the API stopped with ``The configuration value 'Keycloak:Authority' is missing.'' Without the connection string it stopped with ``The configuration value 'ConnectionStrings:PrepMeUpDb' is missing.'' Both messages say which environment variable to set. & Pass \\
 \hline
-NFR-08 & Every API endpoint is covered by at least one automated test that runs in CI. & List every endpoint in the API's OpenAPI document. For each endpoint, name a test in the test projects that calls it, and confirm that the latest CI run on the main branch ran the tests and was green. & & \\
+NFR-08 & Every API endpoint is covered by at least one automated test that runs in CI. & List every endpoint in the API's OpenAPI document. For each endpoint, name a test in the test projects that calls it, and confirm that the latest CI run on the main branch ran the tests and was green. & GET /admin/ping: AdminEndpointTests. GET /admin/orders/planned: AdminPlannedOrdersEndpointTests. POST /admin/orders/\{orderId\}/shipment: AdminMarkOrderShippedEndpointTests. GET /items: ItemsEndpointTests. GET /package-types: PackageTypeEndpointTests. GET and POST /subscription: SubscriptionEndpointTests. GET and PUT /user: UserEndpointTests. The CI run on main for commit c7fdbd5 ran 139 unit tests and 136 integration tests, and all passed. & Pass \\
 \hline
 \end{tabular}
 \end{center}

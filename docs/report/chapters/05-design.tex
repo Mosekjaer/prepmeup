@@ -1,3 +1,251 @@
 \chapter{Design and Implementation}\label{ch:design}
-% Design and implementation of the components of the solution.
 
+This chapter describes how the three applications from \autoref{fig:c4-containers} are
+designed and built: the Web API, the customer app and the admin panel. We go from the
+top and down, so each section starts with the parts of the subsystem and how they work
+together, and then goes into the parts where the important decisions are. A subsystem
+only knows the others through the interfaces in \autoref{sec:arch-interfaces}. The
+database is described as a component of the Web API, because no other container uses it.
+Appendix 4.1 has more flows through the code, Appendix 4.2 has the screen design, and
+Appendix 5.1 to 5.3 have the tests.
+
+\section{Backend}\label{sec:design-backend}
+
+\subsection{Introduction}
+
+The backend is the Web API. It is the only container with business rules and the only
+one that talks to the database. Most of the rules in PrepMeUp are about the subscription
+and its orders: the first order when the customer signs up (FR-01), the list of orders
+that must be sent (FR-05), marking an order as sent (FR-06), and the next order 14 days
+before the previous one expires (FR-19). This section is about that part. The customer
+and the package types follow the same design.
+
+\subsection{Structure}
+
+\autoref{fig:backend-class-diagram} shows the classes behind the subscription and the
+orders, grouped by the layers from \autoref{sec:arch-packages}.
+
+\drawiofig[\linewidth]{backend-class-diagram}{Class diagram of the subscription and the orders in the backend. The repository interfaces are implemented in Infrastructure, which is left out. OrderService also uses IClock, but the line is left out to keep the figure readable.}{fig:backend-class-diagram}
+
+The controllers are the boundary. They read the user's id from the token, turn the
+request into the types the services expect, and choose the status code. The background
+service NextOrderPlanner is also in the Api project, because it is started by the
+ASP.NET Core host, but it only calls Application like a controller does.
+
+Each method on a service is one use case. A service only knows the repository
+interfaces, and the interfaces are defined in Application, so Application has no
+reference to EF Core. The services also get the time from IClock instead of reading the
+system clock. In production IClock returns the real time, and in a test it returns the
+time the test chooses.
+
+In Domain, a subscription owns its orders, and an order owns its lines. A line refers to
+a package type and has a quantity of at least one. All changes to the orders go through
+Subscription or Order. A new order can only be made by Subscription.PlanNextOrder, so
+the rule that a subscription can only have one order waiting to be sent is checked in
+one place.
+
+\subsection{Interaction Between Components}
+
+\autoref{fig:save-customer-flow} shows how a request goes through the layers. The
+example is the onboarding screen, where the customer saves a name and an address.
+
+\drawiofig[\linewidth]{save-customer-flow}{Saving a customer's name and address, from the app through the layers of the API to the database.}{fig:save-customer-flow}
+
+ASP.NET Core checks the token before the controller runs, and a request without a
+valid token gets 401. The controller takes the customer's id and e-mail from the token,
+not from the request body, so a customer can only change their own data (NFR-09). The
+service looks the customer up by the id. If none exists, it creates a new customer, and
+otherwise it updates the old one. The rules for the name, phone number and address are
+in the Customer and Address classes, so they apply no matter which use case changes a
+customer.
+
+Marking an order as sent takes the same path. OrderService answers with a value that
+says what happened: sent, not found or not planned. The controller turns it into 204,
+404 or 409. We chose a result value over exceptions, because Application must not know
+HTTP, and the controller should not have to guess what an exception means.
+
+\subsection{Design of the Order Cycle}
+
+\autoref{fig:subscription-state-diagram} shows the cycle a subscription goes through.
+
+\drawiofig[\linewidth]{subscription-state-diagram}{State diagram of a subscription and its orders.}{fig:subscription-state-diagram}
+
+When the customer signs up, the subscription starts with a planned order. The order
+stays planned until an administrator marks it as sent. Then the order gets its sent date
+and an expiry date one year later. The expiry date is calculated with AddYears in .NET,
+so a leap year does not move the date. 14 days before the expiry date, the subscription
+is ready for its next order, which copies the package types and quantities of the
+previous one.
+
+Nobody starts the next order by hand. NextOrderPlanner runs every 5 minutes and asks
+SubscriptionService to plan the next orders. The rule for when a subscription is ready
+is written once, as an expression in Subscription (\autoref{lst:next-order-rule}).
+
+\begin{code}[H]
+\begin{minted}[fontsize=\small, frame=single, breaklines]{csharp}
+return subscription =>
+    subscription.Status == SubscriptionStatus.Active
+    && subscription.Orders.All(order => order.SentAt != null)
+    && subscription.Orders.Max(order => order.ExpiresAt) <= latestAllowedExpiry;
+\end{minted}
+\caption{The rule for when the next order is due, from Subscription.}
+\label{lst:next-order-rule}
+\end{code}
+
+The repository gives the expression to EF Core, which turns it into the WHERE clause of
+the query, so only the subscriptions that are ready are loaded. The unit tests compile
+the same expression and run it on objects in memory. In that way, the rule in the query
+and the rule in the tests cannot drift apart. The check uses less than or equal and not
+equal, so an order is not missed if the server was down when it became due. The next
+run plans it.
+
+If two administrators mark the same order as sent at the same time, only one of them
+must succeed. The sent date is a concurrency token in EF Core, so the second save finds
+that the row has changed and fails. The repository turns the EF Core exception into its
+own exception, which the service turns into not planned, and the second administrator
+gets 409.
+
+A replaced package type cannot be ordered, and the next order uses the same package
+types as the previous one. Version 1.0 has no way to replace a package type, because
+new versions of a package type (FR-15) are a could-have, so the case never occurs. If it
+is built, the next order has to choose the new version instead.
+
+If the database cannot be reached, a shared exception handler answers 503 with a
+message the apps can show, instead of a 500 without an explanation.
+
+\subsection{Database}
+
+The tables are made from the entities with EF Core migrations
+(\autoref{sec:arch-data}). The mapping is in the DbContext, so Domain does not know about
+tables. Some rules are in both Domain and the database. A quantity of at least one is a
+check constraint on the order lines and the package contents. A package type can only
+appear once in an order, and a Keycloak account can only have one customer, which
+are both unique indexes. If code ever goes around Domain, the database still refuses
+the data.
+
+The planner looks for orders by subscription and expiry date every 5 minutes, so the
+orders table has an index on the two columns. The integration tests use SQLite, which
+cannot compare dates with a time zone. The DbContext therefore stores the expiry date as
+ticks in UTC when the provider is SQLite, and the same query works on both databases.
+The standard package types from the Danish Emergency Management Agency are created
+by a seed when the database is set up \cite{brs-forberedt}.
+
+\subsection{Tests and Results}
+
+The backend has 139 unit tests and 138 integration tests, and they all pass on the main
+branch. \autoref{tab:design-backend-tests} shows the tests of the order cycle. Appendix
+5.1 lists all the module tests, and Appendix 5.2 has the integration plans.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}p{5.6cm} p{6.6cm} l@{}}
+        \hline
+        Test class & What it checks & Result \\
+        \hline
+        OrderTests, OrderExpiryTests & An order is planned until it is sent, and expires one year after & Pass \\
+        SubscriptionNextOrderShouldBePlannedTests & The next order is only due for an active subscription with nothing waiting, 14 days before expiry & Pass \\
+        SubscriptionPlanNextOrderTests & The next order copies the previous one & Pass \\
+        OrderServiceTests & Marking as sent uses the clock and answers not found or not planned & Pass \\
+        SubscriptionReadyForNextOrderTests & The rule works as an SQL query & Pass \\
+        NextOrderPlannerTests & The background service plans the next order & Pass \\
+        AdminMarkOrderShippedEndpointTests & The endpoint answers 204, 401, 403, 404 and 409 & Pass \\
+        \hline
+    \end{tabular}
+    \caption{Tests of the order cycle in the backend.}
+    \label{tab:design-backend-tests}
+\end{table}
+
+The unit tests run without a database. The integration tests start the API with SQLite in
+memory and tokens they sign themselves, so they test the whole path from HTTP to the
+database. We have not measured code coverage.
+
+\subsection{Summary}
+
+The backend keeps the rules of the order cycle in Domain, where they are tested without a
+database. Application runs the use cases through interfaces, and Api only translates
+between HTTP and the use cases. The rule for the next order is written once and used both
+in the query and in the tests.
+
+\section{Customer App}\label{sec:design-customer-app}
+
+\subsection{Introduction}
+
+The customer app is the Expo app where a customer signs up, chooses the first order and
+follows the orders. The screens follow the mockups in Appendix 4.2.
+
+\subsection{Structure}
+
+The app uses Expo Router, so each screen is a file, and the folders decide the
+navigation. The home screen, the orders and the profile are tabs. Onboarding, building
+the order, confirming it and the details of a package type are screens on top of the
+tabs. Two modules are shared by all screens. One sets up the clients generated from the
+OpenAPI document, and the other handles the login with Keycloak and keeps the token in
+the phone's secure storage.
+
+\subsection{Interaction Between Components}
+
+When the customer opens the app, the home screen asks for the customer with GET
+/customer. If the API answers 404, the user is new, and the app goes to onboarding. After
+the name and address are saved, the customer builds the first order from the package
+types from GET /package-types, confirms it, and the app sends it with POST
+/subscription.
+
+\subsection{Design and Implementation}
+
+The app has no business rules. It does not calculate expiry dates or when the next order
+comes, but shows the dates the API sends. The rules then only exist in the backend, and a
+change of a rule does not need a new version of the app.
+
+Every screen that loads data has four states: loading, error, empty and data. An error
+has a button to try again. A screen therefore never shows a blank page when the network
+or the API fails.
+
+\subsection{Tests and Results}
+
+The app has 82 tests with Vitest, which all pass. A test renders a screen with
+react-native-web and a fake API client, and checks what the user sees in each of the four
+states. The login and the navigation are tested in the same way.
+
+\subsection{Summary}
+
+The customer app only shows data and sends the customer's choices to the API. The
+generated client and the four states make the screens simple and alike.
+
+\section{Admin Panel}\label{sec:design-admin-panel}
+
+\subsection{Introduction}
+
+The admin panel is the React app where an administrator sees the planned orders and
+marks them as sent (FR-05, FR-06).
+
+\subsection{Structure}
+
+The admin panel uses React Router. A login gate surrounds all pages. It logs the user
+in with Keycloak and calls GET /admin/ping to check that the user has the admin role.
+The dispatch queue is the main page. Its calls to the API are in two hooks, one that
+loads the planned orders and one that marks an order as sent.
+
+\subsection{Interaction Between Components}
+
+The dispatch queue loads the planned orders, sorted by the API with the oldest first, and
+shows the customer, the address and the contents. When the administrator marks an order
+as sent, the button is disabled until the API answers, so the same order is not sent
+twice by a double click. After 204, the list is loaded again, and the order is gone.
+
+\subsection{Design and Implementation}
+
+The hook that marks an order as sent handles the answers from the API separately. A 409
+means that somebody else has sent the order already, and the panel says so and reloads
+the list. A 404 means that the order no longer exists. Other errors show a message that
+asks the administrator to try again. Like the customer app, the admin panel has no rules
+of its own and only reacts to the status codes.
+
+\subsection{Tests and Results}
+
+The admin panel has 41 tests with Vitest, which all pass. They cover the login gate, the
+router, the four states of the dispatch queue and the answers to marking an order as sent.
+
+\subsection{Summary}
+
+The admin panel is small, because the API does the work. Its design is mostly about
+telling the administrator what happened when two people work on the same queue.

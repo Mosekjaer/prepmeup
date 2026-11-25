@@ -1,0 +1,347 @@
+{
+  "info": {
+    "name": "PrepMeUp FR-04 expiry date of orders",
+    "description": "Acceptance test for FR-04 (appendix 6.1). Customers A and B sign up in the app first, so each has one planned order. Set the collection variables customerNameA and customerNameB to their names. Run the folders in order and get a new token as the user each folder names. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakUrl}}/realms/prepmeup/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "prepmeup-admin",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "http://localhost:5173/",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "PrepMeUp local",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1 As administrator: send O1",
+      "item": [
+        {
+          "name": "1a Find the planned orders of A and B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var name = pm.collectionVariables.get('customerNameA');",
+                  "var order = pm.response.json().find(function (o) { return o.customerName === name; });",
+                  "pm.test('Customer A has a planned order', function () {",
+                  "    pm.expect(order).to.not.equal(undefined);",
+                  "});",
+                  "pm.collectionVariables.set('orderIdA', order.orderId);",
+                  "var nameB = pm.collectionVariables.get('customerNameB');",
+                  "var orderB = pm.response.json().find(function (o) { return o.customerName === nameB; });",
+                  "pm.test('Customer B has a planned order', function () {",
+                  "    pm.expect(orderB).to.not.equal(undefined);",
+                  "});",
+                  "pm.collectionVariables.set('orderIdB', orderB.orderId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/planned",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "planned"
+              ]
+            },
+            "description": "Finds O1 for A and O2 for B by customer name."
+          },
+          "response": []
+        },
+        {
+          "name": "1b Mark O1 as sent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderIdA}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderIdA}}",
+                "shipment"
+              ]
+            },
+            "description": "Step 1."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2 As customer A: read O1",
+      "item": [
+        {
+          "name": "2 O1 has an expiry date one year after it was sent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var sent = pm.response.json().orders.filter(function (o) { return o.sentAt; });",
+                  "pm.test('The customer has exactly one sent order', function () {",
+                  "    pm.expect(sent.length).to.equal(1);",
+                  "});",
+                  "var order = sent[0];",
+                  "pm.test('The order was sent today', function () {",
+                  "    pm.expect(new Date(order.sentAt).toDateString()).to.equal(new Date().toDateString());",
+                  "});",
+                  "pm.test('The expiry date is exactly one year after the sent date', function () {",
+                  "    var expected = new Date(order.sentAt);",
+                  "    expected.setUTCFullYear(expected.getUTCFullYear() + 1);",
+                  "    pm.expect(new Date(order.expiresAt).getTime()).to.equal(expected.getTime());",
+                  "});",
+                  "pm.collectionVariables.set('expiresAtA', order.expiresAt);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
+            },
+            "description": "Step 2. Saves the expiry date of O1 for step 3."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3 As administrator: send O2",
+      "item": [
+        {
+          "name": "3a Mark O2 as sent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/orders/{{orderIdB}}/shipment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "orders",
+                "{{orderIdB}}",
+                "shipment"
+              ]
+            },
+            "description": "Step 3."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4 As customer B: read O2",
+      "item": [
+        {
+          "name": "4 O2 has its own expiry date",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var sent = pm.response.json().orders.filter(function (o) { return o.sentAt; });",
+                  "pm.test('The customer has exactly one sent order', function () {",
+                  "    pm.expect(sent.length).to.equal(1);",
+                  "});",
+                  "var order = sent[0];",
+                  "pm.test('The order was sent today', function () {",
+                  "    pm.expect(new Date(order.sentAt).toDateString()).to.equal(new Date().toDateString());",
+                  "});",
+                  "pm.test('The expiry date is exactly one year after the sent date', function () {",
+                  "    var expected = new Date(order.sentAt);",
+                  "    expected.setUTCFullYear(expected.getUTCFullYear() + 1);",
+                  "    pm.expect(new Date(order.expiresAt).getTime()).to.equal(expected.getTime());",
+                  "});",
+                  "pm.test('The expiry date of O2 is its own', function () {",
+                  "    pm.expect(order.expiresAt).to.not.equal(undefined);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
+            },
+            "description": "Step 3, customer B."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5 As customer A: O1 is unchanged",
+      "item": [
+        {
+          "name": "5 The expiry date of O1 is unchanged",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var order = pm.response.json().orders.filter(function (o) { return o.sentAt; })[0];",
+                  "pm.test('The expiry date of O1 is the same as in step 2', function () {",
+                  "    pm.expect(order.expiresAt).to.equal(pm.collectionVariables.get('expiresAtA'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subscription",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscription"
+              ]
+            },
+            "description": "Step 3, customer A again."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "keycloakUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "customerNameA",
+      "value": ""
+    },
+    {
+      "key": "customerNameB",
+      "value": ""
+    }
+  ]
+}

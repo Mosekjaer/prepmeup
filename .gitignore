@@ -50,3 +50,7 @@ context/*/sources/
 
 # Local video projects (HyperFrames), not part of the hand-in
 video/
+
+# Python bytecode (drawio-skill scripts)
+__pycache__/
+*.pyc

@@ -48,6 +48,7 @@
   1.10 & 25-11-2026 & Group 3 & Ran the tests for NFR-07 and NFR-08 \\
   1.11 & 25-11-2026 & Group 3 & FR-04 uses two customers and reads the expiry date with the customer's token \\
   1.12 & 25-11-2026 & Group 3 & The customer endpoint is now /customer instead of /user. Results written before this version were run against /user \\
+  1.13 & 25-11-2026 & Group 3 & Ran the tests for FR-03 to FR-06, FR-19, NFR-01, NFR-02 and NFR-09 to NFR-11 \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -118,15 +119,17 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
   {The system has just been deployed with an empty database. No administrator has created a package type. One extra package type with the status replaced is put into the database as test data.}
   {None.}
 \begin{steps}
-1 & The tester signs in as ADM and opens the list of package types (or requests it through the API). & Exactly one package type for adults and one for children are listed. The name of each says that it is for a normal diet and for whom it is. The replaced package type is not listed. & & \\
+1 & The tester signs in as ADM and opens the list of package types (or requests it through the API). & Exactly one package type for adults and one for children are listed. The name of each says that it is for a normal diet and for whom it is. The replaced package type is not listed. & Two package types were listed: Normal - Adult and Normal - Child. The replaced package type was not listed. & Pass \\
 \hline
-2 & The tester opens each of the two package types. & Each package type contains at least one item with a quantity greater than 0. & & \\
+2 & The tester opens each of the two package types. & Each package type contains at least one item with a quantity greater than 0. & Each package type contained three items. Normal - Adult: canned food 4, crispbread 2 and water 6. Normal - Child: canned food 3, crispbread 2 and water 4. & Pass \\
 \hline
-3 & The tester tries to change the contents of one of the package types through the API with a PUT request. & The API does not accept the change and answers 404 or 405. & & \\
+3 & The tester tries to change the contents of one of the package types through the API with a PUT request. & The API does not accept the change and answers 404 or 405. & The API answered 404. & Pass \\
 \hline
-4 & The tester opens the same package type again. & The contents are the same as in step 2. & & \\
+4 & The tester opens the same package type again. & The contents are the same as in step 2. & The contents were the same as in step 2. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The local database was deleted first, so the API created the two default package types when it started, and the replaced package type was added with the test data script. The tester signed in as an administrator.
 
 \subsection{FR-04: Expiry date of orders}
 \scenarioinfo{FR-04}
@@ -134,13 +137,15 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
   {Customer A and customer B have signed up (FR-01), so each has one planned order, O1 for A and O2 for B. ADM is signed in.}
   {Each sent order has its own expiry date.}
 \begin{steps}
-1 & ADM marks O1 as sent (FR-06). & O1 is registered as sent with today's date. & & \\
+1 & ADM marks O1 as sent (FR-06). & O1 is registered as sent with today's date. & The list of planned orders answered 200 and marking O1 as sent answered 204. O1 got the sent date 25-11-2026. & Pass \\
 \hline
-2 & The tester calls GET /subscription with A's token. & O1 has today's date as sent date and an expiry date exactly one year later. & & \\
+2 & The tester calls GET /subscription with A's token. & O1 has today's date as sent date and an expiry date exactly one year later. & The call answered 200. O1 had the sent date 25-11-2026 and the expiry date 25-11-2027. & Pass \\
 \hline
-3 & ADM marks O2 as sent. The tester calls GET /subscription with B's token and then with A's token. & O2 has its own expiry date. The expiry date of O1 is unchanged. & & \\
+3 & ADM marks O2 as sent. The tester calls GET /subscription with B's token and then with A's token. & O2 has its own expiry date. The expiry date of O1 is unchanged. & Marking O2 as sent answered 204. B's call answered 200 and O2 had the sent date 25-11-2026 and the expiry date 25-11-2027, a few minutes after O1's. A's call answered 200 and O1 had the same expiry date as in step 2. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. Customer A and customer B signed up in the customer app on an Android emulator in Expo Go, A with 2 adult packages and 1 child package and B with 1 adult package and 3 child packages. The tester signed in as an administrator, A and B in the order of the folders in the collection. The two expiry dates are exactly one year after the time each order was sent, so they differ by the minutes between the two orders being sent.
 
 \subsection{FR-05: See the next orders to send}
 \scenarioinfo{FR-05}
@@ -148,11 +153,13 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
   {ADM is signed in. Test data: planned orders for customers A (send date today+9), B (today+2) and C (today+5), and one sent order for customer D.}
   {None.}
 \begin{steps}
-1 & ADM opens the list of orders to send. & The list shows exactly three orders, in the order B, C, A. The order for D is not shown. & & \\
+1 & ADM opens the list of orders to send. & The list shows exactly three orders, in the order B, C, A. The order for D is not shown. & The list showed three orders: B (planned 27-11-2026), C (30-11-2026) and A (04-12-2026). The order for D was not shown. & Pass \\
 \hline
-2 & ADM marks B's order as sent and reloads the list. & The list shows C, then A. & & \\
+2 & ADM marks B's order as sent and reloads the list. & The list shows C, then A. & Marking B's order as sent answered 204. The list then showed C (30-11-2026) and A (04-12-2026), in that order. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The test data was loaded with the test data script for FR-05. Step 2 was made with two requests added by hand, a POST to mark B's order as sent and a GET of the list. As an extra check, the list was also requested with a customer's token, and the API answered 403.
 
 \subsection{FR-06: Register an order as sent}
 \scenarioinfo{FR-06}
@@ -160,13 +167,15 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
   {ADM is signed in. A planned order for customer A is shown in the list of orders to send (FR-05).}
   {The order has a sent date and is no longer planned.}
 \begin{steps}
-1 & ADM marks the order as sent. & The order disappears from the list of orders to send. & & \\
+1 & ADM marks the order as sent. & The order disappears from the list of orders to send. & A's order was marked as sent. The list of orders to send then showed B and C, and A's order was not in it. & Pass \\
 \hline
-2 & ADM reloads the page. & The order is still gone from the list. & & \\
+2 & ADM reloads the page. & The order is still gone from the list. & The list was requested again and showed B and C only. & Pass \\
 \hline
-3 & The tester looks up the order through the API with ADM's token. & The order has today's date as sent date. & & \\
+3 & The tester looks up the order through the API with ADM's token. & The order has today's date as sent date. & A's order had the sent date 25-11-2026, read from the database. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection and the same test data as FR-05. In step 3 the sent date was read from the database and not through the API. The collection also checked that marking A's order as sent a second time and marking an order that was already sent both answer 409, that an unknown order answers 404, that a request without a token answers 401, and that a request with a customer's token answers 403.
 
 \subsection{FR-19: Next order 14 days before expiry}
 \scenarioinfo{FR-19}
@@ -174,13 +183,15 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
   {Test data: customers C15, C14 and CP each have one sent order with 2 adult packages and 1 child package, and no planned order. The order of C15 expires today+15, the orders of C14 and CP expire today+14. C15 and C14 have an active subscription, CP has a paused subscription. ADM is signed in.}
   {C14 has exactly one new planned order. C15 and CP have none.}
 \begin{steps}
-1 & The tester waits until the back-end has checked the expiry dates, and ADM opens the list of orders to send. & The list contains a planned order for C14 and none for C15 or CP. & & \\
+1 & The tester waits until the back-end has checked the expiry dates, and ADM opens the list of orders to send. & The list contains a planned order for C14 and none for C15 or CP. & The list answered 200 and contained a planned order for C14. There was none for C15 or CP. & Pass \\
 \hline
-2 & ADM opens the new order for C14. & The order contains 2 adult packages and 1 child package of the same package types as the previous order. & & \\
+2 & ADM opens the new order for C14. & The order contains 2 adult packages and 1 child package of the same package types as the previous order. & The call answered 200. The order for C14 contained 2 adult packages and 1 child package, the same package types as the previous order. & Pass \\
 \hline
-3 & The tester waits until the back-end has checked the expiry dates again, and ADM reloads the list. & C14 still has exactly one planned order. & & \\
+3 & The tester waits until the back-end has checked the expiry dates again, and ADM reloads the list. & C14 still has exactly one planned order. & The list answered 200 and C14 still had exactly one planned order. & Pass \\
 \hline
 \end{steps}
+
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The test data was loaded with the test data script for FR-19. The back-end checks the expiry dates when it starts and every 5 minutes, so the tester restarted the API to make it check, once before step 1 and once before step 3.
 
 \section{Non-functional Requirements}
 This section tests the non-functional requirements in appendix 1.2. Each row repeats the requirement in short and says how the test is run. The last two columns are filled in when the test is run.
@@ -192,9 +203,9 @@ This section tests the non-functional requirements in appendix 1.2. Each row rep
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-01 & All text in the customer app and the administrator interface, including API error messages, is in English. & Set the language of the device and the browser to Danish. Review the login and registration pages, every screen in the customer app and the administrator interface, and the error messages from NFR-02. Confirm every visible string is English. & & \\
+NFR-01 & All text in the customer app and the administrator interface, including API error messages, is in English. & Set the language of the device and the browser to Danish. Review the login and registration pages, every screen in the customer app and the administrator interface, and the error messages from NFR-02. Confirm every visible string is English. & Run locally on commit 27b9a67. The language of a device was not changed. Instead the code of the customer app and the administrator interface was read for every visible string, and all of them are English. Dates use the fixed locale en-GB, so they do not follow the language of the device or browser, and there is no currency or number formatting. The login and registration pages of Keycloak were requested with the browser language set to Danish and came back in English, with no language selector. The names of the package types and items are English, and so are the messages written in the API code. & Pass \\
 \hline
-NFR-02 & Every error message is a complete sentence in English stating what went wrong and what the user can do, with no stack traces, HTTP status codes or exception names. & Trigger these errors and read the message shown: wrong password at login, onboarding with an empty name, the API stopped (NFR-03), a customer account in the administrator interface (NFR-10). For each message confirm that it is a complete sentence, says what went wrong and what to do, and contains no status code, exception name or stack trace. & & \\
+NFR-02 & Every error message is a complete sentence in English stating what went wrong and what the user can do, with no stack traces, HTTP status codes or exception names. & Trigger these errors and read the message shown: wrong password at login, onboarding with an empty name, the API stopped (NFR-03), a customer account in the administrator interface (NFR-10). For each message confirm that it is a complete sentence, says what went wrong and what to do, and contains no status code, exception name or stack trace. & Run locally on commit 27b9a67. Wrong password at login: Keycloak said ``Invalid username or password.'' It is a complete sentence that says what went wrong, but it does not say what to do. API stopped: the home screen said ``We could not load your profile. Check your internet connection and try again.'' (the run of NFR-03). Onboarding with an empty name: the code gives ``We could not save your details. Enter your name.'' Customer account in the administrator interface: the code gives ``This account does not have access to the admin panel. Sign out and sign in with an administrator account.'' The last three are complete sentences that say what went wrong and what to do, and none has a status code, exception name or stack trace. The messages for the empty name and the customer account were read from the code and were not triggered in the app. The profile and orders screens also say only ``Could not load your profile.'' and ``Could not load your orders.'' next to a Try again button. The API answers 401, 404 and 409 with no text or only a default title such as Conflict, but the apps do not show that text. & Fail \\
 \hline
 \end{tabular}
 \end{center}
@@ -258,11 +269,11 @@ NFR-08 & Every API endpoint is covered by at least one automated test that runs 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /customer and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & & \\
+NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /customer and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & Run locally on commit 55fe2c0, when the endpoint was still GET /user. In the OpenAPI document no customer endpoint takes an id. The only endpoint with an id is POST /admin/orders/\{orderId\}/shipment, which takes an order id and is reserved for administrators. GET /user and GET /subscription answered 200 with A's token and with B's token. The name was A's for A and B's for B, and the orders of B were not the orders of A. & Pass \\
 \hline
-NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
+NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & Run locally on commit 55fe2c0. With A's token GET /admin/ping, GET /admin/orders/planned and POST /admin/orders/\{orderId\}/shipment all answered 403. With ADM's token the first two answered 200, and the third answered 404 for an order that does not exist, so the request was let through. & Pass \\
 \hline
-NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /customer without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & & \\
+NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /customer without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & Run locally on commit 55fe2c0, when the endpoint was still GET /user. Without an Authorization header the answer was 401. With the token not-a-jwt the answer was 401. With a token that was more than 15 minutes old the answer was 401. A call with curl without a header and with the token not-a-jwt also gave 401 on /subscription, /items, /package-types, /admin/ping and /admin/orders/planned. & Pass \\
 \hline
 \end{tabular}
 \end{center}

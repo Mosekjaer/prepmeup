@@ -32,7 +32,7 @@
 
 **Pattern:** Bedt om et draw.io-diagram over auth-flowet (PMU-77) tegnede jeg et UML-sekvensdiagram med 17 beskeder. Frederik ville have et node-diagram, der giver overblik.
 **Rule:** Når vejleder eller gruppen beder om et "flowdiagram" eller "flow mellem noder", så tegn først et node-diagram: én boks pr. node (klienter, Keycloak, API, database) og få nummererede pile med teknisk tekst. Tegn kun et sekvensdiagram, når der bliver bedt om det, eller som supplement.
-**Context:** PMU-77, `docs/assets/drawio/auth-flow.drawio`. Michel bad 6/10 om "pile med teknisk tekst", så man kan bevare overblikket (referat 13.4).
+**Context:** PMU-77, `docs/assets/drawio/auth-flow.drawio`. Michel bad 6/10 om "pile med teknisk tekst", så man kan bevare overblikket (referat 10.4).
 
 ## 2026-10-06 — Forklaringsvideo: vis hvert skift, og hold skærmen rolig
 
@@ -54,15 +54,15 @@
 
 ## 2026-11-02 — Vejledermøde og sprintskifte er to møder
 
-**Pattern:** Lagde sprint review, retrospective og planning ind i dagsordenen til vejledermødet tirsdag 3/11, fordi Frederik skrev "vi afslutter sprint 4 i morgen". Referatet 13.6 sagde allerede onsdag 4/11. Frederik: "Tirsdag er bare med vejleder."
+**Pattern:** Lagde sprint review, retrospective og planning ind i dagsordenen til vejledermødet tirsdag 3/11, fordi Frederik skrev "vi afslutter sprint 4 i morgen". Referatet 10.6 sagde allerede onsdag 4/11. Frederik: "Tirsdag er bare med vejleder."
 **Rule:** Læg aldrig review, retro og planning i en vejledermøde-dagsorden. De holdes om onsdagen i en egen dagsorden. Tjek "Næste møde" i seneste referat, før møder lægges sammen.
-**Context:** `meeting-docs`, `12-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
+**Context:** `meeting-docs`, `09-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
 
 ## 2026-11-02 — Ingen PMU-numre i dagsordener
 
 **Pattern:** Skrev Kaneo-numre (PMU-xx) ved hvert punkt i dagsordenerne til 3/11 og 4/11. Frederik: "Du behøver ikke skrive PMU'er på."
 **Rule:** Skriv ikke PMU-numre i dagsordener. Omtal kortet ved dets emne ("kortet om zombie-brugere", "databasen") og angiv point, hvor det er relevant.
-**Context:** `meeting-docs`, `12-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
+**Context:** `meeting-docs`, `09-meeting-invitations/07-agenda-2026-11-03.tex` og `08-agenda-2026-11-04.tex`.
 
 ## 2026-11-05 — Behold ER-diagrammets notation, ret kun fejlene
 

@@ -8,7 +8,7 @@
 
 \lstset{basicstyle=\ttfamily\small, columns=fullflexible, breaklines=true}
 
-\title{10.3 Deployment Pipeline}
+\title{7.3 Deployment Pipeline}
 \author{SW4PRJ4 - Group 3}
 \date{\today}
 
@@ -29,7 +29,7 @@
   1.10 & 05-11-2026 & Group 3 & The way from the internet to the containers, legend and artifacts in the deployment diagrams \\
 \end{versionhistory}
 
-In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 10.1, and the reasons for the technology choices are in appendix 2.1.
+In this appendix we describe what happens from the moment a pull request is merged until the new version runs in production, and why we set it up this way. The daily rules for branches, commits and pull requests are in appendix 7.1, and the reasons for the technology choices are in appendix 2.1.
 
 \section{Scope}
 The system runs as one Docker Compose stack on our own server, managed by Coolify. The stack has the API, the SQL Server database, Keycloak, Keycloak's own PostgreSQL database and the admin panel. The admin panel is a container with a web server, see section~\ref{sec:admin-panel}. The customer app is not a container. It is built and shared through Expo, see section~\ref{sec:customer-app}.
@@ -124,7 +124,7 @@ The downside is that a problem that only shows up on the server is first found i
 If we need a test environment later, the pipeline already has what it takes. The images are tagged with the commit they were built from, so a test environment could run the main tag, and production could be locked to a commit with PMU\_IMAGE\_TAG and moved forward by hand after a check. Nothing in the images or the workflow would have to change.
 
 \subsection{Release Tags at the End of a Sprint}
-At the sprint review we put a tag on the main branch, for example v0.5.0 (appendix 10.1). The tag does not start a deployment, because that commit is already running. It marks the version we showed at the review. Every image is tagged with the commit it was built from, so the release tag also tells us which image to roll back to if we want the version from an earlier sprint review.
+At the sprint review we put a tag on the main branch, for example v0.5.0 (appendix 7.1). The tag does not start a deployment, because that commit is already running. It marks the version we showed at the review. Every image is tagged with the commit it was built from, so the release tag also tells us which image to roll back to if we want the version from an earlier sprint review.
 
 Sprints 1 to 4 are tagged v0.1.0 to v0.4.0, each on the last commit on the main branch in that sprint. The admin panel image has only been built since sprint 4. So with the current compose file, a rollback can only go back to v0.4.0. Before that, there is no admin panel image with the same tag.
 

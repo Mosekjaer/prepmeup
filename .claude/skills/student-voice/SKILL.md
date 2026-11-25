@@ -53,7 +53,7 @@ grep -oE '(FR|NFR)-[0-9]+' "$f" | sort -u > /tmp/reqs.before
 | "The price is", "There is a limit:", "It is worth noting" | "The downside is", eller bare påstanden |
 | tre-leddede opremsninger for effektens skyld, slagord til sidst i et afsnit | slet |
 | "the course says / like in the course" med slide som kilde | påstanden med den originale kilde, se Referencer i `docs/AGENTS.md` |
-| detaljer, der står i et andet bilag | "see appendix 10.3" |
+| detaljer, der står i et andet bilag | "see appendix 7.3" |
 | omtale af AI-værktøjer som medforfatter eller af implementeringsstatus, der hurtigt forældes | slet, medmindre dokumentet handler om det |
 
 **Bliver**

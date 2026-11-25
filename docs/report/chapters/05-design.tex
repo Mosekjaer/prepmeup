@@ -40,7 +40,8 @@ time the test chooses.
 
 In Domain, a subscription owns its orders, and an order owns its lines. A line refers to
 a package type and has a quantity of at least one. All changes to the orders go through
-Subscription or Order. A new order can only be made by Subscription.PlanNextOrder, so
+Subscription or Order. An order can only be made by Subscription, with Start for the first order and
+PlanNextOrder for the next ones, so
 the rule that a subscription can only have one order waiting to be sent is checked in
 one place.
 
@@ -132,7 +133,7 @@ by a seed when the database is set up \cite{brs-forberedt}.
 
 \subsection{Tests and Results}
 
-The backend has 139 unit tests and 138 integration tests, and they all pass on the main
+The backend has 139 unit tests and 139 integration tests, and they all pass on the main
 branch. \autoref{tab:design-backend-tests} shows the tests of the order cycle. Appendix
 5.1 lists all the module tests, and Appendix 5.2 has the integration plans.
 

@@ -24,8 +24,8 @@ name and address in the app. We call that step onboarding. Only an existing
 administrator can make another user an administrator. How the system and the identity
 provider fit together is shown in Appendix 3.3.
 
-Payment is simulated. The customer pays a subscription fee to a stored, fake card, and
-no money is charged. There is no real grocery supplier either. Hardware, logistics and
+Payment is not part of version 1.0. In a later version it is simulated: the customer
+pays a subscription fee to a stored, fake card, and no money is charged. There is no real grocery supplier either. Hardware, logistics and
 the actual supply of goods are outside the project.
 
 \section{Functional Requirements}\label{sec:req-functional}
@@ -94,7 +94,7 @@ subscribe and receive a first order. They are shown in \autoref{tab:must-have}.
         \hline
         Number & Requirement \\
         \hline
-        FR-01 & The customer can create an account and sign up for a PrepMeUp subscription in the customer app. \\
+        FR-01 & The customer can create an account and sign up for a PrepMeUp subscription in the customer app, choosing how many adult and child packages the first order contains. \\
         FR-02 & The back-end stores the customers, their subscriptions and their orders. \\
         FR-03 & There are default package types for a normal diet, one for adults and one for children. \\
         FR-04 & When an order is sent, its expiry date is set to one year after the sent date and kept for each of the customer's past orders. \\
@@ -151,8 +151,8 @@ We came up with them in the group in the same way as the functional requirements
                     & NFR-04 & The API answers 503 with an English message if the database cannot be reached. \\
         Performance & NFR-05 & With 10 users at the same time, 90\% of requests are answered in under 1 second. \\
         Portability & NFR-06 & The customer app runs as an Android app. \\
-        Supportability & NFR-07 & Outside development, the API refuses to start without the address of the identity provider or the database. \\
-                       & NFR-08 & Every API endpoint is covered by at least one automated test. \\
+        Supportability & NFR-07 & Outside development and test, the API refuses to start without the address of the identity provider or the database. \\
+                       & NFR-08 & Every API endpoint is covered by at least one automated test that runs in CI. \\
         Security & NFR-09 & A customer can only see and change their own data. \\
                  & NFR-10 & Endpoints for administrators reject customers. \\
                  & NFR-11 & Endpoints that need a logged-in user reject requests without a valid login. \\
@@ -164,7 +164,8 @@ We came up with them in the group in the same way as the functional requirements
 
 The security requirements matter most for the customer, because the system stores
 their name and address. NFR-09 means that a customer can never see another customer's
-orders, even by changing a number in a request.
+orders. A customer never sends an id, because the API finds the customer from the
+access token.
 
 \section{Domain Model}\label{sec:req-domain-model}
 

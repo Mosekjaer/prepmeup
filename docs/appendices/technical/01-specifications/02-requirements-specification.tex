@@ -38,7 +38,7 @@
 
 \textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. A subscription is either active or paused, and the system only creates the next order for an active subscription. Cancelling a subscription is not part of version 1.0. The latest sent order decides when the next order is created, and older orders are only history. A subscription has at most one planned order at a time.
 
-\textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned.
+\textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned (FR-07, not in version 1.0).
 
 \textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (sent by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
 
@@ -131,7 +131,7 @@ User stories are grouped into epics. Each epic lists the functional requirements
 
     \item \textbf{Notifications} (FR-20)
     \begin{enumerate}
-        \item As a customer, I want to receive a notification before my next order is sent, so that I have a chance to make changes (e.g. number of packages, package types).
+        \item As a customer, I want to receive a notification when my next order is created, so that I have a chance to make changes (e.g. number of packages, package types).
     \end{enumerate}
 
     \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)

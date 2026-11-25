@@ -22,6 +22,7 @@
   1.6 & 28-10-2026 & Group 3 & Added Keycloak features \\
   1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and the code \\
   1.8 & 28-10-2026 & Group 3 & The admin panel is deployed as a container \\
+  1.9 & 25-11-2026 & Group 3 & Aligned with the code: scheduler built, NFR-04 and NFR-07 solved, refresh token in the customer app \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -33,7 +34,7 @@ This section is a short overview of our technology stack. The reasons behind the
 \subsection{Clients}
 The client code is written in TypeScript.
 \begin{itemize}
-    \item Customer app: Expo (React Native) with Expo Router \cite{expo-router-introduction}. Android is the main target (NFR-06), but Expo can also run the app in a browser, which is handy while developing.
+    \item Customer app: Expo (React Native) with Expo Router \cite{expo-router-introduction}. Android is the main target (NFR-06). Expo can also run the app in a browser while developing, but the released app does not support web, because SecureStore only exists on Android and iOS (appendix 4.1).
     \item Admin panel: React with Vite and React Router. Runs in the browser.
     \item API client (packages/api-client): generated from the API's OpenAPI document with NSwag \cite{nswag-typescript-client-generator}. Nobody edits it by hand.
     \item All three are in one npm workspace, so npm install, npm test and npm run typecheck only have to be run once in clients/.
@@ -46,7 +47,7 @@ The client code is written in TypeScript.
     \item An OpenAPI document with Swagger UI. We use the document as the contract between the API and the clients \cite[sec.~3.2.1]{desanctis-web-apis-aspnet-core}.
     \item CORS that only allows the admin panel and the customer app \cite[sec.~3.1.1]{desanctis-web-apis-aspnet-core}.
     \item A health check endpoint.
-    \item A background service that will check expiry dates and plan the next order (FR-04, FR-19).
+    \item A background service that checks expiry dates and plans the next order (FR-04, FR-19).
     \item Configuration and secrets come from environment variables.
 \end{itemize}
 
@@ -64,7 +65,7 @@ Locally, one docker compose command starts the API, the database and Keycloak. I
 
 \section{Backend Architecture}
 \label{sec:backend}
-The backend is one ASP.NET Core Web API. It serves both user interfaces and will also run the scheduler. Here we describe how the code inside it is split up.
+The backend is one ASP.NET Core Web API. It serves both user interfaces and also runs the scheduler. Here we describe how the code inside it is split up.
 
 \subsection{Four Layers}
 A layered architecture splits the code into layers stacked on top of each other, where a layer may only use the layers below it. The idea is to keep things apart, so a layer can be changed or tested on its own \cite[ch.~3]{microsoft-application-architecture-guide}. We have four layers, and each one is a separate project in the solution:
@@ -82,7 +83,7 @@ Infrastructure & EF Core configuration, queries, migrations & Making decisions. 
 \hline
 \end{tabular}
 \end{center}
-The scheduler will be placed in the Api project because it runs in the same process. It will call the same use cases as the controllers, so an order is planned by the same rules no matter if a user or the scheduler starts it. Things like authentication, logging and error handling are set up once in Program.cs and are not part of any one layer.
+The scheduler is placed in the Api project because it runs in the same process. It calls the same use cases as the controllers, so an order is planned by the same rules no matter if a user or the scheduler starts it. Things like authentication, logging and error handling are set up once in Program.cs and are not part of any one layer.
 
 \subsection{Which Way the Dependencies Point}
 In the usual layered design, the data access layer is at the bottom, so the business logic depends on it \cite[ch.~5]{microsoft-application-architecture-guide}. We turned that last dependency around. Api uses Application, and Application uses Domain. Application defines the interfaces it needs, for example a repository for customers, and Infrastructure implements them with EF Core. Api only knows about Infrastructure at startup, where the implementations are registered in dependency injection.
@@ -240,7 +241,7 @@ Brute force detection is off by default \cite[sec.~Brute force attacks]{keycloak
 
 Email verification and password reset need an SMTP server \cite[sec.~Configuring email for a realm]{keycloak-server-admin-guide}. Password reset is turned on in the realm, but we have no SMTP server yet, so the email cannot be sent. Without email verification anyone can register with an address they do not own, which is part of the zombie user problem (PMU-80).
 
-Refresh tokens can be reused until they expire. For public clients they should be rotated \cite[sec.~2.2.2]{ietf-rfc9700-oauth-security-bcp}, which Keycloak calls Revoke Refresh Token \cite[sec.~Session and token timeouts]{keycloak-server-admin-guide}. The admin panel already renews its access token with a refresh token, so this should be turned on now. The customer app does not use refresh tokens yet.
+Refresh tokens can be reused until they expire. For public clients they should be rotated \cite[sec.~2.2.2]{ietf-rfc9700-oauth-security-bcp}, which Keycloak calls Revoke Refresh Token \cite[sec.~Session and token timeouts]{keycloak-server-admin-guide}. The admin panel already renews its access token with a refresh token, so this should be turned on now. The customer app also renews its access token with a refresh token, which it keeps in SecureStore.
 
 Finally, Keycloak only logs errors by default and does not save login events \cite[sec.~Auditing user events]{keycloak-server-admin-guide}.
 
@@ -395,10 +396,7 @@ Passwords and other secrets are only set as environment variables in Coolify, no
 These are things we know are not good enough yet. They are also listed under open decisions.
 \begin{itemize}
     \item The API logs in to SQL Server as sa. It should have its own user that can only read and write data.
-    \item If the Keycloak address is missing from the configuration, the API starts without authentication. If the connection string is missing, the API skips the migrations and only fails at the first request that needs the database. That cannot happen in production because the compose file requires both, but the API should refuse to start (NFR-07).
-    \item If the database is down while the API is running, the request fails with a general error. NFR-04 asks for HTTP 503 with an English message.
     \item Both compose files run SQL Server as the Developer edition, which is free but only allowed for development and test. The Express edition is also free and is allowed in production \cite[sec.~4.2.2, p.~101]{desanctis-web-apis-aspnet-core}. Its limits, for example 10 GB per database \cite{microsoft-sql-server-2022-editions}, are far more than we need.
-    \item The customer app only keeps the token in memory, so the customer has to log in again every time the app is restarted.
     \item An API should only accept HTTPS. A redirect from HTTP is not enough for an API, because the token may already have been sent in clear text \cite[sec.~HSTS and API projects]{microsoft-aspnetcore-enforce-https}. We have not checked yet how Coolify's proxy handles this.
     \item The GitHub Actions we use are pinned to a version like v4, not to a specific commit. If one of them is hacked, our pipeline would run the new code \cite[sec.~Using third-party actions]{github-secure-use}.
 \end{itemize}
@@ -414,12 +412,12 @@ These are things we know are not good enough yet. They are also listed under ope
     \item All text the user sees is in English, and there is no translation (NFR-01).
 \end{itemize}
 
+Three weaknesses from earlier versions are solved. The API refuses to start outside development and test without the Keycloak address or the connection string (NFR-07). It answers 503 with an English message when the database is down (NFR-04). The customer app keeps its refresh token in SecureStore, so the customer stays logged in when the app is restarted.
+
 \section{Open Decisions}
 \begin{itemize}
-    \item How the customer app stores the token between restarts, for example with Expo SecureStore, and whether it needs a library for fetching data, for example TanStack Query.
-    \item Whether the customer app should also be released as a web app.
+    \item Whether the customer app needs a library for fetching data, for example TanStack Query.
     \item A separate database user for the API instead of sa.
-    \item Make the API refuse to start without a Keycloak address or a connection string outside development (NFR-07).
     \item Check that Coolify's proxy does not serve the API over plain HTTP, and that Keycloak redirects to HTTPS.
     \item That the admin panel redirects to HTTPS in production.
     \item Whether to pin GitHub Actions to specific commits.

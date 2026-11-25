@@ -15,7 +15,7 @@ PrepMeUp. The administrator maintains the package types the customers choose fro
 sends the orders. \autoref{fig:rich-picture} in \autoref{ch:introduction} shows what
 moves between the users and the system.
 
-\drawiofig[0.8\linewidth]{actor-context}{Actor-context diagram of PrepMeUp. The customer and the administrator use the system, and the identity provider is a system that PrepMeUp uses.}{fig:actor-context}
+\drawiofig[\linewidth]{actor-context}{Actor-context diagram of PrepMeUp. The customer and the administrator use the system, and the identity provider is a system that PrepMeUp uses.}{fig:actor-context}
 
 Both users log in through a separate identity provider. That is where they create an
 account, log in and change their password, so PrepMeUp never handles a password. The
@@ -32,9 +32,10 @@ the actual supply of goods are outside the project.
 
 \subsection{Elicitation and Analysis}\label{sec:req-stories}
 
-% TODO (group): say how the requirements were found, e.g. the project thesis (Appendix 1.1),
-% the guidelines from the Danish Emergency Management Agency and the meetings with the supervisor.
-We have written the requirements as user stories, grouped into six epics.
+PrepMeUp has no real customer we could interview, so we came up with the requirements
+ourselves, together as a group, starting from the project idea in Appendix 1.1. We
+wrote them down in the requirements specification and changed them when we learned
+more, which is why the specification has versions. We have written the requirements as user stories, grouped into six epics.
 \autoref{tab:epics} shows the epics and the functional requirements that realise them.
 
 \begin{table}[H]
@@ -133,7 +134,7 @@ depends on the items in the order.
 The non-functional requirements are grouped by the categories in FURPS+. We have written
 each of them so it can be measured and not just judged, and Appendix 6.1 describes how
 each one is tested.
-% TODO (group): say where the NFRs came from, e.g. the stored personal data (security) and the choice of Android (portability).
+We came up with them in the group in the same way as the functional requirements.
 
 \subsection{Specification}\label{sec:req-nfr-specification}
  \autoref{tab:nfr} gives a short version of each requirement.

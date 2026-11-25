@@ -24,7 +24,7 @@ vi.mock('../src/lib/auth', () => ({
 
 vi.mock('../src/lib/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../src/lib/api')>()),
-  userClient: { getCustomer: mocks.getCustomer },
+  customerClient: { getCustomer: mocks.getCustomer },
   subscriptionClient: { getSubscription: mocks.getSubscription, subscribe: vi.fn() },
 }));
 

@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 
-import { isNotFound, userClient } from '../../lib/api';
+import { isNotFound, customerClient } from '../../lib/api';
 
 type State =
   | { kind: 'loading' }
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
 
   const load = useCallback(() => {
     setState({ kind: 'loading' });
-    userClient
+    customerClient
       .getCustomer()
       .then((customer) => setState({ kind: 'loaded', customer }))
       .catch((reason: unknown) => setState({ kind: isNotFound(reason) ? 'none' : 'error' }));

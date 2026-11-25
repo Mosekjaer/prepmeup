@@ -331,7 +331,7 @@ public class SubscriptionEndpointTests
     {
         var sub = NewSub();
         var body = new SaveCustomerRequest("Malthe", null, new AddressContract("Finlandsgade 22", "8200", "Aarhus N"));
-        var response = await SendAsync(HttpMethod.Put, "/user", sub, body);
+        var response = await SendAsync(HttpMethod.Put, "/customer", sub, body);
         response.EnsureSuccessStatusCode();
         return sub;
     }

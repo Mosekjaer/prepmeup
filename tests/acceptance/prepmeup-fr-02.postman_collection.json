@@ -117,12 +117,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/user",
+              "raw": "{{baseUrl}}/customer",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "user"
+                "customer"
               ]
             },
             "description": "Saves name and address for the signed-in customer. Run once, before the restart."
@@ -339,12 +339,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/user",
+              "raw": "{{baseUrl}}/customer",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "user"
+                "customer"
               ]
             },
             "description": "Run after the restart."

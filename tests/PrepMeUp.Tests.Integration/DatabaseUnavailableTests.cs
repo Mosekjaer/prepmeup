@@ -14,7 +14,7 @@ namespace PrepMeUp.Tests.Integration;
 public class DatabaseUnavailableTests
 {
     [Test]
-    public async Task GetUser_DatabaseUnreachable_ReturnsServiceUnavailableWithEnglishMessage()
+    public async Task GetCustomer_DatabaseUnreachable_ReturnsServiceUnavailableWithEnglishMessage()
     {
         var missingFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "missing.db");
         using var connection = new SqliteConnection($"Data Source={missingFile};Mode=ReadWrite");
@@ -30,7 +30,7 @@ public class DatabaseUnavailableTests
     }
 
     [Test]
-    public async Task GetUser_OtherError_StillReturnsInternalServerError()
+    public async Task GetCustomer_OtherError_StillReturnsInternalServerError()
     {
         using var factory = new AuthenticatedApiFactory().WithWebHostBuilder(builder =>
             builder.ConfigureTestServices(services =>
@@ -46,7 +46,7 @@ public class DatabaseUnavailableTests
     {
         var token = TestJwt.Create(TestJwt.TrustedKey, roles: null,
             additionalClaims: new Dictionary<string, object> { ["sub"] = Guid.NewGuid().ToString() });
-        var request = new HttpRequestMessage(HttpMethod.Get, "/user");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/customer");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return request;
     }

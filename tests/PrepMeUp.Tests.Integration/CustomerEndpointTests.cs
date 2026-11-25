@@ -9,7 +9,7 @@ using PrepMeUp.Application;
 
 namespace PrepMeUp.Tests.Integration;
 
-public class UserEndpointTests
+public class CustomerEndpointTests
 {
     private const string Email = "malthe@example.com";
     private static readonly AddressContract Home = new("Finlandsgade 22", "8200", "Aarhus N");
@@ -35,15 +35,15 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task GetUser_NoToken_ReturnsUnauthorized()
+    public async Task GetCustomer_NoToken_ReturnsUnauthorized()
     {
-        var response = await _client.GetAsync("/user");
+        var response = await _client.GetAsync("/customer");
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
 
     [Test]
-    public async Task GetUser_NotOnboarded_ReturnsNotFound()
+    public async Task GetCustomer_NotOnboarded_ReturnsNotFound()
     {
         var response = await SendAsync(HttpMethod.Get, NewSub());
 
@@ -51,15 +51,15 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task PutUser_NoToken_ReturnsUnauthorized()
+    public async Task PutCustomer_NoToken_ReturnsUnauthorized()
     {
-        var response = await _client.PutAsJsonAsync("/user", Body());
+        var response = await _client.PutAsJsonAsync("/customer", Body());
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
 
     [Test]
-    public async Task PutUser_TokenWithoutEmail_ReturnsUnauthorized()
+    public async Task PutCustomer_TokenWithoutEmail_ReturnsUnauthorized()
     {
         var response = await SendAsync(HttpMethod.Put, NewSub(), Body(), email: null);
 
@@ -67,7 +67,7 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task PutUser_FirstOnboarding_ReturnsNoContentAndCustomerCanBeRead()
+    public async Task PutCustomer_FirstOnboarding_ReturnsNoContentAndCustomerCanBeRead()
     {
         var sub = NewSub();
 
@@ -79,7 +79,7 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task PutUser_Twice_KeepsTheLatestDetailsAndTheFirstEmail()
+    public async Task PutCustomer_Twice_KeepsTheLatestDetailsAndTheFirstEmail()
     {
         var sub = NewSub();
 
@@ -94,7 +94,7 @@ public class UserEndpointTests
 
     [TestCase(null)]
     [TestCase("")]
-    public async Task PutUser_NoPhone_StoresPhoneAsNull(string? phone)
+    public async Task PutCustomer_NoPhone_StoresPhoneAsNull(string? phone)
     {
         var sub = NewSub();
 
@@ -106,7 +106,7 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task PutUser_BlankName_ReturnsBadRequest()
+    public async Task PutCustomer_BlankName_ReturnsBadRequest()
     {
         var response = await SendAsync(HttpMethod.Put, NewSub(), Body(name: ""));
 
@@ -116,7 +116,7 @@ public class UserEndpointTests
     [TestCase("", "8200", "Aarhus N")]
     [TestCase("Finlandsgade 22", "", "Aarhus N")]
     [TestCase("Finlandsgade 22", "8200", "")]
-    public async Task PutUser_BlankAddressField_ReturnsBadRequest(string street, string postalCode, string city)
+    public async Task PutCustomer_BlankAddressField_ReturnsBadRequest(string street, string postalCode, string city)
     {
         var body = Body(address: new AddressContract(street, postalCode, city));
 
@@ -126,7 +126,7 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task PutUser_MissingAddress_ReturnsBadRequest()
+    public async Task PutCustomer_MissingAddress_ReturnsBadRequest()
     {
         var response = await SendAsync(HttpMethod.Put, NewSub(), new { Name = "Malthe" });
 
@@ -136,7 +136,7 @@ public class UserEndpointTests
     [TestCase(101, 1, 1)]
     [TestCase(1, 101, 1)]
     [TestCase(1, 1, 51)]
-    public async Task PutUser_FieldOverMaxLength_ReturnsBadRequest(int nameLength, int streetLength, int cityLength)
+    public async Task PutCustomer_FieldOverMaxLength_ReturnsBadRequest(int nameLength, int streetLength, int cityLength)
     {
         var body = Body(
             name: new string('a', nameLength),
@@ -151,7 +151,7 @@ public class UserEndpointTests
     [TestCase("999")]
     [TestCase("10000")]
     [TestCase("82a0")]
-    public async Task PutUser_InvalidPostalCode_ReturnsBadRequest(string postalCode)
+    public async Task PutCustomer_InvalidPostalCode_ReturnsBadRequest(string postalCode)
     {
         var body = Body(address: new AddressContract("Finlandsgade 22", postalCode, "Aarhus N"));
 
@@ -163,7 +163,7 @@ public class UserEndpointTests
     [TestCase("1234567")]
     [TestCase("123456789")]
     [TestCase("+4512345678")]
-    public async Task PutUser_InvalidPhone_ReturnsBadRequest(string phone)
+    public async Task PutCustomer_InvalidPhone_ReturnsBadRequest(string phone)
     {
         var response = await SendAsync(HttpMethod.Put, NewSub(), Body(phone: phone));
 
@@ -171,7 +171,7 @@ public class UserEndpointTests
     }
 
     [Test]
-    public async Task GetUser_AnotherUserIsOnboarded_ReturnsNotFound()
+    public async Task GetCustomer_AnotherUserIsOnboarded_ReturnsNotFound()
     {
         await SendAsync(HttpMethod.Put, NewSub(), Body());
 
@@ -182,7 +182,7 @@ public class UserEndpointTests
 
     [TestCase(null)]
     [TestCase("   ")]
-    public async Task GetUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    public async Task GetCustomer_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
     {
         var response = await SendAsync(HttpMethod.Get, sub);
 
@@ -191,7 +191,7 @@ public class UserEndpointTests
 
     [TestCase(null)]
     [TestCase("   ")]
-    public async Task PutUser_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
+    public async Task PutCustomer_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
     {
         var response = await SendAsync(HttpMethod.Put, sub, Body());
 
@@ -211,7 +211,7 @@ public class UserEndpointTests
 
     private Task<HttpResponseMessage> SendAsync(HttpMethod method, string? sub, object? body = null, string? email = Email)
     {
-        var request = new HttpRequestMessage(method, "/user");
+        var request = new HttpRequestMessage(method, "/customer");
         var claims = new Dictionary<string, object>();
         if (sub is not null)
         {

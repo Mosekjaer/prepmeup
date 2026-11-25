@@ -18,7 +18,7 @@ vi.mock('expo-router', async () => {
 
 vi.mock('../src/lib/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../src/lib/api')>()),
-  userClient: { getCustomer: mocks.getCustomer },
+  customerClient: { getCustomer: mocks.getCustomer },
 }));
 
 beforeEach(() => {

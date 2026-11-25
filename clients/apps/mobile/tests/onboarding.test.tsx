@@ -14,7 +14,7 @@ vi.mock('expo-router', () => ({
 }));
 
 vi.mock('../src/lib/api', () => ({
-  userClient: { saveCustomer: mocks.saveCustomer },
+  customerClient: { saveCustomer: mocks.saveCustomer },
 }));
 
 beforeEach(() => {

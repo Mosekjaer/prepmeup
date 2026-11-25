@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { userClient } from '../lib/api';
+import { customerClient } from '../lib/api';
 
 const fieldHints: Record<string, string> = {
   Name: 'Enter your name.',
@@ -39,7 +39,7 @@ export default function OnboardingScreen() {
       phone: phone || undefined,
       address: new AddressContract({ street, postalCode, city }),
     });
-    userClient
+    customerClient
       .saveCustomer(request)
       .then(() => router.back())
       .catch((reason: unknown) => {

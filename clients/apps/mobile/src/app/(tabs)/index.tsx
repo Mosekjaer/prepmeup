@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 
 import { SubscriptionSummary } from '../../components/SubscriptionSummary';
-import { isNotFound, userClient } from '../../lib/api';
+import { isNotFound, customerClient } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
 
 export default function HomeScreen() {
@@ -20,7 +20,7 @@ export default function HomeScreen() {
       return;
     }
 
-    userClient
+    customerClient
       .getCustomer()
       .then(setCustomer)
       .catch((reason: unknown) => (isNotFound(reason) ? router.push('/onboarding') : setError(true)));

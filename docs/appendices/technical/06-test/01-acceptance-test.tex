@@ -47,7 +47,8 @@
   1.9 & 18-11-2026 & Group 3 & Test environment changed to a local run from main and one run on the server \\
   1.10 & 25-11-2026 & Group 3 & Ran the tests for NFR-07 and NFR-08 \\
   1.11 & 25-11-2026 & Group 3 & FR-04 uses two customers and reads the expiry date with the customer's token \\
-  1.12 & 25-11-2026 & Group 3 & Ran the tests for FR-03 to FR-06 and FR-19 \\
+  1.12 & 25-11-2026 & Group 3 & The customer endpoint is now /customer instead of /user. Results written before this version were run against /user \\
+  1.13 & 25-11-2026 & Group 3 & Ran the tests for FR-03 to FR-06, FR-19 and NFR-09 to NFR-11 \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -128,7 +129,7 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
 \hline
 \end{steps}
 
-The test was run on 25-11-2026 against the system started locally with Docker (make up), with the calls made from the Postman collection. The local database was deleted first, so the API created the two default package types when it started, and the replaced package type was added with the test data script. The tester signed in as an administrator.
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The local database was deleted first, so the API created the two default package types when it started, and the replaced package type was added with the test data script. The tester signed in as an administrator.
 
 \subsection{FR-04: Expiry date of orders}
 \scenarioinfo{FR-04}
@@ -144,7 +145,7 @@ The test was run on 25-11-2026 against the system started locally with Docker (m
 \hline
 \end{steps}
 
-The test was run on 25-11-2026 against the system started locally with Docker (make up), with the calls made from the Postman collection. Customer A and customer B signed up in the customer app on an Android emulator in Expo Go, A with 2 adult packages and 1 child package and B with 1 adult package and 3 child packages. The tester signed in as an administrator, A and B in the order of the folders in the collection. The two expiry dates are exactly one year after the time each order was sent, so they differ by the minutes between the two orders being sent.
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. Customer A and customer B signed up in the customer app on an Android emulator in Expo Go, A with 2 adult packages and 1 child package and B with 1 adult package and 3 child packages. The tester signed in as an administrator, A and B in the order of the folders in the collection. The two expiry dates are exactly one year after the time each order was sent, so they differ by the minutes between the two orders being sent.
 
 \subsection{FR-05: See the next orders to send}
 \scenarioinfo{FR-05}
@@ -158,7 +159,7 @@ The test was run on 25-11-2026 against the system started locally with Docker (m
 \hline
 \end{steps}
 
-The test was run on 25-11-2026 against the system started locally with Docker (make up), with the calls made from the Postman collection. The test data was loaded with the test data script for FR-05. Step 2 was made with two requests added by hand, a POST to mark B's order as sent and a GET of the list. As an extra check, the list was also requested with a customer's token, and the API answered 403.
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The test data was loaded with the test data script for FR-05. Step 2 was made with two requests added by hand, a POST to mark B's order as sent and a GET of the list. As an extra check, the list was also requested with a customer's token, and the API answered 403.
 
 \subsection{FR-06: Register an order as sent}
 \scenarioinfo{FR-06}
@@ -174,7 +175,7 @@ The test was run on 25-11-2026 against the system started locally with Docker (m
 \hline
 \end{steps}
 
-The test was run on 25-11-2026 against the system started locally with Docker (make up), with the calls made from the Postman collection and the same test data as FR-05. In step 3 the sent date was read from the database and not through the API. The collection also checked that marking A's order as sent a second time and marking an order that was already sent both answer 409, that an unknown order answers 404, that a request without a token answers 401, and that a request with a customer's token answers 403.
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection and the same test data as FR-05. In step 3 the sent date was read from the database and not through the API. The collection also checked that marking A's order as sent a second time and marking an order that was already sent both answer 409, that an unknown order answers 404, that a request without a token answers 401, and that a request with a customer's token answers 403.
 
 \subsection{FR-19: Next order 14 days before expiry}
 \scenarioinfo{FR-19}
@@ -190,7 +191,7 @@ The test was run on 25-11-2026 against the system started locally with Docker (m
 \hline
 \end{steps}
 
-The test was run on 25-11-2026 against the system started locally with Docker (make up), with the calls made from the Postman collection. The test data was loaded with the test data script for FR-19. The back-end checks the expiry dates when it starts and every 5 minutes, so the tester restarted the API to make it check, once before step 1 and once before step 3.
+The test was run on 25-11-2026 against the system started locally with Docker (make up) on commit 55fe2c0, with the calls made from the Postman collection. The test data was loaded with the test data script for FR-19. The back-end checks the expiry dates when it starts and every 5 minutes, so the tester restarted the API to make it check, once before step 1 and once before step 3.
 
 \section{Non-functional Requirements}
 This section tests the non-functional requirements in appendix 1.2. Each row repeats the requirement in short and says how the test is run. The last two columns are filled in when the test is run.
@@ -218,7 +219,7 @@ NFR-02 & Every error message is a complete sentence in English stating what went
 \hline
 NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & Run locally. The home screen said ``We could not load your profile. Check your internet connection and try again.'' and showed Try again. The app kept running. After the API was started and Try again was tapped, the home screen loaded. & Pass \\
 \hline
-NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
+NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /customer with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
 \hline
 \end{tabular}
 \end{center}
@@ -230,7 +231,7 @@ NFR-04 & If the database is unreachable while the API is running, the API return
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-05 & With 10 concurrent users, 90\% of API requests are answered in under 1 second. & Run k6 from a machine outside the server against the deployed API, with 10 virtual users for 1 minute calling GET /user with a customer token. Confirm that the 90th percentile of the response time is under 1 second and that no request failed. Copy the k6 summary to the actual result. & & \\
+NFR-05 & With 10 concurrent users, 90\% of API requests are answered in under 1 second. & Run k6 from a machine outside the server against the deployed API, with 10 virtual users for 1 minute calling GET /customer with a customer token. Confirm that the 90th percentile of the response time is under 1 second and that no request failed. Copy the k6 summary to the actual result. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -268,11 +269,11 @@ NFR-08 & Every API endpoint is covered by at least one automated test that runs 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /user and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & & \\
+NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /customer and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & Run locally on commit 55fe2c0, when the endpoint was still GET /user. In the OpenAPI document no customer endpoint takes an id. The only endpoint with an id is POST /admin/orders/\{orderId\}/shipment, which takes an order id and is reserved for administrators. GET /user and GET /subscription answered 200 with A's token and with B's token. The name was A's for A and B's for B, and the orders of B were not the orders of A. & Pass \\
 \hline
-NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
+NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & Run locally on commit 55fe2c0. With A's token GET /admin/ping, GET /admin/orders/planned and POST /admin/orders/\{orderId\}/shipment all answered 403. With ADM's token the first two answered 200, and the third answered 404 for an order that does not exist, so the request was let through. & Pass \\
 \hline
-NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /user without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & & \\
+NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /customer without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & Run locally on commit 55fe2c0, when the endpoint was still GET /user. Without an Authorization header the answer was 401. With the token not-a-jwt the answer was 401. With a token that was more than 15 minutes old the answer was 401. A call with curl without a header and with the token not-a-jwt also gave 401 on /subscription, /items, /package-types, /admin/ping and /admin/orders/planned. & Pass \\
 \hline
 \end{tabular}
 \end{center}

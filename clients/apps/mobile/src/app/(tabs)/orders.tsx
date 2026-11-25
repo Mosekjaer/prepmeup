@@ -59,7 +59,7 @@ export default function OrdersScreen() {
       <Text>Status: Planned</Text>
       {nextOrder.lines.map((line) => (
         <Text key={line.packageTypeId}>
-          {line.packageTypeName} × {line.quantity}
+          {line.quantity} × {line.packageTypeName}
         </Text>
       ))}
     </View>

@@ -51,8 +51,8 @@ it('shows the next order with its date, status and lines', async () => {
 
   expect(await screen.findByText('Planned for 14 Jan 2027')).toBeTruthy();
   expect(screen.getByText('Status: Planned')).toBeTruthy();
-  expect(screen.getByText('Normal - Adult × 2')).toBeTruthy();
-  expect(screen.getByText('Normal - Child × 1')).toBeTruthy();
+  expect(screen.getByText('2 × Normal - Adult')).toBeTruthy();
+  expect(screen.getByText('1 × Normal - Child')).toBeTruthy();
 });
 
 it('shows the earliest planned order and skips orders that are sent', async () => {

@@ -56,7 +56,7 @@ export default function PackageTypeScreen() {
       <Text style={styles.title}>{packageType.name}</Text>
       {packageType.contents.map((content) => (
         <Text key={content.itemId}>
-          {content.itemName} × {content.quantity}
+          {content.quantity} × {content.itemName}
         </Text>
       ))}
     </View>

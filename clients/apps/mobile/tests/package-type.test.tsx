@@ -48,8 +48,8 @@ it('shows the name and the contents of the package type', async () => {
   render(<PackageTypeScreen />);
 
   expect(await screen.findByText('Normal - Adult')).toBeTruthy();
-  expect(screen.getByText('Drinking water 1.5 L × 6')).toBeTruthy();
-  expect(screen.getByText('Torch × 1')).toBeTruthy();
+  expect(screen.getByText('6 × Drinking water 1.5 L')).toBeTruthy();
+  expect(screen.getByText('1 × Torch')).toBeTruthy();
   expect(screen.queryByText('Normal - Child')).toBeNull();
 });
 

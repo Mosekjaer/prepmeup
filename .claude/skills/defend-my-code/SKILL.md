@@ -42,7 +42,7 @@ Vis den FØR hvert spørgsmål:
 Er `--since` ikke angivet, kør:
 
 ```bash
-ls docs/appendices/process/13-meeting-minutes/*-meeting-minutes-*.tex | sed -E 's/.*minutes-([0-9-]+)\.tex/\1/' | sort | tail -1
+ls docs/appendices/process/10-meeting-minutes/*-meeting-minutes-*.tex | sed -E 's/.*minutes-([0-9-]+)\.tex/\1/' | sort | tail -1
 ```
 
 Er `[person]` ikke angivet, kør `git config user.email`.

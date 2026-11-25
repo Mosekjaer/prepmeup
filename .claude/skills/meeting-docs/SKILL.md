@@ -10,8 +10,8 @@ Dagsordener og referater er **på dansk** (undtagelsen fra rapportens engelske s
 
 ## Filer
 
-- Dagsorden: `docs/appendices/process/12-meeting-invitations/NN-agenda-YYYY-MM-DD.tex`
-- Referat: `docs/appendices/process/13-meeting-minutes/NN-meeting-minutes-YYYY-MM-DD.tex`
+- Dagsorden: `docs/appendices/process/09-meeting-invitations/NN-agenda-YYYY-MM-DD.tex`
+- Referat: `docs/appendices/process/10-meeting-minutes/NN-meeting-minutes-YYYY-MM-DD.tex`
 
 `NN` = højeste eksisterende nummer i **den mappe** + 1 (`ls` mappen først). Findes dagens fil allerede, læs og opdatér den - opret aldrig en fil nummer to for samme dag.
 
@@ -49,10 +49,10 @@ Escape `&` `%` `_` `#` `$` som `\&` `\%` `\_` `\#` `\$`. Punkter i `itemize`, da
 ## Efter hver ændring
 
 ```bash
-cd docs/appendices/process/13-meeting-minutes && latexmk -pdf -outdir=build NN-meeting-minutes-YYYY-MM-DD.tex
+cd docs/appendices/process/10-meeting-minutes && latexmk -pdf -outdir=build NN-meeting-minutes-YYYY-MM-DD.tex
 ```
 
-Dagsordener bygges på samme måde fra `12-meeting-invitations`. `-outdir=build` er obligatorisk: `docs/latexmkrc` læses ikke fra undermapperne, så uden flaget havner `.aux`/`.bbl` ved siden af `.tex`-filen, og VS Code's build (der bruger `build/`) kører derefter `bibtex` i stedet for `biber` og fejler.
+Dagsordener bygges på samme måde fra `09-meeting-invitations`. `-outdir=build` er obligatorisk: `docs/latexmkrc` læses ikke fra undermapperne, så uden flaget havner `.aux`/`.bbl` ved siden af `.tex`-filen, og VS Code's build (der bruger `build/`) kører derefter `bibtex` i stedet for `biber` og fejler.
 
 Rapportér fejl ordret. Svar altid: hvad blev tilføjet i hvilken sektion + link til filen i formatet `[sti:linjer](sti#Lx-Ly)`.
 
@@ -70,4 +70,4 @@ Rapportér fejl ordret. Svar altid: hvad blev tilføjet i hvilken sektion + link
 Denne skill skriver ikke kode og har normalt ingen **Kilder**-sektion. Skriver du undtagelsesvis kode, gælder den almindelige regel: slå op via `context/INDEX.md`, afslut med **Kilder** og markdown-links i formatet `[sti:linjer](sti#Lx-Ly)`, ingen kildehenvisninger i koden, og `⚠ Ikke i kursusmaterialet: <begrundelse>` når mønsteret ikke findes.
 
 - [context/projekt/markdown/07-projektledelse/](context/projekt/markdown/07-projektledelse/) - møde- og procesdokumentation
-- [docs/appendices/process/13-meeting-minutes/02-meeting-minutes-2026-09-15.tex](docs/appendices/process/13-meeting-minutes/02-meeting-minutes-2026-09-15.tex) - sektionsstrukturen
+- [docs/appendices/process/10-meeting-minutes/02-meeting-minutes-2026-09-15.tex](docs/appendices/process/10-meeting-minutes/02-meeting-minutes-2026-09-15.tex) - sektionsstrukturen

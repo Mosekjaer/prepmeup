@@ -48,7 +48,7 @@ Aldrig omskrevet tekst. Tjek:
 
 Mind altid om til sidst:
 
-- `docs/appendices/process/11-team/03-ai-declaration.tex` **skal** afleveres som bilag, når AI er brugt. Den udfyldes manuelt af gruppen.
+- `docs/appendices/process/08-team/03-ai-declaration.tex` **skal** afleveres som bilag, når AI er brugt. Den udfyldes manuelt af gruppen.
 - Rapportens afsnit om brug af AI (kapitel 2) skal dække alle fire: **Delegation** (hvad blev uddelegeret), **Description** (hvordan blev værktøjet brugt - prompts, workflow), **Discernment** (hvordan blev outputtet bedømt og verificeret) og **Diligence** (ansvarlighed og transparens - hvem står inde for koden).
 
 ## Kilder

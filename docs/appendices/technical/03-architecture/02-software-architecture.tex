@@ -51,12 +51,12 @@ We generate the client again every time the contract changes. That is when an en
 
 We commit the generated file because the CI pipeline cannot generate it. It would need a running API inside the pipeline to do that. Instead CI type checks both apps against the committed client.
 
-The weak point is the three steps. If a developer changes the API and forgets to generate the client again, CI does not notice, and the client stays out of date until somebody does it. The development guidelines in appendix 10.1 include the command, and a pull request that changes the API should also change the generated file.
+The weak point is the three steps. If a developer changes the API and forgets to generate the client again, CI does not notice, and the client stays out of date until somebody does it. The development guidelines in appendix 7.1 include the command, and a pull request that changes the API should also change the generated file.
 
 \section{Breaking Changes}
 A change is breaking when an app that worked before stops working. That happens when an endpoint or a field is removed or renamed, when a field changes type, or when an action gets a new name, because the action name becomes the method name in the client. A new endpoint or a new optional field is not breaking.
 
-Because the client is generated, we see a breaking change right away. When we generate the client again, the TypeScript compiler fails everywhere in the apps that uses something that was removed or changed. The type check in CI then fails until the apps are fixed. So the change in the API, the new client and the fixes in the apps go into the same pull request. Our commits follow Conventional Commits (appendix 10.1), so we mark the commit as breaking with an exclamation mark after the type, for example feat(api)!, and a line that explains what breaks.
+Because the client is generated, we see a breaking change right away. When we generate the client again, the TypeScript compiler fails everywhere in the apps that uses something that was removed or changed. The type check in CI then fails until the apps are fixed. So the change in the API, the new client and the fixes in the apps go into the same pull request. Our commits follow Conventional Commits (appendix 7.1), so we mark the commit as breaking with an exclamation mark after the type, for example feat(api)!, and a line that explains what breaks.
 
 We do not version the API, because both apps are in the same repository as the API and are changed together. There is one exception. The customer app is installed on the user's phone, so an old version can still be in use after we deploy a new API. A breaking change can then stop old versions of the app from working until the user updates. We accept that in a prototype. A real product would need a versioned API, or a period where both the old and the new endpoint exist.
 

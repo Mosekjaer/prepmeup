@@ -6,14 +6,16 @@ the requirements for quality, and finally the domain model, which shows the conc
 the requirements talk about. The full requirements specification is in Appendix 1.2.
 Here we only show an overview and the requirements that matter most.
 
-\section{Users and System Context}\label{sec:req-users}
+\section{System Context and Actors}\label{sec:req-users}
 
-PrepMeUp has two kinds of users. The \emph{customer} is a person who wants an
+\autoref{fig:actor-context} shows the actors around PrepMeUp. PrepMeUp has two kinds of users. The \emph{customer} is a person who wants an
 emergency stock at home. The customer signs up for a subscription in the customer
 app, composes the orders and receives them. The \emph{administrator} is an employee of
 PrepMeUp. The administrator maintains the package types the customers choose from and
-sends the orders. \autoref{fig:rich-picture} in \autoref{ch:introduction} shows both
-users and what moves between them and the system.
+sends the orders. \autoref{fig:rich-picture} in \autoref{ch:introduction} shows what
+moves between the users and the system.
+
+\drawiofig[0.8\linewidth]{actor-context}{Actor-context diagram of PrepMeUp. The customer and the administrator use the system, and the identity provider is a system that PrepMeUp uses.}{fig:actor-context}
 
 Both users log in through a separate identity provider. That is where they create an
 account, log in and change their password, so PrepMeUp never handles a password. The
@@ -26,8 +28,12 @@ Payment is simulated. The customer pays a subscription fee to a stored, fake car
 no money is charged. There is no real grocery supplier either. Hardware, logistics and
 the actual supply of goods are outside the project.
 
-\section{Epics and User Stories}\label{sec:req-stories}
+\section{Functional Requirements}\label{sec:req-functional}
 
+\subsection{Elicitation and Analysis}\label{sec:req-stories}
+
+% TODO (group): say how the requirements were found, e.g. the project thesis (Appendix 1.1),
+% the guidelines from the Danish Emergency Management Agency and the meetings with the supervisor.
 We have written the requirements as user stories, grouped into six epics.
 \autoref{tab:epics} shows the epics and the functional requirements that realise them.
 
@@ -73,7 +79,7 @@ on its way.
 Together they describe the loop that keeps the stock in date. The system plans the next
 order, the administrator sends it, and the clock starts again.
 
-\section{Functional Requirements}\label{sec:req-functional}
+\subsection{Specification}\label{sec:req-fr-specification}
 
 Each functional requirement has a number, FR-\emph{nn}, and a priority after the
 MoSCoW method: must have, should have, could have or won't have. A requirement keeps
@@ -122,9 +128,15 @@ depends on the items in the order.
 
 \section{Non-functional Requirements}\label{sec:req-nonfunctional}
 
+\subsection{Elicitation and Analysis}\label{sec:req-nfr-analysis}
+
 The non-functional requirements are grouped by the categories in FURPS+. We have written
 each of them so it can be measured and not just judged, and Appendix 6.1 describes how
-each one is tested. \autoref{tab:nfr} gives a short version of each requirement.
+each one is tested.
+% TODO (group): say where the NFRs came from, e.g. the stored personal data (security) and the choice of Android (portability).
+
+\subsection{Specification}\label{sec:req-nfr-specification}
+ \autoref{tab:nfr} gives a short version of each requirement.
 
 \begin{table}[H]
     \centering

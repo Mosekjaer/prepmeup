@@ -25,7 +25,7 @@ SW4PRJ4, 4. semester softwareteknologi, gruppe 3.
 - Kode, identifiers, kommentarer og commits: engelsk.
 - Agenter skriver ikke kommentarer i kildekoden. Begrundelsen hører i commit-beskeden, PR-teksten eller chatten. Kommentarer skrevet af gruppen står urørt.
 - Alt brugeren ser i appen: engelsk. Labels, knapper, validerings- og API-fejlbeskeder. Ingen i18n.
-- Rapport og bilag i `docs/`: engelsk. **Undtagelse:** dagsordener (`docs/appendices/process/12-meeting-invitations`) og mødereferater (`docs/appendices/process/13-meeting-minutes`) skrives på dansk.
+- Rapport og bilag i `docs/`: engelsk. **Undtagelse:** dagsordener (`docs/appendices/process/09-meeting-invitations`) og mødereferater (`docs/appendices/process/10-meeting-minutes`) skrives på dansk.
 
 ## Kilder (obligatorisk)
 
@@ -153,7 +153,7 @@ Aflevering fredag 11/12 kl. 13.00. Dagene 2/12 – 11/12 er ikke en sprint, men 
 | Ikke-krav | `Teknisk`, `Rapport` | grå |
 | Undergruppe | `Gruppe 1`, `Gruppe 2`, `Alle` | lilla, gul, mørkegrå |
 
-Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point på alle kort, der har været med i en sprint til og med denne, uanset kolonne. Kort i Backlog-visningen uden sprint-label tæller ikke med). Tabellen i bilag 10.2 og burn-up-figuren i kap. 2 genereres fra filen.
+Velocity: ved sprint planning noteres summen af point i `To Do` (committed), ved sprint review summen i `Done` (done). Tallene skrives i `docs/assets/data/sprint-velocity.csv` (kolonnerne `committed`, `done`, `spillover` og `scope` = samlede point på alle kort, der har været med i en sprint til og med denne, uanset kolonne. Kort i Backlog-visningen uden sprint-label tæller ikke med). Tabellen i bilag 7.2 og burn-up-figuren i kap. 2 genereres fra filen.
 
 ## Secrets
 

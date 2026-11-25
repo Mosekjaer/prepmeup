@@ -6,7 +6,7 @@ Rod-[CLAUDE.md](../CLAUDE.md) gælder også her.
 ## Sprog
 
 Rapport og bilag skrives på **engelsk**.
-Undtagelse: dagsordener i `appendices/process/12-meeting-invitations/` og mødereferater i `appendices/process/13-meeting-minutes/` skrives på **dansk** og beholder `\usepackage[danish]{babel}`.
+Undtagelse: dagsordener i `appendices/process/09-meeting-invitations/` og mødereferater i `appendices/process/10-meeting-minutes/` skrives på **dansk** og beholder `\usepackage[danish]{babel}`.
 
 ## Pakker
 
@@ -25,7 +25,7 @@ Alle kilder samles i **én fælles fil**: `assets/references.bib`. Et bilag der 
 
 `assets/references.bib` har én eksempelkilde af hver type (`@online`, `@software`, `@book`, `@article`) som skabelon — brug dem som forlæg, ikke som rigtige kilder (undtagen `brs-forberedt`, `agents365-drawio-skill` og `schwaber-scrum-guide-2016`, som er reelle).
 
-**Slides og Brightspace-links er ikke kilder.** Vejleder har afgjort det på mødet 6/10 (referat 13.4): rapport og bilag henviser kun til originale kilder, dvs. litteratur og dokumentation.
+**Slides og Brightspace-links er ikke kilder.** Vejleder har afgjort det på mødet 6/10 (referat 10.4): rapport og bilag henviser kun til originale kilder, dvs. litteratur og dokumentation.
 
 - Bygger en pointe på et slide, så find originalen: pensumbogen, standarden (fx en RFC) eller leverandørens dokumentation. HTTP citeres fx som specifikationen for HTTP, ikke som slidet om HTTP.
 - Bøger citeres med kapitel og side: `\cite[ch.~8, p.~245]{goldman-maui-in-action}`. Dokumentation citeres som `@online`, se ovenfor.
@@ -69,4 +69,4 @@ Rapportens brødtekst fra `report/chapters/01-introduction.tex` til og med `09-c
 
 ## AI-deklaration
 
-`appendices/process/11-team/03-ai-declaration.tex` udfyldes **i hånden** før aflevering og **skal** med som bilag, når AI er brugt i projektet. Claude skriver den ikke.
+`appendices/process/08-team/03-ai-declaration.tex` udfyldes **i hånden** før aflevering og **skal** med som bilag, når AI er brugt i projektet. Claude skriver den ikke.

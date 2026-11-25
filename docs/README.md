@@ -91,7 +91,7 @@ That generated PDF is a build artifact and is gitignored — only commit the
 
 The remote is GitHub (`Mosekjaer/prepmeup`). We use GitHub Flow: never commit
 directly to `main`. Work on a branch and open a pull request. The full rules are
-in appendix 10.1 (`appendices/process/10-method/01-development-guidelines.tex`).
+in appendix 7.1 (`appendices/process/07-method/01-development-guidelines.tex`).
 
 ```
 git switch main

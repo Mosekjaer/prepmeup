@@ -80,7 +80,7 @@ R4 & FR-19 depends on time, and a test cannot wait 14 days for an order to expir
 \hline
 T1 & Keycloak takes more time than planned. The sprint 3 goal was the Keycloak flow, and two Keycloak tasks moved on to sprint 4. & 3 & 3 & 9 & The realm is kept in a file in the repository, so everyone gets the same setup. The apps log in through standard libraries instead of our own code. The features we use and do not use are listed in appendix 2.1. \\
 \hline
-T2 & The deployed system behaves differently from the local one. It has already happened once, when Keycloak started without our realm on Coolify (report chapter 8). & 3 & 3 & 9 & CI builds and tests before anything is deployed (appendix 10.3). We test on the deployed system and not only locally, and the realm file is now part of the Keycloak image. \\
+T2 & The deployed system behaves differently from the local one. It has already happened once, when Keycloak started without our realm on Coolify (report chapter 8). & 3 & 3 & 9 & CI builds and tests before anything is deployed (appendix 7.3). We test on the deployed system and not only locally, and the realm file is now part of the Keycloak image. \\
 \hline
 T3 & Everything runs on one server that one group member owns. If it fails before a demo or the exam, the system is down. & 1 & 10 & 10 & The whole system starts locally with one docker compose command, so it can be shown from a laptop. The compose files and the realm file are in the repository, so the system can be set up on another server. \\
 \hline

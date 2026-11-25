@@ -125,7 +125,7 @@ Hvilke kort der flyttes, og hvornår, er stadig gruppens beslutning og et bedøm
 
 ### Sprints
 
-To uger, onsdag til tirsdag. Undtagelse: sprint 2 er en mini-sprint på én uge, så den slutter med en demo, sprint 3 er tre uger på grund af efterårsferien (uge 42), og sprint 4 er én uge. Sprint review, retrospective og planning holdes samme dag.
+To uger, onsdag til tirsdag. Undtagelse: sprint 2 er en mini-sprint på én uge, så den slutter med en demo, sprint 3 er tre uger på grund af efterårsferien (uge 42), sprint 4 er én uge, og sprint 7 er de sidste dage op til afleveringen. Sprint review, retrospective og planning holdes samme dag.
 
 | Sprint | Periode |
 |---|---|
@@ -135,8 +135,9 @@ To uger, onsdag til tirsdag. Undtagelse: sprint 2 er en mini-sprint på én uge,
 | 4 | 28/10 – 3/11 |
 | 5 | 4/11 – 17/11 |
 | 6 | 18/11 – 1/12 |
+| 7 | 2/12 – 11/12 |
 
-Aflevering fredag 11/12 kl. 13.00. Dagene 2/12 – 11/12 er ikke en sprint, men buffer før aflevering.
+Aflevering fredag 11/12 kl. 13.00. Sprint 7 slutter med afleveringen og har ingen sprint review. Done for sprint 7 tælles ved afleveringen.
 
 - **Backlog-visningen** (`planned`) er Product Backlog. **Boardet** er Sprint Backlog. Der oprettes ikke en kolonne ved navn Backlog.
 - Et kort flyttes fra Backlog til `To Do` ved sprint planning og kun når det er **ready**: beskrivelse med `Krav: FR-xx` som første linje (eller ingen FR ved `Teknisk`/`Rapport`), definition of done, point-label, epic-label og en ejer.
@@ -148,7 +149,7 @@ Aflevering fredag 11/12 kl. 13.00. Dagene 2/12 – 11/12 er ikke en sprint, men 
 | Type | Labels | Farve |
 |---|---|---|
 | Point | `0 pt`, `½ pt`, `1 pt`, `2 pt`, `3 pt`, `5 pt`, `8 pt`, `13 pt`, `20 pt`, `40 pt`, `? pt` | grøn 0–2, gul 3–5, rød 8+, grå `?` |
-| Sprint | `Sprint 1` … `Sprint 6` | blå |
+| Sprint | `Sprint 1` … `Sprint 7` | blå |
 | Epic | `Account`, `Household`, `Subscription`, `Notifications`, `Catalogue`, `Dispatch` — korte navne for epics i kravspecifikationen. `Household` er epic Order contents (navnet er fra før kravspec 1.4) | teal |
 | Ikke-krav | `Teknisk`, `Rapport` | grå |
 | Undergruppe | `Gruppe 1`, `Gruppe 2`, `Alle` | lilla, gul, mørkegrå |

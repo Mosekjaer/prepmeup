@@ -103,7 +103,7 @@ The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 The admin panel saves one thing: an order marked as sent, with POST /admin/orders/\{orderId\}/shipment. It goes through the same layers, with the order service and the order repository, and the Order entity sets the sent date and the expiry date.
 
 \section{Reading Data}\label{sec:reading-data}
-This section shows the shortest way through the layers, where the API only reads. The example is GET /items, which lists the items in the database. No screen in the customer app uses it after the second screen was removed, but the call is the same for every list the apps read, for example the package types.
+This section shows the shortest way through the layers, where the API only reads. The example is GET /items, which lists the items in the database. No client uses it, but the call is the same for every list the apps read, for example the package types.
 
 \drawiofig[\linewidth]{get-items-flow}{Reading the items, from the client through the layers of the API to the database.}{fig:get-items-flow}
 
@@ -144,7 +144,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
     \item Keycloak checks the credentials: are they correct?
         \begin{itemize}
             \item No: Keycloak shows an error on the login page and user tries again.
-            \item Yes: Keycloak looks up the users realm roles.It is 'household' for customers and 'admin' for administrators. In step 12, these roles into the jwt token.
+            \item Yes: Keycloak looks up the user's realm roles. It is 'household' for customers and 'admin' for administrators. In step 12, these roles are put into the JWT.
         \end{itemize}
     \item Keycloak does two things:
         \begin{itemize}
@@ -164,7 +164,7 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
     \item Client sends a POST http request to Keycloaks token-endpoint. The request contains:
         \begin{itemize}
             \item grant\_type=authorization\_code: This tells keycloak that client would like to exchange \textit{some} code to \textit{some} token.
-            \item code: The authorization code. This was recieved from Keycloak in step 9.
+            \item code: The authorization code. This was received from Keycloak in step 9.
             \item code\_verifier: The secret string from step 2 (un-hashed).
             \item same client\_id and redirect\_uri as in step 3.
         \end{itemize}
@@ -181,14 +181,14 @@ When the app starts, the client app fetches the URL to keycloak's login-page fro
         \end{itemize}
     \item Keycloak issues \textit{three} tokens:
         \begin{itemize}
-            \item Access token of type jwt "Json Web Token" signed by keycloak. It contains bl.a. the users UUID, realm-roles (household and/or admin) and \textit{audience} (which is prepmeup-api). This jwt is valid for 15 minutes.
+            \item Access token of type jwt "Json Web Token" signed by keycloak. It contains, among other things, the user's UUID, realm-roles (household and/or admin) and \textit{audience} (which is prepmeup-api). This jwt is valid for 15 minutes.
             \item Refresh token, which client can use to get a new access token, when the old one expires \textit{without} having to log in again. This, however, is only possible as long as the SSO-session (started in step 7) lives.
             \item ID token, which tells the client who is logged in. This info is only  used for logout.
         \end{itemize}
-    \item Client stores the three recieved tokens in a way that depends if it's mobile-app (for customer) or admin-panel.
+    \item Client stores the three received tokens in a way that depends if it's mobile-app (for customer) or admin-panel.
     Then the Client registers a function with the api-client that returns the current access token. The effect of this, is that before every request the api-client calls that function and can therefore add a non-expired token to the http request.
         \begin{itemize}
-            \item admin-panel: All threee tokens are kept in the browsers memory and are lost when the page is reloaded. Admin has to click 'log in' again.
+            \item admin-panel: All three tokens are kept in the browsers memory and are lost when the page is reloaded. Admin has to click 'log in' again.
             \item mobile-app: access token and ID token are kept in memory and are lost when the app is closed. The refresh token is saved to persistent storage on the phone, so the user stays signed in when reopening the app.
         \end{itemize}
     \item User is now logged in.

@@ -48,7 +48,7 @@ The list must contain exactly the three seeded orders, so use a database without
 
 ### Prerequisites
 
-The same as for FR-05: the stack runs locally (`make up`) on a database where the migrations have run, and an administrator and a customer are registered in Keycloak. The API must be built from the current code, because the endpoint `POST /admin/orders/{orderId}/shipment` is new (`docker compose up -d --build api`).
+The same as for FR-05: the stack runs locally (`make up`) on a database where the migrations have run, and an administrator and a customer are registered in Keycloak. The API must be built from the current code (`docker compose up -d --build api`).
 
 ### Run
 
@@ -102,7 +102,7 @@ The collection only looks at orders for customers whose name starts with `FR-19`
 
 ## FR-04: expiry date of orders
 
-`prepmeup-fr-04.postman_collection.json` checks that an order gets an expiry date exactly one year after it is sent, and that each order keeps its own expiry date. The customer reads the date with `GET /subscription`, which needs the API from the branch that adds `expiresAt` to the response.
+`prepmeup-fr-04.postman_collection.json` checks that an order gets an expiry date exactly one year after it is sent, and that each order keeps its own expiry date. The customer reads the date with `GET /subscription`.
 
 ### Prerequisites
 

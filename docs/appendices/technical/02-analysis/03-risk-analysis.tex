@@ -15,6 +15,7 @@
 
 \begin{versionhistory}
   1.0 & 28-10-2026 & Group 3 & First version \\
+  1.1 & 25-11-2026 & Group 3 & Status on 25 November: W1, R2 and T1 closed, sprint 7 in W2 \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -44,7 +45,7 @@ We split the risks in three groups, like the report template does: risks in how 
 \hline
 W1 & The must-have requirements are not done in time. On 28/10 the backend has customers and items, but no subscriptions, orders or package types, and sprint 5 is the last sprint with new features. & 3 & 10 & 30 & Sprint 5 only plans must-have requirements (decided 28/10). The database has to be in place for the supervisor meeting on 3/11. If we fall behind, the should and could requirements go first. \\
 \hline
-W2 & The report falls behind the code. None of the report tasks in sprint 3 were done (minutes 28/10). & 3 & 10 & 30 & Sprint 4 is mainly for the report, sprint 6 is for the acceptance test and the report, and the days from 2/12 to the hand-in are a buffer. Every report task is a card with a definition of done, like a code task. \\
+W2 & The report falls behind the code. None of the report tasks in sprint 3 were done (minutes 28/10). & 3 & 10 & 30 & Sprint 4 is mainly for the report, sprint 6 is for the acceptance test and the report, and sprint 7, from 2/12 to the hand-in, finishes the report. Every report task is a card with a definition of done, like a code task. \\
 \hline
 W3 & Some parts of the system are only known by one or two of us, and the server belongs to one group member. If one of them is ill, the others cannot take over. & 2 & 10 & 20 & Every sprint review has a demo, so everyone knows the parts they did not build (decided 30/9). Every pull request is reviewed by someone who did not write it. \\
 \hline
@@ -86,7 +87,7 @@ T3 & Everything runs on one server that one group member owns. If it fails befor
 \hline
 T4 & Keycloak is on a public server without brute force detection, a password policy or email verification (appendix 2.1). Anyone can register with an address they do not own. & 2 & 3 & 6 & Turn on brute force detection and a password policy in the realm file. The zombie user problem has its own card (PMU-80). \\
 \hline
-T5 & The apps and the API drift apart when the API changes. & 1 & 3 & 3 & The API client is generated from the API, and the type check in CI fails if an app still uses something that was removed (appendix 2.1). \\
+T5 & The apps and the API drift apart when the API changes. & 1 & 3 & 3 & The API client is generated from the API, and the type check in CI fails if an app still uses something that was removed (appendix 3.2). \\
 \hline
 \end{tabular}
 \end{center}
@@ -113,6 +114,11 @@ K = 1 & & & \\
 Eight risks have P of 9 or more: W1 to W5, T1, T2 and T3. The two largest, W1 and W2, are both about time, and they pull in different directions. Sprint 4 is used for the report, which lowers W2 but leaves only sprint 5 for the must-have requirements in W1. We accept that, because a system without a report cannot be handed in, while a should-have requirement can be left out.
 
 None of the risks have K = 1. We have not listed small risks the plan can absorb, because they do not need a measure.
+
+\section{Status on 25 November}
+Three risks are closed. W1 is closed, because the must-have requirements were built in sprint 5, and the acceptance test of them is in appendix 6.1. R2 is closed for version 1.0, because notifications (FR-20) are not part of version 1.0 (appendix 1.2). T1 is closed. Both apps log in through Keycloak, and the customer app keeps its login when it is restarted (appendix 2.1).
+
+W2 is still the largest risk. Sprint 6 is used for the acceptance test and the report, and sprint 7 runs from 2/12 to the hand-in on 11/12 (appendix 7.2). The other risks are unchanged.
 
 \section{Follow-up}
 We go through the list at each sprint planning. A risk that has happened gets a higher probability, a measure that has worked lowers it, and new risks are added with an ID that is not reused. A change to the list gets a new version in the version history.

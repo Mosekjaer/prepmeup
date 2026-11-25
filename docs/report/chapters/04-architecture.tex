@@ -121,7 +121,7 @@ before a user finds out. Appendix 3.2 describes the chain from the C\# code to t
         \hline
         Method & Path & Purpose \\
         \hline
-        GET, PUT & /customer & Read or save the customer's name and address \\
+        GET, PUT & /customer & Read or save the customer's name, phone number and address \\
         GET, POST & /subscription & Read the subscription, or sign up for one with the contents of the first order (FR-01) \\
         GET & /package-types & List the active package types and their contents (FR-03) \\
         GET & /items & List the items \\
@@ -174,8 +174,9 @@ application data in that way.
 
 The customer app is not deployed on the server. It is built with Expo and installed on
 the phone, and it calls the API on its public address. GitHub Actions builds and tests
-everything on every push, builds the images and tells Coolify to deploy them. Appendix
-10.3 describes the pipeline.
+everything on every pull request and every push to the main branch. On the main branch
+it also builds the images and tells Coolify to deploy them. Appendix 7.3 describes the
+pipeline.
 
 \subsection{Data Model}\label{sec:arch-data}
 
@@ -199,6 +200,6 @@ The diagram shows the whole design, and version 1.0 only builds part of it. The 
 for customers, subscriptions, orders, the packages in an order, package types and their
 contents, and items exist. An order has its planned date, its sent date and its expiry
 date. Payment methods, payments and notifications are not built, because payment
-(FR-10, FR-14) and notifications (FR-20) are not must-haves. The same goes for prices, the
-description of a package type and cancelling a subscription, so a subscription is only
-active or paused.
+(FR-10, FR-14) and notifications (FR-20) are not must-haves. The same goes for prices and for pausing a subscription. The packages in an order are
+stored as order lines. An order line has a package type and a quantity, and an order has
+at most one line for each package type.

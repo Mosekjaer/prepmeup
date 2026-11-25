@@ -85,7 +85,7 @@ file. A stale `.bbl` there makes the VS Code build run `bibtex` instead of
 latexmk runs draw.io for you during compilation and regenerates
 `assets/drawio/*.pdf` whenever the `.drawio` source is new or has changed.
 That generated PDF is a build artifact and is gitignored — only commit the
-`.drawio` source. (An example lives in `report/chapters/1_introduction.tex`.)
+`.drawio` source. (An example lives in `report/chapters/01-introduction.tex`.)
 
 ## Git sync
 
@@ -127,7 +127,7 @@ report/
   frontmatter/        01-titlepage ... 04-table-of-contents
   chapters/           01-introduction ... 10-appendix (the polished report)
 appendices/           Raw standalone documents (technical/ + process/),
-                      numbered like the SW3PRJ3 hand-in
+                      numbered by the AU-ECE report template
 standalone/           One-off documents (proposal, pitch, domain models) - not part of the report
 assets/
   drawio/             .drawio sources + auto-generated PDFs

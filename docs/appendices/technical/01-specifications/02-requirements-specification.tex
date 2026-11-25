@@ -24,21 +24,22 @@
   1.9 & 11-11-2026 & Group 3 & The customer chooses the contents of the first order when signing up (FR-01), and added order line to the glossary \\
   1.10 & 18-11-2026 & Group 3 & NFR-09 matches the endpoints we have \\
   1.11 & 18-11-2026 & Group 3 & Aligned with the system as built, and rules for the next order \\
+  1.12 & 25-11-2026 & Group 3 & Planned date in the glossary, pausing and package type maintenance marked as not in version 1.0, and payment per order \\
 \end{versionhistory}
 
 \section{Glossary}
 
 \textbf{Customer} = A person who has an account. In the identity provider the customer has the role \emph{household}.
 
-\textbf{Administrator} = An employee of PrepMeUp who maintains package types and sends orders through the administrator interface. An administrator is a user with the role \emph{admin}, which only an existing administrator can grant.
+\textbf{Administrator} = An employee of PrepMeUp who maintains package types and sends orders through the administrator interface. In version 1.0 the package types are created by the system (FR-03), and the administrator only sends orders. An administrator is a user with the role \emph{admin}, which only an existing administrator can grant.
 
 \textbf{Identity provider} = The service where users create an account, log in and change their password (Keycloak). The customer app and the administrator interface open its login page. Passwords are never sent to the back-end.
 
 \textbf{Onboarding} = The step after the first login where the customer enters name, address and, if they want, a phone number before using the customer app.
 
-\textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. A subscription is either active or paused, and the system only creates the next order for an active subscription. Cancelling a subscription is not part of version 1.0. The latest sent order decides when the next order is created, and older orders are only history. A subscription has at most one planned order at a time.
+\textbf{Subscription} = A customer's standing agreement to receive a new order before the previous one expires. A subscription is either active or paused, and the system only creates the next order for an active subscription. Pausing and cancelling a subscription are not part of version 1.0, so in version 1.0 a subscription is always active. The latest sent order decides when the next order is created, and older orders are only history. A subscription has at most one planned order at a time.
 
-\textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned.
+\textbf{Order} = The packages a customer receives together in one shipment. The next order starts as a copy of the previous one, and the customer can change it while it is planned (FR-07, not in version 1.0).
 
 \textbf{Order status} = Whether an order is \emph{planned} (not yet sent, can be changed by the customer) or \emph{sent} (sent by the administrator). It follows from whether the order has a sent date. Delivery is not tracked.
 
@@ -53,6 +54,8 @@
 \textbf{Order line} = A package type and how many packages of it an order contains.
 
 \textbf{Item} = A product that can go into a package. An item is either a \emph{food item} (including water) or an \emph{equipment item}.
+
+\textbf{Planned date} = The date on which an order was created, either when the customer signed up or when the system planned the next order 14 days before the previous one expires. The administrator's list of planned orders is sorted by it, earliest first (FR-05).
 
 \textbf{Expiry date} = The date on which the items of an order are no longer considered usable. It is set when the order is sent and is always one year after the sent date, whatever items the order contains. Each order has its own expiry date.
 
@@ -73,7 +76,7 @@ Customers sign up for a prepping subscription called ``PrepMeUp'' through the cu
 The customer app is an Expo (React Native) app. Version 1.0 runs on Android. A web build of the same app is a could-have. The administrator interface is a web application.
 
 \subsection{Payment}
-Payment is simulated. The customer pays a subscription fee, and the fee depends on how many adults and children the customer prepares for. The fee is charged to the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged. Payment is not part of version 1.0, because FR-10 is a should-have and FR-14 a could-have.
+Payment is simulated. The customer pays for each order, and the price depends on the packages in the order. The price is charged to the customer's stored (fake) card. A customer has one card. No real payment provider is integrated, and no real money is charged. Payment is not part of version 1.0, because FR-10 is a should-have and FR-14 a could-have.
 
 \subsection{Responsibilities}
 The back-end is responsible for persistently storing information on:
@@ -126,12 +129,12 @@ User stories are grouped into epics. Each epic lists the functional requirements
     \begin{enumerate}
         \item As a customer, I want to automatically receive a new order before the old one expires, so that I don't have to keep track of the expiry date myself and have a chance to use the soon-to-expire items.
         \item As a customer, I want to see the status of my next order, so that I know when to expect it.
-        \item As a customer, I want to pause or cancel my subscription, so that I am not sent orders I do not need.
+        \item As a customer, I want to pause or cancel my subscription, so that I am not sent orders I do not need (not in version 1.0).
     \end{enumerate}
 
     \item \textbf{Notifications} (FR-20)
     \begin{enumerate}
-        \item As a customer, I want to receive a notification before my next order is sent, so that I have a chance to make changes (e.g. number of packages, package types).
+        \item As a customer, I want to receive a notification when my next order is created, so that I have a chance to make changes (e.g. number of packages, package types).
     \end{enumerate}
 
     \item \textbf{Package catalogue} (FR-03, FR-11, FR-15)

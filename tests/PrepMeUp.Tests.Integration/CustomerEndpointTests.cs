@@ -113,6 +113,15 @@ public class CustomerEndpointTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
+    [Test]
+    public async Task PutCustomer_BlankName_NamesTheNameFieldInTheErrors()
+    {
+        var response = await SendAsync(HttpMethod.Put, NewSub(), Body(name: ""));
+        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ValidationProblemDetails>();
+
+        Assert.That(problem?.Errors.Keys, Is.EquivalentTo(new[] { "Name" }));
+    }
+
     [TestCase("", "8200", "Aarhus N")]
     [TestCase("Finlandsgade 22", "", "Aarhus N")]
     [TestCase("Finlandsgade 22", "8200", "")]

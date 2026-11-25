@@ -833,6 +833,7 @@ export interface IOrderLineResponse {
 export class OrderResponse implements IOrderResponse {
     plannedAt!: string;
     sentAt!: string | undefined;
+    expiresAt!: string | undefined;
     lines!: OrderLineResponse[];
 
     [key: string]: any;
@@ -857,6 +858,7 @@ export class OrderResponse implements IOrderResponse {
             }
             this.plannedAt = _data["plannedAt"];
             this.sentAt = _data["sentAt"];
+            this.expiresAt = _data["expiresAt"];
             if (Array.isArray(_data["lines"])) {
                 this.lines = [] as any;
                 for (let item of _data["lines"])
@@ -880,6 +882,7 @@ export class OrderResponse implements IOrderResponse {
         }
         data["plannedAt"] = this.plannedAt;
         data["sentAt"] = this.sentAt;
+        data["expiresAt"] = this.expiresAt;
         if (Array.isArray(this.lines)) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -892,6 +895,7 @@ export class OrderResponse implements IOrderResponse {
 export interface IOrderResponse {
     plannedAt: string;
     sentAt: string | undefined;
+    expiresAt: string | undefined;
     lines: OrderLineResponse[];
 
     [key: string]: any;
@@ -1453,7 +1457,7 @@ export interface ISubscriptionResponse {
     [key: string]: any;
 }
 
-export type SubscriptionStatus = "Active";
+export type SubscriptionStatus = "Active" | "Paused";
 
 export class ValidationProblemDetails implements IValidationProblemDetails {
     type?: string | undefined;

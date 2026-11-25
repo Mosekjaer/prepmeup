@@ -234,6 +234,31 @@ public class SubscriptionEndpointTests
         Assert.That(createdBody, Does.Contain("\"packageTypeName\"").And.Contain("\"quantity\":1"));
     }
 
+    [Test]
+    public async Task GetSubscription_OrderNotSent_HasNoExpiryDate()
+    {
+        var sub = await OnboardAsync();
+        await PostSubscriptionAsync(sub);
+
+        var body = await GetSubscriptionBodyAsync(sub);
+
+        Assert.That(body.Orders.Single().ExpiresAt, Is.Null);
+    }
+
+    [Test]
+    public async Task GetSubscription_OrderMarkedAsSent_HasExpiryDateOneYearAfterSentDate()
+    {
+        var sub = await OnboardAsync();
+        await PostSubscriptionAsync(sub);
+        var shipment = await MarkOrderAsSentAsync(await GetOrderIdAsync(sub));
+
+        var order = (await GetSubscriptionBodyAsync(sub)).Orders.Single();
+
+        Assert.That(
+            (shipment.StatusCode, order.SentAt.HasValue, order.ExpiresAt),
+            Is.EqualTo((HttpStatusCode.NoContent, true, order.SentAt?.AddYears(1))));
+    }
+
     [TestCase(null)]
     [TestCase("   ")]
     public async Task GetSubscription_TokenWithoutSubject_ReturnsUnauthorized(string? sub)
@@ -268,6 +293,32 @@ public class SubscriptionEndpointTests
         var packageTypes = await GetActivePackageTypesAsync(sub);
         var request = new { lines = new[] { new { packageTypeId = packageTypes[0].Id, quantity = 1 } } };
         return await SendAsync(HttpMethod.Post, "/subscription", sub, request);
+    }
+
+    private async Task<SubscriptionResponse> GetSubscriptionBodyAsync(string sub)
+    {
+        var response = await SendAsync(HttpMethod.Get, "/subscription", sub);
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<SubscriptionResponse>(JsonOptions))!;
+    }
+
+    private async Task<Guid> GetOrderIdAsync(string sub)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<PrepMeUpDbContext>();
+        var customerId = dbContext.Customers.Single(customer => customer.KeycloakId == sub).Id;
+        return dbContext.Subscriptions
+            .Where(subscription => subscription.CustomerId == customerId)
+            .SelectMany(subscription => subscription.Orders)
+            .Single()
+            .Id;
+    }
+
+    private Task<HttpResponseMessage> MarkOrderAsSentAsync(Guid orderId)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/admin/orders/{orderId}/shipment");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TestJwt.Create(TestJwt.TrustedKey, ["admin"]));
+        return _client.SendAsync(request);
     }
 
     private async Task<List<PackageTypeResponse>> GetActivePackageTypesAsync(string sub)

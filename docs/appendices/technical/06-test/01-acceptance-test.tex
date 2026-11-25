@@ -46,6 +46,7 @@
   1.8 & 18-11-2026 & Group 3 & New test for NFR-09 \\
   1.9 & 18-11-2026 & Group 3 & Test environment changed to a local run from main and one run on the server \\
   1.10 & 25-11-2026 & Group 3 & Ran the tests for NFR-07 and NFR-08 \\
+  1.11 & 25-11-2026 & Group 3 & FR-04 uses two customers and reads the expiry date with the customer's token \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -129,14 +130,14 @@ The test was run on 11-11-2026 against the system started locally with Docker (m
 \subsection{FR-04: Expiry date of orders}
 \scenarioinfo{FR-04}
   {Main scenario: The system registers an expiry date for each order when it is sent.}
-  {Customer A has two planned orders, O1 and O2 (test data). ADM is signed in.}
+  {Customer A and customer B have signed up (FR-01), so each has one planned order, O1 for A and O2 for B. ADM is signed in.}
   {Each sent order has its own expiry date.}
 \begin{steps}
 1 & ADM marks O1 as sent (FR-06). & O1 is registered as sent with today's date. & & \\
 \hline
-2 & The tester looks up O1 through the API with ADM's token. & O1 has today's date as sent date and an expiry date exactly one year later. & & \\
+2 & The tester calls GET /subscription with A's token. & O1 has today's date as sent date and an expiry date exactly one year later. & & \\
 \hline
-3 & ADM marks O2 as sent, and the tester looks up both orders again. & O2 has its own expiry date. The expiry date of O1 is unchanged. & & \\
+3 & ADM marks O2 as sent. The tester calls GET /subscription with B's token and then with A's token. & O2 has its own expiry date. The expiry date of O1 is unchanged. & & \\
 \hline
 \end{steps}
 

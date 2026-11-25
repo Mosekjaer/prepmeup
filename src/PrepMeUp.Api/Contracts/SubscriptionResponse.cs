@@ -11,6 +11,7 @@ public record SubscriptionResponse(SubscriptionStatus Status, DateTimeOffset Sta
             .Select(order => new OrderResponse(
                 order.PlannedAt,
                 order.SentAt,
+                order.ExpiresAt,
                 order.Lines.Select(line => new OrderLineResponse(line.PackageType.Id, line.PackageType.Name, line.Quantity)).ToList()))
             .ToList());
 }

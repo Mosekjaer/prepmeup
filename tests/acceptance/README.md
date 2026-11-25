@@ -1,6 +1,6 @@
 # Acceptance tests (Postman)
 
-`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-03.postman_collection.json`, `prepmeup-fr-04.postman_collection.json`, `prepmeup-fr-05.postman_collection.json`, `prepmeup-fr-06.postman_collection.json` and `prepmeup-fr-19.postman_collection.json` run the API part of FR-03, FR-04, FR-05, FR-06 and FR-19 (see the end of this file). The collections hold no tokens or passwords.
+`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-03.postman_collection.json`, `prepmeup-fr-04.postman_collection.json`, `prepmeup-fr-05.postman_collection.json`, `prepmeup-fr-06.postman_collection.json` and `prepmeup-fr-19.postman_collection.json` run the API part of FR-03, FR-04, FR-05, FR-06 and FR-19 (see the end of this file). `prepmeup-nfr-09-to-11.postman_collection.json` runs the API part of NFR-09, NFR-10 and NFR-11. The collections hold no tokens or passwords.
 
 ## Prerequisites
 
@@ -113,3 +113,17 @@ The collection only looks at orders for customers whose name starts with `FR-19`
 
 1. Import the collection and set the collection variables `customerNameA` and `customerNameB` to the names A and B entered at onboarding.
 2. Run the folders in order. Before each folder, press **Get New Access Token** and sign in as the user the folder names: the administrator for folder 1 and 3, A for folder 2 and 5, and B for folder 4.
+
+## NFR-09 to NFR-11: access control
+
+`prepmeup-nfr-09-to-11.postman_collection.json` checks that requests without a valid token get `401` (NFR-11), that a customer token gets `403` on the administrator endpoints and the administrator gets through (NFR-10), and that customers A and B each only get their own data (NFR-09). NFR-09 also asks for the OpenAPI document to be read by hand, to confirm that no customer endpoint takes an id.
+
+### Prerequisites
+
+- The stack runs locally (`make up`), built from the current code.
+- Customers A and B have signed up in the customer app (FR-01), and an administrator is registered in Keycloak.
+
+### Run
+
+1. Import the collection and set the collection variables `customerNameA` and `customerNameB` to the names A and B entered at onboarding. Set `expiredToken` to a token that is more than 15 minutes old: copy an access token from Postman into the current value, and run request 1c after the 15 minutes have passed. The value is not saved in the file.
+2. Before each folder, press **Get New Access Token** and sign in as the user the folder names: the administrator for folder 3, customer A for folders 2 and 4, and customer B for folder 5. Folder 1 sends no token of its own.

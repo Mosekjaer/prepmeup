@@ -49,3 +49,6 @@ _minted*
 # OS
 .DS_Store
 Thumbs.db
+
+# The AU-ECE report template is a reference document, not build output
+!guidelines/*.pdf

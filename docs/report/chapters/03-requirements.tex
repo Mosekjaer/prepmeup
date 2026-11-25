@@ -121,11 +121,8 @@ There are no packages made for allergies (FR-17) and no real grocery supplier (F
 Deleting the account (FR-21) is also left out, because it is not needed to show the
 core flow of the product.
 
-The requirements changed along the way. The biggest change came in version 1.4, when
-the orders went from being calculated from a household to being composed from package
-types. We explain that change with the domain model in \autoref{sec:req-domain-model}.
-In version 1.7 we set the expiry date to one year after the sent date, so it no longer
-depends on the items in the order.
+The requirements changed along the way, and we discuss the largest changes in
+\autoref{sec:disc-requirements}.
 
 \section{Non-functional Requirements}\label{sec:req-nonfunctional}
 
@@ -187,17 +184,3 @@ an order is either planned or sent. The expiry date is stored on the order. It i
 year after the sent date, and the next order is created 14 days before it. The
 customer has at most one payment method, and a notification tells the customer about
 an order.
-
-\subsection{From Household to Package Types}
-
-In the first domain model, the customer described a household with members and a diet,
-and the system calculated the package from it. In version 1.4 we removed the household,
-and the customer now composes each order from package types instead.
-
-We had already chosen packages with fixed contents, so the system did not need to know
-who lives in the house, only how many packages of each type to send. That made the model
-smaller. The diet became part of the package type, for example Vegetarian Adult.
-
-The cost is that the customer now works out how many adult and child packages they
-need. That is one of the barriers from \autoref{ch:introduction}, which the household
-profile used to handle for them.

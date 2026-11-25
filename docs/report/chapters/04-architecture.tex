@@ -200,6 +200,6 @@ The diagram shows the whole design, and version 1.0 only builds part of it. The 
 for customers, subscriptions, orders, the packages in an order, package types and their
 contents, and items exist. An order has its planned date, its sent date and its expiry
 date. Payment methods, payments and notifications are not built, because payment
-(FR-10, FR-14) and notifications (FR-20) are not must-haves. The same goes for prices, the
-description of a package type and cancelling a subscription, so a subscription is only
-active or paused.
+(FR-10, FR-14) and notifications (FR-20) are not must-haves. The same goes for prices and for pausing a subscription. The packages in an order are
+stored as order lines. An order line has a package type and a quantity, and an order has
+at most one line for each package type.

@@ -7,7 +7,36 @@
 
 \section{Process and Method}\label{sec:disc-process}
 
+The risk list (\autoref{sec:method-risk}) mattered most at the sprint planning on 28/10.
+The two largest risks were both about time. The must-have requirements might not be
+done, and the report was behind the code. We therefore used sprint 4 for the report and
+decided that sprint 5 only plans must-have requirements, so the should and could
+requirements would be the first to go. The must-have requirements were built in
+sprint 5, so the decision held.
+
+The rules for AI also changed along the way. We changed what AI may do on the board
+three times (Appendix 7.2). We also learned that text written by AI tends to be too
+dense and too technical, and we rewrote the appendices in plain language for that
+reason.
+
 \section{Requirements}\label{sec:disc-requirements}
+
+The requirements changed along the way. The biggest change came in version 1.4, when
+the orders went from being calculated from a household to being composed from package
+types. In version 1.7 we set the expiry date to one year after the sent date, so it no
+longer depends on the items in the order.
+
+In the first domain model (\autoref{sec:req-domain-model} shows the current one), the customer described a household with members and a diet,
+and the system calculated the package from it. In version 1.4 we removed the household,
+and the customer now composes each order from package types instead.
+
+We had already chosen packages with fixed contents, so the system did not need to know
+who lives in the house, only how many packages of each type to send. That made the model
+smaller. The diet became part of the package type, for example Vegetarian Adult.
+
+The cost is that the customer now works out how many adult and child packages they
+need. That is one of the barriers from \autoref{ch:introduction}, which the household
+profile used to handle for them.
 
 \section{Test Results}\label{sec:disc-test-results}
 

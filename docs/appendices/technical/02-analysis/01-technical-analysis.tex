@@ -22,7 +22,7 @@
   1.6 & 28-10-2026 & Group 3 & Added Keycloak features \\
   1.7 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and the code \\
   1.8 & 28-10-2026 & Group 3 & The admin panel is deployed as a container \\
-  1.9 & 25-11-2026 & Group 3 & Aligned with the code: scheduler built, NFR-04 and NFR-07 solved, refresh token in the customer app \\
+  1.9 & 25-11-2026 & Group 3 & Aligned with the code: scheduler built, NFR-04 and NFR-07 solved, refresh token in the customer app, SQLite in the integration tests \\
 \end{versionhistory}
 
 \section{Purpose}
@@ -339,9 +339,9 @@ MongoDB & Flexible schema. Can scale to several servers. & No foreign keys, so t
 We chose SQL Server, mainly because it is what the course uses, and PostgreSQL did not give us anything we needed. Because of the layers, the choice only shows up in Infrastructure, so switching later would mean a new EF Core provider and new migrations, but no changes to the rules or the API \cite[secs.~4.1.2 and 4.3.1]{desanctis-web-apis-aspnet-core}.
 
 \subsection{Database in Tests}
-The unit tests do not use a database, since they test Domain directly and Application with fake repositories. The integration tests start the whole API, but without a database. They replace the repository with a fake that keeps the data in a list, so they test routing, authentication, roles, status codes and the services. This means that our EF Core mapping, our queries and our migrations are not tested automatically. The migrations are only run against SQL Server when the API starts locally and when we deploy.
+The unit tests do not use a database, since they test Domain directly and Application with fake repositories. Most integration tests start the whole API with an in-memory SQLite database instead of SQL Server, and the database is created from the EF Core model for each test. So they test routing, authentication, roles, status codes, the services, our EF Core mapping and our queries, also the query that finds the subscriptions that are ready for the next order. The tests of the customer endpoints still replace the repository with a fake that keeps the data in a list.
 
-Microsoft's guide describes the options for testing against a database: the real database system, an in-memory SQLite database or fake repositories \cite{microsoft-efcore-testing-strategy}. When the system gets more tables (PMU-91), we need tests of the repositories. The guide recommends testing against the same database system as production, because SQLite does not behave exactly like SQL Server, and our migrations are made for SQL Server.
+Microsoft's guide describes the options for testing against a database: the real database system, an in-memory SQLite database or fake repositories \cite{microsoft-efcore-testing-strategy}. The guide recommends testing against the same database system as production, because SQLite does not behave exactly like SQL Server. We chose SQLite anyway, because it needs no container in CI and a test starts in a moment. The cost is that our migrations are not tested automatically. SQLite creates the schema from the model and not from the migrations, which are made for SQL Server. The migrations are only run against SQL Server when the API starts locally and when we deploy.
 
 \section{Version Control and Git Workflow}
 \label{sec:git}
@@ -385,7 +385,7 @@ The API checks every token it gets: it must be signed by Keycloak, come from the
 
 In production the API talks to Keycloak over the internal network, but the tokens contain Keycloak's public address. Because the two addresses are different, we had to set the expected issuer by hand. Chapter 8 in the report describes how we found this. For the same reason the API is allowed to fetch Keycloak's settings over plain HTTP inside the network. Microsoft recommends only doing that in development \cite{microsoft-jwtbearer-requirehttpsmetadata}, so it only works because the traffic stays internal.
 
-The requirements NFR-09 to NFR-11 say what the API must refuse. A request without a token gets 401 (NFR-11). Customers must get 403 on admin endpoints (NFR-10), so the admin endpoints require the admin role through an authorization policy, and the integration tests check both a customer token and an admin token. A customer must only see and change their own data (NFR-09). A role cannot solve this. Today the endpoints for a customer's own details have no customer id in the URL at all: the controller takes the user id from the token and passes it to the service, so there is no other customer to ask for. When orders get their own endpoints (PMU-91), a request for an order by id must also check that the order belongs to the customer in the token, and answer 403 if it does not. That check belongs in the Application layer, so it cannot be forgotten in a single controller.
+The requirements NFR-09 to NFR-11 say what the API must refuse. A request without a token gets 401 (NFR-11). Customers must get 403 on admin endpoints (NFR-10), so the admin endpoints require the admin role through an authorization policy, and the integration tests check both a customer token and an admin token. A customer must only see and change their own data (NFR-09). A role cannot solve this. Today the endpoints for a customer's own details have no customer id in the URL at all: the controller takes the user id from the token and passes it to the service, so there is no other customer to ask for. If orders get their own endpoints later, a request for an order by id must also check that the order belongs to the customer in the token, and answer 403 if it does not. That check belongs in the Application layer, so it cannot be forgotten in a single controller.
 
 CORS only allows our two apps. That is not real protection, though, because CORS is only enforced by browsers \cite[sec.~3.1.1]{desanctis-web-apis-aspnet-core}. The API still has to check authorization itself.
 
@@ -425,7 +425,7 @@ Three weaknesses from earlier versions are solved. The API refuses to start outs
     \item Make the image tag required in Coolify, so production cannot fall back to the newest image, and fix the PostgreSQL image to a minor version.
     \item Run the migrations as a migration bundle before the API starts, as described in appendix 7.3, or keep running them at startup and change appendix 7.3.
     \item How a customer is notified when the next order is created (FR-20), for example push notifications through Expo, e-mail or only a message in the app.
-    \item Integration tests of the repositories against SQL Server when more tables are added (PMU-91).
+    \item Integration tests of the migrations and the repositories against SQL Server, since SQLite does not run our migrations.
     \item Turn on brute force detection, a password policy, refresh token rotation and email in Keycloak (section~\ref{sec:keycloak-features}).
 \end{itemize}
 

@@ -19,6 +19,7 @@
   1.2 & 28-10-2026 & Group 3 & Aligned with requirements specification 1.5 and added problem statement \\
   1.3 & 28-10-2026 & Group 3 & Rich picture from the report \\
   1.4 & 28-10-2026 & Group 3 & Simpler text \\
+  1.5 & 25-11-2026 & Group 3 & Aligned with requirements specification 1.12: what is not part of version 1.0 \\
 \end{versionhistory}
 
 \section*{Background}
@@ -59,7 +60,7 @@ Figure~\ref{fig:rich-picture} shows the actors around the system and what flows 
 \subsection*{System Components}
 \begin{itemize}[nosep]
   \item In the customer app, the customer signs up, composes and changes orders, and sees the subscription status and notifications.
-  \item In the administrator interface, the administrator maintains the package types and sees and sends upcoming orders.
+  \item In the administrator interface, the administrator maintains the package types and sees and sends upcoming orders. In version 1.0 the package types are created by the system, and the administrator only sees and sends orders.
   \item The PrepMeUp system stores customers, subscriptions, orders and package types. It plans the next order before the previous one expires and notifies customers.
   \item The supplier and the payment are simulated with a product catalogue and a fake card payment. No real supplier or payment provider is connected.
 \end{itemize}
@@ -70,7 +71,7 @@ Figure~\ref{fig:rich-picture} shows the actors around the system and what flows 
   \item The customer composes the order from package types. The customer chooses how many adult and child packages it contains and of which type, for example \emph{Vegetarian -- Adult}. Equipment such as a flashlight is its own package type and can be added too.
   \item The administrator sends the order, and the system records the order's expiry date.
   \item Before the order expires, the system plans the next order as a copy of the previous one and notifies the customer.
-  \item While the next order is planned, the customer can change it, or pause or cancel the subscription.
+  \item While the next order is planned, the customer can change it, or pause or cancel the subscription. Changing a planned order, pausing and cancelling are not part of version 1.0.
 \end{enumerate}
 
 \subsection*{Scope}

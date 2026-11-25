@@ -9,11 +9,11 @@ using PrepMeUp.Domain;
 namespace PrepMeUp.Api.Controllers;
 
 [ApiController]
-[Route("user")]
+[Route("customer")]
 [Authorize]
-public class UserController(CustomerService customerService) : ControllerBase
+public class CustomerController(CustomerService customerService) : ControllerBase
 {
-    [HttpGet(Name = "User_GetCustomer")]
+    [HttpGet(Name = "Customer_GetCustomer")]
     [ProducesResponseType<CustomerResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,7 +38,7 @@ public class UserController(CustomerService customerService) : ControllerBase
             new AddressContract(customer.Address.Street, customer.Address.PostalCode, customer.Address.City)));
     }
 
-    [HttpPut(Name = "User_SaveCustomer")]
+    [HttpPut(Name = "Customer_SaveCustomer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

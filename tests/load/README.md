@@ -1,10 +1,10 @@
 # Load test (k6)
 
-`nfr-05.js` runs the NFR-05 acceptance test (appendix 6.1): 10 virtual users call `GET /user` with a customer token for 1 minute. The test passes when the 90th percentile of the response time is under 1 second and no request failed. k6 marks a failed threshold with a cross and exits with a code other than 0.
+`nfr-05.js` runs the NFR-05 acceptance test (appendix 6.1): 10 virtual users call `GET /customer` with a customer token for 1 minute. The test passes when the 90th percentile of the response time is under 1 second and no request failed. k6 marks a failed threshold with a cross and exits with a code other than 0.
 
 ## Prerequisites
 
-- A customer who has completed onboarding, so `GET /user` answers 200.
+- A customer who has completed onboarding, so `GET /customer` answers 200.
 - k6, or Docker with the `grafana/k6` image.
 - Run it from a machine outside the server, against the deployed API.
 

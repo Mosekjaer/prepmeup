@@ -20,7 +20,7 @@ export function setup() {
 }
 
 export default function () {
-  const response = http.get(`${baseUrl}/user`, {
+  const response = http.get(`${baseUrl}/customer`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

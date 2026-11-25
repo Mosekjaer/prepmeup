@@ -23,6 +23,7 @@
   1.7 & 12-11-2026 & Group 3 & Added what the app does with errors when subscribing \\
   1.8 & 11-11-2026 & Group 3 & A token without a user id gives 401 \\
   1.9 & 18-11-2026 & Group 3 & Added that the mobile app has no token while the session is restored \\
+  1.10 & 25-11-2026 & Group 3 & The customer endpoint is now /customer, and its controller CustomerController \\
 \end{versionhistory}
 
 \section{Roles and Claims}
@@ -86,7 +87,7 @@ This section shows how data travels from the customer app to the database. The e
 
 The numbers below match the arrows in Figure~\ref{fig:save-customer-flow}.
 
-\paragraph{1 and 2. The app sends the data.} The customer types a name and an address and taps Save. The app sends both to the API as PUT /user through the generated API client, with the access token in the Authorization header. The login flow that gives the app the token is in appendix 3.1.
+\paragraph{1 and 2. The app sends the data.} The customer types a name and an address and taps Save. The app sends both to the API as PUT /customer through the generated API client, with the access token in the Authorization header. The login flow that gives the app the token is in appendix 3.1.
 
 \paragraph{3. The Api layer checks the request.} Before the controller runs, ASP.NET Core checks the token and the request body. A missing or invalid token gives 401. An empty name or address, or one that is too long, gives 400. The controller then takes the user id from the token and calls the customer service. If the token has no user id, the controller answers 401 and does not call the service, see appendix 5.2. The id is never sent in the body, so a customer can only change their own data.
 
@@ -190,17 +191,17 @@ Figure~\ref{fig:onboarding-customer} has four lanes: the customer app, Keycloak,
 
 At this point the customer exists in Keycloak, but the API does not know them yet. Keycloak only knows how to log them in. The name and address belong to our domain, so they are stored in our own database.
 
-\paragraph{3. Ask the API for the profile.} The home screen calls GET /user with the access token. The API reads the user id from the token and asks the customer service for the customer with that id. The repository looks the customer up in the database. For a new customer nothing is found, and the API answers 404 Not Found.
+\paragraph{3. Ask the API for the profile.} The home screen calls GET /customer with the access token. The API reads the user id from the token and asks the customer service for the customer with that id. The repository looks the customer up in the database. For a new customer nothing is found, and the API answers 404 Not Found.
 
 For the app, this 404 is not an error. It means that the customer has not finished onboarding. This is how we read the onboarding status, as described in Onboarding Status: we do not keep a flag in the token, we ask the database. If the call fails for another reason, the home screen shows an error and a button to try again.
 
 \paragraph{4. Fill in name and address.} When the app gets the 404, it opens the onboarding screen. The customer types a name and an address and taps Save. The button is disabled while the request is running, so the customer cannot send it twice.
 
-\paragraph{5. Save.} The app sends the name and address to the API as PUT /user. The steps through the layers of the API are described in the Saving Data section and Figure~\ref{fig:save-customer-flow}. For a new customer the service creates a new customer, EF Core writes an INSERT, and the API answers 204 No Content.
+\paragraph{5. Save.} The app sends the name and address to the API as PUT /customer. The steps through the layers of the API are described in the Saving Data section and Figure~\ref{fig:save-customer-flow}. For a new customer the service creates a new customer, EF Core writes an INSERT, and the API answers 204 No Content.
 
-\paragraph{6. Back to the home screen.} The app goes back to the home screen. The home screen loads the profile every time it is shown, so it calls GET /user again. This time the customer is found, the API answers 200 OK with the name and address, and the home screen welcomes the customer. Onboarding is done.
+\paragraph{6. Back to the home screen.} The app goes back to the home screen. The home screen loads the profile every time it is shown, so it calls GET /customer again. This time the customer is found, the API answers 200 OK with the name and address, and the home screen welcomes the customer. Onboarding is done.
 
-The next time the customer opens the app, GET /user answers 200 right away, and the onboarding screen is not shown. If the customer leaves the onboarding screen or closes the app before they save, the API still answers 404 the next time the home screen is shown, and the app opens the onboarding screen again. So a customer cannot use the app without a name and address.
+The next time the customer opens the app, GET /customer answers 200 right away, and the onboarding screen is not shown. If the customer leaves the onboarding screen or closes the app before they save, the API still answers 404 the next time the home screen is shown, and the app opens the onboarding screen again. So a customer cannot use the app without a name and address.
 
 \section{Zombie Users}\label{sec:zombie-users}
 A zombie user is a user who exists in Keycloak but not in PrepMeUp. The user has an account and can log in, but our database has no customer for that user. This section describes how that happens, what it means for the system, what we could do about it, and why we do not handle it in this version.

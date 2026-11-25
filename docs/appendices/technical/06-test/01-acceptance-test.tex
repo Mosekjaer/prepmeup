@@ -47,6 +47,7 @@
   1.9 & 18-11-2026 & Group 3 & Test environment changed to a local run from main and one run on the server \\
   1.10 & 25-11-2026 & Group 3 & Ran the tests for NFR-07 and NFR-08 \\
   1.11 & 25-11-2026 & Group 3 & FR-04 uses two customers and reads the expiry date with the customer's token \\
+  1.12 & 25-11-2026 & Group 3 & The customer endpoint is now /customer instead of /user. Results written before this version were run against /user \\
 \end{versionhistory}
 
 \section{Test Environment}
@@ -207,7 +208,7 @@ NFR-02 & Every error message is a complete sentence in English stating what went
 \hline
 NFR-03 & If the back-end is unreachable, the customer app shows a connection error with an option to try again. It does not crash. & Sign in as A. Stop the API container and reload the home screen. Confirm an error message and a Try again button are shown and the app is still running. Start the API, tap Try again and confirm the screen loads. & Run locally. The home screen said ``We could not load your profile. Check your internet connection and try again.'' and showed Try again. The app kept running. After the API was started and Try again was tapped, the home screen loaded. & Pass \\
 \hline
-NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /user with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
+NFR-04 & If the database is unreachable while the API is running, the API returns HTTP 503 with an English error message. & With the API running, stop the database container. Call GET /customer with A's token and confirm the response is HTTP 503 with a body that contains an English error message. & Run locally. The response was 503 with ``The database is unavailable.'' and ``PrepMeUp cannot reach its database right now. Please try again in a few minutes.'' After the database was started again, GET /user gave 200. & Pass \\
 \hline
 \end{tabular}
 \end{center}
@@ -219,7 +220,7 @@ NFR-04 & If the database is unreachable while the API is running, the API return
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-05 & With 10 concurrent users, 90\% of API requests are answered in under 1 second. & Run k6 from a machine outside the server against the deployed API, with 10 virtual users for 1 minute calling GET /user with a customer token. Confirm that the 90th percentile of the response time is under 1 second and that no request failed. Copy the k6 summary to the actual result. & & \\
+NFR-05 & With 10 concurrent users, 90\% of API requests are answered in under 1 second. & Run k6 from a machine outside the server against the deployed API, with 10 virtual users for 1 minute calling GET /customer with a customer token. Confirm that the 90th percentile of the response time is under 1 second and that no request failed. Copy the k6 summary to the actual result. & & \\
 \hline
 \end{tabular}
 \end{center}
@@ -257,11 +258,11 @@ NFR-08 & Every API endpoint is covered by at least one automated test that runs 
 \hline
 \textbf{No.} & \textbf{Requirement} & \textbf{Test / Execution} & \textbf{Actual result} & \textbf{Verdict} \\
 \hline
-NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /user and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & & \\
+NFR-09 & A customer can only see and change their own data. The API finds the customer from the access token, so no customer endpoint takes an id. & Go through the customer endpoints in the API's OpenAPI document and confirm that none of them takes an id for a customer, a subscription or an order. Call GET /customer and GET /subscription with A's token and confirm that only A's data comes back. Do the same with B's token. & & \\
 \hline
 NFR-10 & Endpoints reserved for administrators reject requests made with a customer's access token, with HTTP 403. & Call every administrator endpoint with A's token and confirm each response is HTTP 403. Call the same endpoints with ADM's token and confirm they succeed. & & \\
 \hline
-NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /user without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & & \\
+NFR-11 & Any endpoint that requires a logged-in user rejects a request without a valid access token, with HTTP 401. & Call GET /customer without an Authorization header, with a token that is not a JWT, and with an expired token. Confirm each response is HTTP 401. & & \\
 \hline
 \end{tabular}
 \end{center}

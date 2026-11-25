@@ -1,6 +1,6 @@
 # Acceptance tests (Postman)
 
-`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-03.postman_collection.json`, `prepmeup-fr-05.postman_collection.json`, `prepmeup-fr-06.postman_collection.json` and `prepmeup-fr-19.postman_collection.json` run the API part of FR-03, FR-05, FR-06 and FR-19 (see the end of this file). The collections hold no tokens or passwords.
+`prepmeup-fr-02.postman_collection.json` runs the API part of the FR-02 acceptance test (appendix 6.1). `prepmeup-fr-03.postman_collection.json`, `prepmeup-fr-04.postman_collection.json`, `prepmeup-fr-05.postman_collection.json`, `prepmeup-fr-06.postman_collection.json` and `prepmeup-fr-19.postman_collection.json` run the API part of FR-03, FR-04, FR-05, FR-06 and FR-19 (see the end of this file). The collections hold no tokens or passwords.
 
 ## Prerequisites
 
@@ -99,3 +99,17 @@ The same as for FR-05. The API plans next orders when it starts and then every 5
 4. Restart the API again (or wait 5 minutes) and run request 3. C14 must still have exactly one planned order.
 
 The collection only looks at orders for customers whose name starts with `FR-19`. The planned order for C14 does show up in the FR-05 list, so load the FR-05 test data on a database without it, or run FR-19 after FR-05 and FR-06.
+
+## FR-04: expiry date of orders
+
+`prepmeup-fr-04.postman_collection.json` checks that an order gets an expiry date exactly one year after it is sent, and that each order keeps its own expiry date. The customer reads the date with `GET /subscription`, which needs the API from the branch that adds `expiresAt` to the response.
+
+### Prerequisites
+
+- The stack runs locally (`make up`).
+- Customers A and B have signed up in the customer app (FR-01), so each has one planned order. An administrator is registered in Keycloak.
+
+### Run
+
+1. Import the collection and set the collection variables `customerNameA` and `customerNameB` to the names A and B entered at onboarding.
+2. Run the folders in order. Before each folder, press **Get New Access Token** and sign in as the user the folder names: the administrator for folder 1 and 3, A for folder 2 and 5, and B for folder 4.
